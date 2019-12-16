@@ -1,10 +1,11 @@
 import React from "react";
-import { Button } from "react-native";
-import { SafeAreaView, Themed } from 'react-navigation';
+import { Button, SafeAreaView } from "react-native";
+// import { SafeAreaView, Themed } from 'react-navigation';
 
 class Home extends React.Component {
 	static navigationOptions = {
-		title: 'Welcome',
+		title: null,
+		header: null
 	};
 	render() {
 		const { navigation } = this.props;
@@ -16,7 +17,6 @@ class Home extends React.Component {
 	          onPress={() => push('Register')}
 	          title="Go Register"
 	        />
-	        <Themed.StatusBar />
 	      </SafeAreaView>
 		);
 	}

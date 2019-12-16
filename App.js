@@ -7,7 +7,9 @@ import Register from "./components/screens/Register";
 
 const RootStack = createStackNavigator(
   {
-    Home:  { screen: Home }, 
+    Home:  { 
+      screen: Home
+    }, 
     Register: { screen: Register }
   },{
     initialRouteName: 'Home',

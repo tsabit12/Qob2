@@ -4,8 +4,9 @@ import { SafeAreaView, Themed } from 'react-navigation';
 import { TextField } from 'react-native-material-textfield';
 import { RaisedTextButton } from 'react-native-material-buttons';
 import DetailRegistrasi from "./DetailRegistrasi";
-// import api from "../api";
+import api from "../api";
 // import MaterialButton from 'react-native-material-loading-button';
+import Loader from "../Loader";
 
 class Register extends React.Component {
   static navigationOptions = {
@@ -27,7 +28,8 @@ class Register extends React.Component {
       secureTextEntry: true,
       nik: '0',
       errors: {},
-      submit: false
+      loading: false,
+      dataDetail: {}
     };
   }
 
@@ -62,7 +64,7 @@ class Register extends React.Component {
         }
       });
   }
-
+ 
   onSubmit = () => {
     let errors = {};
 
@@ -77,8 +79,12 @@ class Register extends React.Component {
 
     this.setState({ errors, submit: false });
     if (Object.keys(errors).length === 0) {
-      this.setState({ submit: true });
-      //api.registrasi.cekKtp(this.state.nik)
+      this.setState({ loading: true });
+      api.registrasi.cekKtp(this.state.nik)
+        .then(res => this.setState({ dataDetail: res, loading: false }))
+        .catch(err => {
+          this.setState({ loading: false, dataDetail: {} })
+        })
     }
   }
 
@@ -86,8 +92,12 @@ class Register extends React.Component {
     return text.replace(/[^+\d]/g, '');
   }
 
+  onCancelValidasi = () => {
+    this.setState({ dataDetail: {} });
+  }
+
 	render() {
-    let { errors, submit, nik } = this.state;
+    let { errors, loading, nik, dataDetail } = this.state;
 
 		return (
 		  <SafeAreaView style={styles.safeContainer}>
@@ -96,6 +106,7 @@ class Register extends React.Component {
           contentContainerStyle={styles.contentContainer}
           keyboardShouldPersistTaps='handled'
         >
+        <Loader loading={loading} />
           <View style={styles.container}>
             <TextField
               ref={this.nikRef}
@@ -115,8 +126,15 @@ class Register extends React.Component {
               title='Cek Data Kependudukan'
               color={TextField.defaultProps.tintColor}
               titleColor='white'
+              disabled={Object.keys(dataDetail).length > 0 ? true : false }
             />
-            { submit && <DetailRegistrasi /> }
+
+            { Object.keys(dataDetail).length > 0  && 
+              <DetailRegistrasi 
+                listdata={dataDetail} 
+                onCancel={this.onCancelValidasi}
+              /> 
+            }
           </View>
         </ScrollView>
         <Themed.StatusBar />
