@@ -26,7 +26,7 @@ class Register extends React.Component {
 
     this.state = {
       secureTextEntry: true,
-      nik: '0',
+      nik: '',
       errors: {},
       loading: false,
       dataDetail: {}
@@ -120,6 +120,7 @@ class Register extends React.Component {
               returnKeyType='next'
               label='Nomor Kartu Tanda Penduduk'
               error={errors.nik}
+              autoFocus
             />
             <RaisedTextButton
               onPress={this.onSubmit}

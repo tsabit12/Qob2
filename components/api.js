@@ -1,4 +1,6 @@
 import axios from "axios";
+import md5 from "react-native-md5";
+import { curdate } from "./utils/curdate";
 
 const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb';
 let config = {	
@@ -12,18 +14,25 @@ let config = {
 	}
 } 
 
+const getHasing = (messtype, nik) => {
+	const key1 = 'c67536e59042f4f7049d441a3a5f71e1';
+	const key2 = 'cd187b9bff4a84415908698f9793098d';
+	const hash = md5.hex_md5(key1+curdate()+messtype+nik+key2);
+	return hash;
+}
+
 export default{
 	registrasi: {
 		cekKtp: (nik) =>
 			axios.post(url, {
 				messtype: '201',
-				param1: '3171030101710005',
+				param1: nik,
 				userid: '',
 				param2: '',
 				param3: '',
 				param4: '',
 				param5: '',
-				hashing: 'd61d087c7a7ebf87ebca7ad7634444df'
+				hashing: getHasing('201',nik)
 			}, config).then(res => res.data.response_data1)
 	}
 }
