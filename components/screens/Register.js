@@ -81,9 +81,18 @@ class Register extends React.Component {
     if (Object.keys(errors).length === 0) {
       this.setState({ loading: true });
       api.registrasi.cekKtp(this.state.nik)
-        .then(res => this.setState({ dataDetail: res, loading: false }))
+        .then(res => {
+          if (res === ''|| !res) {
+            this.setState({ loading: false, dataDetail: {}, errors: {nik: 'Data tidak ditemukan'}  })
+          }else{
+            this.setState({ dataDetail: res, loading: false });
+          }
+        })
         .catch(err => {
-          this.setState({ loading: false, dataDetail: {} })
+          const newErrors = {
+            nik: 'Terdapat kesalahan'
+          };
+          this.setState({ loading: false, dataDetail: {}, errors: newErrors  })
         })
     }
   }
@@ -98,6 +107,7 @@ class Register extends React.Component {
 
 	render() {
     let { errors, loading, nik, dataDetail } = this.state;
+    // console.log(errors);
 
 		return (
 		  <SafeAreaView style={styles.safeContainer}>
