@@ -3,7 +3,9 @@ import { ScrollView, View, Text } from 'react-native';
 import { SafeAreaView, Themed } from 'react-navigation';
 import { TextField } from 'react-native-material-textfield';
 import { RaisedTextButton } from 'react-native-material-buttons';
-
+import DetailRegistrasi from "./DetailRegistrasi";
+// import api from "../api";
+// import MaterialButton from 'react-native-material-loading-button';
 
 class Register extends React.Component {
   static navigationOptions = {
@@ -76,6 +78,7 @@ class Register extends React.Component {
     this.setState({ errors, submit: false });
     if (Object.keys(errors).length === 0) {
       this.setState({ submit: true });
+      //api.registrasi.cekKtp(this.state.nik)
     }
   }
 
@@ -94,7 +97,6 @@ class Register extends React.Component {
           keyboardShouldPersistTaps='handled'
         >
           <View style={styles.container}>
-            { submit && <Text>Oke</Text> }
             <TextField
               ref={this.nikRef}
               value={nik}
@@ -114,6 +116,7 @@ class Register extends React.Component {
               color={TextField.defaultProps.tintColor}
               titleColor='white'
             />
+            { submit && <DetailRegistrasi /> }
           </View>
         </ScrollView>
         <Themed.StatusBar />
