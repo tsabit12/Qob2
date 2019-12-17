@@ -14,7 +14,9 @@ class Home extends React.Component {
 		return (
 		  <SafeAreaView style={{ paddingTop: 30 }}>
 	        <Button
-	          onPress={() => push('Register')}
+	          onPress={() => this.props.navigation.navigate({
+	          	routeName: 'Register'
+	          })}
 	          title="Go Register"
 	        />
 	      </SafeAreaView>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import md5 from "react-native-md5";
-import { curdate } from "./utils/curdate";
+import { curdate } from "./utils/helper";
 
 const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb';
 let config = {	

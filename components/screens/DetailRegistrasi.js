@@ -3,9 +3,8 @@ import { View, Text } from "react-native";
 import { TextField } from 'react-native-material-textfield';
 import Dialog from "react-native-dialog";
 import { RaisedTextButton } from 'react-native-material-buttons';
-import Loader from "../Loader";
 
-const DataLengkap = ({ datanya, onSubmit }) => (
+const DataLengkap = ({ datanya, onNext }) => (
 	<View>
 		<TextField
           value={datanya.fullname}
@@ -45,8 +44,8 @@ const DataLengkap = ({ datanya, onSubmit }) => (
         />
         <View style={{paddingTop: 10, paddingBottom: 10}}>
         	<RaisedTextButton
-              onPress={onSubmit}
-              title='Registrasi'
+              onPress={() => onNext()}
+              title='Selanjutnya'
               color='red'
               titleColor='white'
             />
@@ -144,16 +143,13 @@ class DetailRegistrasi extends React.Component{
 	    }
 	}
 
-	onRegister = () => {
-		this.setState({ loading: true })
-	}
+	onNext = () => this.props.doneValidation(this.state.data)
 
 	render(){
-		const { data, errors, visible, isValid, loading } = this.state;
+		const { data, errors, visible, isValid } = this.state;
 
 		return(
 			<View>
-				<Loader loading={loading} />
 		        <Dialog.Container visible={visible}>
 		          <Dialog.Description>
 		          	Data ditemukan, harap validasi nama ibu kandung
@@ -175,7 +171,7 @@ class DetailRegistrasi extends React.Component{
 		          <Dialog.Button label="Batal" onPress={this.handleCancel} />
 		          <Dialog.Button label="Oke" onPress={this.onValidasi} />
 		        </Dialog.Container>
-		        { isValid && <DataLengkap datanya={data} onSubmit={this.onRegister} />}
+		        { isValid && <DataLengkap datanya={data} onNext={this.onNext} />}
 		    </View>
 		);
 	}

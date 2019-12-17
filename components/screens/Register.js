@@ -10,7 +10,7 @@ import Loader from "../Loader";
 
 class Register extends React.Component {
   static navigationOptions = {
-    title: 'Registrasi',
+    headerTitle: <Text style = {{fontSize: 16, fontWeight: '700'}}>Registrasi</Text>,
   };
 
 	constructor(props) {
@@ -105,9 +105,11 @@ class Register extends React.Component {
     this.setState({ dataDetail: {} });
   }
 
+
 	render() {
     let { errors, loading, nik, dataDetail } = this.state;
-    // console.log(errors);
+    const { navigation } = this.props;
+    const { push } = navigation;
 
 		return (
 		  <SafeAreaView style={styles.safeContainer}>
@@ -144,6 +146,10 @@ class Register extends React.Component {
               <DetailRegistrasi 
                 listdata={dataDetail} 
                 onCancel={this.onCancelValidasi}
+                doneValidation={(detail) => this.props.navigation.navigate({
+                  routeName: 'RegistrasiGiro',
+                  params: detail
+                })}
               /> 
             }
           </View>
