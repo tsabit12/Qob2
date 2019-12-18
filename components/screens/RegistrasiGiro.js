@@ -9,6 +9,7 @@ import status from "../json/status";
 import penghasilan from "../json/penghasilan";
 import sumber from "../json/sumber";
 import tujuan from "../json/tujuan";
+import Constants from 'expo-constants';
 
 const Test = ({ navigation }) => (
 	<View> 
@@ -31,7 +32,8 @@ class RegistrasiGiro extends React.Component{
 			status: '',
 			penghasilan: '',
 			sumber: '',
-			tujuan: ''
+			tujuan: '',
+			imei: Constants.deviceId
 		},
 		selectedOption: {
 			kepercayaan: -1,
@@ -45,11 +47,12 @@ class RegistrasiGiro extends React.Component{
 	}
 
 
-	componentDidMount(){
+	async componentDidMount(){
 		this.props.navigation.setParams({
 			myTitle: this.props.navigation.state.params.fullname
-		})
+		});
 	}
+
 
 	onCheck = () => {
 		const { checked } = this.state;
@@ -108,7 +111,6 @@ class RegistrasiGiro extends React.Component{
 
 	render(){
 		const { checked, data, errors, selectedOption } = this.state;
-		
 		return(
 			<SafeAreaView style={styles.safeContainer}>
 				<Layout style={styles.container}>
@@ -118,8 +120,9 @@ class RegistrasiGiro extends React.Component{
 				      onChange={this.onCheck}
 				    />
 			    </Layout>
+			    	<Text>{data.imei}</Text>
 				    <ScrollView keyboardShouldPersistTaps='handled'>
-				    { !checked && <View style={styles.containerForm}>
+				    { !checked ? <View style={styles.containerForm}>
 				    	<Input
 					      placeholder='Place your Text'
 					      label='Nama'
@@ -188,7 +191,9 @@ class RegistrasiGiro extends React.Component{
 					    />
 					    { errors.tujuan && <Text style={{color: 'red'}}>{errors.tujuan}</Text>}
 					    <Button style={styles.button} size='medium' onPress={this.onSubmit}>Daftar</Button>
-				    </View> }
+				    </View> : <View>
+				    	<Text>Oke</Text>
+				    </View>}
 			    </ScrollView>
 		    </SafeAreaView>
 		);

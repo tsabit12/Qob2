@@ -8,6 +8,7 @@ import RegistrasiGiro from "./components/screens/RegistrasiGiro";
 import { ApplicationProvider, Layout } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva';
 import { encode } from 'base-64';
+import {PermissionsAndroid} from 'react-native';
 
 const RootStack = createStackNavigator(
   {
@@ -26,8 +27,28 @@ const AppContainer = createAppContainer(RootStack);
 
 
 export default class App extends React.Component{
-  componentDidMount(){
+  async componentDidMount(){
     if (!global.btoa) { global.btoa = encode; }
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+        {
+          title: 'Izinkan Aplikasi Ini Mengelola Data?',
+          message:
+            'oke ya' +
+            'baik',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera');
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
   render(){
