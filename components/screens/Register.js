@@ -89,6 +89,7 @@ class Register extends React.Component {
           }
         })
         .catch(err => {
+          console.log(err)
           const newErrors = {
             nik: 'Terdapat kesalahan'
           };

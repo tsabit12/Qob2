@@ -7,6 +7,7 @@ import Register from "./components/screens/Register";
 import RegistrasiGiro from "./components/screens/RegistrasiGiro";
 import { ApplicationProvider, Layout } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva';
+import { encode } from 'base-64';
 
 const RootStack = createStackNavigator(
   {
@@ -24,13 +25,11 @@ const RootStack = createStackNavigator(
 const AppContainer = createAppContainer(RootStack);
 
 
-// const HomeScreen = () => (
-//   <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-//     <Text category='h1'>HOME</Text>
-//   </Layout>
-// );
-
 export default class App extends React.Component{
+  componentDidMount(){
+    if (!global.btoa) { global.btoa = encode; }
+  }
+
   render(){
     return(
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
