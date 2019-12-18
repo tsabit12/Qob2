@@ -24,11 +24,11 @@ const RootStack = createStackNavigator(
 const AppContainer = createAppContainer(RootStack);
 
 
-const HomeScreen = () => (
-  <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-    <Text category='h1'>HOME</Text>
-  </Layout>
-);
+// const HomeScreen = () => (
+//   <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+//     <Text category='h1'>HOME</Text>
+//   </Layout>
+// );
 
 export default class App extends React.Component{
   render(){

@@ -3,7 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { Toggle, Layout, Input, Select, Button } from '@ui-kitten/components';
 import { SafeAreaView } from 'react-navigation';
 import { titleCase } from "../utils/helper";
-import agama from "../json/agama";
+import kepercayaan from "../json/agama";
 import pekerjaan from "../json/pekerjaan";
 import status from "../json/status";
 import penghasilan from "../json/penghasilan";
@@ -21,7 +21,7 @@ class RegistrasiGiro extends React.Component{
 	static navigationOptions = ({ navigation }) => ({
 	  headerTitle: <Test navigation={navigation} />
 	});
-
+    	
 	state = {
 		checked: false,
 		data: {
@@ -33,8 +33,17 @@ class RegistrasiGiro extends React.Component{
 			sumber: '',
 			tujuan: ''
 		},
+		selectedOption: {
+			kepercayaan: -1,
+			pekerjaan: -1,
+			status: -1,
+			penghasilan: -1,
+			sumber: -1,
+			tujuan: -1
+		},
 		errors: {}
 	}
+
 
 	componentDidMount(){
 		this.props.navigation.setParams({
@@ -45,20 +54,41 @@ class RegistrasiGiro extends React.Component{
 	onCheck = () => {
 		const { checked } = this.state;
 		if (checked) {
-			this.setState({ checked: false });
+			this.setState({ checked: false, errors: {} });
 		}else{
-			this.setState({ checked: true });
+			this.setState({ checked: true, errors: {} });
 		}
 	}
 
-	onSelectAgama = (e) => this.setState({ data: { ...this.state.data, kepercayaan: e.value }, errors: { ...this.state.errors, kepercayaan: undefined }})
-	onSelectJob = (e) => this.setState({ data: { ...this.state.data, pekerjaan: e.value }, errors: { ...this.state.errors, pekerjaan: undefined }})
-	onSelectStatus = (e) => this.setState({ data: { ...this.state.data, status: e.value }, errors: { ...this.state.errors, status: undefined }})
-	onSelectSumber = (e) => this.setState({ data: { ...this.state.data, sumber: e.value }, errors: { ...this.state.errors, sumber: undefined }})
-	onSelectTujuan = (e) => this.setState({ data: { ...this.state.data, tujuan: e.value }, errors: { ...this.state.errors, tujuan: undefined }})
-	onSelectPenghasilan = (e) => this.setState({ data: { ...this.state.data, penghasilan: e.value }, errors: { ...this.state.errors, penghasilan: undefined }})
+	onSelectText = ({ name, value }) => {
+		const key = this.getKeyByName(name, value);
+		this.setState({ 
+			data: { ...this.state.data, [name]: value },
+			selectedOption: {
+				...this.state.selectedOption,
+				[name]: key
+			},
+			errors: {...this.state.errors, [name]: undefined }
+		})
+	} 
 
-	onChange = (e) => this.setState({ data: { ...this.state.data, fullname: e }})
+	getKeyByName = (name, value) => {
+		var key = -1;
+		if (name === 'kepercayaan') {
+			key = kepercayaan.findIndex(x => x.value === value);
+		}else if (name === 'pekerjaan') {
+			key = pekerjaan.findIndex(x => x.value === value);
+		}else if (name === 'status') {
+			key = status.findIndex(x => x.value === value);
+		}else if (name === 'penghasilan'){
+			key = penghasilan.findIndex(x => x.value === value);
+		}else if(name === 'sumber'){
+			key = sumber.findIndex(x => x.value === value);
+		}else if(name === 'tujuan'){
+			key = tujuan.findIndex(x => x.value === value);
+		}
+		return key;
+	}
 
 	onSubmit = () => {
 		const errors = this.validate(this.state.data);
@@ -77,7 +107,8 @@ class RegistrasiGiro extends React.Component{
 	}
 
 	render(){
-		const { checked, data, errors } = this.state;
+		const { checked, data, errors, selectedOption } = this.state;
+		
 		return(
 			<SafeAreaView style={styles.safeContainer}>
 				<Layout style={styles.container}>
@@ -93,15 +124,15 @@ class RegistrasiGiro extends React.Component{
 					      placeholder='Place your Text'
 					      label='Nama'
 					      value={data.fullname}
-					      onChangeText={this.onChange}
 					      disabled={true}
 					      style={styles.select}
 					    />
 					    <Select
 					    	label='Kepercayaan'
-					        data={agama}
+					        data={kepercayaan}
+					        selectedOption={kepercayaan[selectedOption.kepercayaan]}
 					        placeholder='Pilih Kepercayaan'
-					        onSelect={this.onSelectAgama}
+					        onSelect={this.onSelectText}
 					        style={styles.select}
 					        status={errors.kepercayaan && 'danger' }
 					    />
@@ -110,7 +141,8 @@ class RegistrasiGiro extends React.Component{
 					    	label='Pekerjaan'
 					        data={pekerjaan}
 					        placeholder='Pilih Jenis Pekerjaan'
-					        onSelect={this.onSelectJob}
+					        selectedOption={pekerjaan[selectedOption.pekerjaan]}
+					        onSelect={this.onSelectText}
 					        style={styles.select}
 					        status={errors.pekerjaan && 'danger' }
 					    />
@@ -119,8 +151,9 @@ class RegistrasiGiro extends React.Component{
 					    	label='Status Perkawinan'
 					        data={status}
 					        placeholder='Pilih Status'
-					        onSelect={this.onSelectStatus}
+					        onSelect={this.onSelectText}
 					        style={styles.select}
+					        selectedOption={status[selectedOption.status]}
 					        status={errors.status && 'danger' }
 					    />
 					    { errors.status && <Text style={{color: 'red'}}>{errors.status}</Text>}
@@ -128,7 +161,8 @@ class RegistrasiGiro extends React.Component{
 					    	label='Penghasilan'
 					        data={penghasilan}
 					        placeholder='Pilih penghasilan pertahun'
-					        onSelect={this.onSelectPenghasilan}
+					        onSelect={this.onSelectText}
+					        selectedOption={penghasilan[selectedOption.penghasilan]}
 					        style={styles.select}
 					        status={errors.penghasilan && 'danger' }
 					    />
@@ -137,8 +171,9 @@ class RegistrasiGiro extends React.Component{
 					    	label='Sumber Penghasilan'
 					        data={sumber}
 					        placeholder='Pilih Sumber Penghasilan'
-					        onSelect={this.onSelectSumber}
+					        onSelect={this.onSelectText}
 					        style={styles.select}
+					        selectedOption={sumber[selectedOption.sumber]}
 					        status={errors.sumber && 'danger' }
 					    />
 					    { errors.sumber && <Text style={{color: 'red'}}>{errors.sumber}</Text>}
@@ -146,7 +181,8 @@ class RegistrasiGiro extends React.Component{
 					    	label='Tujuan'
 					        data={tujuan}
 					        placeholder='Pilih Tujuan Penggunaan Dana'
-					        onSelect={this.onSelectTujuan}
+					        onSelect={this.onSelectText}
+					        selectedOption={tujuan[selectedOption.tujuan]}
 					        style={styles.select}
 					        status={errors.tujuan && 'danger' }
 					    />
