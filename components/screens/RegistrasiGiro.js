@@ -56,8 +56,14 @@ class RegistrasiGiro extends React.Component{
 		})
 	}
 
+	onSubmitUsername = (data) => {
+		const { data1 } = this.state;
+		this.setState({ data1: Object.assign(data1, data) });
+	}
+
 	render(){
 		const { submitform1 } = this.state;
+		console.log(this.state.data1);
 		return(
 			<SafeAreaView style={styles.safeContainer}>
 				 <ScrollView keyboardShouldPersistTaps='handled'>
@@ -69,7 +75,7 @@ class RegistrasiGiro extends React.Component{
 				    			dataForm={this.state.data1}
 				    			selected={this.state.selected}
 				    		/> : 
-				    		<RegisterUsername />
+				    		<RegisterUsername submit={this.onSubmitUsername} />
 				    	}
 				    </View>
 			    </ScrollView>

@@ -33,6 +33,13 @@ export default{
 				param4: '',
 				param5: '',
 				hashing: getHasing('201',nik)
-			}, config).then(res => res.data.response_data1)
+			}, config).then(res => res.data.response_data1),
+		validasiRekening: (rek) => 
+			axios.post(url, {
+				messtype: '202',
+				param1: rek,
+				userid: '',
+				hashing: getHasing('202', rek)
+			}, config).then(res => res.data)
 	}
 }

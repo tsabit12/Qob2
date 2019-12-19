@@ -41,8 +41,6 @@ class FormRegister extends React.Component{
 		secureTextEntry: true
 	}
 
-	email = React.createRef();
-
 	onSelectText = ({ name, value }) => {
 		const key = this.getKeyByName(name, value);
 		this.setState({ 
@@ -75,26 +73,6 @@ class FormRegister extends React.Component{
 
 
 	onChangeUsername = (e) => this.setState({ data: { ...this.state.data, username: e }})
-
-	renderIcon = (style) => {
-		const { secureTextEntry } = this.state;
-		return(
-			<Image
-		      style={style} 
-		      source={ secureTextEntry ? require('../../icons/eye-off-outline.png') : require('../../icons/eye-outline.png')}
-		    />
-		);
-	}
-
-	onIconPress = () => {
-		const { secureTextEntry } = this.state;
-		if (secureTextEntry) {
-			this.setState({ secureTextEntry: false });
-		}else{
-			this.setState({ secureTextEntry: true });
-		}
-	}
-
 	onChangePassword = (e) => this.setState({ data: { ...this.state.data, password: e }})
 	onChangeEmail = (e) => this.setState({ data: { ...this.state.data, email: e }})
 	onChangeImei = (e) => this.setState({ data: { ...this.state.data, imei: e }})
@@ -265,37 +243,4 @@ const styles = StyleSheet.create({
   }
 });
 
-// {
-// <Input
-//   placeholder='Place your Text'
-//   label='Nama'
-//   value={data.fullname}
-//   disabled={true}
-//   style={styles.select}
-// />
-// <Input
-//   placeholder='Masukan Username'
-//   label='Username'
-//   value={data.username}
-//   style={styles.select}
-//   onChangeText={this.onChangeUsername}
-// />
-// <Input
-//   value={data.password}
-//   label='Password'
-//   placeholder='********'
-//   icon={this.renderIcon}
-//   secureTextEntry={this.state.secureTextEntry}
-//   onIconPress={this.onIconPress}
-//   style={styles.select}
-//   onChangeText={this.onChangePassword}
-// />
-// <Input
-//   value={data.email}
-//   label='Email'
-//   placeholder='example@example.com'
-//   style={styles.select}
-//   onChangeText={this.onChangeEmail}
-// />
-// }
 export default FormRegister;
