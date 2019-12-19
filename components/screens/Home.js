@@ -2,7 +2,8 @@ import React from "react";
 import { Button, SafeAreaView, Text } from "react-native";
 import { connect } from 'react-redux';
 // import { SafeAreaView, Themed } from 'react-navigation';
-import { changeTest } from "../../actions/test";
+//import { changeTest } from "../../actions/test";
+import { Input } from '@ui-kitten/components';
 
 class Home extends React.Component {
 	static navigationOptions = {
@@ -12,8 +13,7 @@ class Home extends React.Component {
 	render() {
 		const { navigation, test } = this.props;
     	const { push } = navigation; 
-    	// console.log(this.props.test);
-		
+
 		return (
 		  <SafeAreaView style={{ paddingTop: 30 }}>
 	        <Button
@@ -22,11 +22,13 @@ class Home extends React.Component {
 	          })}
 	          title="Go Register"
 	        />
-	        <Button 
-	        	onPress={() => this.props.changeTest()}
-	        	title='Test'
-	        />
 	        <Text>{ test.ktp.nik }</Text>
+	        <Input
+				placeholder='Test'
+				label='Testing'
+				labelStyle={{color: 'black'}}
+				value='oke'
+			/>
 	      </SafeAreaView>
 		);
 	}
@@ -38,4 +40,4 @@ function mapStateToProps(state) {
 	}
 }
 
-export default connect(mapStateToProps, { changeTest })(Home);
+export default connect(mapStateToProps, null)(Home);

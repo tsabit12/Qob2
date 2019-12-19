@@ -4,6 +4,8 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/registrasi/IndexRegister";
+import { ApplicationProvider, Layout } from '@ui-kitten/components';
+import { mapping, light as lightTheme } from '@eva-design/eva';
 
 const AppNavigator = createStackNavigator({
   		Home: { 
@@ -16,4 +18,12 @@ const AppNavigator = createStackNavigator({
   	initialRouteName: 'Home'
 });
 
-export default createAppContainer(AppNavigator);
+const AppContainer = createAppContainer(AppNavigator);
+
+const Router = () => (
+	<ApplicationProvider mapping={mapping} theme={lightTheme}>
+        <AppContainer />
+    </ApplicationProvider>
+);
+
+export default Router;
