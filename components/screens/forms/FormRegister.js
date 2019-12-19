@@ -27,7 +27,8 @@ class FormRegister extends React.Component{
 			noHp: this.props.dataForm.noHp ? this.props.dataForm.noHp : '',
 			email: this.props.dataForm.noHp ? this.props.dataForm.noHp : '',
 			imei: this.props.dataForm.imei ? this.props.dataForm.imei : '',
-			namaPanggilan: this.props.dataForm.namaPanggilan ? this.props.dataForm.namaPanggilan : ''
+			namaPanggilan: this.props.dataForm.namaPanggilan ? this.props.dataForm.namaPanggilan : '',
+			npwp: this.props.dataForm.npwp ? this.props.dataForm.npwp : '',
 		},
 		selectedOption: {
 			kepercayaan: this.props.selected.kepercayaan ? this.props.selected.kepercayaan : -1,
@@ -82,6 +83,7 @@ class FormRegister extends React.Component{
 	onChangePassword = (e) => this.setState({ data: { ...this.state.data, password: e }})
 	onChangeEmail = (e) => this.setState({ data: { ...this.state.data, email: e }})
 	onChangeImei = (e) => this.setState({ data: { ...this.state.data, imei: e }})
+	onChangeNpwp = (e) => this.setState({ data: { ...this.state.data, npwp: e }})
 	
 	onSubmit = () => {
 		const errors = this.validate(this.state.data);
@@ -103,6 +105,7 @@ class FormRegister extends React.Component{
 		if (!data.email) errors.email = "Alamat email belum diisi";
 		if (!data.imei) errors.imei = "IMEI harap diisi";
 		if (!data.namaPanggilan) errors.namaPanggilan = "Masukan nama panggilan anda";
+		if (!data.npwp) errors.npwp = "Npwp tidak boleh kosong";
 		return errors;
 	}
 
@@ -152,9 +155,21 @@ class FormRegister extends React.Component{
 					onChangeText={this.onChangePhone}
 					keyboardType='numeric'
 					status={errors.noHp && 'danger' }
-					onSubmitEditing={() => this.refs.email.focus() }
+					onSubmitEditing={() => this.refs.npwp.focus() }
 				/>
 				{ errors.noHp && <Text style={{color: 'red'}}>{errors.noHp}</Text>}
+				<Input
+				  value={data.npwp}
+				  ref='npwp'
+				  label='NPWP *'
+				  labelStyle={{color: 'black'}}
+				  placeholder='Masukan nomor NPWP'
+				  style={styles.select}
+				  onChangeText={this.onChangeNpwp}
+				  status={errors.npwp && 'danger' }
+				  onSubmitEditing={() => this.refs.email.focus() }
+				/>
+				{ errors.npwp && <Text style={{color: 'red'}}>{errors.npwp}</Text>}
 				<Input
 				  value={data.email}
 				  ref='email'
