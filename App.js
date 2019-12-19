@@ -9,7 +9,7 @@ import { ApplicationProvider, Layout } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva';
 import { encode } from 'base-64';
 // import {PermissionsAndroid} from 'react-native';
-
+ 
 const RootStack = createStackNavigator(
   {
     Home:  { 
