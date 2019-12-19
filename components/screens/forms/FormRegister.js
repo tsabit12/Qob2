@@ -17,7 +17,7 @@ class FormRegister extends React.Component{
 	state = {
 		data: {
 			fullname: this.props.ktp.fullname,
-			gender: this.props.ktp.gender,
+			gender: this.props.ktp.gender === 'Permepuan' ? 'W' : 'P',
 			kepercayaan: this.props.dataForm.kepercayaan ? this.props.dataForm.kepercayaan : '',
 			pekerjaan: this.props.dataForm.pekerjaan ? this.props.dataForm.pekerjaan : '',
 			status: this.props.dataForm.status ? this.props.dataForm.status : '',
