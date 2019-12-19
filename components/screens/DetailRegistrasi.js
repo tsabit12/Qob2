@@ -79,14 +79,17 @@ class DetailRegistrasi extends React.Component{
 		const data = {
 			nik: parsing[0],
 			fullname: parsing[1],
-			alamat: parsing[2],
+			alamat: parsing[8],
 			city: parsing[10],
 			prov: parsing[13],
 			kec: parsing[4],
 			motherName: parsing[12],
 			gender: parsing[16],
-			birthPlace: parsing[15],
-			birtDate: parsing[17]
+			birthPlace: parsing[10],
+			birtDate: parsing[17],
+			rt: parsing[3],
+			rw: parsing[6],
+			desa: parsing[15]
 		}
 		this.setState({ data: data });
 	}

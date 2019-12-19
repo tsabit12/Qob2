@@ -36,3 +36,12 @@ export const titleCase = (string) => {
        // Directly return the joined string
     return splitStr.join(' '); 
 }
+
+//conver yyyy-mm-dd to dd/mm/yyyy
+export const convertDate = (date) => {
+    const values = date.split('-');
+    const year = values[0];
+    const month = values[1];
+    const day = values[2];
+    return `${day}/${month}/${year}`;
+}

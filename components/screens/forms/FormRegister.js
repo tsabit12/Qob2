@@ -29,6 +29,7 @@ class FormRegister extends React.Component{
 			imei: this.props.dataForm.imei ? this.props.dataForm.imei : '',
 			namaPanggilan: this.props.dataForm.namaPanggilan ? this.props.dataForm.namaPanggilan : '',
 			npwp: this.props.dataForm.npwp ? this.props.dataForm.npwp : '',
+			kodepos: this.props.dataForm.kodepos ? this.props.dataForm.kodepos : '',
 		},
 		selectedOption: {
 			kepercayaan: this.props.selected.kepercayaan ? this.props.selected.kepercayaan : -1,
@@ -84,6 +85,7 @@ class FormRegister extends React.Component{
 	onChangeEmail = (e) => this.setState({ data: { ...this.state.data, email: e }})
 	onChangeImei = (e) => this.setState({ data: { ...this.state.data, imei: e }})
 	onChangeNpwp = (e) => this.setState({ data: { ...this.state.data, npwp: e }})
+	onChangeKodePos = (e) => this.setState({ data: { ...this.state.data, kodepos: e }})
 	
 	onSubmit = () => {
 		const errors = this.validate(this.state.data);
@@ -106,6 +108,7 @@ class FormRegister extends React.Component{
 		if (!data.imei) errors.imei = "IMEI harap diisi";
 		if (!data.namaPanggilan) errors.namaPanggilan = "Masukan nama panggilan anda";
 		if (!data.npwp) errors.npwp = "Npwp tidak boleh kosong";
+		if (!data.kodepos) errors.kodepos = "Kodepos tidak boleh kosong";
 		return errors;
 	}
 
@@ -192,8 +195,20 @@ class FormRegister extends React.Component{
 				  onChangeText={this.onChangeImei}
 				  ref='imei'
 				  status={errors.imei && 'danger' }
+				  onSubmitEditing={() => this.refs.kodepos.focus() }
 				/>
-				{ errors.email && <Text style={{color: 'red'}}>{errors.email}</Text>}
+				<Input
+				  value={data.kodepos}
+				  label='Kodepos *'
+				  placeholder='Masukan kodepos'
+				  style={styles.select}
+				  keyboardType='numeric'
+				  labelStyle={{color: 'black'}}
+				  onChangeText={this.onChangeKodePos}
+				  ref='kodepos'
+				  status={errors.kodepos && 'danger' }
+				/>
+				{ errors.kodepos && <Text style={{color: 'red'}}>{errors.kodepos}</Text>}
 			    <Select
 			    	label='Kepercayaan *'
 			        data={kepercayaan}

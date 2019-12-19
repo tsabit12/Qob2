@@ -6,6 +6,8 @@ import FormRegister from "./forms/FormRegister";
 import { Button, ButtonGroup } from '@ui-kitten/components';
 import { HeaderBackButton } from "react-navigation-stack";
 import RegisterUsername from "./forms/RegisterUsername";
+import md5 from "react-native-md5";
+import { convertDate } from "../utils/helper";
 
 const Judul = ({ navigation }) => (
 	<View> 
@@ -31,7 +33,19 @@ class RegistrasiGiro extends React.Component{
 
 	state = {
 		submitform1: false,
-		data1: {},
+		data1: {
+			birtDate: this.props.navigation.state.params.birtDate,
+			birthPlace: this.props.navigation.state.params.birthPlace,
+			nik: this.props.navigation.state.params.nik,
+			motherName: this.props.navigation.state.params.motherName,
+			kecamatan: this.props.navigation.state.params.kec,
+			kabupaten: this.props.navigation.state.params.city,
+			provinsi: this.props.navigation.state.params.prov,
+			rw: this.props.navigation.state.params.rw,
+			rt: this.props.navigation.state.params.rt,
+			alamat: this.props.navigation.state.params.alamat,
+			desa: this.props.navigation.state.params.desa
+		},
 		selected: {}
 	}
     	
@@ -43,7 +57,12 @@ class RegistrasiGiro extends React.Component{
 	}
 
 	onSubmit = (value, selected) => {
-		this.setState({ submitform1: true, data1: value, selected: selected });	
+		const { data1 } = this.state;
+		this.setState({ 
+			submitform1: true,  
+			data1: Object.assign(data1, value), 
+			selected: selected 
+		});	
 		this.props.navigation.setParams({
 			form2: true
 		})
@@ -59,11 +78,21 @@ class RegistrasiGiro extends React.Component{
 	onSubmitUsername = (data) => {
 		const { data1 } = this.state;
 		this.setState({ data1: Object.assign(data1, data) });
+		const pass 		= md5.hex_md5(data.password);
+		const tglLahir 	= convertDate(data1.birtDate);
+		const kd 		= 1;
+		const param1 	= `${data.username}|${pass}|${data1.fullname}|${data1.namaPanggilan}|${data1.noHp}|${data1.email}|${data1.npwp}|${data1.imei}`;
+		const param2 	= `${data1.birthPlace}|${tglLahir}|${data1.gender}|${data1.kepercayaan}|${data1.pekerjaan}|${data1.status}|${kd}|${data1.nik}|30/12/2050|${data1.alamat}|${data1.rt}|${data1.rw}|${data1.desa}|${data1.kecamatan}|${data1.kabupaten}|${data1.provinsi}|${data1.kodepos}|${data1.tujuan}|${data1.sumber}|${data1.penghasilan}|${data1.motherName}`;
+		const payload  	= {
+			params1: param1,
+			params2: param2
+		};
+		console.log(payload);
 	}
 
 	render(){
 		const { submitform1 } = this.state;
-		console.log(this.state.data1);
+		// console.log(this.state.data1);
 		return(
 			<SafeAreaView style={styles.safeContainer}>
 				 <ScrollView keyboardShouldPersistTaps='handled'>
