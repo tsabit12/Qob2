@@ -73,7 +73,8 @@ class RegistrasiGiro extends React.Component{
 				    			ktp={this.props.navigation.state.params} 
 				    			submit={this.onSubmit} 
 				    			dataForm={this.state.data1}
-				    			selected={this.state.selected}
+				    			selected={this.state.selected} 
+				    			navigation={this.props.navigation}
 				    		/> : 
 				    		<RegisterUsername submit={this.onSubmitUsername} />
 				    	}

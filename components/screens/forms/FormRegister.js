@@ -41,6 +41,12 @@ class FormRegister extends React.Component{
 		secureTextEntry: true
 	}
 
+	componentDidMount(){
+		this.props.navigation.setParams({
+			form2: false
+		})
+	}
+
 	onSelectText = ({ name, value }) => {
 		const key = this.getKeyByName(name, value);
 		this.setState({ 
@@ -111,6 +117,7 @@ class FormRegister extends React.Component{
 				<Input
 					placeholder='Nama Lengkap'
 					label='Nama'
+					labelStyle={{color: 'black'}}
 					value={this.props.ktp.fullname}
 					disabled={true}
 					style={styles.select}
@@ -118,6 +125,7 @@ class FormRegister extends React.Component{
 				<Select
 			    	label='Jenis Kelamin'
 			        data={gender}
+			        labelStyle={{color: 'black'}}
 			        style={styles.select}
 			        selectedOption={genderProps === 'Laki-Laki' ? gender[0] : gender[1]}
 			        disabled={true}
@@ -126,6 +134,7 @@ class FormRegister extends React.Component{
 			    	ref='namaPanggilan'
 					placeholder='Masukan nama panggilan anda'
 					label='Nama Panggilan*'
+					labelStyle={{color: 'black'}}
 					value={data.namaPanggilan}
 					style={styles.select}
 					onChangeText={this.onChangeName}
@@ -138,6 +147,7 @@ class FormRegister extends React.Component{
 					placeholder='628/08 XXXX'
 					label='Nomor Hp *'
 					value={data.noHp}
+					labelStyle={{color: 'black'}}
 					style={styles.select}
 					onChangeText={this.onChangePhone}
 					keyboardType='numeric'
@@ -149,6 +159,7 @@ class FormRegister extends React.Component{
 				  value={data.email}
 				  ref='email'
 				  label='Email *'
+				  labelStyle={{color: 'black'}}
 				  placeholder='example@example.com'
 				  style={styles.select}
 				  onChangeText={this.onChangeEmail}
@@ -162,6 +173,7 @@ class FormRegister extends React.Component{
 				  placeholder='Masukan imei smartphone anda'
 				  style={styles.select}
 				  keyboardType='numeric'
+				  labelStyle={{color: 'black'}}
 				  onChangeText={this.onChangeImei}
 				  ref='imei'
 				  status={errors.imei && 'danger' }
@@ -170,6 +182,7 @@ class FormRegister extends React.Component{
 			    <Select
 			    	label='Kepercayaan *'
 			        data={kepercayaan}
+			        labelStyle={{color: 'black'}}
 			        selectedOption={kepercayaan[selectedOption.kepercayaan]}
 			        placeholder='Pilih Kepercayaan'
 			        onSelect={this.onSelectText}
@@ -181,6 +194,7 @@ class FormRegister extends React.Component{
 			    	label='Pekerjaan *'
 			        data={pekerjaan}
 			        placeholder='Pilih Jenis Pekerjaan'
+			        labelStyle={{color: 'black'}}
 			        selectedOption={pekerjaan[selectedOption.pekerjaan]}
 			        onSelect={this.onSelectText}
 			        style={styles.select}
@@ -191,6 +205,7 @@ class FormRegister extends React.Component{
 			    	label='Status Perkawinan *'
 			        data={status}
 			        placeholder='Pilih Status'
+			        labelStyle={{color: 'black'}}
 			        onSelect={this.onSelectText}
 			        style={styles.select}
 			        selectedOption={status[selectedOption.status]}
@@ -202,6 +217,7 @@ class FormRegister extends React.Component{
 			        data={penghasilan}
 			        placeholder='Pilih penghasilan pertahun'
 			        onSelect={this.onSelectText}
+			        labelStyle={{color: 'black'}}
 			        selectedOption={penghasilan[selectedOption.penghasilan]}
 			        style={styles.select}
 			        status={errors.penghasilan && 'danger' }
@@ -212,6 +228,7 @@ class FormRegister extends React.Component{
 			        data={sumber}
 			        placeholder='Pilih Sumber Penghasilan'
 			        onSelect={this.onSelectText}
+			        labelStyle={{color: 'black'}}
 			        style={styles.select}
 			        selectedOption={sumber[selectedOption.sumber]}
 			        status={errors.sumber && 'danger' }
@@ -222,6 +239,7 @@ class FormRegister extends React.Component{
 			        data={tujuan}
 			        placeholder='Pilih Tujuan Penggunaan Dana'
 			        onSelect={this.onSelectText}
+			        labelStyle={{color: 'black'}}
 			        selectedOption={tujuan[selectedOption.tujuan]}
 			        style={styles.select}
 			        status={errors.tujuan && 'danger' }
