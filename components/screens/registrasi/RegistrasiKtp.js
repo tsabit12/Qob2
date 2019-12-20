@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ScrollView, KeyboardAvoidingView, Image } from "react-native";
+import { View, Text, ScrollView, KeyboardAvoidingView, Image, Platform } from "react-native";
 import { SafeAreaView } from 'react-navigation';
 import { connect } from "react-redux";
 import styles from "./styles";
@@ -68,6 +68,16 @@ class RegistrasiKtp extends React.Component{
 		modal: true
 	}
 
+	usernameRef = React.createRef();
+	passwordRef = React.createRef();
+	nmOlshopRef = React.createRef();
+	namaPanggilanRef = React.createRef();
+	noHpRef = React.createRef();
+	npwpRef = React.createRef();
+	emailRef = React.createRef();
+	imeiRef = React.createRef();
+	kodeposRef = React.createRef();
+
 	componentDidMount(){
 		const { ktp } = this.props.dataktp;
 		const errors = this.props.errr;
@@ -90,6 +100,8 @@ class RegistrasiKtp extends React.Component{
 		this.setState({ bug });
 		if (Object.keys(bug).length === 0) {
 			this.setState({ validateMother: { ...this.state.validateMother, success: true }})
+			//handle null object
+			setTimeout(() => this.usernameRef.current.focus(), 500)
 		}
 	}
 
@@ -104,15 +116,11 @@ class RegistrasiKtp extends React.Component{
 		return bug;
 	}
 
-	onChangeNama = (e) => this.setState({ data: { ...this.state.data, namaPanggilan: e }})
-	onChangePhone = (e) => this.setState({ data: { ...this.state.data, noHp: e }})
-	onChangeNpwp = (e) => this.setState({ data: { ...this.state.data, npwp: e }})
-	onChangeEmail = (e) => this.setState({ data: { ...this.state.data, email: e }})
-	onChangeImei = (e) => this.setState({ data: { ...this.state.data, imei: e }})
-	onChangeKodePos = (e) => this.setState({ data: { ...this.state.data, kodepos: e }})
-	onChangeUsername = (e) => this.setState({ data: { ...this.state.data, username: e }})
-	onChangePassword = (e) => this.setState({ data: { ...this.state.data, password: e }})
-	onChangeOlshop = (e) => this.setState({ data: { ...this.state.data, nmOlshop: e }})
+	onChangeText = (e, ref) => {
+		const { current: {props: { name }}} = ref;
+		this.setState({ data: { ...this.state.data, [name]: e }})
+	} 
+	//console.log(e, ref.current.props.name)
 
 	onSelectText = ({ name, value }) => {
 		// const key = this.getKeyByName(name, value);
@@ -171,6 +179,8 @@ class RegistrasiKtp extends React.Component{
 					console.log(err);
 					this.setState({ loading: false })
 				})
+		}else{
+			this.usernameRef.current.focus();
 		}
 	}
 
@@ -189,6 +199,13 @@ class RegistrasiKtp extends React.Component{
 		if (!data.nmOlshop) errorsState.nmOlshop = "Nama online shop tidak boleh kosong";
 		if (!data.namaPanggilan) errorsState.namaPanggilan = "Nama panggilan tidak boleh kosong";
 		if (!data.imei) errorsState.imei = "Imei tidak boleh kosong";
+		if (!data.kodepos) errorsState.kodepos = "Kodepos tidak boleh kosong";
+		if (!data.kepercayaan) errorsState.kepercayaan = "Kepercayaan belum dipilih";
+		if (!data.pekerjaan) errorsState.pekerjaan = "Pekerjaan belum dipilih";
+		if (!data.status) errorsState.status = "Status perkawinan belum dipilih";
+		if (!data.penghasilan) errorsState.penghasilan = "Penghasilan belum dipilih";
+		if (!data.sumber) errorsState.sumber = "Penghasilan belum dipilih";
+		if (!data.tujuan) errorsState.tujuan = "Tujuan penghasilan belum dipilih";
 		return errorsState;
 	}
 
@@ -206,7 +223,16 @@ class RegistrasiKtp extends React.Component{
 					</View>
 				</View>}
 				<Loader loading={loading} />
-				<KeyboardAvoidingView behavior="padding" style={styles.container}>
+				<KeyboardAvoidingView 
+					behavior="padding" 
+					style={styles.container}
+					keyboardVerticalOffset={
+					  Platform.select({
+					     ios: () => 0,
+					     android: () => 90
+					  })()
+					}
+				>
 				<ScrollView>
 					{Object.keys(ktp).length > 0 && Object.keys(errors).length === 0 && 
 						<View style={styles.centerForm}>
@@ -237,158 +263,181 @@ class RegistrasiKtp extends React.Component{
 							>Validasi</Button>
 							{ validateMother.success && <View style={{paddingTop: 10}}>
 									<Input
-								    	ref='username'
+								    	ref={this.usernameRef}
 										placeholder='Masukan username'
 										label='Username'
+										name='username'
 										value={data.username}
 										labelStyle={styles.label}
-										onChangeText={this.onChangeUsername}
+										onChangeText={(e) => this.onChangeText(e, this.usernameRef)}
 										size='small'
 										status={errorsState.username && 'danger' }
-										onSubmitEditing={() => this.refs.password.focus() }
+										onSubmitEditing={() => this.passwordRef.current.focus() }
 									/>
 									{ errorsState.username && <Text style={styles.labelErr}>{errorsState.username}</Text> }
 									<Input
+									  ref={this.passwordRef}
 									  value={data.password}
 									  labelStyle={styles.label}
 									  label='Password'
-									  ref='password'
+									  name='password'
 									  size='small'
 									  placeholder='********'
 									  icon={this.renderIcon}
 									  status={errorsState.password && 'danger'}
 									  secureTextEntry={secureTextEntry}
 									  onIconPress={this.onIconPress}
-									  onChangeText={this.onChangePassword}
-									  onSubmitEditing={() => this.refs.nmOlshop.focus() }
+									  onChangeText={(e) => this.onChangeText(e, this.passwordRef)}
+									  onSubmitEditing={() => this.nmOlshopRef.current.focus() }
 									/>
 									{ errorsState.password && <Text style={styles.labelErr}>{errorsState.password}</Text> }
 									<Input
-								    	ref='nmOlshop'
+								    	ref={this.nmOlshopRef}
 										placeholder='Masukan nama online shop'
 										label='Nama Online Shop'
 										value={data.nmOlshop}
+										name='nmOlshop'
 										labelStyle={styles.label}
-										onChangeText={this.onChangeOlshop}
+										onChangeText={(e) => this.onChangeText(e, this.nmOlshopRef)}
 										status={errorsState.nmOlshop && 'danger'}
 										size='small'
-										onSubmitEditing={() => this.refs.namaPanggilan.focus() }
+										onSubmitEditing={() => this.namaPanggilanRef.current.focus() }
 									/>
 									{ errorsState.nmOlshop && <Text style={styles.labelErr}>{errorsState.nmOlshop}</Text> }
 									<Input
-								    	ref='namaPanggilan'
+								    	ref={this.namaPanggilanRef}
+								    	name='namaPanggilan'
 										placeholder='Masukan nama panggilan'
 										label='Nama Panggilan'
 										value={data.namaPanggilan}
 										labelStyle={styles.label}
-										onChangeText={this.onChangeNama}
+										onChangeText={(e) => this.onChangeText(e, this.namaPanggilanRef)}
 										status={errorsState.namaPanggilan && 'danger'}
 										size='small'
-										onSubmitEditing={() => this.refs.noHp.focus() }
+										onSubmitEditing={() => this.noHpRef.current.focus() }
 									/>
 									{ errorsState.namaPanggilan && <Text style={styles.labelErr}>{errorsState.namaPanggilan}</Text> }
 									<Input
-								    	ref='noHp'
+								    	ref={this.noHpRef}
 										placeholder='628/08 XXXX'
-										label='Nomor Hp *'
+										label='Nomor Hp'
+										name='noHp'
 										value={data.noHp}
 										labelStyle={styles.label}
-										onChangeText={this.onChangePhone}
+										onChangeText={(e) => this.onChangeText(e, this.noHpRef)}
 										keyboardType='numeric'
 										status={errorsState.noHp && 'danger'}
 										size='small'
-										onSubmitEditing={() => this.refs.npwp.focus() }
+										onSubmitEditing={() => this.npwpRef.current.focus() }
 									/>
 									{ errorsState.noHp && <Text style={styles.labelErr}>{errorsState.noHp}</Text> }
 									<Input
-									  ref='npwp'
+									  ref={this.npwpRef}
 									  label='NPWP'
+									  name='npwp'
 									  labelStyle={styles.label}
 									  placeholder='Masukan nomor NPWP'
 									  value={data.npwp}
-									  onChangeText={this.onChangeNpwp}
+									  onChangeText={(e) => this.onChangeText(e, this.npwpRef)}
 									  status={errorsState.npwp && 'danger'}
 									  size='small'
-									  onSubmitEditing={() => this.refs.email.focus() }
+									  onSubmitEditing={() => this.emailRef.current.focus() }
 									/>
 									{ errorsState.npwp && <Text style={styles.labelErr}>{errorsState.npwp}</Text> }
 									<Input
+									  ref={this.emailRef}
 									  value={data.email}
-									  ref='email'
+									  name='email'
 									  label='Email'
 									  labelStyle={styles.label}
 									  placeholder='example@example.com'
-									  onChangeText={this.onChangeEmail}
+									  onChangeText={(e) => this.onChangeText(e, this.emailRef)}
 									  size='small'
 									  status={errorsState.email && 'danger'}
-									  onSubmitEditing={() => this.refs.imei.focus() }
+									  onSubmitEditing={() => this.imeiRef.current.focus() }
 									/>
 									 { errorsState.email && <Text style={styles.labelErr}>{errorsState.email}</Text> }
 									<Input
+									  ref={this.imeiRef}
 									  value={data.imei}
 									  label='IMEI phone'
+									  name='imei'
 									  placeholder='Masukan imei smartphone anda'
 									  keyboardType='numeric'
 									  labelStyle={styles.label}
-									  onChangeText={this.onChangeImei}
+									  onChangeText={(e) => this.onChangeText(e, this.imeiRef)}
 									  status={errorsState.imei && 'danger'}
-									  ref='imei'
 									  size='small'
-									  onSubmitEditing={() => this.refs.kodepos.focus() }
+									  onSubmitEditing={() => this.kodeposRef.current.focus() }
 									/>
 									{ errorsState.imei && <Text style={styles.labelErr}>{errorsState.imei}</Text> }
 									<Input
+									  ref={this.kodeposRef}
 									  value={data.kodepos}
+									  name='kodepos'
 									  label='Kodepos'
 									  placeholder='Masukan kodepos'
 									  keyboardType='numeric'
 									  labelStyle={styles.label}
-									  onChangeText={this.onChangeKodePos}
-									  ref='kodepos'
+									  onChangeText={(e) => this.onChangeText(e, this.kodeposRef)}
+									  status={errorsState.kodepos && 'danger'}
 									  size='small'
 									/>
+									{ errorsState.kodepos && <Text style={styles.labelErr}>{errorsState.kodepos}</Text> }
 									<Select
 								    	label='Kepercayaan'
 								        data={kepercayaan}
 								        labelStyle={styles.label}
 								        placeholder='Pilih Kepercayaan'
 								        onSelect={this.onSelectText}
+								        status={errorsState.kepercayaan && 'danger'}
 								    />
+								    { errorsState.kepercayaan && <Text style={styles.labelErr}>{errorsState.kepercayaan}</Text> }
 								    <Select
 								    	label='Pekerjaan'
 								        data={pekerjaan}
 								        placeholder='Pilih Jenis Pekerjaan'
 								        labelStyle={styles.label}
 								        onSelect={this.onSelectText}
+								        status={errorsState.pekerjaan && 'danger'}
 								    />
+								    { errorsState.pekerjaan && <Text style={styles.labelErr}>{errorsState.pekerjaan}</Text> }
 								    <Select
 								    	label='Status Perkawinan'
 								        data={status}
 								        placeholder='Pilih Status'
 								        labelStyle={styles.label}
 								        onSelect={this.onSelectText}
+								        status={errorsState.status && 'danger'}
 								    />
+								    { errorsState.status && <Text style={styles.labelErr}>{errorsState.status}</Text> }
 								    <Select
 								    	label='Penghasilan'
 								        data={penghasilan}
 								        placeholder='Pilih penghasilan pertahun'
 								        onSelect={this.onSelectText}
 								        labelStyle={styles.label}
+								        status={errorsState.penghasilan && 'danger'}
 								    />
+								    { errorsState.penghasilan && <Text style={styles.labelErr}>{errorsState.penghasilan}</Text> }
 								    <Select
 								    	label='Sumber Penghasilan'
 								        data={sumber}
 								        placeholder='Pilih Sumber Penghasilan'
 								        labelStyle={styles.label}
 								        onSelect={this.onSelectText}
+								        status={errorsState.sumber && 'danger'}
 								    />
+								    { errorsState.sumber && <Text style={styles.labelErr}>{errorsState.sumber}</Text> }
 								    <Select
 								    	label='Tujuan'
 								        data={tujuan}
 								        placeholder='Pilih Tujuan Penggunaan Dana'
 								        onSelect={this.onSelectText}
 								        labelStyle={styles.label}
+								        status={errorsState.tujuan && 'danger'}
 								    />
+								    { errorsState.tujuan && <Text style={styles.labelErr}>{errorsState.tujuan}</Text> }
 									<Button 
 										size='small' 
 										style={styles.button}
