@@ -14,13 +14,12 @@ import store from './store';
 import { encode } from 'base-64';
 // // import {PermissionsAndroid} from 'react-native';
  
-// const RootStack = createStackNavigator(
+// const RootStack = createStackNavigator( 
 //   {
-//     Home:  { 
+//     Home:  {  
 //       screen: Home
 //     }, 
 //     IndexRegister: { screen: IndexRegister },
-//     // RegistrasiGiro: {screen: RegistrasiGiro }
 //   },{
 //     initialRouteName: 'Home',
 //     headerTransitionPreset: 'uikit'
@@ -45,7 +44,7 @@ class App extends React.Component{
   async componentDidMount(){
     if (!global.btoa) { global.btoa = encode; }
   }
-  
+
   render(){
     return(
       <Provider store={store}>

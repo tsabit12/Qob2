@@ -6,6 +6,7 @@ import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/registrasi/IndexRegister";
 import { ApplicationProvider, Layout } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva';
+import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 
 const AppNavigator = createStackNavigator({
   		Home: { 
@@ -13,17 +14,20 @@ const AppNavigator = createStackNavigator({
   		},
   		IndexRegister:{
   			screen: IndexRegister
-  		}
+  		},
+      RegistrasiKtp: {
+        screen: RegistrasiKtp
+      },
   	},{
   	initialRouteName: 'Home'
 });
-
+ 
 const AppContainer = createAppContainer(AppNavigator);
 
 const Router = () => (
 	<ApplicationProvider mapping={mapping} theme={lightTheme}>
-        <AppContainer />
-    </ApplicationProvider>
+    <AppContainer />
+  </ApplicationProvider>
 );
 
 export default Router;
