@@ -40,6 +40,17 @@ export default{
 				param1: rek,
 				userid: '',
 				hashing: getHasing('202', rek)
+			}, config).then(res => res.data),
+		registrasiNoGiro: (payload) =>
+			axios.post(url, {
+				messtype: '204',
+				param1: payload.params1,
+				userid: '',
+				param2: payload.params2,
+				param3: payload.params3,
+				param4: '',
+				param5: '',
+				hashing: getHasing('204', payload.params1)
 			}, config).then(res => res.data)
 	}
 }

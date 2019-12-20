@@ -1,5 +1,5 @@
 import api from "../components/api";
-import { GET_KTP, KTP_404 } from "../types";
+import { GET_KTP, KTP_404, REG_KTP_GAGAL, REMOVE_ERROR } from "../types";
 
 export const ktpFound = (ktp) => ({
 	type: GET_KTP,
@@ -43,3 +43,23 @@ export const convertNik = (parsing) => {
 	}
 	return data;
 }
+
+export const registerGagal = () => ({
+	type: REG_KTP_GAGAL
+})
+
+export const registerKtp = (payload) => dispatch =>
+	api.registrasi.registrasiNoGiro(payload)
+		.then(res => {
+			console.log(res);
+			if (res.rc_mess === '00') {
+
+			}else{//error response
+				dispatch(registerGagal())
+			}
+		})
+
+export const errorRemoved = () => ({
+	type: REMOVE_ERROR
+})
+export const removeError = () => dispatch => dispatch(errorRemoved())

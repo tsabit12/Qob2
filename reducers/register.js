@@ -1,8 +1,11 @@
-import { GET_KTP, KTP_404 } from "../types";
+import { GET_KTP, KTP_404, REG_KTP_GAGAL, REMOVE_ERROR } from "../types";
 
 const initialState = {
 	ktp: {},
-	errors: {}
+	errors: {
+		ktp: {},
+		register: {}
+	}
 };
 
 export default function register(state=initialState, action={}){
@@ -10,13 +13,37 @@ export default function register(state=initialState, action={}){
 		case GET_KTP:
 			return{
 				ktp: action.ktp,
-				errors: {}
+				errors: {
+					ktp: {},
+					register: {}
+				}
 			}
 		case KTP_404:
 			return{
 				ktp: {},
 				errors: {
-					ktp: 'Data tidak ditemukan'
+					ktp: {
+						message: 'Data tidak ditemukan'
+					},
+					register: {}
+				}
+			}
+		case REG_KTP_GAGAL: 
+			return{
+				...state,
+				errors: {
+					ktp:{},
+					register: {
+						message: 'Terdapat kesalahan saat registrasi, mohon cobalagi nanti yaa. '
+					}
+				}
+			}
+		case REMOVE_ERROR:
+			return{
+				...state,
+				errors: {
+					ktp: {},
+					register: {}
 				}
 			}
 		default: return state;
