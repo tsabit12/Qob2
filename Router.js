@@ -7,7 +7,8 @@ import IndexRegister from "./components/screens/registrasi/IndexRegister";
 import { ApplicationProvider, Layout } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva';
 import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
-
+import RekKoran from "./components/screens/report/RekKoran";
+ 
 const AppNavigator = createStackNavigator({
   		Home: { 
   			screen: Home 
@@ -17,6 +18,9 @@ const AppNavigator = createStackNavigator({
   		},
       RegistrasiKtp: {
         screen: RegistrasiKtp
+      },
+      RekKoran: {
+        screen: RekKoran
       },
   	},{
   	initialRouteName: 'Home'

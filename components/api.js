@@ -52,5 +52,13 @@ export default{
 				param5: '',
 				hashing: getHasing('204', payload.params1)
 			}, config).then(res => res.data)
+	},
+	laporan: {
+		rekKoran: (rek) =>
+			axios.post(url, {
+				messtype: '206',
+				param1: rek,
+				hashing: getHasing('206', rek)
+			}, config).then(res => res.data)
 	}
 }
