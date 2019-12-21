@@ -60,5 +60,19 @@ export default{
 				param1: rek,
 				hashing: getHasing('206', rek)
 			}, config).then(res => res.data)
+	},
+	search: {
+		rekening: (rek) =>
+			axios.post(url, {
+				messtype: '206',
+				param1: rek,
+				hashing: getHasing('206', rek)
+			}, config).then(res => {
+				if (res.data.rc_mess === '000') {
+					return res.data;
+				}else{
+					return Promise.reject(res);
+				}
+			})
 	}
 }

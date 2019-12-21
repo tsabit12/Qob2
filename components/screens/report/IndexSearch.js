@@ -43,7 +43,7 @@ class IndexSearch extends React.Component{
 	render(){
 		return(
 			<View style={styles.container}>
-				<Text>Index pencarian sementara</Text>
+				<Text>Index pencarian sementara hanya pencarian rekening koran</Text>
 			</View>
 		);
 	}

@@ -20,7 +20,7 @@ import { encode } from 'base-64';
 //       screen: Home
 //     }, 
 //     IndexRegister: { screen: IndexRegister },
-//   },{
+//   },{ 
 //     initialRouteName: 'Home',
 //     headerTransitionPreset: 'uikit'
 //   }

@@ -3,6 +3,9 @@ import { View, Text } from "react-native";
 import SearchLayout from 'react-navigation-addon-search-layout';
 import { RectButton } from 'react-native-gesture-handler';
 import styles from "./styles";
+import { connect } from "react-redux";
+import { getRekening } from "../../../actions/search";
+import ResultRekening from "./search/ResultRekening";
 
 class DetailSearch extends React.Component{
 	static navigationOptions = {
@@ -10,7 +13,9 @@ class DetailSearch extends React.Component{
 	};
 
 	state = {
-		searchText: null
+		searchText: null,
+		jenis: null,
+		errors: {}
 	}
 
 	_handleQueryChange = searchText => {
@@ -18,34 +23,41 @@ class DetailSearch extends React.Component{
   	}
 
   	_executeSearch = () => {
-	    alert('do search!');
+	    this.setState({ jenis: 'Rekening'});
+	    const value = 'Rekening';
+	    if (value === 'Rekening') {
+	    	this.props.getRekening(this.state.searchText)
+	    		.catch(err => console.log(err.data))
+	    }
 	};
 
 	render(){
-		const { searchText } = this.state;
+		const { searchText, jenis } = this.state;
 		return(
-			<SearchLayout
-		        onChangeQuery={this._handleQueryChange}
-		        onSubmit={this._executeSearch}>
-		        {searchText ? (
-		          <RectButton
-		            style={{
-		              borderBottomWidth: styles.hairlineWidth,
-		              borderBottomColor: '#eee',
-		              paddingVertical: 20,
-		              paddingHorizontal: 15,
-		            }}
-		            onPress={() =>
-		              this.props.navigation.navigate('Result', {
-		                text: this.state.searchText,
-		              })
-		            }>
-		            <Text style={{ fontSize: 14 }}>{searchText}!</Text>
-		          </RectButton>
-		        ) : null}
-		    </SearchLayout>
+			<React.Fragment>
+				<SearchLayout
+			        onChangeQuery={this._handleQueryChange}
+			        onSubmit={this._executeSearch}>
+			        {searchText ? (
+			          <RectButton
+			            style={{
+			              borderBottomWidth: styles.hairlineWidth,
+			              borderBottomColor: '#eee',
+			              paddingVertical: 20,
+			              paddingHorizontal: 15,
+			            }}
+			            onPress={() =>
+			              this.props.navigation.navigate('Result', {
+			                text: this.state.searchText,
+			              })
+			            }>
+			          </RectButton>
+			        ) : null}
+			        { jenis === 'Rekening' && <ResultRekening searchText={searchText} /> }
+			    </SearchLayout>
+		    </React.Fragment>
 		);
 	}
 }
 
-export default DetailSearch;
+export default connect(null, { getRekening })(DetailSearch);
