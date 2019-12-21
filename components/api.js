@@ -33,7 +33,13 @@ export default{
 				param4: '',
 				param5: '',
 				hashing: getHasing('201',nik)
-			}, config).then(res => res.data),
+			}, config).then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data);
+				}
+			}),
 		validasiRekening: (rek) => 
 			axios.post(url, {
 				messtype: '202',
@@ -51,7 +57,13 @@ export default{
 				param4: '',
 				param5: '',
 				hashing: getHasing('204', payload.params1)
-			}, config).then(res => res.data)
+			}, config).then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data)
+				}
+			})
 	},
 	laporan: {
 		rekKoran: (rek) =>

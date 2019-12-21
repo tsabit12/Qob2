@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-navigation';
 import Loader from "../../Loader";
 import { connect } from "react-redux";
 import { searchKtp } from "../../../actions/register";
+import Modal from "../../Modal";
 
 const Judul = () => (
 	<Text>Registrasi</Text>
@@ -24,7 +25,8 @@ class IndexRegister extends React.Component{
 		success: false,
 		errors: {},
 		loading: false,
-		checked: false
+		checked: false,
+		visible: false
 	}
 
 	onChange = (e) => this.setState({ nik: e })
@@ -41,7 +43,7 @@ class IndexRegister extends React.Component{
 					});
 					this.setState({ loading: false })
 				})
-				.catch(err => this.setState({ loading: false, errors: {global: 'Terdapat kesalahan'} }))
+				.catch(err => this.setState({ errors: {global: 'Data tidak ditemukan'}, visible: true, loading: false }))
 		}
 	}
 
@@ -65,6 +67,12 @@ class IndexRegister extends React.Component{
 		return(
 			<SafeAreaView style={styles.safeContainer}>
 				<Loader loading={loading} />
+				{ errors.global && 
+					<Modal 
+						loading={this.state.visible} 
+						text={errors.global} 
+						handleClose={() => this.setState({ visible: false })} 
+					/>}
 			    <View style={styles.centerForm}>
 				    <Input
 						placeholder='Masukan nomor KTP'

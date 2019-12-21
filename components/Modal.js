@@ -6,7 +6,7 @@ const Modal = ({ loading, text, handleClose }) => (
 	<View>
         <Dialog.Container visible={loading}>
           <Dialog.Description>
-          	<Text>{ text }</Text>
+          	{ text }
           </Dialog.Description>
           <Dialog.Button label="Tutup" onPress={() => handleClose()} />
         </Dialog.Container>

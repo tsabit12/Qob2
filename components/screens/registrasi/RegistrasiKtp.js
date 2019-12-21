@@ -13,9 +13,8 @@ import tujuan from "../../json/tujuan";
 import Loader from "../../Loader";
 import md5 from "react-native-md5";
 import { convertDate } from "../../utils/helper";
-import { registerKtp, removeError } from "../../../actions/register";
+import { registerKtp } from "../../../actions/register";
 import Modal from "../../Modal";
-
 
 const SubTitle = ({ judul }) => (
 		<Text>
@@ -65,7 +64,8 @@ class RegistrasiKtp extends React.Component{
 		secureTextEntry: true,
 		errorsState: {},
 		loading: false,
-		modal: true
+		modal: true,
+		visible: false
 	}
 
 	usernameRef = React.createRef();
@@ -80,8 +80,7 @@ class RegistrasiKtp extends React.Component{
 
 	componentDidMount(){
 		const { ktp } = this.props.dataktp;
-		const errors = this.props.errr;
-		if (Object.keys(ktp).length > 0 && Object.keys(errors).length === 0) {
+		if (Object.keys(ktp).length > 0) {
 			this.props.navigation.setParams({
 				judulHeader: ktp.nik
 			});
@@ -174,19 +173,19 @@ class RegistrasiKtp extends React.Component{
 			console.log(payload);
 
 			this.props.registerKtp(payload)
-				.then(res => this.setState({ loading: false }))
+				.then(res => this.setState({ loading: false, errorsState: {}, visible: false }))
 				.catch(err => {
-					console.log(err);
-					this.setState({ loading: false })
+					this.setState({ 
+						loading: false, 
+						errorsState: {
+							global: `${err.desk_mess} \nTerdapat kesalahan saat registrasi. Harap cobalagi nanti`
+						}, 
+						visible: true 
+					})
 				})
 		}else{
 			this.usernameRef.current.focus();
 		}
-	}
-
-	closeModal = () => {
-		this.setState({ modal: false });
-		this.props.removeError();
 	}
 
 	validateBiodata = (data) => {
@@ -212,17 +211,15 @@ class RegistrasiKtp extends React.Component{
 	render(){
 		const { ktp } = this.props.dataktp;
 		const { validateMother, bug, data, secureTextEntry, errorsState, loading } = this.state;
-		const errors  = this.props.errr; 
-		const { errr2 } = this.props;
 		return(
 			<SafeAreaView>
-				{ Object.keys(errors).length > 0 && <View style={styles.message}>
-					<View style={{margin: 8}}>
-						<Text>{errors.ktp.text}!</Text>
-						<Text>Harap pastikan bahwa nomor ktp yang dientri sudah benar</Text>
-					</View>
-				</View>}
 				<Loader loading={loading} />
+				{ errorsState.global && 
+					<Modal 
+						loading={this.state.visible} 
+						text={errorsState.global} 
+						handleClose={() => this.setState({ visible: false })}
+					/>}
 				<KeyboardAvoidingView 
 					behavior="padding" 
 					style={styles.container}
@@ -234,7 +231,7 @@ class RegistrasiKtp extends React.Component{
 					}
 				>
 				<ScrollView>
-					{Object.keys(ktp).length > 0 && Object.keys(errors).length === 0 && 
+					{Object.keys(ktp).length > 0 && 
 						<View style={styles.centerForm}>
 							<Input
 								label='Validasi'
@@ -447,12 +444,6 @@ class RegistrasiKtp extends React.Component{
 						</View> }
 				</ScrollView>
 				</KeyboardAvoidingView>
-				{ Object.keys(errr2).length > 0 && 
-					<Modal 
-						loading={this.state.modal} 
-						text={errr2.message} 
-						handleClose={this.closeModal}
-					/>}
 			</SafeAreaView>
 		);
 	}
@@ -460,11 +451,9 @@ class RegistrasiKtp extends React.Component{
 
 function mapStateToProps(state) {
 	return{
-		dataktp: state.register,
-		errr: state.register.errors.ktp,
-		errr2: state.register.errors.register
+		dataktp: state.register
 	}
 }
 
 
-export default connect(mapStateToProps, { registerKtp, removeError })(RegistrasiKtp);
+export default connect(mapStateToProps, { registerKtp })(RegistrasiKtp);
