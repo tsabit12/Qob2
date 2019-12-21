@@ -36,10 +36,10 @@ class Home extends React.Component {
 	        <Text 
 	        	style={{color: 'blue'}}
 	        	onPress={() => this.props.navigation.navigate({
-	        		routeName: 'RekKoran'
+	        		routeName: 'IndexSearch'
 	        	})}
 	        >
-	        	Rek Koran
+	        	Search
 	        </Text>
 	      </SafeAreaView>
 		);

@@ -5,9 +5,10 @@ import { createStackNavigator } from 'react-navigation-stack';
 import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/registrasi/IndexRegister";
 import { ApplicationProvider, Layout } from '@ui-kitten/components';
-import { mapping, light as lightTheme } from '@eva-design/eva';
+import { mapping, light as lightTheme } from '@eva-design/eva'; 
 import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
-import RekKoran from "./components/screens/report/RekKoran";
+import IndexSearch from "./components/screens/report/IndexSearch";
+import DetailSearch from "./components/screens/report/DetailSearch";
  
 const AppNavigator = createStackNavigator({
   		Home: { 
@@ -19,9 +20,12 @@ const AppNavigator = createStackNavigator({
       RegistrasiKtp: {
         screen: RegistrasiKtp
       },
-      RekKoran: {
-        screen: RekKoran
+      IndexSearch: {
+        screen: IndexSearch
       },
+      DetailSearch: {
+        screen: DetailSearch
+      }
   	},{
   	initialRouteName: 'Home'
 });
