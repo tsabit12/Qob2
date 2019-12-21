@@ -57,12 +57,13 @@ const List = ({ list }) => {
 
 
 
-const ResultRekening = ({ listSearch, searchText }) => {
+const ResultRekening = ({ listSearch, searchText, errors }) => {
 	return(
 		<SafeAreaView style={{marginTop: -30, paddingBottom: 20}}>
 			<ScrollView>
 				<View style={styles.container}>
-					{ Object.keys(listSearch).length > 0 && searchText.length > 0 && <List list={listSearch[searchText]} /> }
+					{ errors.global && <Text>{errors.global}</Text> }
+					{ Object.keys(listSearch).length > 0 &&  <List list={listSearch[searchText]} /> }
 				</View>
 			</ScrollView>
 		</SafeAreaView>

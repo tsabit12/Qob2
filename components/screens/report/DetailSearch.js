@@ -23,16 +23,16 @@ class DetailSearch extends React.Component{
   	}
 
   	_executeSearch = () => {
-	    this.setState({ jenis: 'Rekening'});
+	    this.setState({ jenis: 'Rekening', errors: {} });
 	    const value = 'Rekening';
 	    if (value === 'Rekening') {
 	    	this.props.getRekening(this.state.searchText)
-	    		.catch(err => console.log(err.data))
+	    		.catch(err => this.setState({ errors: {global: err.data.desk_mess }}))
 	    }
 	};
 
 	render(){
-		const { searchText, jenis } = this.state;
+		const { searchText, jenis, errors } = this.state;
 		return(
 			<React.Fragment>
 				<SearchLayout
@@ -46,14 +46,15 @@ class DetailSearch extends React.Component{
 			              paddingVertical: 20,
 			              paddingHorizontal: 15,
 			            }}
-			            onPress={() =>
-			              this.props.navigation.navigate('Result', {
-			                text: this.state.searchText,
-			              })
+			            onPress={() => {
+			              		this.props.navigation.navigate('Result', {
+			                		text: this.state.searchText,
+			              		});
+			          		}
 			            }>
 			          </RectButton>
 			        ) : null}
-			        { jenis === 'Rekening' && <ResultRekening searchText={searchText} /> }
+			        { jenis === 'Rekening' && <ResultRekening searchText={searchText} errors={errors} /> }
 			    </SearchLayout>
 		    </React.Fragment>
 		);
