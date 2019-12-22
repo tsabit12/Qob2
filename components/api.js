@@ -46,7 +46,13 @@ export default{
 				param1: rek,
 				userid: '',
 				hashing: getHasing('202', rek)
-			}, config).then(res => res.data),
+			}, config).then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data);
+				}
+			}),
 		registrasiNoGiro: (payload) =>
 			axios.post(url, {
 				messtype: '204',

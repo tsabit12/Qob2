@@ -1,7 +1,8 @@
-import { GET_KTP } from "../types";
+import { GET_KTP, GET_REKENING_REG } from "../types";
 
 const initialState = {
-	ktp: {}
+	ktp: {},
+	giro: {}
 };
 
 export default function register(state=initialState, action={}){
@@ -13,6 +14,11 @@ export default function register(state=initialState, action={}){
 					ktp: {},
 					register: {}
 				}
+			}
+		case GET_REKENING_REG:
+			return{
+				...state,
+				giro: action.res
 			}
 		default: return state;
 	}

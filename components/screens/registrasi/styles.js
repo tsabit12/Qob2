@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import Constants from 'expo-constants';
 
 export default StyleSheet.create({
 	centerForm: {
@@ -6,7 +7,7 @@ export default StyleSheet.create({
 	},
 	safeContainer: {
 	    flex: 1,
-	    justifyContent : 'center'
+	    marginTop: Expo.Constants.statusBarHeight
 	},
 	button: {
 	    top: 5

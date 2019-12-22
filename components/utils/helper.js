@@ -45,3 +45,29 @@ export const convertDate = (date) => {
     const day = values[2];
     return `${day}/${month}/${year}`;
 }
+
+export const convertDataFromRek = (string) => {
+    const res = string.split('|');
+    console.log(string);
+    const result = {
+        nmLengkap: res[0],
+        nmPanggilan: res[1],
+        gender: res[2],
+        jenisIdentitas: res[3],
+        nomorIdentitas: res[4],
+        masaLaku: res[5],
+        alamat: res[6],
+        rt: res[7],
+        rw: res[8],
+        kelurahan: res[9],
+        kec: res[10],
+        kab: res[11],
+        prov: res[12],
+        kodePos: res[13],
+        motherName: res[14],
+        noHp: res[15],
+        email: res[16]
+    };
+
+    return result;
+}

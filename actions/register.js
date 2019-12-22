@@ -1,5 +1,6 @@
 import api from "../components/api";
-import { GET_KTP } from "../types";
+import { GET_KTP, GET_REKENING_REG } from "../types";
+import { convertDataFromRek } from "../components/utils/helper";
 
 export const ktpFound = (ktp) => ({
 	type: GET_KTP,
@@ -39,3 +40,15 @@ export const registerKtp = (payload) => dispatch =>
 	api.registrasi.registrasiNoGiro(payload)
 		.then(res => console.log("oke"))
 		// .then(res => console.log(res))
+
+export const rekeningFetched = (res) => ({
+	type: GET_REKENING_REG,
+	res
+})
+
+export const getRek = (rek) => dispatch => 
+	api.registrasi.validasiRekening(rek)
+		.then(res => {
+			const response = convertDataFromRek(res.response_data1);
+			console.log(response);
+		})

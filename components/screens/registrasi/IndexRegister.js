@@ -78,7 +78,6 @@ class IndexRegister extends React.Component{
 						placeholder='Masukan nomor KTP'
 						value={nik}
 						onChangeText={this.onChange}
-						size='small'
 						status={errors.nik && 'danger' }
 					/>
 					{ errors.nik && <Text style={{color: 'red'}}>{errors.nik}</Text>}
@@ -92,9 +91,12 @@ class IndexRegister extends React.Component{
 						<Text>Atau gunakan akun giro </Text>
 						<Text 
 				        	style={{color: 'blue'}}
-				        	onPress={() => this.props.navigation.navigate({
-				        		routeName: 'IndexRegister'
-				        	})}
+				        	onPress={() => {
+				        		this.props.navigation.navigate({
+					        		routeName: 'RegistrasiRek'
+					        	});
+					        	this.setState({ errors: {}})
+				        	}}
 				        >
 				        	disini
 				        </Text>
