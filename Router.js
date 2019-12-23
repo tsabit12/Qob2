@@ -10,10 +10,12 @@ import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/report/IndexSearch";
 import DetailSearch from "./components/screens/report/DetailSearch";
 import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
+import Dashboard from './components/screens/Dashboard';
  
 const AppNavigator = createStackNavigator({
   		Home: { 
-  			screen: Home 
+        //screen: Home 
+        screen: Dashboard
   		},
   		IndexRegister:{
   			screen: IndexRegister
