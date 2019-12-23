@@ -22,7 +22,8 @@ class Home extends React.Component {
     	const { push } = navigation; 
 
 		return (
-		  <SafeAreaView style={{flex: 1, top: 30}}>
+		  <View style={styles.container}>
+		  { /*<SafeAreaView style={{flex: 1, top: 30}}>
 	        <Text 
 	        	style={{color: 'blue'}}
 	        	onPress={() => this.props.navigation.navigate({
@@ -49,8 +50,7 @@ class Home extends React.Component {
 	        >
 	        	Bantuan
 	        </Text>
-	      </SafeAreaView>
-		  <View style={styles.container}>
+	      </SafeAreaView> */}
 		  {/* <View style={styles.inputView} >
 			<TextInput  
 			  style={styles.inputText}
@@ -68,8 +68,9 @@ class Home extends React.Component {
 			<Text style={styles.loginText}>Masuk</Text>
 		  </TouchableOpacity>
 		  <TouchableOpacity style={styles.daftarBtn}>
-			<Text style={styles.loginText}
-			onPress= {() => this.props.navigation.navigate({
+			<Text 
+				style={styles.loginText}
+				onPress= {() => this.props.navigation.navigate({
 				    		routeName: 'IndexRegister'
 				    	})}>Daftar </Text>
 		  </TouchableOpacity>
