@@ -12,7 +12,7 @@ import store from './store';
 // import { ApplicationProvider, Layout } from '@ui-kitten/components';
 // import { mapping, light as lightTheme } from '@eva-design/eva';
 import { encode } from 'base-64';
-// // import {PermissionsAndroid} from 'react-native';
+import * as Font from "expo-font";
  
 // const RootStack = createStackNavigator( 
 //   {
@@ -43,6 +43,10 @@ import { encode } from 'base-64';
 class App extends React.Component{
   async componentDidMount(){
     if (!global.btoa) { global.btoa = encode; }
+    await Font.loadAsync({
+      'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
+      'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+    });
   }
 
   render(){

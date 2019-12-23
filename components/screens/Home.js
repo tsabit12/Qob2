@@ -40,16 +40,23 @@ class Home extends React.Component {
 				        		routeName: 'IndexRegister'
 				        	})}	
 						>disini</Text>
+						<Text>, </Text>
+						<Text 
+				        	style={{color: 'blue'}}
+				        	onPress={() => this.props.navigation.navigate({
+				        		routeName: 'IndexSearch'
+				        	})}
+				        >
+				         Search
+				        </Text>
+				        <Text>, </Text>
+				        <Text 
+				        	style={{color: 'blue'}}
+				        	onPress={() => this.props.navigation.navigate({
+				        		routeName: 'Order'
+				        	})}
+				        >Order</Text>
 					</View>
-					
-			        <Text 
-			        	style={{color: 'blue'}}
-			        	onPress={() => this.props.navigation.navigate({
-			        		routeName: 'IndexSearch'
-			        	})}
-			        >
-			        	Search
-			        </Text>
 			        { /* <Text 
 			        	style={{color: 'blue'}}
 			        	onPress={() => this.props.navigation.navigate({

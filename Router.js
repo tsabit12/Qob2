@@ -11,6 +11,7 @@ import IndexSearch from "./components/screens/report/IndexSearch";
 import DetailSearch from "./components/screens/report/DetailSearch";
 import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
 import IndexHelper from "./components/screens/helper/IndexHelper";
+import IndexOrder from "./components/screens/order/IndexOrder";
  
 const AppNavigator = createStackNavigator({
   		Home: { 
@@ -34,6 +35,9 @@ const AppNavigator = createStackNavigator({
       Helper: {
         screen: IndexHelper
       },
+      Order: {
+        screen: IndexOrder 
+      }
   	},{
   	initialRouteName: 'Home'
 });
