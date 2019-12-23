@@ -41,6 +41,15 @@ class Home extends React.Component {
 	        >
 	        	Search
 	        </Text>
+
+	        <Text 
+	        	style={{color: 'blue'}}
+	        	onPress={() => this.props.navigation.navigate({
+	        		routeName: 'Helper'
+	        	})}
+	        >
+	        	Bantuan
+	        </Text>
 	      </SafeAreaView>
 		);
 	}

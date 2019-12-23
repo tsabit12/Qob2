@@ -10,6 +10,7 @@ import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/report/IndexSearch";
 import DetailSearch from "./components/screens/report/DetailSearch";
 import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
+import IndexHelper from "./components/screens/helper/IndexHelper";
  
 const AppNavigator = createStackNavigator({
   		Home: { 
@@ -29,6 +30,9 @@ const AppNavigator = createStackNavigator({
       },
       RegistrasiRek: {
         screen: RegistrasiRek
+      },
+      Helper: {
+        screen: IndexHelper
       },
   	},{
   	initialRouteName: 'Home'
