@@ -8,7 +8,9 @@ import { getRek } from "../../../actions/register";
 const Judul = ({ navigation }) => (
 	<View>
 		<Text style = {{fontSize: 16, fontWeight: '700'}}>Registrasi</Text>
-		<Text>Rekening giro</Text>
+		<Text style={{fontStyle: 'italic', fontSize: 12}}>
+			Memiliki Rekening Giro
+		</Text>
 	</View>
 );
 
@@ -58,7 +60,7 @@ class RegistrasiRek extends React.Component{
 		return(
 			<ImageBackground 
 				style={styles.backgroundImage}
-				source={require('../../../assets/login.jpg')}
+				
 			>
 				<View style={styles.content}> 
 					<Loader loading={loading} />
@@ -99,7 +101,8 @@ class RegistrasiRek extends React.Component{
 let styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover', // or 'stretch'
+	resizeMode: 'cover', // or 'stretch'
+	backgroundColor: '#FF5000'
   },
   content:{
 	flex: 1,
