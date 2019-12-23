@@ -1,6 +1,8 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Input, Text, Button } from '@ui-kitten/components';
+import { View } from "react-native";
+import { Input, Text, Button, ButtonGroup } from '@ui-kitten/components';
+import styles from "./styles";
+import { SafeAreaView } from 'react-navigation';
 import Loader from "../../Loader";
 import { connect } from "react-redux";
 import { searchKtp } from "../../../actions/register";
@@ -12,7 +14,7 @@ const Judul = () => (
 
 class IndexRegister extends React.Component{
 	static navigationOptions = {
-		
+		// headerTitle: <Judul/>,
 		headerTitle: null,
 		headerMode: 'none',
 		header: null
@@ -47,7 +49,7 @@ class IndexRegister extends React.Component{
 
 	validate = (nik) => {
 		const errors = {};
-		if (!nik) errors.nik = "Nomor Nik belum dilengkapi";
+		if (!nik) errors.nik = "Nomor ktp belum dilengkapi";
 		return errors;
 	}
 
@@ -63,7 +65,7 @@ class IndexRegister extends React.Component{
 		// console.log(this.props.detail);
 		const { nik, success, errors, loading } = this.state;
 		return(
-			<View style={styles.container}>
+			<SafeAreaView style={styles.safeContainer}>
 				<Loader loading={loading} />
 				{ errors.global && 
 					<Modal 
@@ -80,14 +82,16 @@ class IndexRegister extends React.Component{
 					/>
 					{ errors.nik && <Text style={{color: 'red'}}>{errors.nik}</Text>}
 					<Button 
+						size='medium'
+						status='info' 
 						style={styles.button}
 						disabled={success}
 						onPress={this.onSearchKtp}
 					>Cari</Button>
 					<View style={{flexDirection: 'row', top: 8}}>
-						<Text>Atau jika memiliki akun Pos Giro </Text>
+						<Text>Atau gunakan akun giro </Text>
 						<Text 
-				        	style={{color: 'blue', fontStyle: 'italic'}}
+				        	style={{color: 'blue'}}
 				        	onPress={() => {
 				        		this.props.navigation.navigate({
 					        		routeName: 'RegistrasiRek'
@@ -99,7 +103,7 @@ class IndexRegister extends React.Component{
 				        </Text>
 			        </View>
 				</View>
-			</View>
+			</SafeAreaView>
 		);
 	}
 }
@@ -111,21 +115,3 @@ function mapStateToProps(state) {
 }	
 
 export default connect(mapStateToProps, { searchKtp })(IndexRegister);
-
-const styles = StyleSheet.create({
-	container: {
-	  flex: 1,
-	  backgroundColor: '#FF5000',
-	  alignItems: 'center',
-	  justifyContent: 'center',
-	},
-	button: {
-    backgroundColor:"#fb5b5a",
-    height:50,
-    alignItems:"center",
-    justifyContent:"center",
-    marginTop:10,
-    marginBottom:10
-  },
-  });
-  

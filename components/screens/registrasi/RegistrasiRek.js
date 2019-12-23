@@ -102,7 +102,6 @@ let styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
 	resizeMode: 'cover', // or 'stretch'
-	backgroundColor: '#FF5000'
   },
   content:{
 	flex: 1,
