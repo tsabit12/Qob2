@@ -26,7 +26,7 @@ class IndexHelper extends React.Component{
 			<View style={styles.content}>
 				<Menu
 			      data={data}
-			      // selectedIndex={selectedIndex}
+			      selectedIndex={this.selectedIndex}
 			      // onSelect={setSelectedIndex}
 			    />
 			</View>
