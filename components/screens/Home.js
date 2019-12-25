@@ -37,7 +37,10 @@ class Home extends React.Component {
 			  onChangeText={text => this.setState({password:text})}/>
 		  </View> */}
 		  <TouchableOpacity style={styles.loginBtn}>
-			<Text style={styles.loginText}>Masuk</Text>
+			<Text style={styles.loginText}
+			onPress= {() => this.props.navigation.navigate({
+				routeName: 'Dashboard'
+			})}>Masuk</Text>
 		  </TouchableOpacity>
 		  <TouchableOpacity style={styles.daftarBtn}>
 			<Text style={styles.loginText}

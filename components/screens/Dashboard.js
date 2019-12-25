@@ -15,7 +15,8 @@ import { Input,
     Layout ,
     BottomNavigation,
     BottomNavigationTab,
-    Icon,} from '@ui-kitten/components';
+    Icon} from '@ui-kitten/components';
+import { Linking } from "expo";
 
 
 var device = Dimensions.get('window').width;
@@ -33,6 +34,10 @@ const iconPhone = require("../../assets/phone.png");
 
 
 class Dashboard extends Component {
+    state = {
+        haloPos: '161'
+    }
+
     static navigationOptions = {
 		headerMode: 'none',
 		header: null
@@ -82,7 +87,10 @@ class Dashboard extends Component {
                         </TouchableHighlight>
                     </View>
                     <View>
-                        <TouchableHighlight underlayColor="#D8D8D8">
+                        <TouchableHighlight underlayColor="#D8D8D8"  
+                            onPress={() => this.props.navigation.navigate({
+                            routeName: 'CekTarif'
+                        })}>
                         <View style={{width: device*0.3, height: device*0.3, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF'}} >
                             <Image source={iconCekTarif} style={{width: 50, height: 50 }}/>
                             <Text style={{ fontSize: 12, textAlign: 'center'}}>Cek Tarif</Text>
@@ -122,7 +130,7 @@ class Dashboard extends Component {
                 <View style={{ flexDirection: 'row', 
                             backgroundColor: "E6E6E6"}}>
                     <View>
-                        <TouchableHighlight underlayColor="#D8D8D8">
+                        <TouchableHighlight underlayColor="#D8D8D8" onPress={() => Linking.openURL('tel:' + this.state.haloPos)}>
                         <View style={{width: device*0.3, height: device*0.3, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF'}} >
                             <Image source={iconPhone} style={{width: 50, height: 50 }}/>
                             <Text style={{ fontSize: 12, textAlign: 'center'}}> Halo Pos </Text>

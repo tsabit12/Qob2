@@ -11,11 +11,11 @@ import IndexSearch from "./components/screens/report/IndexSearch";
 import DetailSearch from "./components/screens/report/DetailSearch";
 import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
 import Dashboard from './components/screens/Dashboard';
+import CekTarif from "./components/screens/cektarif/CekTarif";
  
 const AppNavigator = createStackNavigator({
   		Home: { 
-        //screen: Home 
-        screen: Dashboard
+        screen: Home 
   		},
   		IndexRegister:{
   			screen: IndexRegister
@@ -31,6 +31,12 @@ const AppNavigator = createStackNavigator({
       },
       RegistrasiRek: {
         screen: RegistrasiRek
+      },
+      Dashboard: {
+        screen: Dashboard
+      },
+      CekTarif :{
+        screen: CekTarif
       },
   	},{
   	initialRouteName: 'Home'
