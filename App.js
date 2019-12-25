@@ -38,7 +38,7 @@ import * as Font from "expo-font";
 //       </ApplicationProvider>
 //     );
 //   }
-// }
+// } 
 
 class App extends React.Component{
   async componentDidMount(){

@@ -14,67 +14,48 @@ class Home extends React.Component {
 		header: null
 	};
 
+	state = {
+		pin: ''
+	}
+
+	pinRef = React.createRef();
+
+	onChange = (e, { name }) => this.setState({ [name]: e })
+
+	onSubmit = () => {
+		this.props.navigation.navigate({
+			routeName: 'IndexSearch'
+		})
+	}
+
 	render() {
 		const { navigation, test } = this.props;
     	const { push } = navigation; 
 
 		return (
 			<SafeAreaView style={styles.container}>
-				<View style={styles.content}>
-					<Input 
-						placeholder='Masukan username'
-						size='medium'
-						style={styles.input}
-					/>
-					<Input 
-						placeholder='PIN'
-						size='medium'
-						style={styles.input}
-					/>
-					<Button status='info' size='medium'>MASUK</Button>
-					<View style={styles.link}>
-						<Text>Atau daftar </Text>
-						<Text 
-							style={{color: 'blue'}}
-							onPress={() => this.props.navigation.navigate({
-				        		routeName: 'IndexRegister'
-				        	})}	
-						>disini</Text>
-						<Text>, </Text>
-						<Text 
-				        	style={{color: 'blue'}}
-				        	onPress={() => this.props.navigation.navigate({
-				        		routeName: 'IndexSearch'
-				        	})}
-				        >
-				         Search
-				        </Text>
-				        <Text>, </Text>
-				        <Text 
-				        	style={{color: 'blue'}}
-				        	onPress={() => this.props.navigation.navigate({
-				        		routeName: 'Order'
-				        	})}
-				        >Order</Text>
-					</View>
-			        { /* <Text 
-			        	style={{color: 'blue'}}
-			        	onPress={() => this.props.navigation.navigate({
+				<Text style={styles.title}>Selamat Datang</Text>
+				<Input 
+					placeholder='Masukan PIN'
+					ref={this.pinRef}
+					size='medium'
+					style={styles.input}
+					maxLength={6}
+					name='pin'
+					keyboardType='numeric'
+					onChangeText={(e) => this.onChange(e, this.pinRef.current.props)}
+					onSubmitEditing={this.onSubmit}
+				/>
+				<Button status='info' size='medium' onPress={this.onSubmit}>MASUK</Button>
+				<View style={styles.link}>
+					<Text>Atau daftar </Text>
+					<Text 
+						style={{color: 'blue'}}
+						onPress={() => this.props.navigation.navigate({
 			        		routeName: 'IndexRegister'
-			        	})}
-			        >
-			        	Registrasi
-			        </Text>
-
-			        <Text 
-			        	style={{color: 'blue'}}
-			        	onPress={() => this.props.navigation.navigate({
-			        		routeName: 'Helper'
-			        	})}
-			        >
-			        	Bantuan
-			        </Text> */ }
-		        </View>
+			        	})}	
+					>disini</Text>
+				</View>
 		   	</SafeAreaView>
 		);
 	}
@@ -91,10 +72,9 @@ export default connect(mapStateToProps, null)(Home);
 const styles = StyleSheet.create({
 	container: {
 	  flex: 1,
-	  marginTop: Expo.Constants.statusBarHeight
-	},
-	content: {
-	    margin: 20,
+	  // marginTop: Expo.Constants.statusBarHeight
+	  justifyContent: 'center',
+	  padding: 20
 	},
 	input: {
 		paddingBottom: 5,
@@ -103,6 +83,12 @@ const styles = StyleSheet.create({
 	link: {
 		flexDirection: 'row',
 		paddingTop: 7
+	},
+	title: {
+		paddingBottom: 20,
+		textAlign: 'center',
+		fontFamily: 'open-sans-bold',
+		fontSize: 20
 	}
   });
   
