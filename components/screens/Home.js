@@ -3,18 +3,29 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import { Text } from '@ui-kitten/components';
 import api from "../api";
-import { StyleSheet, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import Constants from 'expo-constants';
+import { Button, Input } from '@ui-kitten/components';
+
 
 class Home extends React.Component {
 	static navigationOptions = {
 		headerMode: 'none',
 		header: null
 	};
-    
-	componentDidMount(){
-		// api.laporan.rekKoran('0000000018')
-		// 	.then(res => console.log(res))
-		// 	.catch(err => console.log(err))
+
+	state = {
+		pin: ''
+	}
+
+	pinRef = React.createRef();
+
+	onChange = (e, { name }) => this.setState({ [name]: e })
+
+	onSubmit = () => {
+		this.props.navigation.navigate({
+			routeName: 'IndexSearch'
+		})
 	}
 
 	render() {
@@ -22,40 +33,30 @@ class Home extends React.Component {
     	const { push } = navigation; 
 
 		return (
-		  <View style={styles.container}>
-		  {/* <View style={styles.inputView} >
-			<TextInput  
-			  style={styles.inputText}
-			  placeholder="Username..." 
-			  onChangeText={text => this.setState({username:text})}/>
-		  </View>
-		  <View style={styles.inputView} >
-			<TextInput  
-			  secureTextEntry
-			  style={styles.inputText}
-			  placeholder="Password..." 
-			  onChangeText={text => this.setState({password:text})}/>
-		  </View> */}
-		  <TouchableOpacity style={styles.loginBtn}>
-			<Text style={styles.loginText}>Masuk</Text>
-		  </TouchableOpacity>
-		  <TouchableOpacity style={styles.daftarBtn}>
-			<Text style={styles.loginText}
-			onPress= {() => this.props.navigation.navigate({
-				    		routeName: 'IndexRegister'
-				    	})}>Daftar </Text>
-		  </TouchableOpacity>
-		  <TouchableOpacity>
-		  <Text 
-				style={{color: 'blue'}}
-				onPress={() => this.props.navigation.navigate({
-					routeName: 'IndexSearch'
-				})}
-			>
-				Search
-			</Text>
-		  </TouchableOpacity>
-		</View>
+			<SafeAreaView style={styles.container}>
+				<Text style={styles.title}>Selamat Datang</Text>
+				<Input 
+					placeholder='Masukan PIN'
+					ref={this.pinRef}
+					size='medium'
+					style={styles.input}
+					maxLength={6}
+					name='pin'
+					keyboardType='numeric'
+					onChangeText={(e) => this.onChange(e, this.pinRef.current.props)}
+					onSubmitEditing={this.onSubmit}
+				/>
+				<Button status='info' size='medium' onPress={this.onSubmit}>MASUK</Button>
+				<View style={styles.link}>
+					<Text>Atau daftar </Text>
+					<Text 
+						style={{color: 'blue'}}
+						onPress={() => this.props.navigation.navigate({
+			        		routeName: 'IndexRegister'
+			        	})}	
+					>disini</Text>
+				</View>
+		   	</SafeAreaView>
 		);
 	}
 }
@@ -71,55 +72,23 @@ export default connect(mapStateToProps, null)(Home);
 const styles = StyleSheet.create({
 	container: {
 	  flex: 1,
-	  backgroundColor: '#FF5000',
-	  alignItems: 'center',
+	  // marginTop: Expo.Constants.statusBarHeight
 	  justifyContent: 'center',
+	  padding: 20
 	},
-	logo:{
-	  fontWeight:"bold",
-	  fontSize:50,
-	  color:"#fb5b5a",
-	  marginBottom:40
+	input: {
+		paddingBottom: 5,
+		paddingTop: 5
 	},
-	inputView:{
-	  width:"80%",
-	  backgroundColor:"white",
-	  borderRadius:25,
-	  height:50,
-	  marginBottom:20,
-	  justifyContent:"center",
-	  padding:20
+	link: {
+		flexDirection: 'row',
+		paddingTop: 7
 	},
-	inputText:{
-	  height:50,
-	  color:"white"
-	},
-	forgot:{
-	  color:"white",
-	  fontSize:11
-	},
-	loginBtn:{
-	  width:"80%",
-	  backgroundColor:"white",
-	  borderRadius:25,
-	  height:50,
-	  alignItems:"center",
-	  justifyContent:"center",
-	  marginTop:40,
-	  marginBottom:10
-	},
-	daftarBtn:{
-		width:"80%",
-		backgroundColor:"white",
-		borderRadius:25,
-		height:50,
-		alignItems:"center",
-		justifyContent:"center",
-		marginTop:40,
-		marginBottom:10
-	},
-	loginText:{
-	  color:"black"
+	title: {
+		paddingBottom: 20,
+		textAlign: 'center',
+		fontFamily: 'open-sans-bold',
+		fontSize: 20
 	}
   });
   

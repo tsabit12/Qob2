@@ -6,11 +6,13 @@ import {
   Text,
   StyleSheet,
   View,
+  Image
 } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
 import SearchLayout from 'react-navigation-addon-search-layout';
+import Menu from "../Menu";
 
 const Search = ({ navigation }) => (
 	<View>
@@ -28,22 +30,33 @@ const Search = ({ navigation }) => (
 	</View>
 )
 
-const Judul = () => (
-	<View>
-		<Text style={{fontSize: 15}}>Cari</Text>
-	</View>
-);
 
 class IndexSearch extends React.Component{
 	static navigationOptions = ({ navigation }) => ({
 		headerRight: <Search navigation={navigation}/>,
-		headerTitle: <Judul />
+		title: 'QOB MOBILE',
+		headerTitleStyle: { 
+	        textAlign:"center", 
+	        flex:1 
+	    },
+		headerLeft: () => (
+	     	<View>
+				<BorderlessButton
+			        style={{ marginLeft: 15 }}>
+			        <Ionicons
+			          name="md-menu"
+			          size={Platform.OS === 'ios' ? 22 : 25}
+			          color={SearchLayout.DefaultTintColor}
+			        />
+			      </BorderlessButton>
+			</View>
+	    )
 	})
 
 	render(){
 		return(
 			<View style={styles.container}>
-				<Text>Index pencarian sementara hanya pencarian rekening koran</Text>
+				<Menu navigation={this.props.navigation} />
 			</View>
 		);
 	}
