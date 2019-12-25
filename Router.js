@@ -5,11 +5,13 @@ import { createStackNavigator } from 'react-navigation-stack';
 import Home from "./components/screens/Home";
 import Dashboard from "./components/screens/Dashboard";
 import IndexRegister from "./components/screens/registrasi/IndexRegister";
-import { ApplicationProvider, Layout } from '@ui-kitten/components';
+import { ApplicationProvider, Layout, IconRegistry } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva'; 
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
-import IndexSearch from "./components/screens/report/IndexSearch";
-import DetailSearch from "./components/screens/report/DetailSearch";
+import IndexSearch from "./components/screens/search/IndexSearch";
+// import DetailSearch from "./components/screens/report/DetailSearch";
+import SearchTabIndex from "./components/screens/search/SearchTabIndex";
 import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
 import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
@@ -29,10 +31,10 @@ const AppNavigator = createStackNavigator({
         screen: RegistrasiKtp
       },
       IndexSearch: {
-        screen: IndexSearch
+        screen: IndexSearch 
       },
       DetailSearch: {
-        screen: DetailSearch
+        screen: SearchTabIndex
       },
       RegistrasiRek: {
         screen: RegistrasiRek
@@ -53,9 +55,12 @@ const AppNavigator = createStackNavigator({
 const AppContainer = createAppContainer(AppNavigator);
 
 const Router = () => (
-	<ApplicationProvider mapping={mapping} theme={lightTheme}>
-    <AppContainer />
-  </ApplicationProvider>
+  <React.Fragment>
+    <IconRegistry icons={EvaIconsPack} />
+  	<ApplicationProvider mapping={mapping} theme={lightTheme}>
+      <AppContainer />
+    </ApplicationProvider>
+  </React.Fragment>
 );
 
 export default Router;
