@@ -21,6 +21,7 @@ import LacakScreen from "./components/screens/search/tab/LacakScreen";
 import RekeningScreen from "./components/screens/search/tab/RekeningScreen";
 import MyTab from "./components/screens/search/MyTab";
 import LacakBarcode from "./components/screens/search/result/LacakBarcode";
+import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
 
 
 const RouteTab = createMaterialTopTabNavigator(
@@ -70,6 +71,9 @@ const AppNavigator = createStackNavigator({
       LacakBarcode: {
         screen: LacakBarcode
       },
+      ResultRekeningSearch: {
+        screen: ResultRekeningSearch
+      }
   	},{
   	initialRouteName: 'Home'
 });
