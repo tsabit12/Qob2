@@ -11,5 +11,17 @@ export default StyleSheet.create({
   tab: {
     fontSize: 20,
     fontFamily: 'open-sans-reg'
-  }
+  },
+  judul: {
+    fontFamily: 'open-sans-bold',
+    fontSize: 16,
+    fontWeight: '600'
+  },
+  containerTime: {
+    flex: 1,
+    padding: 10,
+  },
+  list: {
+    flex: 1
+  },
 });

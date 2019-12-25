@@ -6,6 +6,11 @@ import SearchLayout from 'react-navigation-addon-search-layout';
 import { RectButton } from 'react-native-gesture-handler';
 
 class MyTab extends React.Component{
+	static navigationOptions = {
+	    header: null,
+	    headerMode: 'none'
+	    /* No more header config here! */
+	};
 	state = {
 		searchText: '',
 		indexActive: this.props.navigation.state.index,

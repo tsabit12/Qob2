@@ -36,7 +36,11 @@ class LacakScreen extends React.Component{
 		this.setState({ data: newdata });
 	}
 
-	handleClick = (e) => console.log(e);
+	handleClick = (e) => {
+		this.props.navigation.navigate('LacakBarcode',{
+			KodeBarcode: e 
+		})
+	}
 
 	render(){
 		return(
