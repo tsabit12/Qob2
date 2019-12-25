@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux'
 import Router from './Router';
 import store from './store';
+import { Text, StyleSheet, View } from "react-native";
 // import { View, Text } from 'react-native';
 // import { createAppContainer } from 'react-navigation';
 // import { createStackNavigator } from 'react-navigation-stack';
@@ -14,48 +15,43 @@ import store from './store';
 import { encode } from 'base-64';
 import * as Font from "expo-font";
  
-// const RootStack = createStackNavigator( 
-//   {
-//     Home:  {  
-//       screen: Home
-//     }, 
-//     IndexRegister: { screen: IndexRegister },
-//   },{ 
-//     initialRouteName: 'Home',
-//     headerTransitionPreset: 'uikit'
-//   }
-// );
-
-// const AppContainer = createAppContainer(RootStack);
- 
-
-// export default class App extends React.Component{
-
-//   render(){
-//     return(
-//       <ApplicationProvider mapping={mapping} theme={lightTheme}>
-//         <AppContainer />
-//       </ApplicationProvider>
-//     );
-//   }
-// } 
+const LoadFont = () => (
+  <View style={styles.container}>
+    <Text style={{textAlign: 'center'}}>Loading font...</Text>
+  </View>
+);
 
 class App extends React.Component{
+  state = {
+    fontLoaded: false,
+  };
+
   async componentDidMount(){
     if (!global.btoa) { global.btoa = encode; }
     await Font.loadAsync({
       'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
       'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
     });
+    this.setState({ fontLoaded: true });
   }
 
   render(){
+    const { fontLoaded } = this.state;
     return(
       <Provider store={store}>
-        <Router />
+        { fontLoaded ? <Router /> : <LoadFont /> }
       </Provider>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    // marginTop: Expo.Constants.statusBarHeight
+    justifyContent: 'center',
+    padding: 20
+  },
+})
 
 export default App;
