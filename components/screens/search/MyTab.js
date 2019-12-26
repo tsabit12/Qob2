@@ -51,7 +51,7 @@ class MyTab extends React.Component{
 	    			this.setState({ errors: {global: err.data.desk_mess }});
 	    		})
 	    }
-	    console.log(this.state.activePage);
+	    // console.log(this.state.activePage);
 	}
 
 	render(){
