@@ -1,11 +1,18 @@
 import React from "react";
-import { Tab, TabBar, TabView } from '@ui-kitten/components';
+import { Tab, TabBar, TabView, Text } from '@ui-kitten/components';
 import { SafeAreaView } from 'react-navigation';
 import styles from "./styles";
 import SearchLayout from 'react-navigation-addon-search-layout';
 import { RectButton } from 'react-native-gesture-handler';
+import { connect } from "react-redux";
+import { getRekening } from "../../../actions/search";
 
 class MyTab extends React.Component{
+	static navigationOptions = {
+	    header: null,
+	    headerMode: 'none'
+	    /* No more header config here! */
+	};
 	state = {
 		searchText: '',
 		indexActive: this.props.navigation.state.index,
@@ -35,16 +42,20 @@ class MyTab extends React.Component{
 
   	_executeSearch = () => {
   		this.setState({ errors: {} });
-	    // const value = 'Rekening';
-	    // if (value === 'Rekening') {
-	    // 	this.props.getRekening(this.state.searchText)
-	    // 		.catch(err => this.setState({ errors: {global: err.data.desk_mess }}))
-	    // }
+	    const value = this.state.activePage;
+	    if (value === 'Rekening') {
+	    	this.props.getRekening(this.state.searchText)
+	    		.then(() => this.props.navigation.navigate('ResultRekeningSearch', { noRek: this.state.searchText }))
+	    		.catch(err => {
+	    			alert(err.data.desk_mess);
+	    			this.setState({ errors: {global: err.data.desk_mess }});
+	    		})
+	    }
 	    console.log(this.state.activePage);
 	}
 
 	render(){
-		const { searchText } = this.state;
+		const { searchText, errors } = this.state;
 		const indexActive = this.props.navigation.state.index;
 		const activePage = this.props.navigation.state.routes[indexActive];
 		const routeName = activePage.routeName;
@@ -80,4 +91,4 @@ class MyTab extends React.Component{
 	}
 }
 
-export default MyTab;
+export default connect(null, { getRekening })(MyTab);
