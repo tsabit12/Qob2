@@ -26,7 +26,7 @@ class LacakScreen extends React.Component{
 
 	renderAccessory = (item) => (
 		<TouchableOpacity onPress={() => this.removeState(item)}>
-	    	<Icon name='close-outline' width={20} height={20} />
+	    	<Icon name='close-outline' width={18} height={18} />
 	    </TouchableOpacity>
 	)
 

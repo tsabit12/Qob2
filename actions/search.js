@@ -1,5 +1,5 @@
 import api from "../components/api";
-import { GET_REKENING } from "../types";
+import { GET_REKENING, REMOVE_REKENING } from "../types";
 
 export const rekeningFetched = (res, rekening) => ({
 	type: GET_REKENING,
@@ -24,3 +24,13 @@ export const getRekening = (rek) => dispatch =>
 			dispatch(rekeningFetched(values, rek))
 			// console.log(toObj);
 		})
+
+export const removed = (rek) => ({
+	type: REMOVE_REKENING,
+	rek
+})
+
+export const removeRek = (keyShouldRemove) => dispatch => {
+	dispatch(removed(keyShouldRemove));
+	// return Promise.resolve(keyShouldRemove);	
+}
