@@ -23,6 +23,8 @@ import MyTab from "./components/screens/search/MyTab";
 import LacakBarcode from "./components/screens/search/result/LacakBarcode";
 import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
 
+import Barcode from './components/screens/helper/barcode';
+
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -64,7 +66,7 @@ const AppNavigator = createStackNavigator({
       },
       Order: {
         screen: IndexOrder 
-      },
+      },   
       OrderPengirim: { 
         screen: Pengirim
       },
@@ -73,6 +75,12 @@ const AppNavigator = createStackNavigator({
       },
       ResultRekeningSearch: {
         screen: ResultRekeningSearch
+      },
+      Barcode: {
+        screen: Barcode,
+        navigationOptions: {
+          header: null
+        }
       }
   	},{
   	initialRouteName: 'Home'

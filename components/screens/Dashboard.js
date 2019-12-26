@@ -17,7 +17,9 @@ import { Input,
     BottomNavigation,
     BottomNavigationTab,
     Icon} from '@ui-kitten/components';
+import { SliderBox } from  "react-native-image-slider-box";
 import { Linking } from "expo";
+
 
 
 var device = Dimensions.get('window').width;
@@ -35,8 +37,20 @@ const iconPhone = require("../../assets/phone.png");
 
 
 class Dashboard extends Component {
+    constructor(props){
+        super(props);
+    
     state = {
-        haloPos: '161'
+        position : 1,
+        interval : null,
+        haloPos: '161',
+        images: [
+            "https://source.unsplash.com/1024x768/?nature",
+            "https://source.unsplash.com/1024x768/?water",
+            "https://source.unsplash.com/1024x768/?girl",
+            "https://source.unsplash.com/1024x768/?tree", // Network image
+          ]
+        };
     }
 
     static navigationOptions = {
@@ -47,13 +61,13 @@ class Dashboard extends Component {
     render() {
         return (
             <Layout style={styles.container}>
+                <SliderBox images={this.state.images} />
             <View style={{paddingTop: 2, backgroundColor: "#FF5000"}}>
                 <Text>Lacak kiriman</Text>
                 <View style={{ flex: -1, flexDirection: 'row' }}>
                     <View style={{ width: device/1.5}}>
                     <Input style={{fontSize:10, height: 5}}
                         placeholder='Masukan Nomor Resi'/>
-                        
                     </View>
                 <View style={{width: device/4 }}>
                     <TouchableOpacity style={{paddingVertical:5, paddingLeft: 2 }}>
@@ -62,8 +76,16 @@ class Dashboard extends Component {
                 </View>
                 </View>
             </View>
+
             {/*MENU*/}
             <Card style={{paddingTop: 20}}>
+            
+                <Text>
+                The Maldives, officially the Republic of Maldives, is a small country in South Asia,
+                located in the Arabian Sea of the Indian Ocean.
+                It lies southwest of Sri Lanka and India, about 1,000 kilometres (620 mi) from the Asian continent
+                </Text>
+            
             <View style={{justifyContent: 'center', alignItems: 'center' }}>
                 <View style={{ flexDirection: 'row', 
                             backgroundColor: "E6E6E6"}}>
@@ -75,7 +97,7 @@ class Dashboard extends Component {
                             })}>
                         <View style={{width: device*0.3, height: device*0.3, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF'}} >
                             <Image source={iconBooking} style={{width: 50, height: 50 }}/>
-                            <Text style={{ fontSize: 12, textAlign: 'center'}}> QOB </Text>
+                            <Text style={{ fontSize: 12, textAlign: 'center'}}> QOBDFDSDF</Text>
                         </View>
                         </TouchableHighlight>
                         <TouchableHighlight underlayColor="#D8D8D8">
@@ -116,7 +138,6 @@ class Dashboard extends Component {
                         </View>
                         </TouchableHighlight>
                     </View>
-
                 </View>
             </View>
             </Card>

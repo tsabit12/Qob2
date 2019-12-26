@@ -18,6 +18,8 @@ import { Input,
     BottomNavigationTab,
     Icon} from '@ui-kitten/components';
 import { Linking } from "expo";
+import { SliderBox } from "react-native-image-slider-box";
+
 
 var device = Dimensions.get('window').width;
 const iconBooking = require("../../assets/order.png");
@@ -32,6 +34,23 @@ const iconPhone = require("../../assets/phone.png");
 
 const Menu = ({ navigation }) => (
 	<View style={styles.container}>
+		<SliderBox images={[
+				require('../../assets/qob.jpg'),
+				require('../../assets/qob2.jpg'),
+				require('../../assets/qob3.jpg')
+			]} 
+			sliderBoxHeight={200}
+			resizeMode={'stretch'}
+			circleLoop
+			parentWidth={300}
+			autoplay={true}
+			paginationBoxStyle={{
+				alignItems: "center",
+				alignSelf: "center",
+				justifyContent: "center",
+				
+			  }}
+			/>
 		<View style={styles.content}>
 			<TouchableHighlight 
             underlayColor="#D8D8D8" 
