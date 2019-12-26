@@ -1,34 +1,34 @@
 import React from "react";
 import {
-  Animated,
   Button,
-  Platform,
   Text,
   StyleSheet,
   View,
-  Image
+  TouchableOpacity
 } from 'react-native';
-import { BorderlessButton } from 'react-native-gesture-handler';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
 import SearchLayout from 'react-navigation-addon-search-layout';
 import Menu from "../Menu";
+import { Icon } from '@ui-kitten/components';
 
+ 
 const Search = ({ navigation }) => (
-	<View>
-		<BorderlessButton
-	        onPress={() => navigation.navigate({
-	        	routeName: 'DetailSearch'
-	        })}
-	        style={{ marginRight: 15 }}>
-	        <Ionicons
-	          name="md-search"
-	          size={Platform.OS === 'ios' ? 22 : 25}
-	          color={SearchLayout.DefaultTintColor}
-	        />
-	      </BorderlessButton>
-	</View>
+	<TouchableOpacity 
+		onPress={() => navigation.navigate({
+	       	routeName: 'DetailSearch'
+	    })}
+	    style={{marginRight: 10}}
+	>
+		<Icon name='search-outline' width={30} height={30} />
+	</TouchableOpacity>
 )
+
+const HeaderKiri = () => (
+	<TouchableOpacity style={{marginLeft: 10}}>
+		<Icon name='menu-outline' width={30} height={30} />
+	</TouchableOpacity>
+);
 
 
 class IndexSearch extends React.Component{
@@ -37,20 +37,10 @@ class IndexSearch extends React.Component{
 		title: 'QOB MOBILE',
 		headerTitleStyle: { 
 	        textAlign:"center", 
-	        flex:1 
+	        flex:1,
+	        fontFamily: 'open-sans-bold'
 	    },
-		headerLeft: () => (
-	     	<View>
-				<BorderlessButton
-			        style={{ marginLeft: 15 }}>
-			        <Ionicons
-			          name="md-menu"
-			          size={Platform.OS === 'ios' ? 22 : 25}
-			          color={SearchLayout.DefaultTintColor}
-			        />
-			      </BorderlessButton>
-			</View>
-	    )
+		headerLeft: <HeaderKiri />
 	})
 
 	render(){
