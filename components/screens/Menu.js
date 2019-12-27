@@ -18,8 +18,6 @@ import { Input,
     BottomNavigationTab,
     Icon} from '@ui-kitten/components';
 import { Linking } from "expo";
-import { SliderBox } from "react-native-image-slider-box";
-
 
 var device = Dimensions.get('window').width;
 const iconBooking = require("../../assets/order.png");
@@ -34,23 +32,6 @@ const iconPhone = require("../../assets/phone.png");
 
 const Menu = ({ navigation }) => (
 	<View style={styles.container}>
-		<SliderBox images={[
-				require('../../assets/qob.jpg'),
-				require('../../assets/qob2.jpg'),
-				require('../../assets/qob3.jpg')
-			]} 
-			sliderBoxHeight={200}
-			resizeMode={'stretch'}
-			circleLoop
-			parentWidth={300}
-			autoplay={true}
-			paginationBoxStyle={{
-				alignItems: "center",
-				alignSelf: "center",
-				justifyContent: "center",
-				
-			  }}
-			/>
 		<View style={styles.content}>
 			<TouchableHighlight 
             underlayColor="#D8D8D8" 
@@ -68,11 +49,14 @@ const Menu = ({ navigation }) => (
                     <Text style={{ fontSize: 12, textAlign: 'center'}}>Cek Tarif</Text>
             	</View>
             </TouchableHighlight>
-            <TouchableHighlight underlayColor="#D8D8D8">
-            	<View style={styles.icon}>
-	        	    <Image source={iconRiwayat} style={styles.img}/>
-                    <Text style={styles.textIcon}>Riwayat Transaksi</Text>
-            	</View>
+             <TouchableHighlight 
+            	underlayColor="#D8D8D8"
+            	onPress={() => Linking.openURL('tel:' + '161')}
+            >
+	            <View style={styles.icon}>
+	            	<Image source={iconPhone} style={styles.img}/>
+                    <Text style={styles.textIcon}>Halo Pos</Text>
+	            </View>
             </TouchableHighlight>
 		</View>
 		<View style={styles.content}>
@@ -87,18 +71,15 @@ const Menu = ({ navigation }) => (
 	            </View>
             </TouchableHighlight>
             <TouchableHighlight underlayColor="#D8D8D8">
+            	<View style={styles.icon}>
+	        	    <Image source={iconRiwayat} style={styles.img}/>
+                    <Text style={styles.textIcon}>Riwayat Transaksi</Text>
+            	</View>
+            </TouchableHighlight>
+            <TouchableHighlight underlayColor="#D8D8D8">
 	            <View style={styles.icon}>
 	            	<Image source={iconProfile} style={styles.img}/>
                     <Text style={styles.textIcon}>Akun</Text>
-	            </View>
-            </TouchableHighlight>
-            <TouchableHighlight 
-            	underlayColor="#D8D8D8"
-            	onPress={() => Linking.openURL('tel:' + '161')}
-            >
-	            <View style={styles.icon}>
-	            	<Image source={iconPhone} style={styles.img}/>
-                    <Text style={styles.textIcon}>Halo Pos</Text>
 	            </View>
             </TouchableHighlight>
         </View>
@@ -112,7 +93,8 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		flexDirection: 'row',
-		marginTop: 15
+		margin: 10,
+		alignItems: 'center'
 	},
 	icon: {
 		width: device*0.3, height: device*0.3,

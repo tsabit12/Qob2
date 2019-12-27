@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: 10,
+    // padding: 10,
   },
   tabContainer: {
     minHeight: 64,
