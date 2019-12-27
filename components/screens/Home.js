@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import { Text } from '@ui-kitten/components';
 import api from "../api";
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import Constants from 'expo-constants';
 import { Button, Input } from '@ui-kitten/components';
 
@@ -33,8 +33,12 @@ class Home extends React.Component {
     	const { push } = navigation; 
 
 		return (
+<<<<<<< HEAD
 			<SafeAreaView style={styles.container}>
-				<Text style={styles.title}>Selamat Datang</Text>
+				<Image source={require('../../assets/logoQOB.png')} 
+				style={{width: 125, height: 125, resizeMode: 'stretch', 
+				alignSelf: 'center', marginBottom: 40}}/>
+				
 				<Input 
 					placeholder='Masukan PIN'
 					ref={this.pinRef}
@@ -48,7 +52,7 @@ class Home extends React.Component {
 				/>
 				<Button status='info' size='medium' onPress={this.onSubmit}>MASUK</Button>
 				<View style={styles.link}>
-					<Text>Atau daftar </Text>
+					<Text>Belum memiliki akun ? daftar </Text>
 					<Text 
 						style={{color: 'blue'}}
 						onPress={() => this.props.navigation.navigate({
@@ -57,6 +61,45 @@ class Home extends React.Component {
 					>disini</Text>
 				</View>
 		   	</SafeAreaView>
+=======
+		  <View style={styles.container}>
+		  {/* <View style={styles.inputView} >
+			<TextInput  
+			  style={styles.inputText}
+			  placeholder="Username..." 
+			  onChangeText={text => this.setState({username:text})}/>
+		  </View>
+		  <View style={styles.inputView} >
+			<TextInput  
+			  secureTextEntry
+			  style={styles.inputText}
+			  placeholder="Password..." 
+			  onChangeText={text => this.setState({password:text})}/>
+		  </View> */}
+		  <TouchableOpacity style={styles.loginBtn}>
+			<Text style={styles.loginText}
+			onPress= {() => this.props.navigation.navigate({
+				routeName: 'Dashboard'
+			})}>Masuk</Text>
+		  </TouchableOpacity>
+		  <TouchableOpacity style={styles.daftarBtn}>
+			<Text style={styles.loginText}
+			onPress= {() => this.props.navigation.navigate({
+				    		routeName: 'IndexRegister'
+				    	})}>Daftar </Text>
+		  </TouchableOpacity>
+		  <TouchableOpacity>
+		  <Text 
+				style={{color: 'blue'}}
+				onPress={() => this.props.navigation.navigate({
+					routeName: 'IndexSearch'
+				})}
+			>
+				Search
+			</Text>
+		  </TouchableOpacity>
+		</View>
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
 		);
 	}
 }

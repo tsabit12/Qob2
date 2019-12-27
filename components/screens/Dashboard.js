@@ -1,5 +1,8 @@
 import React, { Component } from "react";
+<<<<<<< HEAD
 import Constants from 'expo-constants';
+=======
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
 import { StyleSheet,
     TouchableHighlight,
     TouchableOpacity,
@@ -17,9 +20,17 @@ import { Input,
     BottomNavigation,
     BottomNavigationTab,
     Icon} from '@ui-kitten/components';
+<<<<<<< HEAD
+import { SliderBox } from  "react-native-image-slider-box";
 import { Linking } from "expo";
 
 
+
+=======
+import { Linking } from "expo";
+
+
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
 var device = Dimensions.get('window').width;
 
 {/*Icon Image */}
@@ -35,8 +46,25 @@ const iconPhone = require("../../assets/phone.png");
 
 
 class Dashboard extends Component {
+<<<<<<< HEAD
+    constructor(props){
+        super(props);
+    
+    state = {
+        position : 1,
+        interval : null,
+        haloPos: '161',
+        images: [
+            "https://source.unsplash.com/1024x768/?nature",
+            "https://source.unsplash.com/1024x768/?water",
+            "https://source.unsplash.com/1024x768/?girl",
+            "https://source.unsplash.com/1024x768/?tree", // Network image
+          ]
+        };
+=======
     state = {
         haloPos: '161'
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
     }
 
     static navigationOptions = {
@@ -46,14 +74,31 @@ class Dashboard extends Component {
     
     render() {
         return (
+<<<<<<< HEAD
             <Layout style={styles.container}>
+                <SliderBox images={this.state.images} />
             <View style={{paddingTop: 2, backgroundColor: "#FF5000"}}>
                 <Text>Lacak kiriman</Text>
                 <View style={{ flex: -1, flexDirection: 'row' }}>
                     <View style={{ width: device/1.5}}>
                     <Input style={{fontSize:10, height: 5}}
                         placeholder='Masukan Nomor Resi'/>
+=======
+            <Layout style={{ padding: 1}}>
+                <StatusBar 
+                    backgroundColor={'transparent'}
+                    translucent
+                    />
+            <Card style={{paddingTop: 2, backgroundColor: "#FF5000"}}>
+                <View style={{flex: -1, justifyContent: 'center', alignItems: 'center' }}>
+                    <CardHeader title='Lacak Kirim' style={{backgroundColor: "#FF5000"}}/>
+                </View>
+                <View style={{ flex: -1, flexDirection: 'row' }}>
+                    <View style={{ width: device/1.3}}>
+                    <Input style={{fontSize:10, height: 5}}
+                        placeholder='Masukan Nomor Resi'/>
                         
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
                     </View>
                 <View style={{width: device/4 }}>
                     <TouchableOpacity style={{paddingVertical:5, paddingLeft: 2 }}>
@@ -61,13 +106,28 @@ class Dashboard extends Component {
                     </TouchableOpacity>
                 </View>
                 </View>
+<<<<<<< HEAD
             </View>
+
             {/*MENU*/}
             <Card style={{paddingTop: 20}}>
+            
+                <Text>
+                The Maldives, officially the Republic of Maldives, is a small country in South Asia,
+                located in the Arabian Sea of the Indian Ocean.
+                It lies southwest of Sri Lanka and India, about 1,000 kilometres (620 mi) from the Asian continent
+                </Text>
+            
+=======
+            </Card>
+            {/*MENU*/}
+            <Card style={{paddingTop: 20}}>
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
             <View style={{justifyContent: 'center', alignItems: 'center' }}>
                 <View style={{ flexDirection: 'row', 
                             backgroundColor: "E6E6E6"}}>
                     <View>
+<<<<<<< HEAD
                         <TouchableHighlight 
                             underlayColor="#D8D8D8" 
                             onPress={() => this.props.navigation.navigate({
@@ -75,7 +135,13 @@ class Dashboard extends Component {
                             })}>
                         <View style={{width: device*0.3, height: device*0.3, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF'}} >
                             <Image source={iconBooking} style={{width: 50, height: 50 }}/>
+                            <Text style={{ fontSize: 12, textAlign: 'center'}}> QOBDFDSDF</Text>
+=======
+                        <TouchableHighlight underlayColor="#D8D8D8">
+                        <View style={{width: device*0.3, height: device*0.3, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF'}} >
+                            <Image source={iconBooking} style={{width: 50, height: 50 }}/>
                             <Text style={{ fontSize: 12, textAlign: 'center'}}> QOB </Text>
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
                         </View>
                         </TouchableHighlight>
                         <TouchableHighlight underlayColor="#D8D8D8">
@@ -86,7 +152,14 @@ class Dashboard extends Component {
                         </TouchableHighlight>
                     </View>
                     <View>
+<<<<<<< HEAD
                         <TouchableHighlight underlayColor="#D8D8D8">
+=======
+                        <TouchableHighlight underlayColor="#D8D8D8"  
+                            onPress={() => this.props.navigation.navigate({
+                            routeName: 'CekTarif'
+                        })}>
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
                         <View style={{width: device*0.3, height: device*0.3, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF'}} >
                             <Image source={iconCekTarif} style={{width: 50, height: 50 }}/>
                             <Text style={{ fontSize: 12, textAlign: 'center'}}>Cek Tarif</Text>
@@ -116,7 +189,10 @@ class Dashboard extends Component {
                         </View>
                         </TouchableHighlight>
                     </View>
+<<<<<<< HEAD
+=======
 
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
                 </View>
             </View>
             </Card>
@@ -140,6 +216,7 @@ class Dashboard extends Component {
         );
     }
 }
+<<<<<<< HEAD
 
 const styles = StyleSheet.create({
     container: {
@@ -149,3 +226,7 @@ const styles = StyleSheet.create({
 });
 
 export default Dashboard;
+=======
+export default Dashboard;
+
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e

@@ -4,13 +4,16 @@ import {
   Text,
   StyleSheet,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
 import SearchLayout from 'react-navigation-addon-search-layout';
 import Menu from "../Menu";
 import { Icon } from '@ui-kitten/components';
+
+const iconBarcode = require("../../../assets/barcode.png");
 
  
 const Search = ({ navigation }) => (
@@ -24,9 +27,14 @@ const Search = ({ navigation }) => (
 	</TouchableOpacity>
 )
 
-const HeaderKiri = () => (
-	<TouchableOpacity style={{marginLeft: 10}}>
-		<Icon name='menu-outline' width={30} height={30} />
+const HeaderKiri = ({ navigation }) => (
+	<TouchableOpacity 
+		onPress={() => navigation.navigate({
+	       	routeName: 'Barcode'
+	    })}
+	    style={{marginLeft: 10}}
+	>
+		<Image source={iconBarcode} style={{width: 30, height:30}} />
 	</TouchableOpacity>
 );
 
@@ -40,7 +48,7 @@ class IndexSearch extends React.Component{
 	        flex:1,
 	        fontFamily: 'open-sans-bold'
 	    },
-		headerLeft: <HeaderKiri />
+		headerLeft: <HeaderKiri navigation={navigation}/>
 	})
 
 	render(){
