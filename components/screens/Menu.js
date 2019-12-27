@@ -76,7 +76,11 @@ const Menu = ({ navigation }) => (
             </TouchableHighlight>
 		</View>
 		<View style={styles.content}>
-            <TouchableHighlight underlayColor="#D8D8D8">
+			<TouchableHighlight 
+			underlayColor="#D8D8D8"
+			onPress={() => navigation.navigate({
+                routeName: 'Order'
+            })}>
 	            <View style={styles.icon}>
 	            	<Image source={iconPembayaran} style={styles.img}/>
 	                <Text style={styles.textIcon}>Generate Pembayaran</Text>

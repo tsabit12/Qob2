@@ -30,7 +30,11 @@
     "react-native-md5": "^1.0.0",
     "react-native-reanimated": "^1.4.0",
     "react-native-screens": "^1.0.0-alpha.23",
+<<<<<<< HEAD
     "react-native-slideshow": "^1.0.1",
+=======
+    "react-native-searchable-dropdown": "^1.1.1",
+>>>>>>> 6a83b85c474d1be0386b3af06ef6ed4e80593bbb
     "react-native-svg": "^9.13.6",
     "react-native-timeline-flatlist": "^0.5.0",
     "react-native-web": "~0.11.7",

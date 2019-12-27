@@ -22,6 +22,7 @@ import RekeningScreen from "./components/screens/search/tab/RekeningScreen";
 import MyTab from "./components/screens/search/MyTab";
 import LacakBarcode from "./components/screens/search/result/LacakBarcode";
 import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
+import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 
 import Barcode from './components/screens/helper/barcode';
 
@@ -80,6 +81,12 @@ const AppNavigator = createStackNavigator({
         screen: Barcode,
         navigationOptions: {
           header: null
+        }
+      },
+      Pembayaran: {
+        screen: Pembayaran,
+        navigationOptions: {
+          title: "Generate Pembayaran"
         }
       }
   	},{

@@ -91,6 +91,14 @@ export default{
 				}else{
 					return Promise.reject(res);
 				}
-			})
+			}),
+		provinsi: (provName) => 
+			axios.post('https://order.posindonesia.co.id/api/Provinsi/getProv', {
+				provinceName: provName
+			}, {
+				headers: {
+					'content-type': 'application/json'
+				}
+			}).then(res => res.data.result)		
 	}
 }
