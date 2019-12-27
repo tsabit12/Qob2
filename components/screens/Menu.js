@@ -79,7 +79,7 @@ const Menu = ({ navigation }) => (
 			<TouchableHighlight 
 			underlayColor="#D8D8D8"
 			onPress={() => navigation.navigate({
-                routeName: 'Order'
+                routeName: 'Pembayaran'
             })}>
 	            <View style={styles.icon}>
 	            	<Image source={iconPembayaran} style={styles.img}/>
