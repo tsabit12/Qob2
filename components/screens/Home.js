@@ -33,7 +33,6 @@ class Home extends React.Component {
     	const { push } = navigation; 
 
 		return (
-<<<<<<< HEAD
 			<SafeAreaView style={styles.container}>
 				<Image source={require('../../assets/logoQOB.png')} 
 				style={{width: 125, height: 125, resizeMode: 'stretch', 
@@ -61,45 +60,6 @@ class Home extends React.Component {
 					>disini</Text>
 				</View>
 		   	</SafeAreaView>
-=======
-		  <View style={styles.container}>
-		  {/* <View style={styles.inputView} >
-			<TextInput  
-			  style={styles.inputText}
-			  placeholder="Username..." 
-			  onChangeText={text => this.setState({username:text})}/>
-		  </View>
-		  <View style={styles.inputView} >
-			<TextInput  
-			  secureTextEntry
-			  style={styles.inputText}
-			  placeholder="Password..." 
-			  onChangeText={text => this.setState({password:text})}/>
-		  </View> */}
-		  <TouchableOpacity style={styles.loginBtn}>
-			<Text style={styles.loginText}
-			onPress= {() => this.props.navigation.navigate({
-				routeName: 'Dashboard'
-			})}>Masuk</Text>
-		  </TouchableOpacity>
-		  <TouchableOpacity style={styles.daftarBtn}>
-			<Text style={styles.loginText}
-			onPress= {() => this.props.navigation.navigate({
-				    		routeName: 'IndexRegister'
-				    	})}>Daftar </Text>
-		  </TouchableOpacity>
-		  <TouchableOpacity>
-		  <Text 
-				style={{color: 'blue'}}
-				onPress={() => this.props.navigation.navigate({
-					routeName: 'IndexSearch'
-				})}
-			>
-				Search
-			</Text>
-		  </TouchableOpacity>
-		</View>
->>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
 		);
 	}
 }
