@@ -12,6 +12,7 @@ import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/search/IndexSearch";
 // import DetailSearch from "./components/screens/report/DetailSearch";
 import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
+<<<<<<< HEAD
 import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
 import Pengirim from "./components/screens/order/Pengirim";
@@ -40,6 +41,14 @@ const RouteTab = createMaterialTopTabNavigator(
 const AppNavigator = createStackNavigator({
   		Home: { 
   			screen: Home
+=======
+import Dashboard from './components/screens/Dashboard';
+import CekTarif from "./components/screens/cektarif/CekTarif";
+ 
+const AppNavigator = createStackNavigator({
+  		Home: { 
+        screen: Home 
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
   		},
       Dashboard: { 
         screen: Dashboard
@@ -62,6 +71,7 @@ const AppNavigator = createStackNavigator({
       RegistrasiRek: {
         screen: RegistrasiRek
       },
+<<<<<<< HEAD
       Helper: {
         screen: IndexHelper
       },
@@ -89,6 +99,14 @@ const AppNavigator = createStackNavigator({
           title: "Generate Pembayaran"
         }
       }
+=======
+      Dashboard: {
+        screen: Dashboard
+      },
+      CekTarif :{
+        screen: CekTarif
+      },
+>>>>>>> da30ccbe8c172e1a82e7f0540f4486a549525b5e
   	},{
   	initialRouteName: 'Home'
 });
