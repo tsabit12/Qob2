@@ -8,26 +8,24 @@ import {
     Text,
     Card,
     Button,
-    Input
+    Input,
+    CardHeader
   } from '@ui-kitten/components';
+  
 
-class Pembayaran extends Component {
+
+class KonfrimPembayaran extends Component {
+
     CardFooter = () => (
         <View style={styles.footerContainer}>
         <Button
           style={styles.footerControl}
           size='small'
-          status='basic'>
-          ULANG
-        </Button>
-        <Button
-          style={styles.footerControl}
-          size='small'
           onPress={() => this.props.navigation.navigate({
-            routeName: 'KonfrimPembayaran'
+            routeName: 'OutputPembayaran'
             })}	
           >
-          CEK
+          SETUJU
         </Button>
       </View>
     );
@@ -35,17 +33,26 @@ class Pembayaran extends Component {
     render() {
         return (
             <Layout style={styles.container}>
-                <Card footer={this.CardFooter}>
-                    <Text>Nominal</Text>
+                <Card footer={this.CardFooter} status='success' style={{marginVertical: 8}}>
+                    <View style={{padding: 5}}>
+                        <Text style={{fontSize: 13}}>Nominal :Rp. -</Text>
+                    </View>
+                    <View style={{padding: 5}}>
+                        <Text style={{fontSize: 13}}>Bea Transaksi : Rp. -</Text>
+                    </View>
+                    <View style={{padding: 5}}>
+                        <Text style={{fontSize: 13}}>Total : Rp. -</Text>
+                    </View>
                     <Input
-                        placeholder='Masukan Jumlah Nominal'
+                        placeholder='Masukkan Passcode Anda'
+                        style={{marginTop: 20}}
                     />
                 </Card>
             </Layout>
         );
     }
 }
-export default Pembayaran;
+export default KonfrimPembayaran;
 
 const styles = StyleSheet.create({
     container: {
@@ -60,6 +67,6 @@ const styles = StyleSheet.create({
     },
     footerControl: {
         marginHorizontal: 4,
-        width: 120
+        width: 250
     }
 });

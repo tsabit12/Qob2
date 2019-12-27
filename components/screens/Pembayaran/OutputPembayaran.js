@@ -8,26 +8,23 @@ import {
     Text,
     Card,
     Button,
-    Input
-  } from '@ui-kitten/components';
+    Input,
+    CardHeader
+} from '@ui-kitten/components';
+import Constants from 'expo-constants';
 
-class Pembayaran extends Component {
+class OutputPembayaran extends Component {
+    
     CardFooter = () => (
         <View style={styles.footerContainer}>
         <Button
           style={styles.footerControl}
           size='small'
-          status='basic'>
-          ULANG
-        </Button>
-        <Button
-          style={styles.footerControl}
-          size='small'
           onPress={() => this.props.navigation.navigate({
-            routeName: 'KonfrimPembayaran'
+            routeName: 'OutputPembayaran'
             })}	
           >
-          CEK
+          Halaman Utama
         </Button>
       </View>
     );
@@ -35,17 +32,16 @@ class Pembayaran extends Component {
     render() {
         return (
             <Layout style={styles.container}>
-                <Card footer={this.CardFooter}>
-                    <Text>Nominal</Text>
-                    <Input
-                        placeholder='Masukan Jumlah Nominal'
-                    />
+                <Card footer={this.CardFooter} status='success' style={{marginVertical: 8}}>
+                    <View style={{padding: 5}}>
+                        <Text style={{fontSize: 13}}>SIMPAN PESAN INI SEBAGAI BUKTI PENARIKAN INFOKAN PESAN INI KEPADA PETUGAS LOKET KANTOR POS TERDEKAT</Text>
+                    </View>
                 </Card>
             </Layout>
         );
     }
 }
-export default Pembayaran;
+export default OutputPembayaran;
 
 const styles = StyleSheet.create({
     container: {
@@ -53,6 +49,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
+        marginTop: Expo.Constants.statusBarHeight
     },
     footerContainer: {
         flexDirection: 'row',
@@ -60,6 +57,6 @@ const styles = StyleSheet.create({
     },
     footerControl: {
         marginHorizontal: 4,
-        width: 120
+        width: 250
     }
 });

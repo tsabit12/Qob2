@@ -23,12 +23,15 @@ import MyTab from "./components/screens/search/MyTab";
 import LacakBarcode from "./components/screens/search/result/LacakBarcode";
 import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
+import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran";
+import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
 // import Drawer from "./components/screens/Drawer";
 
 import Barcode from './components/screens/helper/barcode';
 import { createDrawerNavigator } from "react-navigation-drawer";
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
+import Akun from "./components/screens/Akun";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -84,7 +87,7 @@ const RoutMenu = createDrawerNavigator(
       screen: AboutScreen
     }
   },{
-    drawerWidth: 250
+    drawerWidth: 250,
   }
 )
 
@@ -127,7 +130,7 @@ const AppNavigator = createStackNavigator({
         screen: LacakBarcode
       },
       ResultRekeningSearch: {
-        screen: ResultRekeningSearch
+        screen: ResultRekeningSearch 
       },
       Barcode: {
         screen: Barcode,
@@ -141,9 +144,21 @@ const AppNavigator = createStackNavigator({
           title: "Generate Pembayaran"
         }
       },
+      KonfrimPembayaran: {
+        screen: KonfrimPembayaran,
+        navigationOptions: {
+          title: "Konfirmasi Pembayaran"
+        }
+      },
+      OutputPembayaran: {
+        screen: OutputPembayaran,
+        navigationOptions: {
+          header: null
+        }
+      },
       DetailSearch: {
         screen: RouteTab,
-        navigationOptions: {
+        navigationOptions: { 
           header: null
         }
       },

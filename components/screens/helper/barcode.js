@@ -15,9 +15,9 @@ export default function barcode() {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ data }) => {
+  const handleBarCodeScanned = ({ data, type }) => {
     setScanned(true);
-    alert(`No Resi ${data} terdeteksi`);
+    alert(`No Resi ${data} terdeteksi ${type}`);
   };
 
   if (hasPermission === null) {
