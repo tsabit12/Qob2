@@ -63,24 +63,23 @@ const Menu = ({ navigation }) => (
 			<TouchableHighlight 
 			underlayColor="#D8D8D8"
 			onPress={() => navigation.navigate({
-                routeName: 'Order'
+                routeName: 'Pembayaran'
             })}>
 	            <View style={styles.icon}>
 	            	<Image source={iconPembayaran} style={styles.img}/>
 	                <Text style={styles.textIcon}>Generate Pembayaran</Text>
 	            </View>
             </TouchableHighlight>
-            <TouchableHighlight underlayColor="#D8D8D8">
+            <TouchableHighlight 
+            	underlayColor="#D8D8D8"
+            	onPress={() => navigation.navigate({
+	                routeName: 'Drawer'
+	            })}
+            >
             	<View style={styles.icon}>
 	        	    <Image source={iconRiwayat} style={styles.img}/>
                     <Text style={styles.textIcon}>Riwayat Transaksi</Text>
             	</View>
-            </TouchableHighlight>
-            <TouchableHighlight underlayColor="#D8D8D8">
-	            <View style={styles.icon}>
-	            	<Image source={iconProfile} style={styles.img}/>
-                    <Text style={styles.textIcon}>Akun</Text>
-	            </View>
             </TouchableHighlight>
         </View>
 	</View>
