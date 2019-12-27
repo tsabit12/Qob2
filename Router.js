@@ -32,24 +32,34 @@ import AboutScreen from "./components/screens/about/AboutScreen";
 
 const iconBarcode = require("./assets/barcode.png");
 
-const Search = ({ navigation }) => (
-  <React.Fragment>
-    <TouchableOpacity 
-      onPress={() => navigation.navigate({
-            routeName: 'DetailSearch'
-        })}
-        style={{marginRight: 5}}
-    >
-      <Icon name='search-outline' width={25} height={25} />
-    </TouchableOpacity>
-    <TouchableOpacity 
-      onPress={() => navigation.openDrawer()}
-        style={{marginRight: 5}}
-    >
-      <Icon name='more-vertical-outline' width={25} height={25} />
-    </TouchableOpacity>
-  </React.Fragment>
-)
+const Search = ({ navigation }) => {
+  const { state } = navigation;
+  // console.log(navigation.router.getStateForAction);
+  return(
+    <React.Fragment>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate({
+              routeName: 'DetailSearch'
+          })}
+          style={{marginRight: 5}}
+      >
+        <Icon name='search-outline' width={25} height={25} />
+      </TouchableOpacity>
+      { !state.isDrawerOpen ? 
+        <TouchableOpacity 
+          onPress={() => navigation.openDrawer()}
+            style={{marginRight: 5}}
+        >
+          <Icon name='more-vertical-outline' width={25} height={25} />
+        </TouchableOpacity> : <TouchableOpacity 
+        onPress={() => navigation.closeDrawer()}
+          style={{marginRight: 5}}
+      >
+        <Icon name='close-outline' width={25} height={25} />
+      </TouchableOpacity> }
+    </React.Fragment>
+  );
+}
 
 const HeaderKiri = ({ navigation }) => (
   <TouchableOpacity 
@@ -141,7 +151,7 @@ const AppNavigator = createStackNavigator({
         screen: RoutMenu,
         navigationOptions: ({ navigation }) => ({
           headerRight: <Search navigation={navigation}/>,
-          title: 'QOB MOBILE',
+          title: 'QOB',
           headerTitleStyle: { 
             fontFamily: 'open-sans-bold',
             marginLeft: -3,
