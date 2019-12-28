@@ -73,7 +73,7 @@ const Menu = ({ navigation }) => (
             <TouchableHighlight 
             	underlayColor="#D8D8D8"
             	onPress={() => navigation.navigate({
-	                routeName: 'Drawer'
+	                routeName: 'History'
 	            })}
             >
             	<View style={styles.icon}>

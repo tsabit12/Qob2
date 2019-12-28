@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Button, TouchableOpacity, Image } from 'react-native'
+import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-native'
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import Home from "./components/screens/Home";
@@ -32,6 +32,8 @@ import { createDrawerNavigator } from "react-navigation-drawer";
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
 import Akun from "./components/screens/Akun";
+import HistoryPembayaran from "./components/screens/HistoryPembayaran";
+import DetailTrans from "./components/screens/DetailTrans";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -46,19 +48,19 @@ const Search = ({ navigation }) => {
           })}
           style={{marginRight: 5}}
       >
-        <Icon name='search-outline' width={25} height={25} />
+        <Icon name='search-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
       </TouchableOpacity>
       { !state.isDrawerOpen ? 
         <TouchableOpacity 
           onPress={() => navigation.openDrawer()}
             style={{marginRight: 5}}
         >
-          <Icon name='more-vertical-outline' width={25} height={25} />
+          <Icon name='more-vertical-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
         </TouchableOpacity> : <TouchableOpacity 
         onPress={() => navigation.closeDrawer()}
           style={{marginRight: 5}}
       >
-        <Icon name='close-outline' width={25} height={25} />
+        <Icon name='close-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
       </TouchableOpacity> }
     </React.Fragment>
   );
@@ -71,7 +73,9 @@ const HeaderKiri = ({ navigation }) => (
       })}
       style={{marginLeft: 10}}
   >
-    <Image source={iconBarcode} style={{width: 30, height:30}} />
+    { Platform.OS === 'ios' ? 
+        <Icon name='camera-outline' fill='#FFF' width={25} height={25} /> : 
+        <Image source={iconBarcode} style={{width: 30, height:30, color: 'white'}} /> }
   </TouchableOpacity>
 );
 
@@ -169,12 +173,23 @@ const AppNavigator = createStackNavigator({
           title: 'QOB',
           headerTitleStyle: { 
             fontFamily: 'open-sans-bold',
+            textAlign: 'left',
             marginLeft: -3,
             fontSize: 20,
-            fontWeight: '700'
+            fontWeight: '700',
+            color: Platform.OS === 'ios' ? 'white' : 'black'
+          },
+          headerStyle: {
+            backgroundColor: Platform.OS === 'ios' ? 'black' : ''
           },
           headerLeft: <HeaderKiri navigation={navigation}/>
         })      
+      },
+      History: {
+        screen: HistoryPembayaran
+      },
+      DetailTrans: {
+        screen: DetailTrans
       },
   	},{
   	initialRouteName: 'Home'
