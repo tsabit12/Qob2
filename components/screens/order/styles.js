@@ -29,5 +29,11 @@ export default StyleSheet.create({
   	paddingRight: 4,
   	padding: 3,
   	flex: 1
+  },
+  labelResult: {
+    color: 'black',
+    fontSize: 15,
+    fontFamily: 'open-sans-reg',
+    paddingTop: 10
   }
 });

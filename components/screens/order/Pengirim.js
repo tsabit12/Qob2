@@ -2,7 +2,7 @@ import React from "react";
 import { View, ScrollView, KeyboardAvoidingView } from "react-native";
 import styles from "./styles";
 import { Header } from 'react-navigation-stack';
-import { Layout, Text, Input } from '@ui-kitten/components';
+import { Layout, Text, Input, Button } from '@ui-kitten/components';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import api from "../../api";
 
@@ -21,7 +21,7 @@ class Pengirim extends React.Component{
 
 	state = {
 		data:{
-			prov: ''
+			nama: ''
 		},
 		items: [],
 		selectedItems: [],
@@ -56,8 +56,20 @@ class Pengirim extends React.Component{
 			})
 	}
 
+	onSubmit = () => {
+		this.props.navigation.navigate({
+			routeName: 'OrderPenerima',
+			params: {
+				...this.props.navigation.state.params,
+				deskripsiPengirim: this.state.data
+			}
+		})
+	}
+
+	onChange = (e) => this.setState({ data: { ...this.state.data, nama: e }})
+
 	render(){
-		const { loadingProv } = this.state;
+		const { loadingProv, data } = this.state;
 		// console.log(this.state.items);
 		return(
 			<KeyboardAvoidingView 
@@ -73,57 +85,13 @@ class Pengirim extends React.Component{
 						      placeholder='Nama'
 						      label='Name Pengirim'
 						      labelStyle={styles.label}
+						      value={data.nama}
+						      onChangeText={this.onChange}
 						    />
 						</View>
-						<View>
-							<View style={{flexDirection: 'row'}}>
-								<Text style={{paddingLeft: 5, fontFamily: 'open-sans-reg'}}>Provinsi </Text>
-								{ loadingProv && <Text style={{fontSize: 12, color: 'red'}}>(loading..)</Text>}
-							</View>
-							<SearchableDropdown
-					            onItemSelect={(item) => {
-					              const items = this.state.selectedItems;
-					              items.push(item)
-					              this.setState({ selectedItems: items });
-					            }}
-					            containerStyle={{ padding: 5 }}
-					            // onRemoveItem={(item, index) => {
-					            //   const items = this.state.selectedItems.filter((sitem) => sitem.id !== item.id);
-					            //   this.setState({ selectedItems: items });
-					            // }}
-					            itemStyle={{
-					              padding: 10,
-					              marginTop: 2,
-					              backgroundColor: '#ddd',
-					              borderColor: '#bbb',
-					              borderWidth: 1,
-					              borderRadius: 5,
-					            }}
-					            itemTextStyle={{ color: '#222' }}
-					            itemsContainerStyle={{ maxHeight: 140 }}
-					            items={this.state.items}
-					            // defaultIndex={2}
-					            resetValue={false}
-					            textInputProps={
-					              {
-					                placeholder: "Cari provinsi",
-					                underlineColorAndroid: "transparent",
-					                style: {
-					                    padding: 8,
-					                    borderWidth: 1,
-					                    borderColor: '#ccc',
-					                    borderRadius: 5,
-					                },
-					                onTextChange: text => this.onChangeProv(text)
-					              }
-					            }
-					            listProps={
-					              {
-					                nestedScrollEnabled: true,
-					              }
-					            }
-					        />
-						</View>
+						<View style={{ borderBottomColor: 'black', borderBottomWidth: 1, paddingTop: 10}}/>
+						<Text style={{color: 'red', fontSize: 12}}>Detail Pengirim (menunggu parameter yang dibutuhkan)</Text>
+						<Button style={{margin: 2}} onPress={this.onSubmit}>Selanjutnya</Button>
 					</Layout>
 				</ScrollView>
 			</KeyboardAvoidingView>
