@@ -43,7 +43,12 @@ const Menu = ({ navigation }) => (
             		<Text style={styles.textIcon}> QOB </Text>
             	</View>
             </TouchableHighlight>
-            <TouchableHighlight underlayColor="#D8D8D8">
+            <TouchableHighlight 
+                underlayColor="#D8D8D8"
+                onPress={() => navigation.navigate({
+                    routeName: 'CekTarif'
+                })}
+            >
             	<View style={styles.icon}>
 	        	    <Image source={iconCekTarif} style={styles.img}/>
                     <Text style={{ fontSize: 12, textAlign: 'center'}}>Cek Tarif</Text>

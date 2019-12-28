@@ -34,6 +34,7 @@ import AboutScreen from "./components/screens/about/AboutScreen";
 import Akun from "./components/screens/Akun";
 import HistoryPembayaran from "./components/screens/HistoryPembayaran";
 import DetailTrans from "./components/screens/DetailTrans";
+import CekTarif from "./components/screens/CekTarif";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -190,6 +191,9 @@ const AppNavigator = createStackNavigator({
       },
       DetailTrans: {
         screen: DetailTrans
+      },
+      CekTarif: {
+        screen: CekTarif
       },
   	},{
   	initialRouteName: 'Home'
