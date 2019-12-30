@@ -3,9 +3,8 @@ import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-nat
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import Home from "./components/screens/Home";
-import Dashboard from "./components/screens/Dashboard";
 import IndexRegister from "./components/screens/registrasi/IndexRegister";
-import { ApplicationProvider, Layout, IconRegistry, Icon } from '@ui-kitten/components';
+import { ApplicationProvider, Layout, IconRegistry, Icon, Avatar } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva'; 
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
@@ -28,16 +27,16 @@ import ResultRekeningSearch from "./components/screens/search/result/ResultReken
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran";
 import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
-// import Drawer from "./components/screens/Drawer";
 
 import Barcode from './components/screens/helper/barcode';
-import { createDrawerNavigator } from "react-navigation-drawer";
+//import { createDrawerNavigator } from "react-navigation-drawer";
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
 import Akun from "./components/screens/Akun";
 import HistoryPembayaran from "./components/screens/HistoryPembayaran";
 import DetailTrans from "./components/screens/DetailTrans";
 import CekTarif from "./components/screens/CekTarif";
+//import DrawerComponent from "./components/DrawerComponent";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -50,22 +49,17 @@ const Search = ({ navigation }) => {
         onPress={() => navigation.navigate({
               routeName: 'DetailSearch'
           })}
-          style={{marginRight: 5}}
+          style={{ marginRight: 10 }}
       >
         <Icon name='search-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
       </TouchableOpacity>
-      { !state.isDrawerOpen ? 
-        <TouchableOpacity 
-          onPress={() => navigation.openDrawer()}
-            style={{marginRight: 5}}
-        >
-          <Icon name='more-vertical-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
-        </TouchableOpacity> : <TouchableOpacity 
-        onPress={() => navigation.closeDrawer()}
-          style={{marginRight: 5}}
+      <TouchableOpacity
+        onPress={() => navigation.navigate({
+          routeName: 'Account'
+        })}
       >
-        <Icon name='close-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
-      </TouchableOpacity> }
+      <Avatar style={{marginRight: 10}} size='tiny' source={require('./components/icons/avatar-user.jpg')}/>
+      </TouchableOpacity>
     </React.Fragment>
   );
 }
@@ -79,25 +73,31 @@ const HeaderKiri = ({ navigation }) => (
   >
     { Platform.OS === 'ios' ? 
         <Icon name='camera-outline' fill='#FFF' width={25} height={25} /> : 
-        <Image source={iconBarcode} style={{width: 30, height:30, color: 'white'}} /> }
+        <Image source={iconBarcode} style={{width: 30, height:30 }} /> }
   </TouchableOpacity>
 );
 
-const RoutMenu = createDrawerNavigator(
-  {
-    IndexMenu: {
-      screen: IndexSearch
-    },
-    Acount:{
-      screen: AccountScreen,
-    },
-    About:{
-      screen: AboutScreen
-    }
-  },{
-    drawerWidth: 250,
-  }
-)
+// const RoutMenu = createDrawerNavigator(
+//   {
+//     IndexMenu: {
+//       screen: IndexSearch
+//     },
+//     Acount:{
+//       screen: AccountScreen,
+//     },
+//     About:{
+//       screen: AboutScreen
+//     }
+//   },{
+//     contentComponent: DrawerComponent,
+//     contentOptions: {
+//       labelStyle: {
+//         fontSize: 20,
+//         fontFamily: 'open-sans-bold'
+//       }
+//     }
+//   }
+// )
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -113,9 +113,6 @@ const AppNavigator = createStackNavigator({
   		Home: { 
   			screen: Home
   		},
-      Dashboard: { 
-        screen: Dashboard
-      },
   		IndexRegister:{
   			screen: IndexRegister
   		},
@@ -180,7 +177,8 @@ const AppNavigator = createStackNavigator({
         }
       },
       IndexSearch: {
-        screen: RoutMenu,
+        screen: IndexSearch,
+        //if you want using drawe just use screen RoutMenu
         navigationOptions: ({ navigation }) => ({
           headerRight: <Search navigation={navigation}/>,
           title: 'QOB',
@@ -197,6 +195,9 @@ const AppNavigator = createStackNavigator({
           },
           headerLeft: <HeaderKiri navigation={navigation}/>
         })      
+      },
+      Account:{
+        screen: AccountScreen,
       },
       History: {
         screen: HistoryPembayaran
