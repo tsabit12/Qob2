@@ -32,7 +32,7 @@ import Barcode from './components/screens/helper/barcode';
 //import { createDrawerNavigator } from "react-navigation-drawer";
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
-import Akun from "./components/screens/Akun";
+//import Akun from "./components/screens/Akun";
 import HistoryPembayaran from "./components/screens/HistoryPembayaran";
 import DetailTrans from "./components/screens/DetailTrans";
 import CekTarif from "./components/screens/CekTarif";
