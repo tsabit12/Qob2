@@ -31,6 +31,7 @@ class App extends React.Component{
     await Font.loadAsync({
       'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
       'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+      'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
     });
     this.setState({ fontLoaded: true });
   }

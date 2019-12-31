@@ -51,6 +51,21 @@ class IndexOrder extends React.Component{
 					deskripsiOrder: this.state.data
 				}
 			})
+		}else{
+
+			if (errors.jenis){
+				this.jenisRef.current.focus();
+			}else if(errors.berat){
+				this.beratRef.current.focus();
+			}else if (errors.panjang) {
+				this.panjangRef.current.focus();
+			}else if (errors.lebar) {
+				this.lebarRef.current.focus();
+			}else if (errors.tinggi) {
+				this.tinggiRef.current.focus();
+			}else{
+				this.nilaiRef.current.focus();
+			}
 		}
 	}
 

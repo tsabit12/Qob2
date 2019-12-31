@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import { Text } from '@ui-kitten/components';
 import api from "../api";
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Image } from 'react-native';
 import Constants from 'expo-constants';
 import { Button, Input } from '@ui-kitten/components';
 
@@ -34,7 +34,10 @@ class Home extends React.Component {
 
 		return (
 			<SafeAreaView style={styles.container}>
-				<Text style={styles.title}>Selamat Datang</Text>
+				<Image source={require('../../assets/logoQOB.png')} 
+				style={{width: 125, height: 125, resizeMode: 'stretch', 
+				alignSelf: 'center', marginBottom: 40}}/>
+				
 				<Input 
 					placeholder='Masukan PIN'
 					ref={this.pinRef}
@@ -48,7 +51,7 @@ class Home extends React.Component {
 				/>
 				<Button status='info' size='medium' onPress={this.onSubmit}>MASUK</Button>
 				<View style={styles.link}>
-					<Text>Atau daftar </Text>
+					<Text>Belum memiliki akun ? daftar </Text>
 					<Text 
 						style={{color: 'blue'}}
 						onPress={() => this.props.navigation.navigate({
