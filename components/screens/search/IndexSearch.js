@@ -3,7 +3,8 @@ import {
   Button,
   Text,
   StyleSheet,
-  View
+  View,
+  ScrollView
 } from 'react-native';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
@@ -20,24 +21,26 @@ class IndexSearch extends React.Component{
 	render(){
 		return(
 			<React.Fragment>
-				<SliderBox images={[
-					require('../../../assets/qob.jpg'),
-					require('../../../assets/qob2.jpg'),
-					require('../../../assets/qob3.jpg')
-				]} 
-				sliderBoxHeight={230}
-				resizeMode={'stretch'}
-				circleLoop
-				autoplay={true}
-				paginationBoxStyle={{
-					alignItems: "center",
-					alignSelf: "center",
-					justifyContent: "center",
-				  }}
-				/>
-				<View style={styles.container}>
-					<Menu navigation={this.props.navigation} />
-				</View>
+				<ScrollView>
+					<SliderBox images={[
+						require('../../../assets/qob.jpg'),
+						require('../../../assets/qob2.jpg'),
+						require('../../../assets/qob3.jpg')
+					]} 
+					sliderBoxHeight={230}
+					resizeMode={'stretch'}
+					circleLoop
+					autoplay={true}
+					paginationBoxStyle={{
+						alignItems: "center",
+						alignSelf: "center",
+						justifyContent: "center",
+					  }}
+					/>
+					<View style={styles.container}>
+						<Menu navigation={this.props.navigation} />
+					</View>
+				</ScrollView>
 			</React.Fragment>
 		);
 	}
