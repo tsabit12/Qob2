@@ -10,7 +10,9 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/search/IndexSearch";
 // import DetailSearch from "./components/screens/report/DetailSearch";
-import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
+// import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
+import ValidasiRekening from "./components/screens/registrasi/ValidasiRekening";
+import ValidasiRegRek from "./components/screens/registrasi/ValidasiRegRek";
 import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
 import Pengirim from "./components/screens/order/Pengirim";
@@ -121,7 +123,13 @@ const AppNavigator = createStackNavigator({
         screen: RegistrasiKtp
       },
       RegistrasiRek: {
-        screen: RegistrasiRek
+        screen: ValidasiRekening
+      },
+      ValidasiRegRek: {
+        screen: ValidasiRegRek,
+        navigationOptions: {
+          header: null
+        }
       },
       RegisterSukses:{
         screen: RegisterSukses
