@@ -21,7 +21,7 @@ class OutputPembayaran extends Component {
           style={styles.footerControl}
           size='small'
           onPress={() => this.props.navigation.navigate({
-            routeName: 'OutputPembayaran'
+            routeName: 'Home '
             })}	
           >
           Halaman Utama

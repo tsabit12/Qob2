@@ -52,3 +52,16 @@ export const getRek = (rek) => dispatch =>
 			const response = convertDataFromRek(res.response_data1);
 			console.log(response);
 		})
+
+export const registerGiro = (payload) => dispatch =>
+	api.registrasi.registrasiGiro(payload)
+		.then(res => {
+			const response = {
+				'dessk_mess' : res.desk_mess,
+				'response_data1' : res.response_data1
+
+			}
+			console.log(response);
+		})
+		// .then(res => console.log("oke"))
+		// .then(res => console.log(res))
