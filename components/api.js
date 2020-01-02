@@ -1,6 +1,7 @@
 import axios from "axios";
 import md5 from "react-native-md5";
 import { curdate } from "./utils/helper";
+import querystring from "querystring";
 
 const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb';
 let config = {	
@@ -36,7 +37,9 @@ export default{
 			}, config).then(res => {
 				if (res.data.rc_mess === '00') {
 					return res.data;
+					console.log(res.data);
 				}else{
+					console.log(res.data);
 					return Promise.reject(res.data);
 				}
 			}),
@@ -100,5 +103,13 @@ export default{
 					'content-type': 'application/json'
 				}
 			}).then(res => res.data.result)		
+	},
+	qob: {
+		getAlamat: (searchTerm) => 
+			axios.post('https://profilagen.posindonesia.co.id/agen.com/index.php/getkodepos/kodepos_api', 
+				querystring.stringify({ 
+					searchTerm: searchTerm
+				})
+			).then(res => res.data)
 	}
 }

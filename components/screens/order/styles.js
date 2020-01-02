@@ -35,5 +35,8 @@ export default StyleSheet.create({
     fontSize: 15,
     fontFamily: 'open-sans-reg',
     paddingTop: 10
-  }
+  },
+  listItem: { borderRadius: 1},
+  listItemTitle: { color: '#3366ff' },
+  listItemDescription: { color: '#2E3A59' }
 });
