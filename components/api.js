@@ -94,15 +94,7 @@ export default{
 				}else{
 					return Promise.reject(res);
 				}
-			}),
-		provinsi: (provName) => 
-			axios.post('https://order.posindonesia.co.id/api/Provinsi/getProv', {
-				provinceName: provName
-			}, {
-				headers: {
-					'content-type': 'application/json'
-				}
-			}).then(res => res.data.result)		
+			})
 	},
 	qob: {
 		getAlamat: (searchTerm) => 
@@ -110,6 +102,22 @@ export default{
 				querystring.stringify({ 
 					searchTerm: searchTerm
 				})
-			).then(res => res.data)
+			).then(res => res.data),
+		getTarif: (payload) => axios.post(url, {
+			messtype: '703',
+			param1: `#1#0#${payload.kodePosA}#${payload.kodePosB}#${payload.berat}#0#0#0#0#0`,
+			param2: '',
+			param3: '',
+			param4: '',
+			param5: '',
+			hashing: getHasing('703', `#1#0#${payload.kodePosA}#${payload.kodePosB}#${payload.berat}#0#0#0#0#0`)
+		}, config).then(res => {
+			const { rc_mess } = res.data;
+			if (rc_mess === '00') {
+				return res.data.response_data1.substring(2);
+			}else{
+				return Promise.reject(res.data);
+			}
+		})
 	}
 }

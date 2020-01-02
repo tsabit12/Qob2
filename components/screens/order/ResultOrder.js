@@ -18,6 +18,10 @@ class ResultOrder extends React.Component{
 		success: false
 	}
 
+	// componentDidMount(){
+	// 	console.log(this.props.navigation.state.params);
+	// }
+
 	convertTarif = (tarif) => {
 		var result = '';
 		if (tarif === 1) result = "Rp 100.000/PAKET KILAT KHUSUS (2-4 Hari)";
@@ -39,20 +43,50 @@ class ResultOrder extends React.Component{
 		})
 	}
 
+	numberWithCommas = (number) => {
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+
 	render(){
 		const { params } = this.props.navigation.state;
 		const { selectedTarif } = this.props.navigation.state.params;
-		const deskripsiTarif = this.convertTarif(selectedTarif);
+		// const deskripsiTarif = this.convertTarif(selectedTarif);
 		return(
 			<View style={{margin: 15}}>
 				<Loader loading={this.state.loading} />
 				{ !this.state.success ? <React.Fragment>
-						<Text style={styles.labelResult}>Jenis Kiriman : { params.deskripsiOrder.jenis }</Text>
+						<Text style={{
+							fontFamily: 'open-sans-reg', 
+							fontWeight: '700',
+							paddingBottom: 12
+						}}>{params.selectedTarif.description}</Text>
+						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+							<Text>Pengirim            :</Text>
+							<Text>{params.deskripsiPengirim.nama}</Text>
+						</View>
+						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+							<Text>Penerima           :</Text>
+							<Text>{params.deskripsiPenerima.nama}</Text>
+						</View>
+						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+							<Text>Jenis Kiriman   :</Text>
+							<Text>{params.deskripsiOrder.jenis}</Text>
+						</View>
+						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+							<Text>Nilai Barang 	    :</Text>
+							<Text>Rp {this.numberWithCommas(params.deskripsiOrder.nilai)}</Text>
+						</View>
+						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+							<Text>Estimasi Tarif	  :</Text>
+							<Text>Rp {this.numberWithCommas(params.selectedTarif.tarif)}</Text>
+						</View>
+
+						{ /* <Text style={styles.labelResult}>Jenis Kiriman : { params.deskripsiOrder.jenis }</Text>
 						<Text style={styles.labelResult}>Nilai Barang : { params.deskripsiOrder.nilai }</Text>
 						<Text style={styles.labelResult}>Pengirim : { params.deskripsiPengirim.nama }</Text>
-						<Text style={styles.labelResult}>Penerima : { params.deskripsiPenerima.nama }</Text>
-						<Text style={styles.labelResult}>Biaya : {deskripsiTarif}</Text>
-						<Button status='info' style={{marginTop: 10}} onPress={this.onSubmit}>Order</Button>
+						<Text style={styles.labelResult}>Penerima : { params.deskripsiPenerima.nama }</Text> */ }
+						
+						<Button status='info' style={{marginTop: 10}} onPress={this.onSubmit}>Simpan</Button>
 					</React.Fragment> : <React.Fragment>
 						<Text style={{textAlign: 'center'}}>Proses order sukses. Id order = PSQ000182828261ZXC</Text>
 						<Button status='info' style={{marginTop: 10}} onPress={this.backHome}>Ke halaman utama</Button>
