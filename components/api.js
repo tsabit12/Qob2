@@ -1,6 +1,7 @@
 import axios from "axios";
 import md5 from "react-native-md5";
 import { curdate } from "./utils/helper";
+import querystring from "querystring";
 
 const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb';
 let config = {	
@@ -36,7 +37,9 @@ export default{
 			}, config).then(res => {
 				if (res.data.rc_mess === '00') {
 					return res.data;
+					console.log(res.data);
 				}else{
+					console.log(res.data);
 					return Promise.reject(res.data);
 				}
 			}),
@@ -108,14 +111,46 @@ export default{
 				}else{
 					return Promise.reject(res);
 				}
-			}),
-		provinsi: (provName) => 
-			axios.post('https://order.posindonesia.co.id/api/Provinsi/getProv', {
-				provinceName: provName
-			}, {
-				headers: {
-					'content-type': 'application/json'
+			})
+	},
+	qob: {
+		getAlamat: (searchTerm) => 
+			axios.post('https://profilagen.posindonesia.co.id/agen.com/index.php/getkodepos/kodepos_api', 
+				querystring.stringify({ 
+					searchTerm: searchTerm
+				})
+			).then(res => res.data),
+		getTarif: (payload) => axios.post(url, {
+			messtype: '703',
+			param1: `#1#0#${payload.kodePosA}#${payload.kodePosB}#${payload.berat}#0#0#0#0#0`,
+			param2: '',
+			param3: '',
+			param4: '',
+			param5: '',
+			hashing: getHasing('703', `#1#0#${payload.kodePosA}#${payload.kodePosB}#${payload.berat}#0#0#0#0#0`)
+		}, config).then(res => {
+			const { rc_mess } = res.data;
+			if (rc_mess === '00') {
+				return res.data.response_data1.substring(2);
+			}else{
+				return Promise.reject(res.data);
+			}
+		}),
+		booking: (payload) => axios.post(url, {
+				messtype: '301',
+				param1: payload.param1,
+				param2: payload.param2,
+				param3: payload.param3,
+				param4: payload.param4,
+				param4: payload.param5,
+				hashing: getHasing('301', payload.param1)
+			}, config)
+			.then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data);
 				}
-			}).then(res => res.data.result)		
+			})
 	}
 }
