@@ -3,6 +3,10 @@ import { View, Text } from "react-native";
 import styles from "./styles";
 import { Button } from '@ui-kitten/components';
 import Loader from "../../Loader";
+import Modal from "../../Modal";
+import { curdateTime } from "../../utils/helper";
+import api from "../../api";
+import Dialog from "react-native-dialog";
 
 const Judul = () => (
 	<Text style={styles.header}>Summary Order</Text>
@@ -15,25 +19,58 @@ class ResultOrder extends React.Component{
 
 	state = {
 		loading: false,
-		success: false
+		success: false,
+		payload: {},
+		errors: {},
+		idOrder: '',
+		visible: true
 	}
 
-	// componentDidMount(){
-	// 	console.log(this.props.navigation.state.params);
-	// }
+	componentDidMount(){
+		const { params } = this.props.navigation.state;
+		// console.log(this.props.navigation.state.params);
+		const { selectedTarif } = params;
+		const { deskripsiOrder } = params;
+		const { deskripsiPengirim } = params;
+		const { deskripsiPenerima } = params;
+		var idOrder = this.getRandomInt(10000000000, 99999999999);
+		idOrder 	= `QOB${idOrder}`;
+		let param1 = `${curdateTime()}|${idOrder}|USR9000001|001`;
+		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
+		let param3 = `${deskripsiPengirim.nama}|${deskripsiPengirim.alamat2}|${deskripsiPengirim.alamat}|-|${deskripsiPengirim.kota}|Jawa Barat|Indonesia|${deskripsiPengirim.kodepos}|${deskripsiPengirim.nohp}|${deskripsiPengirim.email}`;
+		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.alamat}|-|${deskripsiPenerima.kota}|Jawa Barat|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|${deskripsiPenerima.email}|-|-`;
+		let param5 = `0|0|60012345678|0`;
+		const payload = {
+			param1: param1,
+			param2: param2,
+			param3: param3,
+			param4: param4,
+			param5: param5
+		};
+		this.setState({ payload, idOrder: idOrder });
+	}
 
-	convertTarif = (tarif) => {
-		var result = '';
-		if (tarif === 1) result = "Rp 100.000/PAKET KILAT KHUSUS (2-4 Hari)";
-		if (tarif === 2) result = "Rp 240.000/EXPRESS NEXT DAY BARANG (1 Hari)";
-		if (tarif === 3) result = "Rp 120.000/PAKETPOS VALUABLE GOODS (3 Hari)";
-		if (tarif === 4) result = "Rp 120.000/PAKETPOS DANGEROUS GOODS (3 Hari)";
-		return result;
+	getRandomInt = (min, max) => {
+	    min = Math.ceil(min);
+	    max = Math.floor(max);
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	onSubmit = () => {
 		this.setState({ loading: true, success: false });
-		setTimeout(() => this.setState({loading: false, success: true }), 1000);	
+			api.qob.booking(this.state.payload)
+				.then(res => {
+					this.setState({ loading: false, success: true });
+				})
+				.catch(err => {
+					// console.log(err);
+					if (Object.keys(err).length === 10) {
+						this.setState({ loading: false, errors: {global: err.desk_mess }});	
+					}else{
+						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
+					}
+				})
+		// setTimeout(() => this.setState({loading: false, success: true }), 1000);	
 	}
 
 	backHome = () => {
@@ -50,11 +87,13 @@ class ResultOrder extends React.Component{
 	render(){
 		const { params } = this.props.navigation.state;
 		const { selectedTarif } = this.props.navigation.state.params;
-		// const deskripsiTarif = this.convertTarif(selectedTarif);
+		const { errors } = this.state;
+
 		return(
-			<View style={{margin: 15}}>
+			<React.Fragment>
+				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> } 
 				<Loader loading={this.state.loading} />
-				{ !this.state.success ? <React.Fragment>
+				{ !this.state.success ? <View style={{margin: 15}}>
 						<Text style={{
 							fontFamily: 'open-sans-reg', 
 							fontWeight: '700',
@@ -80,18 +119,25 @@ class ResultOrder extends React.Component{
 							<Text>Estimasi Tarif	  :</Text>
 							<Text>Rp {this.numberWithCommas(params.selectedTarif.tarif)}</Text>
 						</View>
-
-						{ /* <Text style={styles.labelResult}>Jenis Kiriman : { params.deskripsiOrder.jenis }</Text>
-						<Text style={styles.labelResult}>Nilai Barang : { params.deskripsiOrder.nilai }</Text>
-						<Text style={styles.labelResult}>Pengirim : { params.deskripsiPengirim.nama }</Text>
-						<Text style={styles.labelResult}>Penerima : { params.deskripsiPenerima.nama }</Text> */ }
 						
 						<Button status='info' style={{marginTop: 10}} onPress={this.onSubmit}>Simpan</Button>
-					</React.Fragment> : <React.Fragment>
-						<Text style={{textAlign: 'center'}}>Proses order sukses. Id order = PSQ000182828261ZXC</Text>
-						<Button status='info' style={{marginTop: 10}} onPress={this.backHome}>Ke halaman utama</Button>
+					</View> : <React.Fragment>
+						<View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+							<Text style={{fontFamily: 'open-sans-reg', fontSize: 20, textAlign: 'center' }}>SUKSES!</Text>
+							<Button status='info' onPress={() => this.backHome()}>Kembali ke home</Button>
+						</View>
+						<View>
+							<Dialog.Container visible={this.state.visible}>
+								<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
+						        <Dialog.Description>
+						          	<Text>Nomor order   : {this.state.idOrder} {'\n'}</Text>
+						          	<Text>Jenis Kiriman : {params.deskripsiOrder.jenis}</Text>
+						        </Dialog.Description>
+					          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
+					        </Dialog.Container>
+						</View>
 					</React.Fragment>}
-			</View>
+			</React.Fragment>
 		);
 	}
 }

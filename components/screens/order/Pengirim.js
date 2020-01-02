@@ -32,7 +32,8 @@ class Pengirim extends React.Component{
 			kodepos: '',
 			alamat2: '',
 			email: '',
-			nohp: ''
+			nohp: '',
+			kota: ''
 		},
 	    loadingProv: false,
     	listAlamat: [],
@@ -57,7 +58,8 @@ class Pengirim extends React.Component{
 				res.forEach(x => {
 					listAlamat.push({
 						title: x.text.replace('   ',''),
-						kodepos: x.id
+						kodepos: x.id,
+						kota: x.kota
 					})
 				})
 				this.setState({ listAlamat, show: true });
@@ -102,9 +104,9 @@ class Pengirim extends React.Component{
 	    />
 	)
 
-	onClickAlamat = (title, kodepos) => {
+	onClickAlamat = (title, kodepos, kota) => {
 		this.setState({ 
-			data: { ...this.state.data, alamat: title, kodepos: kodepos}, 
+			data: { ...this.state.data, alamat: title, kodepos: kodepos, kota: kota}, 
 			show: false
 		});
 		this.alamat2Ref.current.focus()	
@@ -165,7 +167,7 @@ class Pengirim extends React.Component{
 									    	titleStyle={styles.listItemTitle}
 									    	descriptionStyle={styles.listItemDescription}
 									    	title={x.title}
-									    	onPress={() => this.onClickAlamat(x.title, x.kodepos)}
+									    	onPress={() => this.onClickAlamat(x.title, x.kodepos, x.kota)}
 										/> )}
 							    </View>
 						    </ScrollView> }

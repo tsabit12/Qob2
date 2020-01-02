@@ -29,7 +29,11 @@ const ListTarif = ({ onAccept, list }) => (
 					const payload = {
 						id: parsing[0],
 						description: parsing[1],
-						tarif: totalTarif
+						tarif: totalTarif,
+						beadasar: tarif[0],
+						ppn: tarif[1],
+						htnb: tarif[2],
+						ppnhtnb: tarif[3]
 					};
 					return(
 						<ListItem

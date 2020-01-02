@@ -118,6 +118,22 @@ export default{
 			}else{
 				return Promise.reject(res.data);
 			}
-		})
+		}),
+		booking: (payload) => axios.post(url, {
+				messtype: '301',
+				param1: payload.param1,
+				param2: payload.param2,
+				param3: payload.param3,
+				param4: payload.param4,
+				param4: payload.param5,
+				hashing: getHasing('301', payload.param1)
+			}, config)
+			.then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data);
+				}
+			})
 	}
 }

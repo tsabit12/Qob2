@@ -28,6 +28,7 @@ class Penerima extends React.Component{
 			nama: '',
 			alamat: '',
 			alamat2: '',
+			kota: '',
 			email: '',
 			nohp: ''
 		},
@@ -88,7 +89,8 @@ class Penerima extends React.Component{
 				res.forEach(x => {
 					listAlamat.push({
 						title: x.text.replace('   ',''),
-						kodepos: x.id
+						kodepos: x.id,
+						kota: x.kota
 					})
 				})
 				this.setState({ listAlamat, show: true });
@@ -96,9 +98,9 @@ class Penerima extends React.Component{
 			.catch(err => console.log(err))
 	}
 
-	onClickAlamat = (title, kodepos) => {
+	onClickAlamat = (title, kodepos, kota) => {
 		this.setState({ 
-			data: { ...this.state.data, alamat: title, kodepos: kodepos}, 
+			data: { ...this.state.data, alamat: title, kodepos: kodepos, kota: kota}, 
 			show: false
 		});
 		this.alamat2Ref.current.focus()	
@@ -158,7 +160,7 @@ class Penerima extends React.Component{
 									    	titleStyle={styles.listItemTitle}
 									    	descriptionStyle={styles.listItemDescription}
 									    	title={x.title}
-									    	onPress={() => this.onClickAlamat(x.title, x.kodepos)}
+									    	onPress={() => this.onClickAlamat(x.title, x.kodepos, x.kota)}
 										/> )}
 							    </View>
 						    </ScrollView> }
