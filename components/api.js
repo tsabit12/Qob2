@@ -142,7 +142,7 @@ export default{
 				param2: payload.param2,
 				param3: payload.param3,
 				param4: payload.param4,
-				param4: payload.param5,
+				param5: payload.param5,
 				hashing: getHasing('301', payload.param1)
 			}, config)
 			.then(res => {
