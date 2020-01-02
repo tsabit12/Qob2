@@ -69,6 +69,23 @@ export default{
 				}else{
 					return Promise.reject(res.data)
 				}
+			}),
+		registrasiGiro: (payload) =>
+			axios.post(url, {
+				messtype: '203',
+				param1: payload.params1,
+				userid: '',
+				param2: payload.params2,
+				param3: payload.params3,
+				param4: '',
+				param5: '',
+				hashing: getHasing('203', payload.params1)
+			}, config).then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data)
+				}
 			})
 	},
 	laporan: {

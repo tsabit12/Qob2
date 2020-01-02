@@ -27,6 +27,7 @@ import ResultRekeningSearch from "./components/screens/search/result/ResultReken
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran";
 import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
+import RegisterSukses from './components/screens/registrasi/RegisterSukses';
 
 import Barcode from './components/screens/helper/barcode';
 //import { createDrawerNavigator } from "react-navigation-drawer";
@@ -121,6 +122,9 @@ const AppNavigator = createStackNavigator({
       },
       RegistrasiRek: {
         screen: RegistrasiRek
+      },
+      RegisterSukses:{
+        screen: RegisterSukses
       },
       Helper: {
         screen: IndexHelper

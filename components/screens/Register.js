@@ -164,14 +164,17 @@ class Register extends React.Component {
 let styles = {
   scroll: {
     backgroundColor: 'transparent',
+    
   },
 
   container: {
     flex: 1,
+    
   },
 
   contentContainer: {
     padding: 8,
+    justifyContent: 'center',
   },
 
   safeContainer: {
