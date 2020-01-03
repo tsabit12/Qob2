@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import { Text } from '@ui-kitten/components';
 import api from "../api";
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, AsyncStorage } from 'react-native';
 import Constants from 'expo-constants';
 import { Button, Input } from '@ui-kitten/components';
 
@@ -19,6 +19,11 @@ class Home extends React.Component {
 	}
 
 	pinRef = React.createRef();
+
+	async componentDidMount(){
+		const value = await AsyncStorage.getItem('qobUserPrivasi');
+		console.log(value);
+	}
 
 	onChange = (e, { name }) => this.setState({ [name]: e })
 
