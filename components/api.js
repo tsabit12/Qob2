@@ -164,5 +164,19 @@ export default{
 					return Promise.reject(res.data);
 				}
 			})
+	},
+	Pembayaran: {
+		generate: (payload) =>
+			axios.post(url, {
+				messtype: '205',
+				param1: payload.param1,
+				hashing: getHasing('205', payload.param1)
+			}, config).then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data);
+				}
+			})
 	}
 }
