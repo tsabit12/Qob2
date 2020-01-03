@@ -48,6 +48,13 @@ export default StyleSheet.create({
 	labelErr: {
 		color: 'red',
 		top: -2,
-		fontSize: 12
+		fontSize: 12,
+		paddingBottom: 4
+	},
+	labelSuccess: {
+		color: '#7FFFD4',
+		fontSize: 15,
+		top: 4,
+		padding: 2
 	}
 })

@@ -10,7 +10,6 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/search/IndexSearch";
 // import DetailSearch from "./components/screens/report/DetailSearch";
-// import RegistrasiRek from "./components/screens/registrasi/RegistrasiRek"; 
 import ValidasiRekening from "./components/screens/registrasi/ValidasiRekening";
 import ValidasiRegRek from "./components/screens/registrasi/ValidasiRegRek";
 import IndexHelper from "./components/screens/helper/IndexHelper";
@@ -29,7 +28,6 @@ import ResultRekeningSearch from "./components/screens/search/result/ResultReken
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran";
 import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
-import RegisterSukses from './components/screens/registrasi/RegisterSukses';
 
 import Barcode from './components/screens/helper/barcode';
 //import { createDrawerNavigator } from "react-navigation-drawer";
@@ -126,13 +124,7 @@ const AppNavigator = createStackNavigator({
         screen: ValidasiRekening
       },
       ValidasiRegRek: {
-        screen: ValidasiRegRek,
-        navigationOptions: {
-          header: null
-        }
-      },
-      RegisterSukses:{
-        screen: RegisterSukses
+        screen: ValidasiRegRek
       },
       Helper: {
         screen: IndexHelper
