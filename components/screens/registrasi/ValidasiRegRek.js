@@ -47,13 +47,13 @@ class ValidasiRegRek extends React.Component{
 		errors2: {},
 		loading: false,
 		saved: 0,
-		payloadRes: ''
+		payloadRes: {}
 	}
 
 	async componentDidMount(){
 		setTimeout(() => this.ibuRef.current.focus(), 500);	
-		const value = await AsyncStorage.getItem('@MySuperStore:key');
-		console.log(value);
+		// const value = await AsyncStorage.getItem('@MySuperStore:key');
+		// console.log(value);
 	}
 
 	onSubmit = () => {
@@ -110,16 +110,16 @@ class ValidasiRegRek extends React.Component{
 				.then(res => {
 					const { response_data1 } = res;
 					let parsing = response_data1.split('|');
-					// const payloadRes = {
-					// 	userid: parsing[0],
-					// 	username: parsing[1],
-					// 	pin: parsing[2],
-					// 	nama: parsing[3],
-					// 	nohp: parsing[4],
-					// 	email: parsing[5]
-					// }
-					this.setState({ payloadRes: response_data1 });
-					this.saveToStorage(response_data1)
+					const payloadRes = {
+						userid: parsing[0],
+						username: parsing[1],
+						pin: parsing[2],
+						nama: parsing[3],
+						nohp: parsing[4],
+						email: parsing[5]
+					}
+					this.setState({ payloadRes });
+					this.saveToStorage(payloadRes)
 						.then(() => this.setState({ loading: false, saved: 200 }))
 						.catch(err => {
 							this.setState({ loading: false, saved: 500, errors: {global: err} });
@@ -141,7 +141,7 @@ class ValidasiRegRek extends React.Component{
 
 	async saveToStorage(payload){
 		try{
-			await AsyncStorage.setItem('@MySuperStore:key', payload);
+			await AsyncStorage.setItem('qobUserPrivasi', JSON.stringify(payload));
 			return Promise.resolve(payload);
 		}catch(errors){
 			return Promise.reject(errors);
