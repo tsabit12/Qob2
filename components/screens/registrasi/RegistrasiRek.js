@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { getRek, registerGiro } from "../../../actions/register";
 import md5 from "react-native-md5";
 import Modal from "../../Modal";
-
+import api from "../../api";
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -116,16 +116,17 @@ class RegistrasiRek extends React.Component{
 			params3: param3
 		}
 		
-		console.log(payload);
 
-		this.props.registerGiro(payload)
+		api.registrasi.registrasiGiro(payload)
 			.then(res => { 
 				this.props.navigation.navigate({
-					routeName: 'RegisterSukses'
+					routeName: 'RegisterSukses',
+					params: {
+						responseMessage: res.desk_mess
+					}
 				});
 				this.setState({ loading: false, errors: {}, visible: false})
-			})
-				.catch(err => this.setState({ 
+			}).catch(err => this.setState({ 
 					errors: {global: 'Data tidak ditemukan'},
 					visible: true, 
 					loading: false }))

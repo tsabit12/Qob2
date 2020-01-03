@@ -76,13 +76,13 @@ export default{
 		registrasiGiro: (payload) =>
 			axios.post(url, {
 				messtype: '203',
-				param1: payload.params1,
+				param1: payload.param1,
 				userid: '',
-				param2: payload.params2,
-				param3: payload.params3,
-				param4: '',
+				param2: payload.param2,
+				param3: payload.param3,
+				param4: payload.param4,
 				param5: '',
-				hashing: getHasing('203', payload.params1)
+				hashing: getHasing('203', payload.param1)
 			}, config).then(res => {
 				if (res.data.rc_mess === '00') {
 					return res.data;
@@ -104,6 +104,7 @@ export default{
 			axios.post(url, {
 				messtype: '206',
 				param1: rek,
+				param2: rek,
 				hashing: getHasing('206', rek)
 			}, config).then(res => {
 				if (res.data.rc_mess === '000') {
@@ -137,18 +138,29 @@ export default{
 			}
 		}),
 		booking: (payload) => axios.post(url, {
-				messtype: '301',
+				messtype: '302',
 				param1: payload.param1,
 				param2: payload.param2,
 				param3: payload.param3,
 				param4: payload.param4,
-				param4: payload.param5,
-				hashing: getHasing('301', payload.param1)
+				param5: payload.param5,
+				hashing: getHasing('302', payload.param1)
 			}, config)
 			.then(res => {
 				if (res.data.rc_mess === '00') {
 					return res.data;
 				}else{
+					// const paramsss = {
+					// 	messtype: '302',
+					// 	param1: payload.param1,
+					// 	param2: payload.param2,
+					// 	param3: payload.param3,
+					// 	param4: payload.param4,
+					// 	param5: payload.param5,
+					// 	hashing: getHasing('302', payload.param1)
+					// };
+					// console.log(res.data);
+					// console.log(paramsss);
 					return Promise.reject(res.data);
 				}
 			})
