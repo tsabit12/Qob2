@@ -166,10 +166,10 @@ class RegistrasiRek extends React.Component{
 					        	value={data.noRek}
 					        	onChangeText={(e) => this.onChangeText(e, this.noRekRef)}
 					        	status={errors.noRek && 'danger'}
-					        	// onSubmitEditing={this.onSearch}
+					        	onSubmitEditing={this.onSearch}
 								keyboardType='numeric'
 								size='small'
-								onSubmitEditing={() => this.fullnameRef.current.focus() }
+								// onSubmitEditing={() => this.fullnameRef.current.focus() }
 					        />
 							{ errors.noRek && <Text style={styles.errors}>{errors.noRek}</Text>}
 							<Input
