@@ -24,4 +24,11 @@ export default StyleSheet.create({
   list: {
     flex: 1
   },
+  label: {
+    fontFamily: 'open-sans-bold', 
+    fontSize: 15
+  },
+  labelList: {
+    fontFamily: 'open-sans-reg'
+  }
 });

@@ -54,6 +54,7 @@ class ValidasiRegRek extends React.Component{
 		setTimeout(() => this.ibuRef.current.focus(), 500);	
 		// const value = await AsyncStorage.getItem('@MySuperStore:key');
 		// console.log(value);
+		console.log(this.state.validasi);
 	}
 
 	onSubmit = () => {
