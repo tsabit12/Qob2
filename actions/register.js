@@ -63,5 +63,13 @@ export const registerGiro = (payload) => dispatch =>
 			}
 			console.log(response);
 		})
-		// .then(res => console.log("oke"))
-		// .then(res => console.log(res))
+
+export const generate = (payload) => dispatch =>
+	api.Pembayaran.generate(payload)
+		.then(res => {
+			const response = {
+				'dessk_mess' : res.desk_mess,
+				'response_data1' : res.response_data
+			}
+			console.log(response);
+		})

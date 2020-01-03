@@ -5,13 +5,58 @@ import {
 } from "react-native";
 import {
     Layout,
-    Text,
     Card,
     Button,
     Input
   } from '@ui-kitten/components';
+import api from '../../api';
+import Loader from "../../Loader";
 
 class Pembayaran extends Component {
+    state = {
+        nominal : '',
+        loading: false,
+        errors: {}
+    }
+
+    nominalRef = React.createRef();
+
+    validate = (nominal) => {
+		const errors = {};
+		if (!nominal) errors.nominal = "Masukan nomor rekening";
+		return errors;
+    }
+    
+
+    onSubmit = () => {
+            this.setState({ loading: true });
+            const { nominal } = this.state;
+            const payload = { 
+                param1: `440000347|0000000018|${nominal}`
+            }
+            console.log(payload);
+
+            api.Pembayaran.generate(payload)
+                .then(res => {
+                    this.setState ({ loading : false})
+                    const response = {
+                        desc : res.desk_mess,
+                        pin : res.response_data1
+                    }
+                    this.props.navigation.navigate({
+                        routeName : 'KonfrimPembayaran',
+                        params: {
+                            resGenerate: response,
+                            nominal : nominal
+                        }
+                    })
+                })
+                .catch(err => {
+                    this.setState({loading : false });
+                    alert(err.desk_mess)
+                });
+    }
+
     CardFooter = () => (
         <View style={styles.footerContainer}>
         <Button
@@ -23,9 +68,7 @@ class Pembayaran extends Component {
         <Button
           style={styles.footerControl}
           size='small'
-          onPress={() => this.props.navigation.navigate({
-            routeName: 'KonfrimPembayaran'
-            })}	
+          onPress={this.onSubmit}	
           >
           CEK
         </Button>
@@ -33,12 +76,22 @@ class Pembayaran extends Component {
     );
 
     render() {
+        const { nominal, errors, loading } = this.state;
         return (
             <Layout style={styles.container}>
+                <Loader loading={loading}/>
                 <Card footer={this.CardFooter}>
-                    <Text>Nominal</Text>
                     <Input
+                        label='Nominal'
                         placeholder='Masukan Jumlah Nominal'
+                        ref={this.nominalRef}
+                        value={nominal}
+                        name='nominal'
+                        size='small'
+                        onChangeText={(e) => this.setState({ nominal: e })}
+                        onSubmitEditing={this.onSubmit}
+                        keyboardType='numeric'
+                        autoFocus
                     />
                 </Card>
             </Layout>
