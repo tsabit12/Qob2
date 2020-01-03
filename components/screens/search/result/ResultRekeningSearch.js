@@ -46,7 +46,7 @@ const ListItem = ({ listitem }) => {
 						if (x.length > 0) {
 							let valuesOfDetail = x.split('~');
 							return(
-								<Card status='success' key={i} style={{marginTop: 7, marginHorizontal: 10}} header={() => Header(valuesOfDetail[0])}>
+								<Card status='success' key={i} style={{marginTop: 7, marginHorizontal: 10}}>
 							      	<View style={{paddingBottom: 5}}>
 							      		<Text style={{fontFamily: 'open-sans-bold'}}>Keterangan</Text>
 										<Text style={styles.labelList}>{valuesOfDetail[1]}</Text>
@@ -61,7 +61,7 @@ const ListItem = ({ listitem }) => {
 									</View>
 									<View style={{paddingBottom: 5}}>
 										<Text style={{fontFamily: 'open-sans-bold'}}>Nominal</Text>
-										<Text style={styles.labelList}>{numberWithCommas(valuesOfDetail[5])}</Text>
+										<Text style={styles.labelList}>{numberWithCommas(valuesOfDetail[5])} ({valuesOfDetail[0]})</Text>
 									</View>
 							    </Card>
 							)
