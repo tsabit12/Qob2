@@ -124,10 +124,7 @@ const AppNavigator = createStackNavigator({
         screen: ValidasiRekening
       },
       ValidasiRegRek: {
-        screen: ValidasiRegRek,
-        navigationOptions: {
-          header: null
-        }
+        screen: ValidasiRegRek
       },
       Helper: {
         screen: IndexHelper
