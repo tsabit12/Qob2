@@ -38,6 +38,7 @@ import HistoryPembayaran from "./components/screens/HistoryPembayaran";
 import DetailTrans from "./components/screens/DetailTrans";
 import CekTarif from "./components/screens/CekTarif";
 //import DrawerComponent from "./components/DrawerComponent";
+import LupaPin from "./components/screens/LupaPin";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -211,6 +212,12 @@ const AppNavigator = createStackNavigator({
       },
       CekTarif: {
         screen: CekTarif
+      },
+      LupaPin: {
+        screen: LupaPin,
+        navigationOptions: {
+          header: null
+        }
       },
   	},{
   	initialRouteName: 'Home'

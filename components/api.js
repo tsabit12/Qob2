@@ -89,7 +89,12 @@ export default{
 				}else{
 					return Promise.reject(res.data)
 				}
-			})
+			}),
+		lupaPin: (payload) => axios.post(url, {
+			messtype: '207',
+			param1: `${payload.userid}|${payload.nama}|${payload.nohp}|${payload.email}|12345678|0000000018`,
+			hashing: getHasing('207', payload.param1)
+		}, config).then(res => console.log(res))
 	},
 	laporan: {
 		rekKoran: (rek) =>

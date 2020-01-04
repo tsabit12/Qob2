@@ -55,6 +55,12 @@ class Home extends React.Component {
 					onSubmitEditing={this.onSubmit}
 				/>
 				<Button status='info' size='medium' onPress={this.onSubmit}>MASUK</Button>
+				<Text 
+					style={{color: 'blue', paddingTop: 5}}
+					onPress={() => this.props.navigation.navigate({
+						routeName: 'LupaPin'
+					})}
+				>Lupa pin saya</Text>
 				<View style={styles.link}>
 					<Text>Belum memiliki akun ? daftar </Text>
 					<Text 
@@ -89,8 +95,7 @@ const styles = StyleSheet.create({
 		paddingTop: 5
 	},
 	link: {
-		flexDirection: 'row',
-		paddingTop: 7
+		flexDirection: 'row'
 	},
 	title: {
 		paddingBottom: 20,
