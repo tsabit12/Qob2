@@ -15,10 +15,10 @@ let config = {
 	}
 } 
 
-const getHasing = (messtype, nik) => {
+const getHasing = (messtype, param1) => {
 	const key1 = 'c67536e59042f4f7049d441a3a5f71e1';
 	const key2 = 'cd187b9bff4a84415908698f9793098d';
-	const hash = md5.hex_md5(key1+curdate()+messtype+nik+key2);
+	const hash = md5.hex_md5(key1+curdate()+messtype+param1+key2);
 	return hash;
 }
 
@@ -92,9 +92,15 @@ export default{
 			}),
 		lupaPin: (payload) => axios.post(url, {
 			messtype: '207',
-			param1: `${payload.userid}|${payload.nama}|${payload.nohp}|${payload.email}|12345678|0000000018`,
+			param1: payload.param1,
 			hashing: getHasing('207', payload.param1)
-		}, config).then(res => console.log(res))
+		}, config).then(res => {
+			if (res.data.rc_mess === '01') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
+		})
 	},
 	laporan: {
 		rekKoran: (rek) =>
@@ -177,11 +183,25 @@ export default{
 				param1: payload.param1,
 				hashing: getHasing('205', payload.param1)
 			}, config).then(res => {
+				// console.log(res.data);
 				if (res.data.rc_mess === '00') {
 					return res.data;
 				}else{
 					return Promise.reject(res.data);
 				}
 			})
+	},
+	auth: {
+		login: (payload) => axios.post(url, {
+			messtype: '200',
+			param1: payload.param1,
+			hashing: getHasing('200', payload.param1)
+		}, config).then(res => {
+			if (res.data.rc_mess === '00') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
+		})
 	}
 }

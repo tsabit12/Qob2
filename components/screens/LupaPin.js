@@ -4,6 +4,22 @@ import { SafeAreaView } from 'react-navigation';
 import { Button, Input } from '@ui-kitten/components';
 import Loader from "../Loader";
 import api from "../api";
+import Modal from "../Modal";
+import Dialog from "react-native-dialog";
+
+const MessageSucces = ({ message, visible, onPress, backHome }) => (
+	<View>
+        <Dialog.Container visible={true}>
+          <Dialog.Description>
+          	{ message }
+          </Dialog.Description>
+          <Dialog.Button label="Tutup" onPress={() => onPress()} />
+          <Dialog.Button 
+          	label="Login" 
+          	onPress={() => backHome() } />
+        </Dialog.Container>
+    </View>
+)
 
 class LupaPin extends React.Component{
 
@@ -20,28 +36,38 @@ class LupaPin extends React.Component{
 			email: ''
 		},
 		errors: {},
-		loading: false
+		loading: false,
+		success: {
+			status: false,
+			message: ''
+		},
+		visible: false
 	}
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
 
 	onSubmit = () => {
-		// this.getUserLocal()
-		// 	.then(res => {
-		// 		const 
-		// 	})
-		// 	.catch(err => alert("Opps"));
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
 			this.setState({ loading: true });
-			api.registrasi.lupaPin(this.state.data)
+
+			const { data } 	= this.state;
+			let jenis		= 1;
+			const payload = {
+				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|12345678|${jenis}`	
+			};
+			api.registrasi.lupaPin(payload)
 				.then(res => {
 					// console.log(res);
-					this.setState({ loading: false });
+					//console.log("oke");
+					this.setState({ loading: false, visible: true, success: { status: true, message: res.desk_mess }});
 				}).catch(err => {
-					console.log(err);
-					this.setState({ loading: false });
+					if (Object.keys(err).length === 10) {
+						this.setState({ loading: false, errors: { global: err.desk_mess } });
+					}else{
+						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
+					}
 				})
 		}
 	}
@@ -64,8 +90,15 @@ class LupaPin extends React.Component{
 		}
 	}
 
+	onBackHome = () => {
+		this.setState({ visible: false });
+		this.props.navigation.navigate({
+			routeName: 'Home'
+		})
+	}
+
 	render(){
-		const { data, errors, loading } = this.state;
+		const { data, errors, loading, success, visible } = this.state;
 		return(
 			<KeyboardAvoidingView 
 				behavior="padding"
@@ -74,7 +107,15 @@ class LupaPin extends React.Component{
 				// keyboardVerticalOffset = {40}
 			>
 				<ScrollView>
+					{ success.status && 
+						<MessageSucces 
+							message={success.message} 
+							visible={visible} 
+							onPress={() => this.setState({ visible: false })}
+							backHome={this.onBackHome}
+						/> }
 					<Loader loading={loading} />
+					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
 					<SafeAreaView style={styles.container}>
 						<View>
 							<Input 
