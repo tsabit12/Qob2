@@ -50,8 +50,8 @@ class Home extends React.Component {
 				}
 			});
 		}
-		let id = Constants.deviceId;
-		console.log(id);
+		// let id = Constants.deviceId;
+		// console.log(id);
 	}
 
 	onChange = (e, { name }) => this.setState({ [name]: e })

@@ -95,7 +95,7 @@ export default{
 			param1: payload.param1,
 			hashing: getHasing('207', payload.param1)
 		}, config).then(res => {
-			if (res.data.rc_mess === '01') {
+			if (res.data.rc_mess === '02') {
 				return res.data;
 			}else{
 				return Promise.reject(res.data);
@@ -196,6 +196,17 @@ export default{
 			messtype: '200',
 			param1: payload.param1,
 			hashing: getHasing('200', payload.param1)
+		}, config).then(res => {
+			if (res.data.rc_mess === '00') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
+		}),
+		verifikasi: (payload) => axios.post(url, {
+			messtype: '211',
+			param1: payload.param1,
+			hashing: getHasing('211', payload.param1)
 		}, config).then(res => {
 			if (res.data.rc_mess === '00') {
 				return res.data;

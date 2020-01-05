@@ -119,7 +119,8 @@ class ValidasiRegRek extends React.Component{
 						pin: parsing[2],
 						nama: parsing[3],
 						nohp: parsing[4],
-						email: parsing[5]
+						email: parsing[5],
+						norek: parsing[6]
 					}
 					this.setState({ payloadRes });
 					this.saveToStorage(payloadRes)

@@ -27,6 +27,7 @@ class LupaPin extends React.Component{
 	namaRef = React.createRef();
 	nohpRef = React.createRef();
 	emailRef = React.createRef();
+	kodeRef = React.createRef();
 
 	state = {
 		data: {
@@ -39,9 +40,12 @@ class LupaPin extends React.Component{
 		loading: false,
 		success: {
 			status: false,
-			message: ''
+			message: '',
+			statusVer: false,
+			messageVer: ''
 		},
-		visible: false
+		visible: false,
+		kode: ''
 	}
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
@@ -97,6 +101,72 @@ class LupaPin extends React.Component{
 		})
 	}
 
+	onChangeKode = (e) => this.setState({ kode: e })
+
+	async saveToStorage(payload){
+		try{
+			await AsyncStorage.setItem('qobUserPrivasi', JSON.stringify(payload));
+			return Promise.resolve(payload);
+		}catch(errors){
+			return Promise.reject(errors);
+		}
+	}
+
+	onVerfikasi = () => {
+		const errors = this.validateKode(this.state.kode);
+		this.setState({ errors });
+		if (Object.keys(errors).length === 0) {
+			this.setState({ loading: true });
+			const { data, kode } = this.state;
+			let jenis = 1;
+ 			const payload = {
+				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|12345678|${kode}|${jenis}`
+			};
+			api.auth.verifikasi(payload)
+				.then(res => {
+					//return res.data
+					// console.log(res);
+					const { response_data1 } = res;
+					let parsing = response_data2.split('|');
+					const payloadRes = {
+						userid: parsing[0],
+						username: parsing[1],
+						pin: parsing[2],
+						nama: parsing[3],
+						nohp: parsing[4],
+						email: parsing[5],
+						norek: parsing[6]
+					};
+					this.saveToStorage(payloadRes)
+						.then(() => 
+							this.setState({ 
+								loading: false, 
+								success: {
+									...this.state.success,
+									statusVer: true,
+									messageVer: res.response_data1
+								},
+								visible: true
+							}))
+						.catch(() => alert("Oppps, something wrong with storage"));
+				}).catch(err => {
+					if (Object.keys(err).length === 10) {
+						this.setState({ loading: false });
+						alert(err.desk_mess);
+					}else{
+						alert("Terdapat kesalahan harap cobalagi nanti");
+					}
+					
+				});	
+		}
+	}
+
+	validateKode = (kode) => {
+		const errors = {};
+		if (!kode) errors.kode = "Masukan kode verifikasi";
+		return errors;
+	}
+
 	render(){
 		const { data, errors, loading, success, visible } = this.state;
 		return(
@@ -104,17 +174,16 @@ class LupaPin extends React.Component{
 				behavior="padding"
 				style={{flex:1, marginTop: 30}} 
 				enabled
-				// keyboardVerticalOffset = {40}
+				keyboardVerticalOffset = {10}
 			>
 				<ScrollView>
-					{ success.status && 
-						<MessageSucces 
-							message={success.message} 
+					<Loader loading={loading} />
+					{ success.statusVer && <MessageSucces 
+							message={success.messageVer} 
 							visible={visible} 
 							onPress={() => this.setState({ visible: false })}
 							backHome={this.onBackHome}
 						/> }
-					<Loader loading={loading} />
 					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
 					<SafeAreaView style={styles.container}>
 						<View>
@@ -174,6 +243,23 @@ class LupaPin extends React.Component{
 							{ errors.email && <Text style={styles.labelErr}>{errors.email}</Text>}
 						</View>
 						<Button status='danger' onPress={this.onSubmit}>Pulihkan</Button>
+						{ success.status && <View style={{marginTop: 8}}>
+							<Text style={{fontFamily: 'open-sans-reg'}}>{success.message}</Text>
+							<Input 
+								ref={this.kodeRef}
+								labelStyle={styles.label}
+								placeholder='Masukan kode verifikasi disini'
+								style={{ marginTop: 10 }}
+								value={this.state.kode}
+								name='kode'
+								keyboardType='numeric'
+								maxLength={6}
+								onChangeText={this.onChangeKode}
+								status={errors.kode && 'danger'}
+							/>
+							{ errors.kode && <Text style={{fontSize: 12, color: 'red'}}>{errors.kode}</Text>}
+							<Button status='info' style={{marginTop: 4}} onPress={this.onVerfikasi}>Verifikasi</Button>
+						</View> }
 					</SafeAreaView>
 				</ScrollView>
 			</KeyboardAvoidingView>
