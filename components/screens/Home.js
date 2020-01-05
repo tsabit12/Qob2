@@ -8,8 +8,6 @@ import Constants from 'expo-constants';
 import { Button, Input } from '@ui-kitten/components';
 import Loader from "../Loader";
 import Modal from "../Modal";
-
-
 class Home extends React.Component {
 	static navigationOptions = {
 		headerMode: 'none',
@@ -28,7 +26,7 @@ class Home extends React.Component {
 	async componentDidMount(){
 		const value = await AsyncStorage.getItem('qobUserPrivasi');
 		const toObje = JSON.parse(value);
-		console.log(toObje);
+		// console.log(toObje);
 		if (!value) { //handle null
 			this.setState({
 				localUser: {
@@ -52,6 +50,8 @@ class Home extends React.Component {
 				}
 			});
 		}
+		let id = Constants.deviceId;
+		console.log(id);
 	}
 
 	onChange = (e, { name }) => this.setState({ [name]: e })

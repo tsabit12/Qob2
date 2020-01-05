@@ -6,6 +6,7 @@ import api from "../../api";
 import Loader from "../../Loader";
 import styles from "./styles";
 import Dialog from "react-native-dialog";
+import Modal from "../../Modal";
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -47,7 +48,8 @@ class ValidasiRegRek extends React.Component{
 		errors2: {},
 		loading: false,
 		saved: 0,
-		payloadRes: {}
+		payloadRes: {},
+		desk_mess: ''
 	}
 
 	async componentDidMount(){
@@ -121,7 +123,7 @@ class ValidasiRegRek extends React.Component{
 					}
 					this.setState({ payloadRes });
 					this.saveToStorage(payloadRes)
-						.then(() => this.setState({ loading: false, saved: 200 }))
+						.then(() => this.setState({ loading: false, saved: 200, desk_mess: res.desk_mess }))
 						.catch(err => {
 							this.setState({ loading: false, saved: 500, errors: {global: err} });
 							console.log(err);
@@ -168,7 +170,7 @@ class ValidasiRegRek extends React.Component{
 
 	render(){
 		const { responseRek } = this.props.navigation.state.params;
-		const { data, errors, success, errors2 } = this.state;
+		const { data, errors, success, errors2, saved, desk_mess } = this.state;
 		return(
 			<KeyboardAvoidingView 
 					style={{flex:1}} 
@@ -176,6 +178,7 @@ class ValidasiRegRek extends React.Component{
 					enabled
 					keyboardVerticalOffset = {Header.HEIGHT + 40}
 				>
+				{ saved === 200 && <Modal loading={true} text={desk_mess} handleClose={() => this.setState({ saved: 0 })} />}
 				<ScrollView keyboardShouldPersistTaps='always'>
 					<Loader loading={this.state.loading} />
 					<View style={{padding: 10}}>
