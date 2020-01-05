@@ -115,13 +115,13 @@ class ValidasiRegRek extends React.Component{
 					let parsing = response_data1.split('|');
 					const payloadRes = {
 						userid: parsing[0],
-						username: parsing[1],
-						pin: parsing[2],
-						nama: parsing[3],
-						nohp: parsing[4],
-						email: parsing[5],
-						norek: parsing[6]
-					}
+						pin: parsing[1],
+						nama: parsing[2],
+						nohp: parsing[3],
+						email: parsing[4],
+						imei: parsing[5],
+						norek: parsing[6],
+					};
 					this.setState({ payloadRes });
 					this.saveToStorage(payloadRes)
 						.then(() => this.setState({ loading: false, saved: 200, desk_mess: res.desk_mess }))

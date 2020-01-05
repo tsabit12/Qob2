@@ -130,11 +130,11 @@ class LupaPin extends React.Component{
 					let parsing = response_data2.split('|');
 					const payloadRes = {
 						userid: parsing[0],
-						username: parsing[1],
-						pin: parsing[2],
-						nama: parsing[3],
-						nohp: parsing[4],
-						email: parsing[5],
+						pin: parsing[1],
+						nama: parsing[2],
+						nohp: parsing[3],
+						email: parsing[4],
+						imei: parsing[5],
 						norek: parsing[6]
 					};
 					this.saveToStorage(payloadRes)

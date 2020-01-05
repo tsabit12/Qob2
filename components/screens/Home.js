@@ -1,3 +1,17 @@
+// const response = '440000347|8a266d4bad3552473f2de193283a59c5|IKHSAN FANANI|085220135077|Ikhsan.fanani@gmail.com|12345678|0000000018';
+// let parsing = response.split('|');
+// const payload = {
+// 	userid: parsing[0],
+// 	pin: parsing[1],
+// 	nama: parsing[2],
+// 	nohp: parsing[3],
+// 	email: parsing[4],
+// 	imei: parsing[5],
+// 	norek: parsing[6],
+// };
+// this.saveToStorage(payload)
+// 	.then(() => console.log("oke"))
+// 	.catch(err => console.log(err));
 import React from "react";
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
@@ -26,7 +40,6 @@ class Home extends React.Component {
 	async componentDidMount(){
 		const value = await AsyncStorage.getItem('qobUserPrivasi');
 		const toObje = JSON.parse(value);
-		console.log(toObje);
 		if (!value) { //handle null
 			this.setState({
 				localUser: {
@@ -35,7 +48,8 @@ class Home extends React.Component {
 					nohp: '-',
 					pin: '-',
 					userid: '-',
-					username: '-'
+					imei: '-',
+					norek: '-'
 				}
 			});
 		}else{
@@ -46,12 +60,22 @@ class Home extends React.Component {
 					nohp: toObje.nohp,
 					pin: toObje.pin,
 					userid: toObje.userid,
-					username: toObje.username
+					imei: toObje.imei,
+					norek: toObje.norek
 				}
 			});
 		}
 		// let id = Constants.deviceId;
 		// console.log(id);
+	}
+
+	async saveToStorage(payload){
+		try{
+			await AsyncStorage.setItem('qobUserPrivasi', JSON.stringify(payload));
+			return Promise.resolve(payload);
+		}catch(errors){
+			return Promise.reject(errors);
+		}
 	}
 
 	onChange = (e, { name }) => this.setState({ [name]: e })
@@ -64,9 +88,9 @@ class Home extends React.Component {
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
 			this.setState({ loading: true });
-			const { userid, nohp, email  } = this.state.localUser;
+			const { userid, nohp, email, imei, norek  } = this.state.localUser;
 			const payload = {
-				param1: `${userid}|${this.state.pin}|085220135077|ikhsan.fanani@gmail.com|123456|0000000018`
+				param1: `${userid}|${this.state.pin}|${nohp}|${email}|${imei}|${norek}`
 			};
 			api.auth.login(payload)
 				.then(res => {
