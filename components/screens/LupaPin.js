@@ -34,7 +34,8 @@ class LupaPin extends React.Component{
 			userid: '',
 			nama: '',
 			nohp: '',
-			email: ''
+			email: '',
+			imei: ''
 		},
 		errors: {},
 		loading: false,
@@ -46,6 +47,17 @@ class LupaPin extends React.Component{
 		},
 		visible: false,
 		kode: ''
+	}
+
+	async componentDidMount(){
+		const value = await AsyncStorage.getItem('qobUserPrivasi');
+		const toObje = JSON.parse(value);
+		this.setState({
+			data: {
+				...this.state.data,
+				imei: toObje.imei
+			}
+		});
 	}
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
@@ -120,7 +132,7 @@ class LupaPin extends React.Component{
 			const { data, kode } = this.state;
 			let jenis = 1;
  			const payload = {
-				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|12345678|${kode}|${jenis}`
+				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${kode}|${jenis}`
 			};
 			api.auth.verifikasi(payload)
 				.then(res => {

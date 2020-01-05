@@ -7,6 +7,7 @@ import Loader from "../../Loader";
 import styles from "./styles";
 import Dialog from "react-native-dialog";
 import Modal from "../../Modal";
+import Constants from 'expo-constants';
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -42,7 +43,7 @@ class ValidasiRegRek extends React.Component{
 		namaOlshop: '',
 		jenisOl: '',
 		npwp: '',
-		imei: '12345678',
+		imei: Constants.deviceId,
 		success: false,
 		errors: {},
 		errors2: {},
