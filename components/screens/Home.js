@@ -112,11 +112,11 @@ class Home extends React.Component {
 							>disini</Text>
 						</View>
 						<Text 
-							style={{color: 'blue', textAlign: 'center', marginTop: -20}}
+							style={{color: 'blue', textAlign: 'center'}}
 							onPress={() => this.props.navigation.navigate({
 								routeName: 'LupaPin'
 							})}
-						>{"\n"}Lupa pin saya</Text>
+						>Lupa pin saya</Text>
 			   	</ImageBackground>
 		   	</React.Fragment>
 		);
