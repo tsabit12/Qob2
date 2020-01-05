@@ -1,8 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView } from "react-native";
+import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Image } from "react-native";
 import { Layout, Input, Button, ListItem } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
 import Loader from "../Loader";
+import api from "../api";
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -36,20 +37,198 @@ class CekTarif extends React.Component{
 		headerTitle: <Judul navigation={navigation}/>
 	})
 
+	kotaAsalRef = React.createRef();
+	kotaTujuanRef = React.createRef();
+	panjangRef = React.createRef();
+	lebarRef = React.createRef();
+	tinggiRef = React.createRef();
+	nilaiRef = React.createRef();
+
 	state = {
 		loading: false,
-		success: false
+		success: false,
+		data: {
+			kotaAsal: '',
+			kotaTujuan: '',
+			panjang: '',
+			lebar: '',
+			tinggi: '',
+			nilai: '',
+			kotaA: '',
+			kotaB: '',
+			kodeposA: '',
+			kodeposB: '',
+		},
+		errors: {},
+		loadingGet: false,
+		loadingGet2: false,
+		listAlamat1: [],
+		listAlamat2: [],
+		show1: false,
+		show2: false
 	}
 
 	onClick = () => {
-		this.setState({ loading: true, success: false });
-		setTimeout(() => this.setState({loading: false, success: true }), 1000);	
+		// this.setState({ loading: true, success: false });
+		// setTimeout(() => this.setState({loading: false, success: true }), 1000);	
+		const errors = this.validate(this.state.data);
+		this.setState({ errors });
+		if (Object.keys(errors).length === 0) {
+			this.setState({ loading: true });
+			setTimeout(() => this.setState({loading: false, success: true }), 1000);	
+			const payload = {
+				kodePosA: this.state.data.kodeposA,
+				kodePosB: this.state.data.kodeposB,
+				berat: this.state.data.nilai
+			}
+		}
 	}
 
-	onReset = () => this.setState({ success: false });
+	validate = (data) => {
+		const errors = {};
+		if (!data.kotaAsal) errors.kotaAsal = "Kota asal belum dipilih";
+		if (!data.kotaTujuan) errors.kotaTujuan = "Kota tujuan belum dipilih";
+		if (!data.panjang) errors.panjang = "Required";
+		if (!data.tinggi) errors.tinggi = "Required";
+		if (!data.lebar) errors.lebar = "Required";
+		if (!data.nilai) errors.nilai = "Berat barang masih kosong";
+		return errors;
+	}
+
+	onReset = () => this.setState({ 
+		success: false,
+		data: {
+			kotaAsal: '',
+			kotaTujuan: '',
+			panjang: '',
+			lebar: '',
+			tinggi: '',
+			nilai: '',
+			kotaA: '',
+			kotaB: '',
+			kodeposA: '',
+			kodeposB: '',
+		}
+	})
+
+	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
+
+	onChangeKotaA = (e) => {
+		clearTimeout(this.timer);
+		this.setState({ data: { ...this.state.data, kotaAsal: e }});
+		this.timer = setTimeout(() => this.getKodepos('A'), 500);
+	}
+
+	onChangeKotaB = (e) => {
+		clearTimeout(this.timer);
+		this.setState({ data: { ...this.state.data, kotaTujuan: e }});
+		this.timer = setTimeout(() => this.getKodepos('B'), 500);	
+	}
+
+	getKodepos = (jenis) => {
+		const { data } = this.state;
+		// var value = null;
+		if (jenis === 'A') {
+			let value = data.kotaAsal;
+			if (value.length >= 6) {
+				this.setState({ loadingGet: true });
+				api.qob.getAlamat(value)
+					.then(res => {
+						const listAlamat1 = [];
+						res.forEach(x => {
+							listAlamat1.push({
+								title: x.text.replace('   ',''),
+								kodepos: x.id,
+								kota: x.kota		
+							});
+						});
+						this.setState({ loadingGet: false, listAlamat1, show1: true });
+					}).catch(err => {
+						console.log(err);
+						this.setState({ loadingGet: false });
+					});
+			}
+		}else{
+			let value = data.kotaTujuan;
+			if (value.length >= 6) {
+				this.setState({ loadingGet2: true });	
+				api.qob.getAlamat(value)
+					.then(res => {
+						const listAlamat2 = [];
+						res.forEach(x => {
+							listAlamat2.push({
+								title: x.text.replace('   ',''),
+								kodepos: x.id,
+								kota: x.kota		
+							});
+						});
+						this.setState({ loadingGet2: false, listAlamat2, show2: true });
+					}).catch(err => {
+						console.log(err);
+						this.setState({ loadingGet2: false });
+					});
+			}
+		}
+
+	}
+
+	renderIcon = (style, jenis) => {
+		const { loadingGet, loadingGet2 } = this.state;
+		return(
+			<React.Fragment>
+				{ jenis === 'A' ?
+					<Image
+				      style={{width: 20, height: 20}} 
+				      source={ loadingGet ? require('../icons/loaderInput.gif') : require('../icons/location.png')}
+				    /> : 
+				    <Image
+				      style={{width: 20, height: 20}} 
+				      source={ loadingGet2 ? require('../icons/loaderInput.gif') : require('../icons/location.png')}
+				    />
+				}
+		    </React.Fragment>
+		);
+	} 
+
+	onClickGet = (jenis, title, kodepos, kota) => {
+		if (jenis === 'A') {
+			this.setState({
+				data: {
+					...this.state.data,
+					kotaAsal: title,
+					kodeposA: kodepos,
+					kotaA: kota
+				},
+				show1: false,
+				errors: {
+					...this.state.errors,
+					kotaAsal: undefined
+				}
+			})
+			this.kotaTujuanRef.current.focus();
+		}else{
+			this.setState({
+				data: {
+					...this.state.data,
+					kotaTujuan: title,
+					kodeposB: kodepos,
+					kotaB: kota
+				},
+				show2: false,
+				errors: {
+					...this.state.errors,
+					kotaTujuan: undefined
+				}
+			})
+			this.panjangRef.current.focus();
+		}
+	}
+
+
 
 	render(){
-		const { loading, success } = this.state;
+		const { loading, success, data, errors, listAlamat1, show1, listAlamat2, show2 } = this.state;
+		// console.log(this.state.listAlamat1);
 		return(
 			<KeyboardAvoidingView 
 					style={{flex:1}} 
@@ -62,48 +241,123 @@ class CekTarif extends React.Component{
 					<Layout style={styles.container}>
 						<View style={{padding: 4}}>
 							<Input
-						      placeholder='Masukan kota asal'
-						      name='nilai'
-						      label='Kota Asal'
+						      placeholder='Kota/kab/kec/kel'
+						      ref={this.kotaAsalRef}
+						      name='kotaAsal'
+						      label='Kota Asal (Min 6 karakter)'
 						      labelStyle={styles.label}
 						      style={styles.input}
+						      value={data.kotaAsal}
+						      status={errors.kotaAsal && 'danger'}
+						      onChangeText={this.onChangeKotaA}
+						      icon={(style) => this.renderIcon(style,'A')}
 						    />
+						    { errors.kotaAsal && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaAsal}</Text>}
+
+						    { listAlamat1.length > 0 && show1 && <ScrollView style={styles.scroll} nestedScrollEnabled={true}>
+							   	{ listAlamat1.map((x, i) => 
+							   		<ListItem
+							   			key={i}
+								    	style={{backgroundColor: '#d6d7da'}}
+								    	titleStyle={styles.listItemTitle}
+								    	descriptionStyle={styles.listItemDescription}
+								    	title={x.title}
+								    	onPress={() => this.onClickGet('A', x.title, x.kodepos, x.kota)}
+									/> )}
+						    </ScrollView> }
 						</View>
 						<View style={{padding: 4}}>
 							<Input
-						      placeholder='Masukan kota tujuan'
-						      name='nilai'
-						      label='Kota Tujuan'
+						      placeholder='Kota/kab/kec/kel'
+						      ref={this.kotaTujuanRef}
+						      name='kotaTujuan'
+						      label='Kota Tujuan (Min 6 karakter)'
 						      labelStyle={styles.label}
 						      style={styles.input}
+						      value={data.kotaTujuan}
+						      status={errors.kotaTujuan && 'danger'}
+						      onChangeText={this.onChangeKotaB}
+						      icon={(style) => this.renderIcon(style,'B')}
 						    />
+						    { errors.kotaTujuan && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaTujuan}</Text>}
+
+						     { listAlamat2.length > 0 && show2 && <ScrollView style={styles.scroll} nestedScrollEnabled={true}>
+							   	{ listAlamat2.map((x, i) => 
+							   		<ListItem
+							   			key={i}
+								    	style={{backgroundColor: '#d6d7da'}}
+								    	titleStyle={styles.listItemTitle}
+								    	title={x.title}
+								    	onPress={() => this.onClickGet('B', x.title, x.kodepos, x.kota)}
+									/> )}
+						    </ScrollView> }
 						</View>
 						<View style={styles.hitung}>
 						    <Input
 						      placeholder='XX (CM)'
+						      ref={this.panjangRef}
 						      label='Panjang'
 						      name='panjang'
 						      labelStyle={styles.label}
 						      style={styles.inputHitung}
 						      keyboardType='numeric'
+						      value={data.panjang}
+						      status={errors.panjang && 'danger'}
+						      onChangeText={(e) => this.onChange(e, this.panjangRef.current.props)}
+						      onSubmitEditing={() => {
+						      	this.lebarRef.current.focus();
+						      	this.setState({ errors: {...this.state.errors, panjang: undefined }})
+						      }}
 						    />
 						    <Input
 						      placeholder='XX (CM)'
+						      ref={this.lebarRef}
 						      label='Lebar'
 						      name='lebar'
 						      labelStyle={styles.label}
 						      style={styles.inputHitung}
 						      keyboardType='numeric'
 						      style={styles.inputHitung}
+						      value={data.lebar}
+						      status={errors.lebar && 'danger'}
+						      onChangeText={(e) => this.onChange(e, this.lebarRef.current.props)}
+						      onSubmitEditing={() => {
+						      	this.tinggiRef.current.focus();
+						      	this.setState({ errors: {...this.state.errors, lebar: undefined }})
+						      }}
 						    />
 						    <Input
 						      placeholder='XX (CM)'
+						      ref={this.tinggiRef}
 						      label='Tinggi'
 						      name='tinggi'
 						      labelStyle={styles.label}
 						      keyboardType='numeric'
 						      style={styles.inputHitung}
+						      value={data.tinggi}
+						      status={errors.tinggi && 'danger'}
+						      onChangeText={(e) => this.onChange(e, this.tinggiRef.current.props)}
+						      onSubmitEditing={() => {
+						      	this.nilaiRef.current.focus();
+						      	this.setState({ errors: {...this.state.errors, tinggi: undefined }})
+						      }}
 						    />
+						</View>
+						<View style={{padding: 4}}>
+							<Input
+						      placeholder='Masukan berat barang (GRAM)'
+						      ref={this.nilaiRef}
+						      name='nilai'
+						      label='Berat'
+						      keyboardType='numeric'
+						      labelStyle={styles.label}
+						      style={styles.input}
+						      value={data.nilai}
+						      status={errors.nilai && 'danger'}
+						      onChangeText={(e) => this.onChange(e, this.nilaiRef.current.props)}
+						      onSubmitEditing={() => this.onClick()}
+						    />
+						    { errors.nilai && <Text style={{fontSize: 12, color: 'red'}}>{errors.nilai}</Text>}
 						</View>
 						<View style={styles.button}>
 							<Button style={{margin: 2, flex: 1}} status='info' onPress={this.onClick}>Cek Tarif</Button>
@@ -144,6 +398,10 @@ const styles = StyleSheet.create({
 	button: {
 		flexDirection: 'row',
 		alignSelf: 'stretch'
+	},
+	scroll: {
+		height: 100,
+		paddingBottom: 50
 	}
 });
 

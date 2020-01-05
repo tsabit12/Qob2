@@ -26,7 +26,7 @@ class Home extends React.Component {
 	async componentDidMount(){
 		const value = await AsyncStorage.getItem('qobUserPrivasi');
 		const toObje = JSON.parse(value);
-		// console.log(toObje);
+		console.log(toObje);
 		if (!value) { //handle null
 			this.setState({
 				localUser: {
@@ -75,6 +75,12 @@ class Home extends React.Component {
 				})
 				.catch(err => {
 					// console.log(err);
+					setTimeout(() => {
+						this.props.navigation.navigate({
+							routeName: 'IndexSearch'
+						});
+					}, 1000);
+
 					if (Object.keys(err).length === 10) { //handle undefined
 						this.setState({ loading: false, errors: {global: err.desk_mess } });
 					}else{
