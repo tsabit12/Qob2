@@ -67,6 +67,7 @@ export default{
 				param5: '',
 				hashing: getHasing('204', payload.params1)
 			}, config).then(res => {
+				// console.log(res);
 				if (res.data.rc_mess === '00') {
 					return res.data;
 				}else{

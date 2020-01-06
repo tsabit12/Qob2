@@ -39,6 +39,7 @@ import DetailTrans from "./components/screens/DetailTrans";
 import CekTarif from "./components/screens/CekTarif";
 //import DrawerComponent from "./components/DrawerComponent";
 import LupaPin from "./components/screens/LupaPin";
+import ListOrder from "./components/screens/ListOrder";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -218,6 +219,9 @@ const AppNavigator = createStackNavigator({
         navigationOptions: {
           header: null
         }
+      },
+      ListOrder: {
+        screen: ListOrder
       },
   	},{
   	initialRouteName: 'Home'

@@ -11,9 +11,6 @@ import PinView from 'react-native-pin-view';
 import md5 from "react-native-md5";
 import Constants from 'expo-constants';
 
-const fuckingResponse = '440000370|09755027ff7ac792bba13fe05ac69472|YUYUS NURKAMAL|087736967892|tsabit830@gmail.com|-|-';
-
-
 class Home extends React.Component {
 	static navigationOptions = {
 		headerMode: 'none',
@@ -30,9 +27,8 @@ class Home extends React.Component {
 	}
 
 	async componentDidMount(){
-		const value = await AsyncStorage.getItem('qobUserPrivasi');
-		const toObje = JSON.parse(value);
-		// console.log(toObje);
+		const value 	= await AsyncStorage.getItem('qobUserPrivasi');
+		const toObje 	= JSON.parse(value);
 		if (!value) { //handle null
 			this.setState({
 				localUser: {
@@ -41,8 +37,7 @@ class Home extends React.Component {
 					nohp: '-',
 					pin: '-',
 					userid: '-',
-					imei: '-',
-					norek: '-'
+					username: '-'
 				}
 			});
 		}else{
@@ -51,32 +46,34 @@ class Home extends React.Component {
 					email: toObje.email,
 					nama: toObje.nama,
 					nohp: toObje.nohp,
-					pin: toObje.pin,
+					pin: toObje.pinMd5,
 					userid: toObje.userid,
-					imei: toObje.imei,
-					norek: toObje.norek
+					username: toObje.username
 				}
 			});
 		}
-		// const gob = fuckingResponse.split('|');
-		// const payload = {
-		// 	email: gob[4],
-		// 	nohp: gob[3],
-		// 	nama: gob[2],
-		// 	pin: gob[1],
-		// 	userid: gob[0],
-		// 	imei: gob[5],
-		// 	norek: gob[6]
-		// }
-
-		// // console.log(payload);
-		// this.saveToStorage(payload)
-		// 	.then(() => console.log("oke"));
 	}
+
+	// async componentDidMount(){
+	// 	const payload = '440000396|malangdistro|e10adc3949ba59abbe56e057f20f883e|MARTIN NUGROHO PARAPAT|082234224784|mr.mnp007@gmail.com';
+	// 	const x = payload.split('|');
+	// 	const toSave = {
+	// 		userid: x[0],
+	// 		username: x[1],
+	// 		pinMd5: x[2],
+	// 		nama: x[3],
+	// 		nohp: x[4],
+	// 		email: x[5]
+	// 	};
+
+	// 	this.saveToStorage(toSave)
+	// 		.then(() => console.log("oke"))
+	// 		.catch(err => console.log(err));
+	// }
 
 	async saveToStorage(payload){
 		try{
-			await AsyncStorage.setItem('qobUserPrivasi', JSON.stringify(payload));
+			await AsyncStorage.setItem('sessionLogin', JSON.stringify(payload));
 			return Promise.resolve(payload);
 		}catch(errors){
 			return Promise.reject(errors);
@@ -87,33 +84,43 @@ class Home extends React.Component {
 	onComplete = (val, clear) => {
 		this.setState({ loading: true });
 
-		const { userid, nohp, email, imei, norek, pin  } = this.state.localUser;
-		//val --> pin input
-		//pin --> response register (local storage)
-		const pinMd5 = md5.hex_md5(userid+val+nohp+email+email+'8b321770897ac2d5bfc26965d9bf64a1');
-		// console.log(pinMd5);
+		const { userid, nohp, email } = this.state.localUser;
+		let 	imei = Constants.deviceId;
+		const pinMd5 = md5.hex_md5(userid+val+nohp+email+imei+'8b321770897ac2d5bfc26965d9bf64a1');
 		
 		const payload = {
-			param1: `${userid}|${pinMd5}|${nohp}|${email}|${Constants.deviceId}|0000000042`
+			param1: `${userid}|${pinMd5}|${nohp}|${email}|${imei}`
 		};
-		console.log(payload);
+		
 		api.auth.login(payload)
 			.then(res => {
-				this.setState({ loading: false });
-				this.props.navigation.navigate({
-					routeName: 'IndexSearch'
-				});
+				const { response_data4 } = res;
+				const x = response_data4.split('|');
+				const payload2 = {
+					namaOl: x[0],
+					alamatOl: x[1],
+					tempatLahir: x[2],
+					kodepos: x[3]
+				};
+
+				this.saveToStorage(payload2)
+					.then(() => {
+						this.setState({ loading: false });
+						this.props.navigation.navigate({
+							routeName: 'IndexSearch'
+						});
+					}).catch(err => {
+						this.setState({ loading: false });	
+						alert("Failed save data to storage");
+					});
 			})
 			.catch(err => {
 				clear();
 				if (Object.keys(err).length === 10) { //handle undefined
 					this.setState({ loading: false, errors: {global: err.desk_mess } });
 				}else{
-					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, harap cobalagi nanti'}});
+					this.setState({ loading: false });
 				}
-				this.props.navigation.navigate({
-					routeName: 'IndexSearch'
-				});
 			});
 	}
 

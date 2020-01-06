@@ -118,17 +118,16 @@ class ValidasiRegRek extends React.Component{
 			api.registrasi.registrasiGiro(payload)
 				.then(res => {
 					const { response_data1 } = res;
-					console.log(response_data1);
-					let parsing = response_data1.split('|');
+					let x = response_data1.split('|');
 					const payloadRes = {
-						userid: parsing[0],
-						pin: parsing[1],
-						nama: parsing[2],
-						nohp: parsing[3],
-						email: parsing[4],
-						imei: parsing[5],
-						norek: parsing[6],
+						userid: x[0],
+						username: x[1],
+						pinMd5: x[2],
+						nama: x[3],
+						nohp: x[4],
+						email: x[5]
 					};
+					
 					this.setState({ payloadRes });
 					this.saveToStorage(payloadRes)
 						.then(() => this.setState({ loading: false, saved: 200, desk_mess: res.desk_mess }))
