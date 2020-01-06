@@ -4,7 +4,7 @@ import styles from "./styles";
 import { Button } from '@ui-kitten/components';
 import Loader from "../../Loader";
 import Modal from "../../Modal";
-import { curdateTime } from "../../utils/helper";
+import { curdate } from "../../utils/helper";
 import api from "../../api";
 import Dialog from "react-native-dialog";
 
@@ -33,13 +33,13 @@ class ResultOrder extends React.Component{
 		const { deskripsiOrder } = params;
 		const { deskripsiPengirim } = params;
 		const { deskripsiPenerima } = params;
-		var idOrder = this.getRandomInt(10000000000, 99999999999);
-		idOrder 	= `QOB${idOrder}`;
-		let param1 = `${curdateTime()}|${idOrder}|USR9000001|001`;
+		//var idOrder = this.getRandomInt(10000000000, 99999999999);
+		// idOrder 	= `QOB${idOrder}`;
+		let param1 = `${curdate()}|01|999999999|-`;
 		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
 		let param3 = `${deskripsiPengirim.nama}|${deskripsiPengirim.alamat2}|${deskripsiPengirim.alamat}|-|${deskripsiPengirim.kota}|Jawa Barat|Indonesia|${deskripsiPengirim.kodepos}|${deskripsiPengirim.nohp}|${deskripsiPengirim.email}`;
 		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.alamat}|-|${deskripsiPenerima.kota}|Jawa Barat|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|${deskripsiPenerima.email}|-|-`;
-		let param5 = `0|0|60012345678|0`;
+		let param5 = `0|0|-|0`;
 		const payload = {
 			param1: param1,
 			param2: param2,
@@ -49,7 +49,7 @@ class ResultOrder extends React.Component{
 		};
 
 		console.log(payload);
-		this.setState({ payload, idOrder: idOrder });
+		this.setState({ payload });
 	}
 
 	getRandomInt = (min, max) => {
@@ -62,8 +62,10 @@ class ResultOrder extends React.Component{
 		this.setState({ loading: true, success: false });
 			api.qob.booking(this.state.payload)
 				.then(res => {
-					console.log(res);
-					this.setState({ loading: false, success: true });
+					const { response_data1 } = res;
+					let x = response_data1.split('|');
+					// let idOrder = x
+					this.setState({ loading: false, success: true, idOrder: x[3] });
 				})
 				.catch(err => {
 					// console.log(err);
@@ -134,8 +136,8 @@ class ResultOrder extends React.Component{
 							<Dialog.Container visible={this.state.visible}>
 								<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
 						        <Dialog.Description>
-						          	<Text>Nomor order   : {this.state.idOrder} {'\n'}</Text>
-						          	<Text>Jenis Kiriman : {params.deskripsiOrder.jenis}</Text>
+						          	Nomor order   : {this.state.idOrder} {'\n'}
+						          	Jenis Kiriman : {params.deskripsiOrder.jenis}
 						        </Dialog.Description>
 					          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
 					        </Dialog.Container>

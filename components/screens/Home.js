@@ -90,7 +90,7 @@ class Home extends React.Component {
 		const { userid, nohp, email, imei, norek, pin  } = this.state.localUser;
 		//val --> pin input
 		//pin --> response register (local storage)
-		const pinMd5 = md5.hex_md5(userid+val+nohp+email+email+pin);
+		const pinMd5 = md5.hex_md5(userid+val+nohp+email+email+'8b321770897ac2d5bfc26965d9bf64a1');
 		// console.log(pinMd5);
 		
 		const payload = {
@@ -98,23 +98,23 @@ class Home extends React.Component {
 		};
 		console.log(payload);
 		api.auth.login(payload)
-			// .then(res => {
-			// 	this.setState({ loading: false });
-			// 	this.props.navigation.navigate({
-			// 		routeName: 'IndexSearch'
-			// 	});
-			// })
-			// .catch(err => {
-			// 	clear();
-			// 	if (Object.keys(err).length === 10) { //handle undefined
-			// 		this.setState({ loading: false, errors: {global: err.desk_mess } });
-			// 	}else{
-			// 		this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, harap cobalagi nanti'}});
-			// 	}
-			// 	this.props.navigation.navigate({
-			// 		routeName: 'IndexSearch'
-			// 	});
-			// });
+			.then(res => {
+				this.setState({ loading: false });
+				this.props.navigation.navigate({
+					routeName: 'IndexSearch'
+				});
+			})
+			.catch(err => {
+				clear();
+				if (Object.keys(err).length === 10) { //handle undefined
+					this.setState({ loading: false, errors: {global: err.desk_mess } });
+				}else{
+					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, harap cobalagi nanti'}});
+				}
+				this.props.navigation.navigate({
+					routeName: 'IndexSearch'
+				});
+			});
 	}
 
 	render() {
