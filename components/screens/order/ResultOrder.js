@@ -47,6 +47,8 @@ class ResultOrder extends React.Component{
 			param4: param4,
 			param5: param5
 		};
+
+		console.log(payload);
 		this.setState({ payload, idOrder: idOrder });
 	}
 
@@ -60,10 +62,12 @@ class ResultOrder extends React.Component{
 		this.setState({ loading: true, success: false });
 			api.qob.booking(this.state.payload)
 				.then(res => {
+					console.log(res);
 					this.setState({ loading: false, success: true });
 				})
 				.catch(err => {
 					// console.log(err);
+					console.log(err);
 					if (Object.keys(err).length === 10) {
 						this.setState({ loading: false, errors: {global: err.desk_mess }});	
 					}else{
