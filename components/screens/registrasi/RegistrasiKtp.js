@@ -13,7 +13,7 @@ import tujuan from "../../json/tujuan";
 import Loader from "../../Loader";
 import md5 from "react-native-md5";
 import { convertDate } from "../../utils/helper";
-import { registerKtp } from "../../../actions/register";
+import { registerKtp, saveRegister } from "../../../actions/register";
 import Modal from "../../Modal";
 import Constants from 'expo-constants';
 
@@ -66,7 +66,9 @@ class RegistrasiKtp extends React.Component{
 		errorsState: {},
 		loading: false,
 		modal: true,
-		visible: false
+		visible: false,
+		saved: null,
+		responseText: ''
 	}
 
 	usernameRef = React.createRef();
@@ -172,6 +174,7 @@ class RegistrasiKtp extends React.Component{
 
 			this.props.registerKtp(payload)
 				.then(res => {
+					console.log(res);
 					const { response_data1 } = res;
 					const x = response_data1.split('|');
 					const toSave = {
@@ -185,12 +188,20 @@ class RegistrasiKtp extends React.Component{
 
 					this.saveToStorage(toSave)
 						.then(() => {
-							this.setState({ loading: false, errorsState: {}, visible: false });
-							alert(res.desk_mess);
+							this.setState({ 
+								loading: false, 
+								errorsState: {}, 
+								visible: false, 
+								saved: 200,
+								responseText: res.desk_mess
+							});
+							//save to redux store
+							this.props.saveRegister(toSave);
 						}).catch(err => alert("failed saving data to storage"));
 
 				})
 				.catch(err => {
+					console.log(err);
 					this.setState({ 
 						loading: false, 
 						errorsState: {
@@ -234,16 +245,29 @@ class RegistrasiKtp extends React.Component{
 
 	render(){
 		const { ktp } = this.props.dataktp;
-		const { validateMother, bug, data, secureTextEntry, errorsState, loading } = this.state;
+		const { validateMother, bug, data, secureTextEntry, errorsState, loading, saved } = this.state;
 		return(
 			<SafeAreaView>
 				<Loader loading={loading} />
+				
 				{ errorsState.global && 
 					<Modal 
 						loading={this.state.visible} 
 						text={errorsState.global} 
 						handleClose={() => this.setState({ visible: false })}
-					/>}
+					/> }
+
+				{ saved === 200 && 
+					<Modal 
+						loading={true}
+						text={this.state.responseText}
+						handleClose={() => {
+							this.setState({ saved: null });
+							this.props.navigation.navigate({
+								routeName: 'Home'
+							});
+						}}
+					/> }
 				<KeyboardAvoidingView 
 					behavior="padding" 
 					style={styles.container}
@@ -264,7 +288,6 @@ class RegistrasiKtp extends React.Component{
 								value={validateMother.text}
 								onChangeText={this.onChange}
 								autoFocus
-								size='small'
 								status={bug.validate && 'danger' }
 							/>
 							{ bug.validate && <Text style={styles.labelErr}>{bug.validate}</Text> }
@@ -274,10 +297,8 @@ class RegistrasiKtp extends React.Component{
 								labelStyle={styles.label}
 								value={ktp.fullname}
 								disabled={true}
-								size='small'
 							/>
 							<Button 
-								size='small' 
 								style={styles.button}
 								onPress={this.onValidate}
 								disabled={validateMother.success}
@@ -291,7 +312,6 @@ class RegistrasiKtp extends React.Component{
 										value={data.username}
 										labelStyle={styles.label}
 										onChangeText={(e) => this.onChangeText(e, this.usernameRef)}
-										size='small'
 										status={errorsState.username && 'danger' }
 										onSubmitEditing={() => this.passwordRef.current.focus() }
 									/>
@@ -302,16 +322,27 @@ class RegistrasiKtp extends React.Component{
 									  labelStyle={styles.label}
 									  label='Password'
 									  name='password'
-									  size='small'
 									  placeholder='********'
 									  icon={this.renderIcon}
 									  status={errorsState.password && 'danger'}
 									  secureTextEntry={secureTextEntry}
 									  onIconPress={this.onIconPress}
 									  onChangeText={(e) => this.onChangeText(e, this.passwordRef)}
-									  onSubmitEditing={() => this.nmOlshopRef.current.focus() }
+									  onSubmitEditing={() => this.namaPanggilanRef.current.focus() }
 									/>
 									{ errorsState.password && <Text style={styles.labelErr}>{errorsState.password}</Text> }
+									<Input
+								    	ref={this.namaPanggilanRef}
+								    	name='namaPanggilan'
+										placeholder='Masukan nama panggilan anda'
+										label='Nama Panggilan'
+										value={data.namaPanggilan}
+										labelStyle={styles.label}
+										onChangeText={(e) => this.onChangeText(e, this.namaPanggilanRef)}
+										status={errorsState.namaPanggilan && 'danger'}
+										onSubmitEditing={() => this.nmOlshopRef.current.focus() }
+									/>
+									{ errorsState.namaPanggilan && <Text style={styles.labelErr}>{errorsState.namaPanggilan}</Text> }
 									<Input
 								    	ref={this.nmOlshopRef}
 										placeholder='Masukan nama online shop'
@@ -321,23 +352,9 @@ class RegistrasiKtp extends React.Component{
 										labelStyle={styles.label}
 										onChangeText={(e) => this.onChangeText(e, this.nmOlshopRef)}
 										status={errorsState.nmOlshop && 'danger'}
-										size='small'
-										onSubmitEditing={() => this.namaPanggilanRef.current.focus() }
-									/>
-									{ errorsState.nmOlshop && <Text style={styles.labelErr}>{errorsState.nmOlshop}</Text> }
-									<Input
-								    	ref={this.namaPanggilanRef}
-								    	name='namaPanggilan'
-										placeholder='Masukan nama panggilan'
-										label='Nama Panggilan'
-										value={data.namaPanggilan}
-										labelStyle={styles.label}
-										onChangeText={(e) => this.onChangeText(e, this.namaPanggilanRef)}
-										status={errorsState.namaPanggilan && 'danger'}
-										size='small'
 										onSubmitEditing={() => this.noHpRef.current.focus() }
 									/>
-									{ errorsState.namaPanggilan && <Text style={styles.labelErr}>{errorsState.namaPanggilan}</Text> }
+									{ errorsState.nmOlshop && <Text style={styles.labelErr}>{errorsState.nmOlshop}</Text> }
 									<Input
 								    	ref={this.noHpRef}
 										placeholder='628/08 XXXX'
@@ -348,7 +365,6 @@ class RegistrasiKtp extends React.Component{
 										onChangeText={(e) => this.onChangeText(e, this.noHpRef)}
 										keyboardType='numeric'
 										status={errorsState.noHp && 'danger'}
-										size='small'
 										onSubmitEditing={() => this.npwpRef.current.focus() }
 									/>
 									{ errorsState.noHp && <Text style={styles.labelErr}>{errorsState.noHp}</Text> }
@@ -361,7 +377,6 @@ class RegistrasiKtp extends React.Component{
 									  value={data.npwp}
 									  onChangeText={(e) => this.onChangeText(e, this.npwpRef)}
 									  status={errorsState.npwp && 'danger'}
-									  size='small'
 									  onSubmitEditing={() => this.emailRef.current.focus() }
 									/>
 									{ errorsState.npwp && <Text style={styles.labelErr}>{errorsState.npwp}</Text> }
@@ -373,7 +388,6 @@ class RegistrasiKtp extends React.Component{
 									  labelStyle={styles.label}
 									  placeholder='example@example.com'
 									  onChangeText={(e) => this.onChangeText(e, this.emailRef)}
-									  size='small'
 									  status={errorsState.email && 'danger'}
 									  onSubmitEditing={() => this.kodeposRef.current.focus() }
 									/>
@@ -388,14 +402,13 @@ class RegistrasiKtp extends React.Component{
 									  labelStyle={styles.label}
 									  onChangeText={(e) => this.onChangeText(e, this.kodeposRef)}
 									  status={errorsState.kodepos && 'danger'}
-									  size='small'
 									/>
 									{ errorsState.kodepos && <Text style={styles.labelErr}>{errorsState.kodepos}</Text> }
 									<Select
-								    	label='Kepercayaan'
+								    	label='Agama'
 								        data={kepercayaan}
 								        labelStyle={styles.label}
-								        placeholder='Pilih Kepercayaan'
+								        placeholder='Pilih agama'
 								        onSelect={this.onSelectText}
 								        status={errorsState.kepercayaan && 'danger'}
 								    />
@@ -446,7 +459,6 @@ class RegistrasiKtp extends React.Component{
 								    />
 								    { errorsState.tujuan && <Text style={styles.labelErr}>{errorsState.tujuan}</Text> }
 									<Button 
-										size='small' 
 										style={styles.button}
 										onPress={this.onSubmit}
 									>Daftar</Button>
@@ -466,4 +478,4 @@ function mapStateToProps(state) {
 }
 
 
-export default connect(mapStateToProps, { registerKtp })(RegistrasiKtp);
+export default connect(mapStateToProps, { registerKtp, saveRegister })(RegistrasiKtp);

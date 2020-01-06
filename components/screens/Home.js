@@ -23,53 +23,64 @@ class Home extends React.Component {
 		pin: '',
 		loading: false,
 		errors: {},
-		localUser: {}
-	}
-
-	async componentDidMount(){
-		const value 	= await AsyncStorage.getItem('qobUserPrivasi');
-		const toObje 	= JSON.parse(value);
-		if (!value) { //handle null
-			this.setState({
-				localUser: {
-					email: '-',
-					nama: '-',
-					nohp: '-',
-					pin: '-',
-					userid: '-',
-					username: '-'
-				}
-			});
-		}else{
-			this.setState({
-				localUser: {
-					email: toObje.email,
-					nama: toObje.nama,
-					nohp: toObje.nohp,
-					pin: toObje.pinMd5,
-					userid: toObje.userid,
-					username: toObje.username
-				}
-			});
+		localUser: {
+			email: '-',
+			nama: '-',
+			nohp: '-',
+			pin: '-',
+			userid: '-',
+			username: '-'
 		}
 	}
 
-	// async componentDidMount(){
-	// 	const payload = '440000396|malangdistro|e10adc3949ba59abbe56e057f20f883e|MARTIN NUGROHO PARAPAT|082234224784|mr.mnp007@gmail.com';
-	// 	const x = payload.split('|');
-	// 	const toSave = {
-	// 		userid: x[0],
-	// 		username: x[1],
-	// 		pinMd5: x[2],
-	// 		nama: x[3],
-	// 		nohp: x[4],
-	// 		email: x[5]
-	// 	};
+	async componentDidMount(){
+		const { session } = this.props;
+		//handle after register
+		//user can login without close app first
+		if (Object.keys(session).length === 0) { //if session is null then call from storage
+			const value 	= await AsyncStorage.getItem('qobUserPrivasi');
+			const toObje 	= JSON.parse(value);
+			if (value) { //only storage not empty
+				this.setState({
+					localUser: {
+						email: toObje.email,
+						nama: toObje.nama,
+						nohp: toObje.nohp,
+						pin: toObje.pinMd5,
+						userid: toObje.userid,
+						username: toObje.username
+					}
+				});
+			}
+		}else{
+			this.setState({
+				localUser: {
+					email: session.email,
+					nama: session.nama,
+					nohp: session.nohp,
+					pin: session.pinMd5,
+					userid: session.userid,
+					username: session.username
+				}
+			})
+		}
+	}
 
-	// 	this.saveToStorage(toSave)
-	// 		.then(() => console.log("oke"))
-	// 		.catch(err => console.log(err));
-	// }
+	UNSAFE_componentWillReceiveProps(nextProps){
+		if (nextProps.session) {
+			const { session } = nextProps;
+			this.setState({
+				localUser: {
+					email: session.email,
+					nama: session.nama,
+					nohp: session.nohp,
+					pin: session.pinMd5,
+					userid: session.userid,
+					username: session.username
+				}
+			})
+		}
+	}
 
 	async saveToStorage(payload){
 		try{
@@ -161,7 +172,7 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
 	return{
-		test: state.register
+		session: state.register.session
 	}
 }
 

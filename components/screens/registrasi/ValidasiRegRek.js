@@ -8,6 +8,8 @@ import styles from "./styles";
 import Dialog from "react-native-dialog";
 import Modal from "../../Modal";
 import Constants from 'expo-constants';
+import { connect } from "react-redux";
+import { saveRegister } from "../../../actions/register";
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -130,9 +132,12 @@ class ValidasiRegRek extends React.Component{
 					
 					this.setState({ payloadRes });
 					this.saveToStorage(payloadRes)
-						.then(() => this.setState({ loading: false, saved: 200, desk_mess: res.desk_mess }))
+						.then(() => {
+							this.setState({ loading: false, saved: 200, desk_mess: res.desk_mess });
+							this.props.saveRegister(payloadRes);
+						})
 						.catch(err => {
-							this.setState({ loading: false, saved: 500, errors: {global: err} });
+							this.setState({ loading: false, saved: 500, errors: {global: 'Failed saving data to storage'} });
 							console.log(err);
 						});
 				})
@@ -187,7 +192,16 @@ class ValidasiRegRek extends React.Component{
 					enabled
 					keyboardVerticalOffset = {Header.HEIGHT + 40}
 				>
-				{ saved === 200 && <Modal loading={true} text={desk_mess} handleClose={() => this.setState({ saved: 0 })} />}
+				{ saved === 200 && 
+					<Modal 
+						loading={true} 
+						text={desk_mess} 
+						handleClose={() => {
+							this.setState({ saved: 0 });
+							this.props.navigation.navigate({
+								routeName: 'Home'
+							});
+						}} />}
 				<ScrollView keyboardShouldPersistTaps='always'>
 					<Loader loading={this.state.loading} />
 					<View style={{padding: 10}}>
@@ -339,4 +353,4 @@ class ValidasiRegRek extends React.Component{
 	}
 }
 
-export default ValidasiRegRek;
+export default  connect(null, { saveRegister })(ValidasiRegRek);
