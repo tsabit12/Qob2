@@ -118,6 +118,7 @@ class ValidasiRegRek extends React.Component{
 			api.registrasi.registrasiGiro(payload)
 				.then(res => {
 					const { response_data1 } = res;
+					console.log(response_data1);
 					let parsing = response_data1.split('|');
 					const payloadRes = {
 						userid: parsing[0],

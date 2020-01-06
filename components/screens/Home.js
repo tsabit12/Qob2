@@ -1,4 +1,3 @@
-// const response = '440000347|8a266d4bad3552473f2de193283a59c5|IKHSAN FANANI|085220135077|Ikhsan.fanani@gmail.com|12345678|0000000018';
 import React from "react";
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
@@ -9,6 +8,11 @@ import { Button, Input } from '@ui-kitten/components';
 import Loader from "../Loader";
 import Modal from "../Modal";
 import PinView from 'react-native-pin-view';
+import md5 from "react-native-md5";
+import Constants from 'expo-constants';
+
+const fuckingResponse = '440000370|09755027ff7ac792bba13fe05ac69472|YUYUS NURKAMAL|087736967892|tsabit830@gmail.com|-|-';
+
 
 class Home extends React.Component {
 	static navigationOptions = {
@@ -28,6 +32,7 @@ class Home extends React.Component {
 	async componentDidMount(){
 		const value = await AsyncStorage.getItem('qobUserPrivasi');
 		const toObje = JSON.parse(value);
+		// console.log(toObje);
 		if (!value) { //handle null
 			this.setState({
 				localUser: {
@@ -53,6 +58,20 @@ class Home extends React.Component {
 				}
 			});
 		}
+		// const gob = fuckingResponse.split('|');
+		// const payload = {
+		// 	email: gob[4],
+		// 	nohp: gob[3],
+		// 	nama: gob[2],
+		// 	pin: gob[1],
+		// 	userid: gob[0],
+		// 	imei: gob[5],
+		// 	norek: gob[6]
+		// }
+
+		// // console.log(payload);
+		// this.saveToStorage(payload)
+		// 	.then(() => console.log("oke"));
 	}
 
 	async saveToStorage(payload){
@@ -67,25 +86,35 @@ class Home extends React.Component {
 
 	onComplete = (val, clear) => {
 		this.setState({ loading: true });
-		const { userid, nohp, email, imei, norek  } = this.state.localUser;
+
+		const { userid, nohp, email, imei, norek, pin  } = this.state.localUser;
+		//val --> pin input
+		//pin --> response register (local storage)
+		const pinMd5 = md5.hex_md5(userid+val+nohp+email+email+pin);
+		// console.log(pinMd5);
+		
 		const payload = {
-			param1: `${userid}|${val}|${nohp}|${email}|${imei}|${norek}`
+			param1: `${userid}|${pinMd5}|${nohp}|${email}|${Constants.deviceId}|0000000042`
 		};
+		console.log(payload);
 		api.auth.login(payload)
-			.then(res => {
-				this.setState({ loading: false });
-				this.props.navigation.navigate({
-					routeName: 'IndexSearch'
-				});
-			})
-			.catch(err => {
-				clear();
-				if (Object.keys(err).length === 10) { //handle undefined
-					this.setState({ loading: false, errors: {global: err.desk_mess } });
-				}else{
-					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, harap cobalagi nanti'}});
-				}
-			});
+			// .then(res => {
+			// 	this.setState({ loading: false });
+			// 	this.props.navigation.navigate({
+			// 		routeName: 'IndexSearch'
+			// 	});
+			// })
+			// .catch(err => {
+			// 	clear();
+			// 	if (Object.keys(err).length === 10) { //handle undefined
+			// 		this.setState({ loading: false, errors: {global: err.desk_mess } });
+			// 	}else{
+			// 		this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, harap cobalagi nanti'}});
+			// 	}
+			// 	this.props.navigation.navigate({
+			// 		routeName: 'IndexSearch'
+			// 	});
+			// });
 	}
 
 	render() {
