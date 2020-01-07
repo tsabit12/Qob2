@@ -96,7 +96,7 @@ class IndexOrder extends React.Component{
 						      placeholder='Laptop, baju, sepatu dll'
 						      ref={this.jenisRef}
 						      name='jenis'
-						      label='Jenis kiriman'
+						      label='Isi kiriman'
 						      labelStyle={styles.label}
 						      style={styles.input}
 						      value={data.jenis}

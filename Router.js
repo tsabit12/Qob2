@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-native'
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
+import { connect } from "react-redux";
 import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/registrasi/IndexRegister";
 import { ApplicationProvider, Layout, IconRegistry, Icon, Avatar } from '@ui-kitten/components';
@@ -30,14 +31,11 @@ import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran
 import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
 
 import Barcode from './components/screens/helper/barcode';
-//import { createDrawerNavigator } from "react-navigation-drawer";
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
-//import Akun from "./components/screens/Akun";
 import HistoryPembayaran from "./components/screens/HistoryPembayaran";
 import DetailTrans from "./components/screens/DetailTrans";
 import CekTarif from "./components/screens/CekTarif";
-//import DrawerComponent from "./components/DrawerComponent";
 import LupaPin from "./components/screens/LupaPin";
 import ListOrder from "./components/screens/ListOrder";
 
@@ -113,21 +111,6 @@ const RouteTab = createMaterialTopTabNavigator(
 );
 
 const AppNavigator = createStackNavigator({
-  		Home: { 
-  			screen: Home
-  		},
-  		IndexRegister:{
-  			screen: IndexRegister
-  		},
-      RegistrasiKtp: {
-        screen: RegistrasiKtp
-      },
-      RegistrasiRek: {
-        screen: ValidasiRekening
-      },
-      ValidasiRegRek: {
-        screen: ValidasiRegRek
-      },
       Helper: {
         screen: IndexHelper
       },
@@ -214,28 +197,57 @@ const AppNavigator = createStackNavigator({
       CekTarif: {
         screen: CekTarif
       },
-      LupaPin: {
-        screen: LupaPin,
-        navigationOptions: {
-          header: null
-        }
-      },
       ListOrder: {
         screen: ListOrder
       },
   	},{
-  	initialRouteName: 'Home'
+  	initialRouteName: 'IndexSearch'
+});
+
+const LoginNavigator = createStackNavigator({
+  Home: { 
+    screen: Home
+  },
+  IndexRegister:{
+    screen: IndexRegister
+  },
+  RegistrasiRek: {
+    screen: ValidasiRekening
+  },
+  LupaPin: {
+    screen: LupaPin,
+    navigationOptions: {
+      header: null
+    }
+  },
+  RegistrasiKtp: {
+    screen: RegistrasiKtp
+  },
+  ValidasiRegRek: {
+    screen: ValidasiRegRek
+  },
+  initialRouteName: 'Home'
 });
  
 const AppContainer = createAppContainer(AppNavigator);
 
-const Router = () => (
-  <React.Fragment>
-    <IconRegistry icons={EvaIconsPack} />
-  	<ApplicationProvider mapping={mapping} theme={lightTheme}>
-      <AppContainer />
-    </ApplicationProvider>
-  </React.Fragment>
-);
+const LoginContainer = createAppContainer(LoginNavigator);
 
-export default Router;
+const Router = ({ isLoggedIn }) => {
+  return(
+    <React.Fragment>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider mapping={mapping} theme={lightTheme}>
+        { isLoggedIn ? <AppContainer /> : <LoginContainer />} 
+      </ApplicationProvider>
+    </React.Fragment>
+  )
+}
+
+function mapStateToProps(state) {
+  return{
+    isLoggedIn: state.auth.logged
+  }
+}
+
+export default connect(mapStateToProps, null)(Router);

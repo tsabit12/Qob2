@@ -149,7 +149,7 @@ class ResultOrder extends React.Component{
 								<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
 						        <Dialog.Description>
 							          	Nomor order   : {this.state.idOrder} {'\n'}
-							          	Jenis Kiriman : {params.deskripsiOrder.jenis}
+							          	Isi Kiriman   : {params.deskripsiOrder.jenis}
 						        </Dialog.Description>
 					          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
 					        </Dialog.Container>
