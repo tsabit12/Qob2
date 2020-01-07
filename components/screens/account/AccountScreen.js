@@ -79,9 +79,9 @@ class AccountScreen extends React.Component{
 		const value 	= await AsyncStorage.getItem('qobUserPrivasi');
 		const toObj 	= JSON.parse(value);
 		let userid 		= toObj.userid;
-		// this.props.getDetailUser(userid)
-		// 	.then(() => console.log("oke"))
-		// 	.catch(err => console.log(err));
+		this.props.getDetailUser(userid)
+			.then(() => console.log("oke"))
+			.catch(err => console.log(err));
 	}
 
 	render(){
