@@ -376,6 +376,7 @@ class RegistrasiKtp extends React.Component{
 									  placeholder='Masukan nomor NPWP'
 									  value={data.npwp}
 									  onChangeText={(e) => this.onChangeText(e, this.npwpRef)}
+									  keyboardType='numeric'
 									  status={errorsState.npwp && 'danger'}
 									  onSubmitEditing={() => this.emailRef.current.focus() }
 									/>

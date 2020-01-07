@@ -117,6 +117,12 @@ class Home extends React.Component {
 					username: x2[0],
 					nama: x2[1]
 				};
+				
+				this.props.navigation.navigate({
+					params: {
+						resGenerate: payload2
+					}
+				})
 
 				this.saveToStorage(payload2)
 					.then(() => {

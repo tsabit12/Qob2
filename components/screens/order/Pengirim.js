@@ -150,7 +150,7 @@ class Pengirim extends React.Component{
 						    <Input 
 						    	placeholder='Alamat (kota/kab/kec/kel)'
 						    	ref={this.alamatRef}
-						    	label='Alamat'
+						    	label='Kota / Kab.'
 						    	labelStyle={styles.label}
 						    	style={{paddingTop: 7}}
 						    	value={data.alamat}

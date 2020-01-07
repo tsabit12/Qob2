@@ -78,6 +78,7 @@ class IndexRegister extends React.Component{
 						placeholder='Masukan nomor KTP'
 						value={nik}
 						onChangeText={this.onChange}
+						keyboardType='numeric'
 						status={errors.nik && 'danger' }
 					/>
 					{ errors.nik && <Text style={{color: 'red'}}>{errors.nik}</Text>}
