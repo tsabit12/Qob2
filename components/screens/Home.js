@@ -10,6 +10,7 @@ import Modal from "../Modal";
 import PinView from 'react-native-pin-view';
 import md5 from "react-native-md5";
 import Constants from 'expo-constants';
+import { setLoggedIn } from "../../actions/auth";
 
 class Home extends React.Component {
 	static navigationOptions = {
@@ -117,9 +118,7 @@ class Home extends React.Component {
 				this.saveToStorage(payload2)
 					.then(() => {
 						this.setState({ loading: false });
-						this.props.navigation.navigate({
-							routeName: 'IndexSearch'
-						});
+						this.props.setLoggedIn();
 					}).catch(err => {
 						this.setState({ loading: false });	
 						alert("Failed save data to storage");
@@ -176,7 +175,7 @@ function mapStateToProps(state) {
 	}
 }
 
-export default connect(mapStateToProps, null)(Home);
+export default connect(mapStateToProps, { setLoggedIn })(Home);
 
 const styles = StyleSheet.create({
 	input: {
