@@ -1,7 +1,8 @@
-import { USER_LOGGED_IN } from "../types";
+import { USER_LOGGED_IN, GET_DETAIL_USER } from "../types";
 
 const initialState = {
-	logged: false
+	logged: false,
+	user: {}
 }
 
 export default function auth(state=initialState, action={}){
@@ -10,6 +11,11 @@ export default function auth(state=initialState, action={}){
 			return{
 				...state,
 				logged: true
+			}
+		case GET_DETAIL_USER:
+			return{
+				...state,
+				user: action.user
 			}
 		default: return state;
 	}

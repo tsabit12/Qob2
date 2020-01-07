@@ -9,4 +9,8 @@ export default StyleSheet.create({
 	text: {
 	  	fontFamily: 'open-sans-reg'
 	},
+	labelInformasi: {
+		fontSize: 13,
+		fontFamily: 'open-sans-reg',
+	},
 })

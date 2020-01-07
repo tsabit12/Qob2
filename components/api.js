@@ -216,5 +216,20 @@ export default{
 				return Promise.reject(res.data);
 			}
 		})
+	},
+	user: {
+		getDetail: (userid) => axios.post(url, {
+			messtype: '210',
+			param1: userid,
+			hashing: getHasing('210', userid)
+		}, config)
+		.then(res => {
+			const { rc_mess } = res.data;
+			if (rc_mess === '00') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
+		})
 	}
 }
