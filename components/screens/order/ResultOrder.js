@@ -35,11 +35,11 @@ class ResultOrder extends React.Component{
 		const { deskripsiPenerima } = params;
 		var idOrder = this.getRandomInt(10000000000, 99999999999);
 		idOrder 	= `QOB${idOrder}`;
-		let param1 = `${curdateTime()}|${idOrder}|USR9000001|001`;
+		let param1 = `${curdateTime()}|${idOrder}|440000347|001`;
 		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
 		let param3 = `${deskripsiPengirim.nama}|${deskripsiPengirim.alamat2}|${deskripsiPengirim.alamat}|-|${deskripsiPengirim.kota}|Jawa Barat|Indonesia|${deskripsiPengirim.kodepos}|${deskripsiPengirim.nohp}|${deskripsiPengirim.email}`;
 		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.alamat}|-|${deskripsiPenerima.kota}|Jawa Barat|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|${deskripsiPenerima.email}|-|-`;
-		let param5 = `0|0|60012345678|0`;
+		let param5 = `1|0|-|0`;
 		const payload = {
 			param1: param1,
 			param2: param2,
