@@ -19,12 +19,8 @@ class Pembayaran extends Component {
         loading: false,
         errors: {},
         localUser: {
-			email: '-',
-			nama: '-',
-			nohp: '-',
-			pin: '-',
-			userid: '-',
-            username: '-'
+			norek: '-',
+			userid: '-'
         }
     }
 
@@ -37,16 +33,14 @@ class Pembayaran extends Component {
     }
     
     async componentDidMount() {
-        const value     = await AsyncStorage.getItem('qobUserPrivasi');
+        const value     = await AsyncStorage.getItem('sessionLogin');
+        const value2     = await AsyncStorage.getItem('qobUserPrivasi');
         const toObje    = JSON.parse(value);
+        const toObje2    = JSON.parse(value2);
         this.setState({
             localUser: {
-                email: toObje.email,
-                nama: toObje.nama,
-                nohp: toObje.nohp,
-                pin: toObje.pinMd5,
-                userid: toObje.userid,
-                username: toObje.username
+                userid: toObje2.userid,
+                norek: toObje.norek
             }
         });
     }
@@ -55,7 +49,7 @@ class Pembayaran extends Component {
             this.setState({ loading: true });
             const { nominal , localUser } = this.state;
             const payload = { 
-                param1: `${localUser.userid}|C000007225|${nominal}`
+                param1: `${localUser.userid}|${localUser.norek}|${nominal}`
             }
             console.log(payload);
 

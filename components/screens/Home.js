@@ -41,6 +41,7 @@ class Home extends React.Component {
 		if (Object.keys(session).length === 0) { //if session is null then call from storage
 			const value 	= await AsyncStorage.getItem('qobUserPrivasi');
 			const toObje 	= JSON.parse(value);
+			// console.log(toObje);
 			if (value) { //only storage not empty
 				this.setState({
 					localUser: {
@@ -106,23 +107,27 @@ class Home extends React.Component {
 		
 		api.auth.login(payload)
 			.then(res => {
-				const { response_data4, response_data1 } = res;
+				const { response_data4, response_data1, response_data5 } = res;
 				const x 	= response_data4.split('|');
 				const x2 	= response_data1.split('|'); 
+				// const x3 	= response_data5.split('|'); 
 				const payload2 = {
+					norek: x2[0],
+					nama: x2[1],
 					namaOl: x[0],
 					alamatOl: x[1],
-					tempatLahir: x[2],
+					kota: x[2],
 					kodepos: x[3],
-					username: x2[0],
-					nama: x2[1]
+					saldo: response_data5
 				};
-				
-				this.props.navigation.navigate({
-					params: {
-						resGenerate: payload2
-					}
-				})
+
+				console.log(payload2);
+
+				// this.props.navigation.navigate({
+				// 	params: {
+				// 		resGenerate: payload2
+				// 	}
+				// })
 
 				this.saveToStorage(payload2)
 					.then(() => {
@@ -147,6 +152,7 @@ class Home extends React.Component {
 		const { navigation, test } = this.props;
     	const { push } = navigation; 
     	const { errors, loading, localUser } = this.state;
+    	// console.log(localUser);
     	
 		return (
 			<React.Fragment>
@@ -171,7 +177,7 @@ class Home extends React.Component {
 							onPress={() => this.props.navigation.navigate({
 								routeName: 'LupaPin'
 							})}
-						>Lupa pin saya</Text>
+						>Bantuan</Text>
 			   	</ImageBackground>
 		   	</React.Fragment>
 		);

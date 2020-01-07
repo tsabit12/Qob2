@@ -1,12 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, AsyncStorage } from "react-native";
 import { SafeAreaView } from 'react-navigation';
-import { Button, Input } from '@ui-kitten/components';
+import { Button, Input, Select } from '@ui-kitten/components';
 import Loader from "../Loader";
 import api from "../api";
 import Modal from "../Modal";
 import Dialog from "react-native-dialog";
 import Constants from 'expo-constants';
+import { connect } from "react-redux";
+import { saveRegister } from "../../actions/register";
 
 const MessageSucces = ({ message, visible, onPress, backHome }) => (
 	<View>
@@ -20,7 +22,13 @@ const MessageSucces = ({ message, visible, onPress, backHome }) => (
           	onPress={() => backHome() } />
         </Dialog.Container>
     </View>
-)
+);
+
+const optionsData = [
+  { text: 'Lupa pin', value: 1 },
+  { text: 'Pulihkan Akun', value: 2 },
+  { text: 'Buka Blokir', value: 3 },
+];
 
 class LupaPin extends React.Component{
 
@@ -47,7 +55,8 @@ class LupaPin extends React.Component{
 			messageVer: ''
 		},
 		visible: false,
-		kode: ''
+		kode: '',
+		jenis: 0
 	}
 
 	// async componentDidMount(){
@@ -64,23 +73,25 @@ class LupaPin extends React.Component{
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
 
 	onSubmit = () => {
-		const errors = this.validate(this.state.data);
+		let jenis		= this.state.jenis;
+		const errors = this.validate(this.state.data, jenis);
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
 			this.setState({ loading: true });
 
 			const { data } 	= this.state;
-			let jenis		= 1;
 
 			const payload = {
 				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
 			};
 			api.registrasi.lupaPin(payload)
 				.then(res => {
-					// console.log(res);
-					//console.log("oke");
+					console.log(res);
+					console.log(payload);
 					this.setState({ loading: false, visible: true, success: { status: true, message: res.desk_mess }});
 				}).catch(err => {
+					console.log(err);
+					console.log(payload);
 					if (Object.keys(err).length === 10) {
 						this.setState({ loading: false, errors: { global: err.desk_mess } });
 					}else{
@@ -90,8 +101,9 @@ class LupaPin extends React.Component{
 		}
 	}
 
-	validate = (data) => {
+	validate = (data, jenis) => {
 		const errors = {};
+		if (jenis === 0) errors.jenis = "Jenis belum dipilih";
 		if (!data.userid) errors.userid = "Masukan userid";
 		if (!data.nama) errors.nama = "Masukan nama";
 		if (!data.nohp) errors.nohp = "Masukan nomor handphone";
@@ -132,7 +144,7 @@ class LupaPin extends React.Component{
 		if (Object.keys(errors).length === 0) {
 			this.setState({ loading: true });
 			const { data, kode } = this.state;
-			let jenis = 1;
+			let jenis = this.state.jenis;
  			const payload = {
 				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${kode}|${jenis}`
 			};
@@ -140,19 +152,26 @@ class LupaPin extends React.Component{
 				.then(res => {
 					//return res.data
 					// console.log(res);
-					const { response_data1 } = res;
+					const { response_data2 } = res;
 					let parsing = response_data2.split('|');
 					const payloadRes = {
+						// userid: parsing[0],
+						// pin: parsing[1],
+						// nama: parsing[2],
+						// nohp: parsing[3],
+						// email: parsing[4],
+						// imei: parsing[5],
+						// norek: parsing[6],
+
 						userid: parsing[0],
-						pin: parsing[1],
-						nama: parsing[2],
-						nohp: parsing[3],
-						email: parsing[4],
-						imei: parsing[5],
-						norek: parsing[6]
+						username: parsing[1],
+						pinMd5: parsing[2],
+						nama: parsing[3],
+						nohp: parsing[4],
+						email: parsing[5]
 					};
 					this.saveToStorage(payloadRes)
-						.then(() => 
+						.then(() => {
 							this.setState({ 
 								loading: false, 
 								success: {
@@ -161,9 +180,12 @@ class LupaPin extends React.Component{
 									messageVer: res.response_data1
 								},
 								visible: true
-							}))
-						.catch(() => alert("Oppps, something wrong with storage"));
+							})
+							this.props.saveRegister(payloadRes);
+						}).catch(() => alert("Oppps, something wrong with storage"));
 				}).catch(err => {
+					//090635
+					console.log(err);
 					if (Object.keys(err).length === 10) {
 						this.setState({ loading: false });
 						alert(err.desk_mess);
@@ -180,6 +202,8 @@ class LupaPin extends React.Component{
 		if (!kode) errors.kode = "Masukan kode verifikasi";
 		return errors;
 	}
+
+	onsetSelectedOption = (e) => this.setState({ jenis: e.value });
 
 	render(){
 		const { data, errors, loading, success, visible } = this.state;
@@ -200,6 +224,17 @@ class LupaPin extends React.Component{
 						/> }
 					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
 					<SafeAreaView style={styles.container}>
+						<Select
+							label='Jenis Pemulihan'
+							labelStyle={styles.label}
+					        data={optionsData}
+					        style={{paddingBottom: 10 }}
+					        // selectedOption={selectedOption}
+					        onSelect={this.onsetSelectedOption}
+					        status={errors.jenis && 'danger'}
+					        size='medium'
+					    />
+					    { errors.jenis && <Text style={styles.labelErr}>{errors.jenis}</Text>}
 						<View>
 							<Input 
 								label='Userid'
@@ -282,7 +317,7 @@ class LupaPin extends React.Component{
 }
 
 
-export default LupaPin;
+export default connect(null, { saveRegister })(LupaPin);
 
 const styles = StyleSheet.create({
 	container: {
