@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Image } from "react-native";
+import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Image, Platform } from "react-native";
 import { Layout, Input, Button, ListItem } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
 import Loader from "../Loader";
 import api from "../api";
+import { SafeAreaView } from 'react-navigation';
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -11,24 +12,30 @@ const Judul = ({ navigation }) => (
 	</View>
 );
 
-const ListTarif = () => (
-	<View style={{paddingBottom: 10}}>
-		<ListItem
-		    title='Rp 100.000'
-		    description='PAKET KILAT KHUSUS (2-4 Hari)'
-		/>
-		<ListItem
-		    title='Rp 240.000'
-		    description='EXPRESS NEXT DAY BARANG (1 Hari)'
-		/>
-		<ListItem
-		    title='Rp 120.000'
-		    description='PAKETPOS VALUABLE GOODS (3 Hari)'
-		/>
-		<ListItem
-		    title='Rp 120.000'
-		    description='PAKETPOS DANGEROUS GOODS (3 Hari)'
-		/>
+const numberWithCommas = (number) => {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+const ListTarif = ({ list }) => (
+	<View>
+		{list.map((x, i) => {
+			if (x.length > 0) {
+				const parsing = x.split('-');
+				var tarif 	= parsing[2];
+				tarif = tarif.split('*');
+				tarif = tarif[1];
+				tarif = tarif.split('|');
+				// console.log(tarif[4]);
+				let totalTarif = tarif[4];
+				return(
+					<ListItem
+						key={i}
+					    title={`Rp. ${numberWithCommas(totalTarif)}`}
+					    description={`${parsing[0]} ${parsing[1]}`}
+					/>
+				);
+			}
+		})}
 	</View>
 );
 
@@ -69,18 +76,25 @@ class CekTarif extends React.Component{
 	}
 
 	onClick = () => {
-		// this.setState({ loading: true, success: false });
-		// setTimeout(() => this.setState({loading: false, success: true }), 1000);	
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
 			this.setState({ loading: true });
-			setTimeout(() => this.setState({loading: false, success: true }), 1000);	
 			const payload = {
 				kodePosA: this.state.data.kodeposA,
 				kodePosB: this.state.data.kodeposB,
 				berat: this.state.data.nilai
 			}
+
+			api.qob.getTarif(payload)
+				.then(res => {
+					this.setState({ loading: false });
+					const response = res.split('#');
+					this.setState({ success: response });
+				})
+				.catch(err => {
+					this.setState({ loading: false, success:[], errors: {global: 'Data tarif tidak ditemukan'}});
+				});
 		}
 	}
 
@@ -96,7 +110,7 @@ class CekTarif extends React.Component{
 	}
 
 	onReset = () => this.setState({ 
-		success: false,
+		success: [],
 		data: {
 			kotaAsal: '',
 			kotaTujuan: '',
@@ -230,143 +244,149 @@ class CekTarif extends React.Component{
 		const { loading, success, data, errors, listAlamat1, show1, listAlamat2, show2 } = this.state;
 		// console.log(this.state.listAlamat1);
 		return(
-			<KeyboardAvoidingView 
-					style={{flex:1}} 
+			<SafeAreaView>
+				<KeyboardAvoidingView 
 					behavior="padding" 
-					keyboardVerticalOffset = {Header.HEIGHT + 40}
-					enabled
+					keyboardVerticalOffset={
+					  Platform.select({
+					     ios: () => 0,
+					     android: () => 90
+					  })()
+					}
 				>
-				<Loader loading={loading} />
-				<ScrollView keyboardShouldPersistTaps='always'>
-					<Layout style={styles.container}>
-						<View style={{padding: 4}}>
-							<Input
-						      placeholder='Kota/kab/kec/kel'
-						      ref={this.kotaAsalRef}
-						      name='kotaAsal'
-						      label='Kota Asal (Min 6 karakter)'
-						      labelStyle={styles.label}
-						      style={styles.input}
-						      value={data.kotaAsal}
-						      status={errors.kotaAsal && 'danger'}
-						      onChangeText={this.onChangeKotaA}
-						      icon={(style) => this.renderIcon(style,'A')}
-						    />
-						    { errors.kotaAsal && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaAsal}</Text>}
+					<Loader loading={loading} />
+					<ScrollView keyboardShouldPersistTaps='always'>
+						<Layout style={styles.container}>
+							<View style={{padding: 4}}>
+								<Input
+							      placeholder='Kota/kab/kec/kel'
+							      ref={this.kotaAsalRef}
+							      name='kotaAsal'
+							      label='Kota Asal (Min 6 karakter)'
+							      labelStyle={styles.label}
+							      style={styles.input}
+							      value={data.kotaAsal}
+							      status={errors.kotaAsal && 'danger'}
+							      onChangeText={this.onChangeKotaA}
+							      icon={(style) => this.renderIcon(style,'A')}
+							    />
+							    { errors.kotaAsal && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaAsal}</Text>}
 
-						    { listAlamat1.length > 0 && show1 && <ScrollView style={styles.scroll} nestedScrollEnabled={true}>
-							   	{ listAlamat1.map((x, i) => 
-							   		<ListItem
-							   			key={i}
-								    	style={{backgroundColor: '#d6d7da'}}
-								    	titleStyle={styles.listItemTitle}
-								    	descriptionStyle={styles.listItemDescription}
-								    	title={x.title}
-								    	onPress={() => this.onClickGet('A', x.title, x.kodepos, x.kota)}
-									/> )}
-						    </ScrollView> }
-						</View>
-						<View style={{padding: 4}}>
-							<Input
-						      placeholder='Kota/kab/kec/kel'
-						      ref={this.kotaTujuanRef}
-						      name='kotaTujuan'
-						      label='Kota Tujuan (Min 6 karakter)'
-						      labelStyle={styles.label}
-						      style={styles.input}
-						      value={data.kotaTujuan}
-						      status={errors.kotaTujuan && 'danger'}
-						      onChangeText={this.onChangeKotaB}
-						      icon={(style) => this.renderIcon(style,'B')}
-						    />
-						    { errors.kotaTujuan && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaTujuan}</Text>}
+							    { listAlamat1.length > 0 && show1 && <ScrollView style={styles.scroll} nestedScrollEnabled={true}>
+								   	{ listAlamat1.map((x, i) => 
+								   		<ListItem
+								   			key={i}
+									    	style={{backgroundColor: '#d6d7da'}}
+									    	titleStyle={styles.listItemTitle}
+									    	descriptionStyle={styles.listItemDescription}
+									    	title={x.title}
+									    	onPress={() => this.onClickGet('A', x.title, x.kodepos, x.kota)}
+										/> )}
+							    </ScrollView> }
+							</View>
+							<View style={{padding: 4}}>
+								<Input
+							      placeholder='Kota/kab/kec/kel'
+							      ref={this.kotaTujuanRef}
+							      name='kotaTujuan'
+							      label='Kota Tujuan (Min 6 karakter)'
+							      labelStyle={styles.label}
+							      style={styles.input}
+							      value={data.kotaTujuan}
+							      status={errors.kotaTujuan && 'danger'}
+							      onChangeText={this.onChangeKotaB}
+							      icon={(style) => this.renderIcon(style,'B')}
+							    />
+							    { errors.kotaTujuan && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaTujuan}</Text>}
 
-						     { listAlamat2.length > 0 && show2 && <ScrollView style={styles.scroll} nestedScrollEnabled={true}>
-							   	{ listAlamat2.map((x, i) => 
-							   		<ListItem
-							   			key={i}
-								    	style={{backgroundColor: '#d6d7da'}}
-								    	titleStyle={styles.listItemTitle}
-								    	title={x.title}
-								    	onPress={() => this.onClickGet('B', x.title, x.kodepos, x.kota)}
-									/> )}
-						    </ScrollView> }
-						</View>
-						<View style={styles.hitung}>
-						    <Input
-						      placeholder='XX (CM)'
-						      ref={this.panjangRef}
-						      label='Panjang'
-						      name='panjang'
-						      labelStyle={styles.label}
-						      style={styles.inputHitung}
-						      keyboardType='numeric'
-						      value={data.panjang}
-						      status={errors.panjang && 'danger'}
-						      onChangeText={(e) => this.onChange(e, this.panjangRef.current.props)}
-						      onSubmitEditing={() => {
-						      	this.lebarRef.current.focus();
-						      	this.setState({ errors: {...this.state.errors, panjang: undefined }})
-						      }}
-						    />
-						    <Input
-						      placeholder='XX (CM)'
-						      ref={this.lebarRef}
-						      label='Lebar'
-						      name='lebar'
-						      labelStyle={styles.label}
-						      style={styles.inputHitung}
-						      keyboardType='numeric'
-						      style={styles.inputHitung}
-						      value={data.lebar}
-						      status={errors.lebar && 'danger'}
-						      onChangeText={(e) => this.onChange(e, this.lebarRef.current.props)}
-						      onSubmitEditing={() => {
-						      	this.tinggiRef.current.focus();
-						      	this.setState({ errors: {...this.state.errors, lebar: undefined }})
-						      }}
-						    />
-						    <Input
-						      placeholder='XX (CM)'
-						      ref={this.tinggiRef}
-						      label='Tinggi'
-						      name='tinggi'
-						      labelStyle={styles.label}
-						      keyboardType='numeric'
-						      style={styles.inputHitung}
-						      value={data.tinggi}
-						      status={errors.tinggi && 'danger'}
-						      onChangeText={(e) => this.onChange(e, this.tinggiRef.current.props)}
-						      onSubmitEditing={() => {
-						      	this.nilaiRef.current.focus();
-						      	this.setState({ errors: {...this.state.errors, tinggi: undefined }})
-						      }}
-						    />
-						</View>
-						<View style={{padding: 4}}>
-							<Input
-						      placeholder='Masukan berat barang (GRAM)'
-						      ref={this.nilaiRef}
-						      name='nilai'
-						      label='Berat'
-						      keyboardType='numeric'
-						      labelStyle={styles.label}
-						      style={styles.input}
-						      value={data.nilai}
-						      status={errors.nilai && 'danger'}
-						      onChangeText={(e) => this.onChange(e, this.nilaiRef.current.props)}
-						      onSubmitEditing={() => this.onClick()}
-						    />
-						    { errors.nilai && <Text style={{fontSize: 12, color: 'red'}}>{errors.nilai}</Text>}
-						</View>
-						<View style={styles.button}>
-							<Button style={{margin: 2, flex: 1}} status='info' onPress={this.onClick}>Cek Tarif</Button>
-							{ success && <Button style={{margin: 2, flex: 1}} status='danger' onPress={this.onReset}>Reset</Button>}
-						</View>
-					</Layout>
-					{ success && <ListTarif /> }
-				</ScrollView>
-			</KeyboardAvoidingView>
+							     { listAlamat2.length > 0 && show2 && <ScrollView style={styles.scroll} nestedScrollEnabled={true}>
+								   	{ listAlamat2.map((x, i) => 
+								   		<ListItem
+								   			key={i}
+									    	style={{backgroundColor: '#d6d7da'}}
+									    	titleStyle={styles.listItemTitle}
+									    	title={x.title}
+									    	onPress={() => this.onClickGet('B', x.title, x.kodepos, x.kota)}
+										/> )}
+							    </ScrollView> }
+							</View>
+							<View style={styles.hitung}>
+							    <Input
+							      placeholder='XX (CM)'
+							      ref={this.panjangRef}
+							      label='Panjang'
+							      name='panjang'
+							      labelStyle={styles.label}
+							      style={styles.inputHitung}
+							      keyboardType='numeric'
+							      value={data.panjang}
+							      status={errors.panjang && 'danger'}
+							      onChangeText={(e) => this.onChange(e, this.panjangRef.current.props)}
+							      onSubmitEditing={() => {
+							      	this.lebarRef.current.focus();
+							      	this.setState({ errors: {...this.state.errors, panjang: undefined }})
+							      }}
+							    />
+							    <Input
+							      placeholder='XX (CM)'
+							      ref={this.lebarRef}
+							      label='Lebar'
+							      name='lebar'
+							      labelStyle={styles.label}
+							      style={styles.inputHitung}
+							      keyboardType='numeric'
+							      style={styles.inputHitung}
+							      value={data.lebar}
+							      status={errors.lebar && 'danger'}
+							      onChangeText={(e) => this.onChange(e, this.lebarRef.current.props)}
+							      onSubmitEditing={() => {
+							      	this.tinggiRef.current.focus();
+							      	this.setState({ errors: {...this.state.errors, lebar: undefined }})
+							      }}
+							    />
+							    <Input
+							      placeholder='XX (CM)'
+							      ref={this.tinggiRef}
+							      label='Tinggi'
+							      name='tinggi'
+							      labelStyle={styles.label}
+							      keyboardType='numeric'
+							      style={styles.inputHitung}
+							      value={data.tinggi}
+							      status={errors.tinggi && 'danger'}
+							      onChangeText={(e) => this.onChange(e, this.tinggiRef.current.props)}
+							      onSubmitEditing={() => {
+							      	this.nilaiRef.current.focus();
+							      	this.setState({ errors: {...this.state.errors, tinggi: undefined }})
+							      }}
+							    />
+							</View>
+							<View style={{padding: 4}}>
+								<Input
+							      placeholder='Masukan berat barang (GRAM)'
+							      ref={this.nilaiRef}
+							      name='nilai'
+							      label='Berat'
+							      keyboardType='numeric'
+							      labelStyle={styles.label}
+							      style={styles.input}
+							      value={data.nilai}
+							      status={errors.nilai && 'danger'}
+							      onChangeText={(e) => this.onChange(e, this.nilaiRef.current.props)}
+							      onSubmitEditing={() => this.onClick()}
+							    />
+							    { errors.nilai && <Text style={{fontSize: 12, color: 'red'}}>{errors.nilai}</Text>}
+							</View>
+							<View style={styles.button}>
+								<Button style={{margin: 2, flex: 1}} status='info' onPress={this.onClick}>Cek Tarif</Button>
+								{ success.length > 0 && <Button style={{margin: 2, flex: 1}} status='danger' onPress={this.onReset}>Reset</Button>}
+							</View>
+						</Layout>
+						{ success.length > 0 && <ListTarif list={success} /> }
+						{ errors.global && <Text style={{fontSize: 20, textAlign: 'center', fontFamily: 'open-sans-bold'}}>{errors.global}</Text> }
+					</ScrollView>
+				</KeyboardAvoidingView>
+			</SafeAreaView>
 		);
 	}
 }
