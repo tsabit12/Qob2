@@ -6,6 +6,7 @@ import Loader from "../Loader";
 import api from "../api";
 import Modal from "../Modal";
 import Dialog from "react-native-dialog";
+import Constants from 'expo-constants';
 
 const MessageSucces = ({ message, visible, onPress, backHome }) => (
 	<View>
@@ -35,7 +36,7 @@ class LupaPin extends React.Component{
 			nama: '',
 			nohp: '',
 			email: '',
-			imei: ''
+			imei: Constants.deviceId
 		},
 		errors: {},
 		loading: false,
@@ -49,16 +50,16 @@ class LupaPin extends React.Component{
 		kode: ''
 	}
 
-	async componentDidMount(){
-		const value = await AsyncStorage.getItem('qobUserPrivasi');
-		const toObje = JSON.parse(value);
-		this.setState({
-			data: {
-				...this.state.data,
-				imei: toObje.imei
-			}
-		});
-	}
+	// async componentDidMount(){
+	// 	const value = await AsyncStorage.getItem('qobUserPrivasi');
+	// 	const toObje = JSON.parse(value);
+	// 	this.setState({
+	// 		data: {
+	// 			...this.state.data,
+	// 			imei: toObje.imei
+	// 		}
+	// 	});
+	// }
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
 
@@ -70,8 +71,9 @@ class LupaPin extends React.Component{
 
 			const { data } 	= this.state;
 			let jenis		= 1;
+
 			const payload = {
-				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|12345678|${jenis}`	
+				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
 			};
 			api.registrasi.lupaPin(payload)
 				.then(res => {
