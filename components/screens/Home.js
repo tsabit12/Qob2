@@ -106,13 +106,16 @@ class Home extends React.Component {
 		
 		api.auth.login(payload)
 			.then(res => {
-				const { response_data4 } = res;
-				const x = response_data4.split('|');
+				const { response_data4, response_data1 } = res;
+				const x 	= response_data4.split('|');
+				const x2 	= response_data1.split('|'); 
 				const payload2 = {
 					namaOl: x[0],
 					alamatOl: x[1],
 					tempatLahir: x[2],
-					kodepos: x[3]
+					kodepos: x[3],
+					username: x2[0],
+					nama: x2[1]
 				};
 
 				this.saveToStorage(payload2)
