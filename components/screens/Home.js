@@ -1,4 +1,3 @@
-// const response = '440000347|8a266d4bad3552473f2de193283a59c5|IKHSAN FANANI|085220135077|Ikhsan.fanani@gmail.com|12345678|0000000018';
 import React from "react";
 import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
@@ -9,6 +8,8 @@ import { Button, Input } from '@ui-kitten/components';
 import Loader from "../Loader";
 import Modal from "../Modal";
 import PinView from 'react-native-pin-view';
+import md5 from "react-native-md5";
+import Constants from 'expo-constants';
 
 class Home extends React.Component {
 	static navigationOptions = {
@@ -22,42 +23,68 @@ class Home extends React.Component {
 		pin: '',
 		loading: false,
 		errors: {},
-		localUser: {}
+		localUser: {
+			email: '-',
+			nama: '-',
+			nohp: '-',
+			pin: '-',
+			userid: '-',
+			username: '-'
+		}
 	}
 
 	async componentDidMount(){
-		const value = await AsyncStorage.getItem('qobUserPrivasi');
-		const toObje = JSON.parse(value);
-		if (!value) { //handle null
-			this.setState({
-				localUser: {
-					email: '-',
-					nama: '-',
-					nohp: '-',
-					pin: '-',
-					userid: '-',
-					imei: '-',
-					norek: '-'
-				}
-			});
+		const { session } = this.props;
+		//handle after register
+		//user can login without close app first
+		if (Object.keys(session).length === 0) { //if session is null then call from storage
+			const value 	= await AsyncStorage.getItem('qobUserPrivasi');
+			const toObje 	= JSON.parse(value);
+			if (value) { //only storage not empty
+				this.setState({
+					localUser: {
+						email: toObje.email,
+						nama: toObje.nama,
+						nohp: toObje.nohp,
+						pin: toObje.pinMd5,
+						userid: toObje.userid,
+						username: toObje.username
+					}
+				});
+			}
 		}else{
 			this.setState({
 				localUser: {
-					email: toObje.email,
-					nama: toObje.nama,
-					nohp: toObje.nohp,
-					pin: toObje.pin,
-					userid: toObje.userid,
-					imei: toObje.imei,
-					norek: toObje.norek
+					email: session.email,
+					nama: session.nama,
+					nohp: session.nohp,
+					pin: session.pinMd5,
+					userid: session.userid,
+					username: session.username
 				}
-			});
+			})
+		}
+	}
+
+	UNSAFE_componentWillReceiveProps(nextProps){
+		if (nextProps.session) {
+			const { session } = nextProps;
+			this.setState({
+				localUser: {
+					email: session.email,
+					nama: session.nama,
+					nohp: session.nohp,
+					pin: session.pinMd5,
+					userid: session.userid,
+					username: session.username
+				}
+			})
 		}
 	}
 
 	async saveToStorage(payload){
 		try{
-			await AsyncStorage.setItem('qobUserPrivasi', JSON.stringify(payload));
+			await AsyncStorage.setItem('sessionLogin', JSON.stringify(payload));
 			return Promise.resolve(payload);
 		}catch(errors){
 			return Promise.reject(errors);
@@ -67,23 +94,43 @@ class Home extends React.Component {
 
 	onComplete = (val, clear) => {
 		this.setState({ loading: true });
-		const { userid, nohp, email, imei, norek  } = this.state.localUser;
+
+		const { userid, nohp, email } = this.state.localUser;
+		let 	imei = Constants.deviceId;
+		const pinMd5 = md5.hex_md5(userid+val+nohp+email+imei+'8b321770897ac2d5bfc26965d9bf64a1');
+		
 		const payload = {
-			param1: `${userid}|${val}|${nohp}|${email}|${imei}|${norek}`
+			param1: `${userid}|${pinMd5}|${nohp}|${email}|${imei}`
 		};
+		
 		api.auth.login(payload)
 			.then(res => {
-				this.setState({ loading: false });
-				this.props.navigation.navigate({
-					routeName: 'IndexSearch'
-				});
+				const { response_data4 } = res;
+				const x = response_data4.split('|');
+				const payload2 = {
+					namaOl: x[0],
+					alamatOl: x[1],
+					tempatLahir: x[2],
+					kodepos: x[3]
+				};
+
+				this.saveToStorage(payload2)
+					.then(() => {
+						this.setState({ loading: false });
+						this.props.navigation.navigate({
+							routeName: 'IndexSearch'
+						});
+					}).catch(err => {
+						this.setState({ loading: false });	
+						alert("Failed save data to storage");
+					});
 			})
 			.catch(err => {
 				clear();
 				if (Object.keys(err).length === 10) { //handle undefined
 					this.setState({ loading: false, errors: {global: err.desk_mess } });
 				}else{
-					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, harap cobalagi nanti'}});
+					this.setState({ loading: false });
 				}
 			});
 	}
@@ -125,7 +172,7 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
 	return{
-		test: state.register
+		session: state.register.session
 	}
 }
 

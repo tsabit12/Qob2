@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, AsyncStorage } from "react-native";
 import styles from "./styles";
 import { Button } from '@ui-kitten/components';
 import Loader from "../../Loader";
@@ -7,6 +7,8 @@ import Modal from "../../Modal";
 import { curdateTime } from "../../utils/helper";
 import api from "../../api";
 import Dialog from "react-native-dialog";
+import { connect } from "react-redux";
+import { orderAdded } from "../../../actions/order";
 
 const Judul = () => (
 	<Text style={styles.header}>Summary Order</Text>
@@ -26,20 +28,17 @@ class ResultOrder extends React.Component{
 		visible: true
 	}
 
-	componentDidMount(){
+	async componentDidMount(){
+		const value 	= await AsyncStorage.getItem('qobUserPrivasi');
+		const toObje 	= JSON.parse(value);
+
 		const { params } = this.props.navigation.state;
-		// console.log(this.props.navigation.state.params);
-		const { selectedTarif } = params;
-		const { deskripsiOrder } = params;
-		const { deskripsiPengirim } = params;
-		const { deskripsiPenerima } = params;
-		var idOrder = this.getRandomInt(10000000000, 99999999999);
-		idOrder 	= `QOB${idOrder}`;
-		let param1 = `${curdateTime()}|${idOrder}|440000347|001`;
+		const { selectedTarif, deskripsiOrder, deskripsiPengirim, deskripsiPenerima } = params;
+		let param1 = `${curdateTime()}|01|${toObje.userid}|-`;
 		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
 		let param3 = `${deskripsiPengirim.nama}|${deskripsiPengirim.alamat2}|${deskripsiPengirim.alamat}|-|${deskripsiPengirim.kota}|Jawa Barat|Indonesia|${deskripsiPengirim.kodepos}|${deskripsiPengirim.nohp}|${deskripsiPengirim.email}`;
 		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.alamat}|-|${deskripsiPenerima.kota}|Jawa Barat|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|${deskripsiPenerima.email}|-|-`;
-		let param5 = `1|0|-|0`;
+		let param5 = `0|0|-|0`;
 		const payload = {
 			param1: param1,
 			param2: param2,
@@ -47,7 +46,8 @@ class ResultOrder extends React.Component{
 			param4: param4,
 			param5: param5
 		};
-		this.setState({ payload, idOrder: idOrder });
+
+		this.setState({ payload });
 	}
 
 	getRandomInt = (min, max) => {
@@ -60,7 +60,24 @@ class ResultOrder extends React.Component{
 		this.setState({ loading: true, success: false });
 			api.qob.booking(this.state.payload)
 				.then(res => {
-					this.setState({ loading: false, success: true });
+					console.log(res);
+					const { response_data1 } = res;
+					let x = response_data1.split('|');
+					// let idOrder = x
+					this.setState({ loading: false, success: true, idOrder: x[3] });
+
+					const { params } = this.props.navigation.state;
+					const { deskripsiPengirim, deskripsiPenerima, deskripsiOrder } = params;
+					
+					const payload = {
+						idorder: x[3],
+						nmPenrima:  deskripsiPenerima.nama,
+						nmPengirim: deskripsiPengirim.nama,
+						jenis: deskripsiOrder.jenis,
+						tgl: res.wkt_mess
+					};
+					//save to stroe redux
+					this.props.orderAdded(x[3], payload);
 				})
 				.catch(err => {
 					// console.log(err);
@@ -88,6 +105,7 @@ class ResultOrder extends React.Component{
 		const { params } = this.props.navigation.state;
 		const { selectedTarif } = this.props.navigation.state.params;
 		const { errors } = this.state;
+		console.log(this.props.dataorder);
 
 		return(
 			<React.Fragment>
@@ -130,8 +148,8 @@ class ResultOrder extends React.Component{
 							<Dialog.Container visible={this.state.visible}>
 								<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
 						        <Dialog.Description>
-						          	<Text>Nomor order   : {this.state.idOrder} {'\n'}</Text>
-						          	<Text>Jenis Kiriman : {params.deskripsiOrder.jenis}</Text>
+							          	Nomor order   : {this.state.idOrder} {'\n'}
+							          	Jenis Kiriman : {params.deskripsiOrder.jenis}
 						        </Dialog.Description>
 					          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
 					        </Dialog.Container>
@@ -142,4 +160,10 @@ class ResultOrder extends React.Component{
 	}
 }
 
-export default ResultOrder;
+function mapStateToProps(state) {
+	return{
+		dataorder: state.order.dataOrder
+	}
+}
+
+export default connect(mapStateToProps, { orderAdded })(ResultOrder);

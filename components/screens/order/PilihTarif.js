@@ -16,7 +16,7 @@ const numberWithCommas = (number) => {
 const ListTarif = ({ onAccept, list }) => (
 	<View style={{paddingBottom: 10}}>
 		{ list.length > 0 && <View>
-			{ list.map(x => {
+			{ list.map((x, i) => {
 				const parsing = x.split('-');
 				//I Hate STRING!
 				if (x.length > 0) { //handle tarif last index cause parsing (#)
@@ -37,6 +37,7 @@ const ListTarif = ({ onAccept, list }) => (
 					};
 					return(
 						<ListItem
+							key={i}
 						    title={`Rp. ${numberWithCommas(totalTarif)}`}
 						    description={parsing[1]}
 							accessory={(e) => renderItemAccessory(e, payload, onAccept)}

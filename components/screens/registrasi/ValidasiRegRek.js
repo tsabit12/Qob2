@@ -8,6 +8,8 @@ import styles from "./styles";
 import Dialog from "react-native-dialog";
 import Modal from "../../Modal";
 import Constants from 'expo-constants';
+import { connect } from "react-redux";
+import { saveRegister } from "../../../actions/register";
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -28,6 +30,8 @@ class ValidasiRegRek extends React.Component{
 	jenisOlRef = React.createRef();
 	npwpRef = React.createRef();
 	imeiRef = React.createRef();
+	noHpRef = React.createRef();
+	emailRef = React.createRef();
 
 	state = {
 		validasi: {
@@ -50,7 +54,9 @@ class ValidasiRegRek extends React.Component{
 		loading: false,
 		saved: 0,
 		payloadRes: {},
-		desk_mess: ''
+		desk_mess: '',
+		nohp: '',
+		email: ''
 	}
 
 	async componentDidMount(){
@@ -98,14 +104,15 @@ class ValidasiRegRek extends React.Component{
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
 
 	onRegistrasi = () => {
-		const errors2 = this.validate2(this.state.namaOlshop, this.state.jenisOl, this.state.npwp, this.state.imei)
+		const { nohp, email } = this.state;
+		const errors2 = this.validate2(this.state.namaOlshop, this.state.jenisOl, this.state.npwp, this.state.imei, nohp, email)
 		this.setState({ errors2 });
 		if (Object.keys(errors2).length === 0) {
 			this.setState({ loading: true });
 			const { responseRek } = this.props.navigation.state.params;
 			const { npwp, imei, namaOlshop, jenisOl } = this.state;
 			const payload = {
-				param1: `-|-|${responseRek.namaLengkap}|${responseRek.nama}|${responseRek.nohp}|${responseRek.email}|${npwp}|${imei}`,
+				param1: `-|-|${responseRek.namaLengkap}|${responseRek.nama}|${this.state.nohp}|${this.state.email}|${npwp}|${imei}`,
 				param2: `${responseRek.noGiro}`,
 				param3: `${namaOlshop}|${jenisOl}|${responseRek.alamat}|${responseRek.kel}|${responseRek.kec}|${responseRek.kota}|${responseRek.prov}|${responseRek.kodePos}`,
 				param4: `${responseRek.nik}`
@@ -113,21 +120,24 @@ class ValidasiRegRek extends React.Component{
 			api.registrasi.registrasiGiro(payload)
 				.then(res => {
 					const { response_data1 } = res;
-					let parsing = response_data1.split('|');
+					let x = response_data1.split('|');
 					const payloadRes = {
-						userid: parsing[0],
-						pin: parsing[1],
-						nama: parsing[2],
-						nohp: parsing[3],
-						email: parsing[4],
-						imei: parsing[5],
-						norek: parsing[6],
+						userid: x[0],
+						username: x[1],
+						pinMd5: x[2],
+						nama: x[3],
+						nohp: x[4],
+						email: x[5]
 					};
+					
 					this.setState({ payloadRes });
 					this.saveToStorage(payloadRes)
-						.then(() => this.setState({ loading: false, saved: 200, desk_mess: res.desk_mess }))
+						.then(() => {
+							this.setState({ loading: false, saved: 200, desk_mess: res.desk_mess });
+							this.props.saveRegister(payloadRes);
+						})
 						.catch(err => {
-							this.setState({ loading: false, saved: 500, errors: {global: err} });
+							this.setState({ loading: false, saved: 500, errors: {global: 'Failed saving data to storage'} });
 							console.log(err);
 						});
 				})
@@ -153,11 +163,13 @@ class ValidasiRegRek extends React.Component{
 		}
 	}
 
-	validate2 = (nama, jenis, npwp, imei) => {
+	validate2 = (nama, jenis, npwp, imei, nohp, email) => {
 		const errors = {};
 		if (!nama) errors.namaOlshop = "Harap diisi";
 		if (!jenis) errors.jenisOl = "Harap diisi";
 		if (!npwp) errors.npwp = "Harap diisi";
+		if (!nohp) errors.nohp = "Harap diisi";
+		if (!email) errors.email = "Harap diisi";
 		// if (!imei) errors.imei = "Harap diisi";
 		return errors;
 	}
@@ -180,7 +192,16 @@ class ValidasiRegRek extends React.Component{
 					enabled
 					keyboardVerticalOffset = {Header.HEIGHT + 40}
 				>
-				{ saved === 200 && <Modal loading={true} text={desk_mess} handleClose={() => this.setState({ saved: 0 })} />}
+				{ saved === 200 && 
+					<Modal 
+						loading={true} 
+						text={desk_mess} 
+						handleClose={() => {
+							this.setState({ saved: 0 });
+							this.props.navigation.navigate({
+								routeName: 'Home'
+							});
+						}} />}
 				<ScrollView keyboardShouldPersistTaps='always'>
 					<Loader loading={this.state.loading} />
 					<View style={{padding: 10}}>
@@ -281,8 +302,28 @@ class ValidasiRegRek extends React.Component{
 								placeholder='Masukan npwp anda'
 								onChangeText={(e) => this.setState({ npwp: e })}
 								labelStyle={errors2.npwp ? styles.labelRed : styles.label }
+								onSubmitEditing={() => this.noHpRef.current.focus() }
+							/>
+							<Input 
+								label='No handphone'
+								ref={this.noHpRef}
+								value={this.state.nohp}
+								keyboardType='numeric'
+								placeholder='Masukan nomor handphone'
+								onChangeText={(e) => this.setState({ nohp: e })}
+								labelStyle={errors2.nohp ? styles.labelRed : styles.label }
+								onSubmitEditing={() => this.emailRef.current.focus() }
+							/>
+							<Input 
+								label='Email'
+								ref={this.emailRef}
+								value={this.state.email}
+								placeholder='Masukan alamat email'
+								onChangeText={(e) => this.setState({ email: e })}
+								labelStyle={errors2.email ? styles.labelRed : styles.label }
 								onSubmitEditing={this.onRegistrasi}
 							/>
+							
 							{/*<Input 
 								label='IMEI'
 								ref={this.imeiRef}
@@ -312,4 +353,4 @@ class ValidasiRegRek extends React.Component{
 	}
 }
 
-export default ValidasiRegRek;
+export default  connect(null, { saveRegister })(ValidasiRegRek);

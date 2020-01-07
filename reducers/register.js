@@ -1,8 +1,9 @@
-import { GET_KTP, GET_REKENING_REG } from "../types";
+import { GET_KTP, GET_REKENING_REG, SAVE_RES_REGISTER } from "../types";
 
 const initialState = {
 	ktp: {},
-	giro: {}
+	giro: {},
+	session: {}
 };
 
 export default function register(state=initialState, action={}){
@@ -19,6 +20,11 @@ export default function register(state=initialState, action={}){
 			return{
 				...state,
 				giro: action.res
+			}
+		case SAVE_RES_REGISTER: 
+			return{
+				...state,
+				session: action.response
 			}
 		default: return state;
 	}

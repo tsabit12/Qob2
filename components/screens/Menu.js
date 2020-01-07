@@ -20,6 +20,7 @@ const iconBarcode = require("../../assets/barcode.png");
 const iconRiwayat = require("../../assets/history.png");
 const iconProfile = require("../../assets/profile.png");
 const iconPhone = require("../../assets/phone2.png");
+const cartIcon = require("../../assets/cart.png");
 
 
 const Menu = ({ navigation }) => (
@@ -77,6 +78,17 @@ const Menu = ({ navigation }) => (
 	        	    <Image source={iconRiwayat} style={styles.img}/>
                     <Text style={styles.textIcon}>Riwayat Transaksi</Text>
             	</View>
+            </TouchableHighlight>
+             <TouchableHighlight 
+                underlayColor="#D8D8D8"
+                onPress={() => navigation.navigate({
+                    routeName: 'ListOrder'
+                })}
+            >
+                <View style={styles.icon}>
+                    <Image source={cartIcon} style={styles.img}/>
+                    <Text style={styles.textIcon}>List {'\n'}Order</Text>
+                </View>
             </TouchableHighlight>
         </View>
 	</View>
