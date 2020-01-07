@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { 
     View,
-    StyleSheet
+    StyleSheet,
+    AsyncStorage
 } from "react-native";
 import {
     Layout,
@@ -16,7 +17,15 @@ class Pembayaran extends Component {
     state = {
         nominal : '',
         loading: false,
-        errors: {}
+        errors: {},
+        localUser: {
+			email: '-',
+			nama: '-',
+			nohp: '-',
+			pin: '-',
+			userid: '-',
+            username: '-'
+        }
     }
 
     nominalRef = React.createRef();
@@ -27,12 +36,26 @@ class Pembayaran extends Component {
 		return errors;
     }
     
+    async componentDidMount() {
+        const value     = await AsyncStorage.getItem('qobUserPrivasi');
+        const toObje    = JSON.parse(value);
+        this.setState({
+            localUser: {
+                email: toObje.email,
+                nama: toObje.nama,
+                nohp: toObje.nohp,
+                pin: toObje.pinMd5,
+                userid: toObje.userid,
+                username: toObje.username
+            }
+        });
+    }
 
     onSubmit = () => {
             this.setState({ loading: true });
-            const { nominal } = this.state;
+            const { nominal , localUser } = this.state;
             const payload = { 
-                param1: `440000347|0000000018|${nominal}`
+                param1: `${localUser.userid}|C000007225|${nominal}`
             }
             console.log(payload);
 
