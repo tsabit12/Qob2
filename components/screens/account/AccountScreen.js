@@ -2,12 +2,14 @@ import React from "react";
 import {View, Text } from "react-native";
 import styles from "./styles";
 
-const Judul = ({ navigation }) => (
-	<View>
-		<Text style={styles.header}>Profile</Text>
-		<Text style={styles.text}>Jhon Doe</Text>
-	</View>
-);
+const Judul = ({ navigation }) => {
+	return(
+		<View>
+			<Text style={styles.header}>Profile</Text>
+			<Text style={styles.text}>{navigation.namaLengkap}</Text> 
+		</View>
+	);
+}
 
 class AccountScreen extends React.Component{
 	static navigationOptions = ({ navigation }) => ({

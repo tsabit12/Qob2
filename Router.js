@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-native'
+import { View, Text, Button, TouchableOpacity, Image, Platform, AsyncStorage } from 'react-native'
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
@@ -41,6 +41,14 @@ import ListOrder from "./components/screens/ListOrder";
 
 const iconBarcode = require("./assets/barcode.png");
 
+
+const getProfileName = async() => {
+    const value = await AsyncStorage.getItem('sessionLogin');
+    const toObj = JSON.parse(value);
+    const nama  = toObj.nama.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+    return nama;
+}
+
 const Search = ({ navigation }) => {
   const { state } = navigation;
   // console.log(navigation.router.getStateForAction);
@@ -55,8 +63,13 @@ const Search = ({ navigation }) => {
         <Icon name='search-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate({
-          routeName: 'Account'
+        onPress={() => getProfileName().then(nama => {
+          navigation.navigate({
+            routeName: 'Account',
+            params: {
+              namaLengkap: nama
+            }
+          })
         })}
       >
       <Avatar style={{marginRight: 10}} size='tiny' source={require('./components/icons/avatar-user.jpg')}/>
