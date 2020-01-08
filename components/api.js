@@ -96,8 +96,8 @@ export default{
 			param1: payload.param1,
 			hashing: getHasing('207', payload.param1)
 		}, config).then(res => {
-			// console.log(res);
-			if (res.data.rc_mess === '00' || res.data.rc_mess === '02') {
+			console.log(res);
+			if (res.data.rc_mess === '00' || res.data.rc_mess === '02' || res.data.rc_mess === '01') {
 				return res.data;
 			}else{
 				return Promise.reject(res.data);

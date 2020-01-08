@@ -7,7 +7,7 @@ import api from "../../api";
 
 const Judul = ({ navigation }) => (
 	<View>
-		<Text style={styles.header}>{navigation.deskripsiPengirim.nama} (Pengirim)</Text>
+		<Text style={styles.header}>{navigation.deskripsiOrder.jenis}</Text>
 		<Text style={{fontFamily: 'open-sans-reg'}}>Kelola data penerima</Text>
 	</View>
 )

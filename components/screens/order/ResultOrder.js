@@ -7,8 +7,10 @@ import Modal from "../../Modal";
 import { curdateTime } from "../../utils/helper";
 import api from "../../api";
 import Dialog from "react-native-dialog";
-import { connect } from "react-redux";
-import { orderAdded } from "../../../actions/order";
+
+const capitalize = (string) => {
+	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+}
 
 const Judul = () => (
 	<Text style={styles.header}>Summary Order</Text>
@@ -36,7 +38,7 @@ class ResultOrder extends React.Component{
 		const { selectedTarif, deskripsiOrder, deskripsiPengirim, deskripsiPenerima } = params;
 		let param1 = `${curdateTime()}|01|${toObje.userid}|-`;
 		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
-		let param3 = `${deskripsiPengirim.nama}|${deskripsiPengirim.alamat2}|${deskripsiPengirim.alamat}|-|${deskripsiPengirim.kota}|Jawa Barat|Indonesia|${deskripsiPengirim.kodepos}|${deskripsiPengirim.nohp}|${deskripsiPengirim.email}`;
+		let param3 = `${deskripsiPengirim.nama}|-|${deskripsiPengirim.alamat}|-|${deskripsiPengirim.kota}|Jawa Barat|Indonesia|${deskripsiPengirim.kodepos}|${toObje.nohp}|${toObje.email}`;
 		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.alamat}|-|${deskripsiPenerima.kota}|Jawa Barat|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|${deskripsiPenerima.email}|-|-`;
 		let param5 = `0|0|-|0`;
 		const payload = {
@@ -77,7 +79,7 @@ class ResultOrder extends React.Component{
 						tgl: res.wkt_mess
 					};
 					//save to stroe redux
-					this.props.orderAdded(x[3], payload);
+					// this.props.orderAdded(x[3], payload);
 				})
 				.catch(err => {
 					// console.log(err);
@@ -105,39 +107,44 @@ class ResultOrder extends React.Component{
 		const { params } = this.props.navigation.state;
 		const { selectedTarif } = this.props.navigation.state.params;
 		const { errors } = this.state;
-		console.log(this.props.dataorder);
 
 		return(
 			<React.Fragment>
 				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> } 
 				<Loader loading={this.state.loading} />
 				{ !this.state.success ? <View style={{margin: 15}}>
-						<Text style={{
-							fontFamily: 'open-sans-reg', 
-							fontWeight: '700',
-							paddingBottom: 12
-						}}>{params.selectedTarif.description}</Text>
-						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-							<Text>Pengirim            :</Text>
-							<Text>{params.deskripsiPengirim.nama}</Text>
+						<View style={styles.labelTarif}>
+							<Text style={{
+								fontFamily: 'open-sans-reg', 
+								fontWeight: '700',
+								textAlign: 'center',
+								fontSize: 16,
+								paddingBottom: 12,
+								paddingTop: 12
+							}}>{params.selectedTarif.description}</Text>
 						</View>
-						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-							<Text>Penerima           :</Text>
-							<Text>{params.deskripsiPenerima.nama}</Text>
+						<View style={{paddingTop: 10}}>
+							<View style={styles.viewResult}>
+								<Text style={styles.labelInformasi}>Pengirim</Text>
+								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 73 }}>: {capitalize(params.deskripsiPengirim.nama)}</Text>
+							</View>
+							<View style={styles.viewResult}>
+								<Text style={styles.labelInformasi}>Penerima</Text>
+								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 68 }}>: {capitalize(params.deskripsiPenerima.nama)}</Text>
+							</View>
+							<View style={styles.viewResult}>
+								<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
+								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 44 }}>: {params.deskripsiOrder.jenis}</Text>
+							</View>
+							<View style={styles.viewResult}>
+								<Text style={styles.labelInformasi}>Nilai Barang</Text>
+								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 50 }}>: Rp {this.numberWithCommas(params.deskripsiOrder.nilai)}</Text>
+							</View>
+							<View style={styles.viewResult}>
+								<Text style={styles.labelInformasi}>Estimasi Tarif</Text>
+								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 40 }}>: Rp {this.numberWithCommas(params.selectedTarif.tarif)}</Text>
+							</View>
 						</View>
-						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-							<Text>Jenis Kiriman   :</Text>
-							<Text>{params.deskripsiOrder.jenis}</Text>
-						</View>
-						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-							<Text>Nilai Barang 	    :</Text>
-							<Text>Rp {this.numberWithCommas(params.deskripsiOrder.nilai)}</Text>
-						</View>
-						<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-							<Text>Estimasi Tarif	  :</Text>
-							<Text>Rp {this.numberWithCommas(params.selectedTarif.tarif)}</Text>
-						</View>
-						
 						<Button status='info' style={{marginTop: 10}} onPress={this.onSubmit}>Simpan</Button>
 					</View> : <React.Fragment>
 						<View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
@@ -148,10 +155,8 @@ class ResultOrder extends React.Component{
 							<Dialog.Container visible={this.state.visible}>
 								<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
 						        <Dialog.Description>
-							        <Text>
-										Nomor order   : {this.state.idOrder} {'\n'}
-										  Isi Kiriman   : {params.deskripsiOrder.jenis}
-									</Text>
+							          	Nomor order   : {this.state.idOrder} {'\n'}
+							          	Isi Kiriman     : {params.deskripsiOrder.jenis}
 						        </Dialog.Description>
 					          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
 					        </Dialog.Container>
@@ -162,10 +167,4 @@ class ResultOrder extends React.Component{
 	}
 }
 
-function mapStateToProps(state) {
-	return{
-		dataorder: state.order.dataOrder
-	}
-}
-
-export default connect(mapStateToProps, { orderAdded })(ResultOrder);
+export default ResultOrder;

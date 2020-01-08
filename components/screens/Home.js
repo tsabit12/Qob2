@@ -41,7 +41,7 @@ class Home extends React.Component {
 		if (Object.keys(session).length === 0) { //if session is null then call from storage
 			const value 	= await AsyncStorage.getItem('qobUserPrivasi');
 			const toObje 	= JSON.parse(value);
-			// console.log(toObje);
+			console.log(toObje);
 			if (value) { //only storage not empty
 				this.setState({
 					localUser: {
@@ -143,7 +143,7 @@ class Home extends React.Component {
 				if (Object.keys(err).length === 10) { //handle undefined
 					this.setState({ loading: false, errors: {global: err.desk_mess } });
 				}else{
-					this.setState({ loading: false });
+					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan saat menghubungkan ke server, harap cobalagi nanti'} });
 				}
 			});
 	}
@@ -162,6 +162,7 @@ class Home extends React.Component {
 						<PinView
 				            onComplete={(val, clear) => this.onComplete(val, clear) }
 				            pinLength={6}
+				            buttonActiveOpacity={0.4}
 				        />
 						<View style={styles.link}>
 							<Text>Belum memiliki akun ? daftar </Text>

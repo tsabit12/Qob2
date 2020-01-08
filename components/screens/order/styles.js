@@ -38,5 +38,25 @@ export default StyleSheet.create({
   },
   listItem: { borderRadius: 1},
   listItemTitle: { color: '#3366ff' },
-  listItemDescription: { color: '#2E3A59' }
+  listItemDescription: { color: '#2E3A59' },
+  labelInformasi: {
+    fontSize: 16,
+    fontFamily: 'open-sans-reg',
+  },
+  labelRight: {
+    fontSize: 16, 
+    fontFamily: 'open-sans-reg', 
+    marginLeft: 73 
+  },
+  viewResult: {
+    flexDirection: 'row', 
+    alignItems: 'flex-start', 
+    paddingBottom: 10
+  },
+  labelTarif: {
+    borderBottomWidth: 1, 
+    borderBottomColor: '#cbccc4', 
+    borderTopWidth: 1,
+    borderTopColor: '#cbccc4', 
+  }
 });

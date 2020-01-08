@@ -15,7 +15,6 @@ import ValidasiRekening from "./components/screens/registrasi/ValidasiRekening";
 import ValidasiRegRek from "./components/screens/registrasi/ValidasiRegRek";
 import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
-import Pengirim from "./components/screens/order/Pengirim";
 import Penerima from "./components/screens/order/Penerima";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
@@ -46,7 +45,11 @@ const getProfileName = async() => {
     const value = await AsyncStorage.getItem('sessionLogin');
     const toObj = JSON.parse(value);
     const nama  = toObj.nama.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-    return nama;
+    const saldo = toObj.saldo;
+    return {
+      nama: nama,
+      sisaSaldo: saldo
+    };
 }
 
 const Search = ({ navigation }) => {
@@ -63,11 +66,12 @@ const Search = ({ navigation }) => {
         <Icon name='search-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => getProfileName().then(nama => {
+        onPress={() => getProfileName().then(obj => {
           navigation.navigate({
             routeName: 'Account',
             params: {
-              namaLengkap: nama
+              namaLengkap: obj.nama,
+              saldo: obj.sisaSaldo
             }
           })
         })}
@@ -129,9 +133,6 @@ const AppNavigator = createStackNavigator({
       },
       Order: {
         screen: IndexOrder 
-      },   
-      OrderPengirim: { 
-        screen: Pengirim
       },
       OrderPenerima: {
         screen: Penerima
@@ -228,10 +229,7 @@ const LoginNavigator = createStackNavigator({
     screen: ValidasiRekening
   },
   LupaPin: {
-    screen: LupaPin,
-    navigationOptions: {
-      header: null
-    }
+    screen: LupaPin
   },
   RegistrasiKtp: {
     screen: RegistrasiKtp
