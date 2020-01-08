@@ -15,7 +15,6 @@ import ValidasiRekening from "./components/screens/registrasi/ValidasiRekening";
 import ValidasiRegRek from "./components/screens/registrasi/ValidasiRegRek";
 import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
-import Pengirim from "./components/screens/order/Pengirim";
 import Penerima from "./components/screens/order/Penerima";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
@@ -129,9 +128,6 @@ const AppNavigator = createStackNavigator({
       },
       Order: {
         screen: IndexOrder 
-      },   
-      OrderPengirim: { 
-        screen: Pengirim
       },
       OrderPenerima: {
         screen: Penerima

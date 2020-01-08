@@ -46,7 +46,7 @@ class IndexOrder extends React.Component{
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
 			this.props.navigation.navigate({
-				routeName: 'OrderPengirim',
+				routeName: 'OrderPenerima',
 				params: {
 					deskripsiOrder: this.state.data
 				}
