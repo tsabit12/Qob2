@@ -228,10 +228,7 @@ const LoginNavigator = createStackNavigator({
     screen: ValidasiRekening
   },
   LupaPin: {
-    screen: LupaPin,
-    navigationOptions: {
-      header: null
-    }
+    screen: LupaPin
   },
   RegistrasiKtp: {
     screen: RegistrasiKtp

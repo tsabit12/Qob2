@@ -9,6 +9,7 @@ import Dialog from "react-native-dialog";
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
 import { saveRegister } from "../../actions/register";
+import { Header } from 'react-navigation-stack';
 
 const MessageSucces = ({ message, visible, onPress, backHome }) => (
 	<View>
@@ -208,22 +209,23 @@ class LupaPin extends React.Component{
 	render(){
 		const { data, errors, loading, success, visible } = this.state;
 		return(
-			<KeyboardAvoidingView 
-				behavior="padding"
-				style={{flex:1, marginTop: 30}} 
-				enabled
-				keyboardVerticalOffset = {10}
-			>
+			<View style={{flex: 1}}>
+				<Loader loading={loading} />
+				{ success.statusVer && <MessageSucces 
+						message={success.messageVer} 
+						visible={visible} 
+						onPress={() => this.setState({ visible: false })}
+						backHome={this.onBackHome}
+					/> }
+				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
+				<KeyboardAvoidingView 
+					behavior="padding" 
+					enabled
+					style={{flexGrow:1}} 
+					keyboardVerticalOffset = {Header.HEIGHT + 20}
+				>
 				<ScrollView>
-					<Loader loading={loading} />
-					{ success.statusVer && <MessageSucces 
-							message={success.messageVer} 
-							visible={visible} 
-							onPress={() => this.setState({ visible: false })}
-							backHome={this.onBackHome}
-						/> }
-					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
-					<SafeAreaView style={styles.container}>
+					<View style={{padding: 10}}>
 						<Select
 							label='Jenis Pemulihan'
 							labelStyle={styles.label}
@@ -309,9 +311,10 @@ class LupaPin extends React.Component{
 							{ errors.kode && <Text style={{fontSize: 12, color: 'red'}}>{errors.kode}</Text>}
 							<Button status='info' style={{marginTop: 4}} onPress={this.onVerfikasi}>Verifikasi</Button>
 						</View> }
-					</SafeAreaView>
+					</View>
 				</ScrollView>
-			</KeyboardAvoidingView>
+				</KeyboardAvoidingView>
+			</View>
 		);
 	}
 }
@@ -320,13 +323,6 @@ class LupaPin extends React.Component{
 export default connect(null, { saveRegister })(LupaPin);
 
 const styles = StyleSheet.create({
-	container: {
-	  // marginTop: Expo.Constants.statusBarHeight
-	  justifyContent: 'center',
-	  flex: 1,
-	  padding: 20,
-	  // backgroundColor: '#FFFFF0'
-	},
 	label: {
 		color: 'black',
 		fontSize: 14,
