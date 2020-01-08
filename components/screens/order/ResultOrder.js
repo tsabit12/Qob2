@@ -7,8 +7,6 @@ import Modal from "../../Modal";
 import { curdateTime } from "../../utils/helper";
 import api from "../../api";
 import Dialog from "react-native-dialog";
-import { connect } from "react-redux";
-import { orderAdded } from "../../../actions/order";
 
 const capitalize = (string) => {
 	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -81,7 +79,7 @@ class ResultOrder extends React.Component{
 						tgl: res.wkt_mess
 					};
 					//save to stroe redux
-					this.props.orderAdded(x[3], payload);
+					// this.props.orderAdded(x[3], payload);
 				})
 				.catch(err => {
 					// console.log(err);
@@ -169,10 +167,4 @@ class ResultOrder extends React.Component{
 	}
 }
 
-function mapStateToProps(state) {
-	return{
-		dataorder: state.order.dataOrder
-	}
-}
-
-export default connect(mapStateToProps, { orderAdded })(ResultOrder);
+export default ResultOrder;

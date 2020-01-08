@@ -21,7 +21,7 @@ const Judul = ({ navigation }) => {
 	);
 }
 
-const Profile = ({ user }) => {
+const Profile = ({ user, saldo }) => {
 	return(
 		<React.Fragment>
 			<View style={{flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderBottomColor: '#cbccc4' }}>
@@ -32,8 +32,7 @@ const Profile = ({ user }) => {
 					<Text style={{ paddingLeft: 10, fontFamily: 'Roboto-Regular', fontSize: 13 }}>Nomor Rekening ({user.noRek})</Text>
 				</View>
 			</View>
-			<View style={{paddingTop: 10}}>
-				<Text style={{textAlign: 'center', fontFamily: 'open-sans-reg', color: '#9b9c98'}}>Informasi Pribadi</Text>
+			<View style={{paddingTop: 10, borderBottomWidth: 1, borderBottomColor: '#cbccc4'}}>
 				<View style={{padding: 10}}>
 					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
 						<Text style={styles.labelInformasi}>Email</Text>
@@ -42,6 +41,10 @@ const Profile = ({ user }) => {
 					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
 						<Text style={styles.labelInformasi}>Nomor Handphone</Text>
 						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 14 }}>: {user.noHp}</Text>
+					</View>
+					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
+						<Text style={styles.labelInformasi}>Olshop</Text>
+						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 88 }}>: {user.detailUsaha}</Text>
 					</View>
 					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
 						<Text style={styles.labelInformasi}>Alamat</Text>
@@ -59,10 +62,18 @@ const Profile = ({ user }) => {
 						<Text style={styles.labelInformasi}>Last Login</Text>
 						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 73 }}>: {user.lastLogin}</Text>
 					</View>
+					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
+						<Text style={styles.labelInformasi}>Bergabung</Text>
+						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 68 }}>: {user.createTime.substring(0, 10)}</Text>
+					</View>
+					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
+						<Text style={styles.labelInformasi}>Saldo Giro</Text>
+						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 72 }}>: {saldo}</Text>
+					</View>
 				</View>
 			</View>
-			<View style={{ paddingLeft: 10, paddingRight: 10 }}>
-			<Button status='info' size='small'>Tampilkan Rekening Koran</Button>
+			<View style={{ paddingLeft: 10, paddingRight: 10, marginTop: 10 }}>
+				<Button status='info' size='small'>Tampilkan Rekening Koran</Button>
 			</View>
 		</React.Fragment>
 	);
@@ -73,22 +84,27 @@ class AccountScreen extends React.Component{
 		headerTitle: <Judul navigation={navigation.state.params}/>
 	}) 
 
-	state = {}
+	state = {
+		sisaSaldo: null
+	}
 
 	async componentDidMount(){
 		const value 	= await AsyncStorage.getItem('qobUserPrivasi');
 		const toObj 	= JSON.parse(value);
 		let userid 		= toObj.userid;
+		this.setState({
+			sisaSaldo: this.props.navigation.state.params.saldo
+		});
 		this.props.getDetailUser(userid)
-			.then(() => console.log("oke"))
-			.catch(err => console.log(err));
+			// .then(() => console.log("oke"))
+			// .catch(err => console.log(err));
 	}
 
 	render(){
 		const { detail } = this.props;
 		return(
 			<SafeAreaView style={{ marginTop: 5 }}>
-				{ Object.keys(detail).length > 0 ? <Profile user={detail} /> : <Text>Loading..</Text> }
+				{ Object.keys(detail).length > 0 ? <Profile user={detail} saldo={this.state.sisaSaldo} /> : <Text>Loading..</Text> }
 			</SafeAreaView>
 		);
 	}

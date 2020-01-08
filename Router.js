@@ -45,7 +45,11 @@ const getProfileName = async() => {
     const value = await AsyncStorage.getItem('sessionLogin');
     const toObj = JSON.parse(value);
     const nama  = toObj.nama.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-    return nama;
+    const saldo = toObj.saldo;
+    return {
+      nama: nama,
+      sisaSaldo: saldo
+    };
 }
 
 const Search = ({ navigation }) => {
@@ -62,11 +66,12 @@ const Search = ({ navigation }) => {
         <Icon name='search-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => getProfileName().then(nama => {
+        onPress={() => getProfileName().then(obj => {
           navigation.navigate({
             routeName: 'Account',
             params: {
-              namaLengkap: nama
+              namaLengkap: obj.nama,
+              saldo: obj.sisaSaldo
             }
           })
         })}
