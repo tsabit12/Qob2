@@ -94,7 +94,8 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                     };
                     //get data order on this button
                     //with curdate
-                    getOrder(payload, curdate);
+                    getOrder(payload, curdate).catch(err => console.log("kosong"));
+                    
                     navigation.navigate({
                         routeName: 'ListOrder',
                         params: {

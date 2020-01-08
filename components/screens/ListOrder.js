@@ -52,7 +52,7 @@ const List = ({ listdata, tanggal, openModal }) => {
 					      accessory={(e) => renderItemAccessory(e, detail, openModal)}
 					    />
 	    			)
-	    		})}
+	    		}) }
 	    	</React.Fragment>
 	    );
 } 
@@ -85,68 +85,71 @@ class ListOrder extends React.Component{
 	}
 
 	render(){
-		const { orderlist, tanggalProps } = this.props;
+		const { tanggalSearch } = this.props.navigation.state.params;
+		const { orderlist } = this.props;
 		const { dataDetail } = this.state;
 
 		return(
-			<View style={styles.container}>
-				{Object.keys(orderlist).length > 0 && <React.Fragment>
-						{ tanggalProps && <List 
-							listdata={orderlist[tanggalProps]} 
-							tanggal={tanggalProps} 
-							openModal={(e) => this.setState({ dataDetail: e, visible: true })}
-						/> }
-					</React.Fragment> }
-			        <Modal 
-			        	style={{margin: 50}}
-			        	isVisible={this.state.visible}
-			        	onSwipeComplete={() => this.setState({ visible: false })}
-			        	swipeDirection="left"
-			        	animationIn="slideInLeft"
-			        	animationInTiming={500}
-			        	backdropTransitionInTiming={800}
-			        >
-			          <View style={styles.contentModal}>
-			          	<View style={{margin: 20}}>
-			          		<View style={styles.listModal}>
-				            	<Text style={styles.titleDetail}>Isi Kiriman</Text>
-				            	<Text style={styles.subtitle}>{dataDetail.isikiriman}</Text>
+			<React.Fragment>
+				<View style={styles.container}>
+					{ orderlist ? <React.Fragment>
+							<List 
+								listdata={orderlist} 
+								tanggal={tanggalSearch} 
+								openModal={(e) => this.setState({ dataDetail: e, visible: true })}
+							/>
+						</React.Fragment> : <Text style={{marginTop: 20, textAlign: 'center'}}>Data Tidak Ditemukan</Text>}
+				        <Modal 
+				        	style={{margin: 50}}
+				        	isVisible={this.state.visible}
+				        	onSwipeComplete={() => this.setState({ visible: false })}
+				        	swipeDirection="left"
+				        	animationIn="slideInLeft"
+				        	animationInTiming={500}
+				        	backdropTransitionInTiming={800}
+				        >
+				          <View style={styles.contentModal}>
+				          	<View style={{margin: 20}}>
+				          		<View style={styles.listModal}>
+					            	<Text style={styles.titleDetail}>Isi Kiriman</Text>
+					            	<Text style={styles.subtitle}>{dataDetail.isikiriman}</Text>
+					            </View>
+					            <View style={styles.listModal}>
+					            	<Text style={styles.titleDetail}>Alamat Penerima</Text>
+					            	<Text style={styles.subtitle}>{dataDetail.alamatpenerima}</Text>
+					            </View>
+					            <View style={styles.listModal}>
+					            	<Text style={styles.titleDetail}>Kota Penerima</Text>
+						            <Text style={styles.subtitle}>{dataDetail.kotapenerima}</Text>
+						        </View>
+						        <View style={styles.listModal}>
+						        	<Text style={styles.titleDetail}>Nama Penerima</Text>
+						         	<Text style={styles.subtitle}>{dataDetail.nmpenerima}</Text>
+						        </View>
+						        <View style={styles.listModal}>
+						        	<Text style={styles.titleDetail}>Status</Text>
+					            	<Text style={styles.subtitle}>{dataDetail.status_kiriman}</Text>
+					            </View>
+					            <View style={styles.listModal}>
+					            	<Text style={styles.titleDetail}>Waktu Posting</Text>
+					            	<Text style={styles.subtitle}>{dataDetail.wkt_posting}</Text>
+					            </View>
 				            </View>
-				            <View style={styles.listModal}>
-				            	<Text style={styles.titleDetail}>Alamat Penerima</Text>
-				            	<Text style={styles.subtitle}>{dataDetail.alamatpenerima}</Text>
-				            </View>
-				            <View style={styles.listModal}>
-				            	<Text style={styles.titleDetail}>Kota Penerima</Text>
-					            <Text style={styles.subtitle}>{dataDetail.kotapenerima}</Text>
+				            <View style={{padding: 50}}>
+					        	<Button onPress={this.toggleModal}>Tutup</Button>
 					        </View>
-					        <View style={styles.listModal}>
-					        	<Text style={styles.titleDetail}>Nama Penerima</Text>
-					         	<Text style={styles.subtitle}>{dataDetail.nmpenerima}</Text>
-					        </View>
-					        <View style={styles.listModal}>
-					        	<Text style={styles.titleDetail}>Status</Text>
-				            	<Text style={styles.subtitle}>{dataDetail.status_kiriman}</Text>
-				            </View>
-				            <View style={styles.listModal}>
-				            	<Text style={styles.titleDetail}>Waktu Posting</Text>
-				            	<Text style={styles.subtitle}>{dataDetail.wkt_posting}</Text>
-				            </View>
-			            </View>
-			            <View style={{padding: 50}}>
-				        	<Button onPress={this.toggleModal}>Tutup</Button>
-				        </View>
-			          </View>
-			        </Modal>
-			</View>
+				          </View>
+				        </Modal>
+				</View>
+			</React.Fragment>
 		);
 	}
 }
 
-function mapStateToProps(state) {
+function mapStateToProps(state, nextProps) {
+	const { tanggalSearch } = nextProps.navigation.state.params;
 	return{
-		orderlist: state.order.dataOrder,
-		tanggalProps: state.order.searchParam
+		orderlist: state.order.dataOrder[tanggalSearch]
 	}
 }
 
