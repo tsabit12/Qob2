@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet,AsyncStorage } from "react-native";
 import { connect } from "react-redux";
 import { ListItem, Button, Icon } from '@ui-kitten/components';
+import api from "../api";
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -43,10 +44,33 @@ const List = ({ listdata }) => {
 	    );
 } 
 
+
 class ListOrder extends React.Component{
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: <Judul navigation={navigation}/>
 	})
+
+	async componentDidMount() {
+        const value     = await AsyncStorage.getItem('qobUserPrivasi');
+		const toObje    = JSON.parse(value);
+		let userid 		= toObje.userid;
+
+		const payload = {
+			sp_nama  : `Ipos_getPostingPebisol`,
+			par_data : `${userid}|2020-01-08|2020-01-08`
+		}
+		console.log(payload);
+		
+		api.qob.listOrder(payload)
+			.then(res => {
+				const response = {
+					// 'jmldata' : res.jmldata,
+					'recordnya': res.recordnya
+				}
+			console.log(response);
+			})
+
+    }
 
 	render(){
 		const { orderlist } = this.props;

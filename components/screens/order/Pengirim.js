@@ -41,6 +41,8 @@ class Pengirim extends React.Component{
     	errors: {}
 	}
 
+
+
 	onChangeAlamat = (text) => {
 		clearTimeout(this.timer);
 		this.setState({ data: { ...this.state.data, alamat: text}});
@@ -200,7 +202,8 @@ class Pengirim extends React.Component{
 						    	placeholder='Masukan nomor handphone'
 						    	ref={this.phoneRef}
 						    	name='nohp'
-						    	label='No Handphone'
+								label='No Handphone'
+								keyboardType='numeric'
 						    	style={{ paddingTop: 7 }}
 						    	labelStyle={styles.label}
 						    	value={data.nohp}

@@ -181,7 +181,8 @@ class Penerima extends React.Component{
 						    	placeholder='Masukan email'
 						    	ref={this.emailRef}
 						    	name='email'
-						    	label='Email'
+								label='Email'
+								keyboardType='email-address'
 						    	style={{ paddingTop: 7 }}
 						    	labelStyle={styles.label}
 						    	value={data.email}
@@ -193,7 +194,8 @@ class Penerima extends React.Component{
 						    	placeholder='Masukan nomor handphone'
 						    	ref={this.phoneRef}
 						    	name='nohp'
-						    	label='No Handphone'
+								label='No Handphone'
+								keyboardType='numeric'
 						    	style={{ paddingTop: 7 }}
 						    	labelStyle={styles.label}
 						    	value={data.nohp}

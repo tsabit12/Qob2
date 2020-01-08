@@ -148,8 +148,10 @@ class ResultOrder extends React.Component{
 							<Dialog.Container visible={this.state.visible}>
 								<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
 						        <Dialog.Description>
-							          	Nomor order   : {this.state.idOrder} {'\n'}
-							          	Isi Kiriman   : {params.deskripsiOrder.jenis}
+							        <Text>
+										Nomor order   : {this.state.idOrder} {'\n'}
+										  Isi Kiriman   : {params.deskripsiOrder.jenis}
+									</Text>
 						        </Dialog.Description>
 					          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
 					        </Dialog.Container>
