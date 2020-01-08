@@ -27,7 +27,6 @@
     "react-native-gesture-handler": "^1.5.2",
     "react-native-image-slider-box": "^1.0.11",
     "react-native-image-slider-show": "^1.0.3",
-    "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-md5": "^1.0.0",
     "react-native-modal": "^11.5.3",
     "react-native-pin-view": "^2.5.0",
