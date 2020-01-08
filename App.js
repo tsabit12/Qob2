@@ -3,22 +3,14 @@ import { Provider } from 'react-redux'
 import Router from './Router';
 import store from './store';
 import { Text, StyleSheet, View } from "react-native";
-// import { View, Text } from 'react-native';
-// import { createAppContainer } from 'react-navigation';
-// import { createStackNavigator } from 'react-navigation-stack';
-// import Home from "./components/screens/Home";
-// // import Register from "./components/screens/Register"; 
-// // import RegistrasiGiro from "./components/screens/RegistrasiGiro";
-// import IndexRegister from "./components/screens/registrasi/IndexRegister";
-// import { ApplicationProvider, Layout } from '@ui-kitten/components';
-// import { mapping, light as lightTheme } from '@eva-design/eva';
+import { ApplicationProvider, IconRegistry, Icon, Spinner } from '@ui-kitten/components';
+import { mapping, light as lightTheme } from '@eva-design/eva'; 
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { encode } from 'base-64';
 import * as Font from "expo-font";
  
 const LoadFont = () => (
-  <View style={styles.container}>
-    <Text style={{textAlign: 'center'}}>Loading font...</Text>
-  </View>
+    <Spinner size='medium' />
 );
 
 class App extends React.Component{
@@ -40,7 +32,10 @@ class App extends React.Component{
     const { fontLoaded } = this.state;
     return(
       <Provider store={store}>
-        { fontLoaded ? <Router /> : <LoadFont /> }
+        <IconRegistry icons={EvaIconsPack} />
+        <ApplicationProvider mapping={mapping} theme={lightTheme}>
+        { fontLoaded ? <Router /> : <View style={styles.container}><LoadFont /></View> }
+        </ApplicationProvider>
       </Provider>
     );
   }
@@ -49,9 +44,8 @@ class App extends React.Component{
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // marginTop: Expo.Constants.statusBarHeight
     justifyContent: 'center',
-    padding: 20
+    alignItems: 'center',
   },
 })
 

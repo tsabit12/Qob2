@@ -5,9 +5,9 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
 import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/registrasi/IndexRegister";
-import { ApplicationProvider, Layout, IconRegistry, Icon, Avatar } from '@ui-kitten/components';
-import { mapping, light as lightTheme } from '@eva-design/eva'; 
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { Layout, Icon, Avatar } from '@ui-kitten/components';
+// import { mapping, light as lightTheme } from '@eva-design/eva'; 
+// import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/search/IndexSearch";
 // import DetailSearch from "./components/screens/report/DetailSearch";
@@ -254,10 +254,7 @@ const LoginContainer = createAppContainer(LoginNavigator);
 const Router = ({ isLoggedIn }) => {
   return(
     <React.Fragment>
-      <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider mapping={mapping} theme={lightTheme}>
         { isLoggedIn ? <AppContainer /> : <LoginContainer />} 
-      </ApplicationProvider>
     </React.Fragment>
   )
 }
