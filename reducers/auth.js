@@ -2,7 +2,11 @@ import { USER_LOGGED_IN, GET_DETAIL_USER } from "../types";
 
 const initialState = {
 	logged: false,
-	user: {}
+	user: {},
+	dataLogin: {
+		userid: null,
+		norek: null
+	}
 }
 
 export default function auth(state=initialState, action={}){
@@ -10,7 +14,11 @@ export default function auth(state=initialState, action={}){
 		case USER_LOGGED_IN:
 			return{
 				...state,
-				logged: true
+				logged: true,
+				dataLogin: {
+					userid: action.userid,
+					norek: action.noRek
+				}
 			}
 		case GET_DETAIL_USER:
 			return{

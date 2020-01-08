@@ -29,6 +29,7 @@
     "react-native-image-slider-show": "^1.0.3",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-md5": "^1.0.0",
+    "react-native-modal": "^11.5.3",
     "react-native-pin-view": "^2.5.0",
     "react-native-reanimated": "^1.4.0",
     "react-native-scan-barcode": "^3.1.5",

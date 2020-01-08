@@ -1,4 +1,5 @@
-import { SUCCESS_ORDER } from "../types";
+import { SUCCESS_ORDER, GET_ORDER } from "../types";
+import api from "../components/api";
 
 //dataorder 
 // QOB122299: {
@@ -16,3 +17,13 @@ export const oderIsAdded = (id, dataorder) => ({
 })
 
 export const orderAdded = (id, dataorder) => dispatch => dispatch(oderIsAdded(id, dataorder))
+
+export const orderFetched = (response, tanggal) => ({
+	type: GET_ORDER,
+	response,
+	tanggal
+})
+
+export const getOrder = (payload, tanggal) => dispatch => 
+	api.qob.listOrder(payload)
+		.then(res => dispatch(orderFetched(res, tanggal)))

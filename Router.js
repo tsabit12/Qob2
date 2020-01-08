@@ -37,6 +37,7 @@ import DetailTrans from "./components/screens/DetailTrans";
 import CekTarif from "./components/screens/CekTarif";
 import LupaPin from "./components/screens/LupaPin";
 import ListOrder from "./components/screens/ListOrder";
+import SearchOrderScreen from "./components/screens/SearchOrderScreen";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -213,6 +214,12 @@ const AppNavigator = createStackNavigator({
       },
       ListOrder: {
         screen: ListOrder
+      },
+      SearchOrder: {
+        screen: SearchOrderScreen,
+        navigationOptions: { 
+          header: null
+        }
       },
   	},{
   	initialRouteName: 'IndexSearch'

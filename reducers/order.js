@@ -1,25 +1,20 @@
-import { SUCCESS_ORDER } from "../types";
-//'idOrder': {
-	//id:
-	//jenis:
-	//nama:
-	//tgl:
-	//dll
-//}
+import { SUCCESS_ORDER, GET_ORDER } from "../types";
 
 const initialState = {
-	dataOrder: {}
+	dataOrder: {},
+	searchParam: null
 }
 
 export default function order(state=initialState, action={}){
 	switch(action.type){
-		case SUCCESS_ORDER: 
+		case GET_ORDER:
 			return{
 				...state,
 				dataOrder: {
 					...state.dataOrder,
-					[action.id]: action.dataorder
-				}
+					[action.tanggal] : action.response
+				},
+				searchParam: action.tanggal
 			}
 		default: return state;
 	}

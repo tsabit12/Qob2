@@ -1,9 +1,11 @@
 import { USER_LOGGED_IN, GET_DETAIL_USER } from "../types"; 
 import api from "../components/api";
 
-export const setLoggedIn = () => dispatch => {
+export const setLoggedIn = (userid, noRek) => dispatch => {
 	dispatch({
-		type: USER_LOGGED_IN
+		type: USER_LOGGED_IN,
+		userid,
+		noRek
 	})
 }
 

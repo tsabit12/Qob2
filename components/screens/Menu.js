@@ -10,6 +10,9 @@ import { StyleSheet,
     View } from "react-native";
 import { Text, Icon } from '@ui-kitten/components';
 import { Linking } from "expo";
+import { connect } from "react-redux";
+import { getCurdateWithStrip } from "../utils/helper";
+import { getOrder } from "../../actions/order";
 
 var device = Dimensions.get('window').width;
 const iconBooking = require("../../assets/calendar.png");
@@ -23,7 +26,7 @@ const iconPhone = require("../../assets/phone2.png");
 const cartIcon = require("../../assets/cart.png");
 
 
-const Menu = ({ navigation }) => (
+const Menu = ({ navigation, dataLogin, getOrder }) => (
 	<View style={styles.container}>
         <View style={styles.content}>
             <TouchableHighlight 
@@ -79,11 +82,26 @@ const Menu = ({ navigation }) => (
                     <Text style={styles.textIcon}>Riwayat Transaksi</Text>
             	</View>
             </TouchableHighlight>
+
              <TouchableHighlight 
                 underlayColor="#D8D8D8"
-                onPress={() => navigation.navigate({
-                    routeName: 'ListOrder'
-                })}
+                onPress={() => {
+                    const curdate = getCurdateWithStrip();
+                    const { userid, norek } = dataLogin;
+                    const payload = {
+                        sp_nama  : `Ipos_getPostingPebisol`,
+                        par_data : `${userid}|${curdate}|${curdate}`
+                    };
+                    //get data order on this button
+                    //with curdate
+                    getOrder(payload, curdate);
+                    navigation.navigate({
+                        routeName: 'ListOrder',
+                        params: {
+                            tanggalSearch: curdate
+                        }
+                    })
+                }}
             >
                 <View style={styles.icon}>
                     <Image source={cartIcon} style={styles.img}/>
@@ -120,4 +138,10 @@ const styles = StyleSheet.create({
 	}
 })
 
-export default Menu;
+function mapStateToProps(state) {
+    return{
+        dataLogin: state.auth.dataLogin
+    }
+}
+
+export default connect(mapStateToProps, { getOrder })(Menu);

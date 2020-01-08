@@ -182,7 +182,7 @@ export default{
 				par_data: payload.par_data,
 				hashing: getHasing('ecom', payload.sp_nama , payload.par_data)
 			},config).then(res => {
-					if (res.data.jmldata >= 0){
+					if (res.data.jmldata > 0){
 						return res.data;
 					}else{
 						return Promise.reject(res.data);

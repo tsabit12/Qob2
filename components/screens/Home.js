@@ -121,18 +121,10 @@ class Home extends React.Component {
 					saldo: response_data5
 				};
 
-				console.log(payload2);
-
-				// this.props.navigation.navigate({
-				// 	params: {
-				// 		resGenerate: payload2
-				// 	}
-				// })
-
 				this.saveToStorage(payload2)
 					.then(() => {
 						this.setState({ loading: false });
-						this.props.setLoggedIn();
+						this.props.setLoggedIn(userid, x2[0]);
 					}).catch(err => {
 						this.setState({ loading: false });	
 						alert("Failed save data to storage");
