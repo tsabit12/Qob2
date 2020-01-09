@@ -21,6 +21,11 @@ const Judul = ({ navigation }) => {
 	);
 }
 
+const numberWithCommas = (number) => {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
 const Profile = ({ user, saldo }) => {
 	return(
 		<React.Fragment>
@@ -32,43 +37,35 @@ const Profile = ({ user, saldo }) => {
 					<Text style={{ paddingLeft: 10, fontFamily: 'Roboto-Regular', fontSize: 13 }}>Nomor Rekening ({user.noRek})</Text>
 				</View>
 			</View>
-			<View style={{paddingTop: 10, borderBottomWidth: 1, borderBottomColor: '#cbccc4'}}>
-				<View style={{padding: 10}}>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Email</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 100 }}>: {user.email}</Text>
+			<View style={{paddingTop: 10 }}>
+				<View style={{margin: 13}}>
+					<View style={{paddingBottom: 5}}>
+						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Email</Text>
+						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.email}</Text>
 					</View>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Nomor Handphone</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 14 }}>: {user.noHp}</Text>
+					<View style={{paddingBottom: 5}}>
+						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Telepon</Text>
+						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.noHp}</Text>
 					</View>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Olshop</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 88 }}>: {user.detailUsaha}</Text>
+					<View style={{paddingBottom: 5}}>
+						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Detail Usaha</Text>
+						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.detailUsaha}</Text>
 					</View>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Alamat</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 90 }}>: {capitalize(user.alamat)}</Text>
+					<View style={{paddingBottom: 5}}>
+						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Alamat</Text>
+						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{capitalize(user.alamat)}, {capitalize(user.kota)}</Text>
 					</View>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Kota</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 105 }}>: {capitalize(user.kota)}</Text>
+					<View style={{paddingBottom: 5}}>
+						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Kodepos</Text>
+						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.kodepos}</Text>
 					</View>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Kodepos</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 80 }}>: {user.kodepos}</Text>
+					<View style={{paddingBottom: 5}}>
+						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Last Login</Text>
+						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.lastLogin}</Text>
 					</View>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Last Login</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 73 }}>: {user.lastLogin}</Text>
-					</View>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Bergabung</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 68 }}>: {user.createTime.substring(0, 10)}</Text>
-					</View>
-					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 10}}>
-						<Text style={styles.labelInformasi}>Saldo Giro</Text>
-						<Text style={{fontSize: 14, fontFamily: 'open-sans-reg', marginLeft: 72 }}>: {saldo}</Text>
+					<View style={{paddingBottom: 5}}>
+						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Saldo Giro</Text>
+						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{saldo}</Text>
 					</View>
 				</View>
 			</View>
