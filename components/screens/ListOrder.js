@@ -4,8 +4,7 @@ import { connect } from "react-redux";
 import { ListItem, Button, Icon } from '@ui-kitten/components';
 import api from "../api";
 import { getOrder } from "../../actions/order";
-import Modal from "react-native-modal";
-import { QRCode } from 'react-native-custom-qr-codes-expo';
+import Barcode from 'react-native-barcode-builder';
 
 const Judul = ({ navigation }) => {
 	const { params } = navigation.state;
@@ -20,15 +19,16 @@ const Judul = ({ navigation }) => {
 
 
 
-const renderItemAccessory = (style, detail, openModal) => (
+const renderItemAccessory = (style, detail, showDetail, visible, id) => (
 	<TouchableOpacity
-		onPress={() => openModal(detail)}
+		onPress={() => showDetail(detail)}
 	>
-		<Icon name='eye' width={25} height={25} fill='#3366FF' />
+		<Icon name={ visible && detail.id_external === id ? 'arrow-ios-downward-outline' : 'arrow-ios-forward-outline'} width={25} height={25} fill='#3366FF' />
 	</TouchableOpacity>
 )
 
-const List = ({ listdata, tanggal, openModal }) => {
+const List = ({ listdata, tanggal, showDetail, visible, detailProps }) => {
+	// console.log(detailProps.id_external);
 	 return(
 	    	<React.Fragment>
 	    		{ listdata.recordnya.map((x, i) => {
@@ -43,15 +43,43 @@ const List = ({ listdata, tanggal, openModal }) => {
 	    				wkt_posting: x.wkt_posting
 	    			};
 	    			return(
-	    				<ListItem
-					      title={x.id_external}
-					      key={i}
-					      style={styles.listItem}
-					      description={`(${x.isikiriman}) Ke ${x.nmpenerima} pada jam ${x.wkt_posting.substring(11, 16)}`}
-					      titleStyle={styles.listItemTitle}
-					      descriptionStyle={styles.listItemDescription}
-					      accessory={(e) => renderItemAccessory(e, detail, openModal)}
-					    />
+	    				<React.Fragment key={i}>
+		    				<ListItem
+						      title={x.id_external}
+						      description={x.isikiriman}
+						      titleStyle={styles.listItemTitle}
+						      descriptionStyle={styles.listItemDescription}
+						      accessory={(e) => renderItemAccessory(e, detail, showDetail, visible, detailProps.id_external)}
+						    />
+						    { visible && <React.Fragment>
+						    	{ x.id_external === detailProps.id_external && 
+						    		<View style={{ paddingBottom: 5 }}>
+						    			<View style={{paddingBottom: 5 }}>
+						    				<Barcode value={detailProps.id_external} format="CODE128" height={50} />
+						    				<Text style={{textAlign: 'center', marginTop: -10, color: '#83857e'}}>{detailProps.id_external}</Text>
+					    				</View>
+					    				<View style={{ marginLeft: 15 }}>
+							    			<View style={{ paddingBottom: 5 }}>
+								    			<Text style={{fontFamily: 'open-sans-reg'}}>Nama Penerima</Text>
+								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.nmpenerima}</Text>
+							    			</View>
+							    			<View style={{ paddingBottom: 5 }}>
+								    			<Text style={{fontFamily: 'open-sans-reg'}}>Alamat Penerima</Text>
+								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.alamatpenerima}</Text>
+							    			</View>
+							    			<View style={{ paddingBottom: 5 }}>
+								    			<Text style={{fontFamily: 'open-sans-reg'}}>Kota Penerima</Text>
+								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.kotapenerima}</Text>
+							    			</View>
+							    			<View style={{ paddingBottom: 5 }}>
+								    			<Text style={{fontFamily: 'open-sans-reg'}}>Waktu</Text>
+								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.wkt_posting.substring(11, 16)}</Text>
+							    			</View>
+						    			</View>
+						    		</View> }
+						    </React.Fragment> }
+						    <View style={{borderBottomWidth: 1, borderBottomColor: '#cbccc4'}}/>
+					    </React.Fragment>
 	    			)
 	    		}) }
 	    	</React.Fragment>
@@ -84,20 +112,8 @@ class ListOrder extends React.Component{
 		scrollOffset: null
 	}
 
-	toggleModal = () => {
-		this.setState({ visible: !this.state.visible });
-	}
-
-	handleOnScroll = event => {
-	    this.setState({
-	      scrollOffset: event.nativeEvent.contentOffset.y,
-	    });
-	};
-
-	handleScrollTo = p => {
-	    if (this.scrollViewRef.current) {
-	      this.scrollViewRef.current.scrollTo(p);
-	    }
+	onShowDetail = (e) => {
+		this.setState({ visible: !this.state.visible, dataDetail: e });
 	}
 
 	render(){
@@ -106,75 +122,19 @@ class ListOrder extends React.Component{
 		const { dataDetail } = this.state;
 
 		return(
-			<React.Fragment>
+			<ScrollView>
 				<View style={styles.container}>
 					{ orderlist ? <React.Fragment>
 							<List 
 								listdata={orderlist} 
 								tanggal={tanggalSearch} 
-								openModal={(e) => this.setState({ dataDetail: e, visible: true })}
+								showDetail={(e) => this.onShowDetail(e)}
+								visible={this.state.visible}
+								detailProps={this.state.dataDetail}
 							/>
 						</React.Fragment> : <Text style={{marginTop: 20, textAlign: 'center'}}>Data Tidak Ditemukan</Text>}
-				        <Modal 
-				        	
-				        	isVisible={this.state.visible}
-				        	// onSwipeComplete={() => this.setState({ visible: false })}
-				        	// swipeDirection="left"
-				        	scrollTo={this.handleScrollTo}
-				        	scrollOffsetMax={400 - 300} // content height - ScrollView height
-				        	scrollOffset={this.state.scrollOffset}
-				        >
-				          		<View style={styles.contentModal}>
-				          			<TouchableOpacity onPress={this.toggleModal}>
-					          			<View style={{flex: 1, alignItems: 'flex-end', margin: 10}}>
-					          					<Icon name='close-outline' width={25} height={25} />
-					          			</View>
-				          			</TouchableOpacity>
-						          	<ScrollView 
-						          		ref={this.scrollViewRef}
-						          		onScroll={this.handleOnScroll}
-		        						scrollEventThrottle={16}
-		        					>
-							          	<View style={{margin: 20}}>
-											<View style={{ alignItems: 'center' }}>
-												<QRCode 
-													content={dataDetail.id_external}
-													codeStyle='sharp'
-													size={200}
-													logo={require('../../assets/logoQOB.png')}
-													logoSize={50}/>
-												<Text style={styles.subtitle}>{dataDetail.id_external}</Text>
-											</View>
-							          		<View style={styles.listModal}>
-								            	<Text style={styles.titleDetail}>Isi Kiriman</Text>
-								            	<Text style={styles.subtitle}>{dataDetail.isikiriman}</Text>
-								            </View>
-								            <View style={styles.listModal}>
-								            	<Text style={styles.titleDetail}>Alamat Penerima</Text>
-								            	<Text style={styles.subtitle}>{dataDetail.alamatpenerima}</Text>
-								            </View>
-								            <View style={styles.listModal}>
-								            	<Text style={styles.titleDetail}>Kota Penerima</Text>
-									            <Text style={styles.subtitle}>{dataDetail.kotapenerima}</Text>
-									        </View>
-									        <View style={styles.listModal}>
-									        	<Text style={styles.titleDetail}>Nama Penerima</Text>
-									         	<Text style={styles.subtitle}>{dataDetail.nmpenerima}</Text>
-									        </View>
-									        <View style={styles.listModal}>
-									        	<Text style={styles.titleDetail}>Status</Text>
-								            	<Text style={styles.subtitle}>{dataDetail.status_kiriman}</Text>
-								            </View>
-								            <View style={styles.listModal}>
-								            	<Text style={styles.titleDetail}>Waktu Posting</Text>
-								            	<Text style={styles.subtitle}>{dataDetail.wkt_posting}</Text>
-								            </View>
-							            </View>
-						   			</ScrollView>
-					          </View>
-				        </Modal>
 				</View>
-			</React.Fragment>
+			</ScrollView>
 		);
 	}
 }
