@@ -5,9 +5,15 @@ import api from "../../api";
 import { connect } from "react-redux";
 import { getDetailUser, loggedOut } from "../../../actions/auth";
 import { getRekening } from "../../../actions/search";
-import { Icon } from '@ui-kitten/components';
+import { Icon, Spinner } from '@ui-kitten/components';
 
 const imageIcon = require("../../icons/user.png");
+
+const LoaderView = () => (
+	<View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+		<Spinner size='medium' />
+	</View>
+);
 
 const capitalize = (string) => {
 	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -195,9 +201,8 @@ class AccountScreen extends React.Component{
 		const { detail, rekKoran } = this.props;
 		
 		return(
-			<SafeAreaView>
-				<ScrollView>
-				{ Object.keys(detail).length > 0 ? 
+			<React.Fragment>
+			{ Object.keys(detail).length > 0 ? <ScrollView>
 					<View style={{marginTop: 5}}>
 						<Profile 
 							user={detail} 
@@ -208,16 +213,15 @@ class AccountScreen extends React.Component{
 							listRek={rekKoran}
 							loading={this.state.loading}
 						/>
-					</View> : <Text>Loading..</Text> }
+					</View>
 					<View style={{ marginLeft: 14, marginRight: 15 }}>
 						<Text 
 							style={{fontFamily: 'open-sans-reg', fontSize: 15, color: 'blue' }}
 							onPress={this.onLogout}
 						>Logout</Text>
-						<View style={{borderBottomWidth: 1, borderBottomColor: '#cfcfcf', marginTop: 10}} />
 					</View>
-				</ScrollView>
-			</SafeAreaView>
+				</ScrollView> : <LoaderView />  }
+			</React.Fragment>
 		);
 	}
 }
