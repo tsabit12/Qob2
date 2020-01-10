@@ -102,7 +102,7 @@ class SearchOrderScreen extends React.Component{
 									    onPress={() => this.handlePress(x.tanggal)}
 									/>   
 				    			</View>)}
-				    	</React.Fragment> : <Text>No history search found</Text> }
+				    	</React.Fragment> : <Text style={{marginTop: 20, textAlign: 'center'}}>Riwayat pencarian tidak ditemukan</Text> }
 			    </View>
 			    </SearchLayout>
 			</React.Fragment>

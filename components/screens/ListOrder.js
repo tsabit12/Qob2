@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Platform , ScrollView} from "react-native";
 import { connect } from "react-redux";
-import { ListItem, Button, Icon } from '@ui-kitten/components';
+import { ListItem, Button, Icon, Toggle } from '@ui-kitten/components';
 import api from "../api";
 import { getOrder } from "../../actions/order";
 import Barcode from 'react-native-barcode-builder';
@@ -10,7 +10,7 @@ const Judul = ({ navigation }) => {
 	const { params } = navigation.state;
 	return(
 		<View>
-			<Text style={styles.judul}>Daftar Order</Text>
+			<Text style={styles.judul}>Riwayat Transaksi</Text>
 			<Text style={{fontFamily: 'open-sans-reg'}}>{params && navigation.state.params.tanggalSearch}</Text>
 		</View>
 	);
@@ -80,40 +80,42 @@ const DetailView = ({ listDetail }) => (
 	</View>
 )
 
-const List = ({ listdata, tanggal, showDetail, visible, detailProps }) => {
+const List = ({ listdata, tanggal, showDetail, visible, detailProps, checked }) => {
 	//only show with status 1 or null
-	const filterList = listdata.recordnya.filter(x => x.status_kiriman !== '2');
+	const filterList = !checked ? listdata.recordnya.filter(x => x.status_kiriman !== '2') : listdata.recordnya.filter(x => x.status_kiriman === '2');
 	// console.log(detailProps.id_external);
 	 return(
 	    	<React.Fragment>
-	    		{ filterList.map((x, i) => {
-	    			let detail = {
-	    				alamatpenerima: x.alamatpenerima,
-	    				isikiriman: x.isikiriman,
-	    				kotapenerima: x.kotapenerima,
-	    				nmpenerima: x.nmpenerima,
-	    				status_kiriman: x.status_kiriman,
-	    				id_external: x.id_external,
-	    				nmpengirim: x.nmpengirim,
-	    				wkt_posting: x.wkt_posting
-	    			};
-	    			return(
-	    				<React.Fragment key={i}>
-		    				<ListItem
-						      title={x.id_external}
-						      description={x.isikiriman}
-						      titleStyle={styles.listItemTitle}
-						      descriptionStyle={styles.listItemDescription}
-						      accessory={(e) => renderItemAccessory(e, detail, showDetail, visible)}
-						      onPress={() => showDetail(detail)}
-						    />
-						    { visible[x.id_external] && <React.Fragment>
-						    	{ x.id_external === detailProps[x.id_external].id_external &&  <DetailView listDetail={detailProps[x.id_external]} />}
-						    </React.Fragment> }
-						    <View style={{borderBottomWidth: 1, borderBottomColor: '#cbccc4'}}/>
-					    </React.Fragment>
-	    			)
-	    		}) }
+	    		{ filterList.length > 0 ? <React.Fragment>
+	    			{ filterList.map((x, i) => {
+		    			let detail = {
+		    				alamatpenerima: x.alamatpenerima,
+		    				isikiriman: x.isikiriman,
+		    				kotapenerima: x.kotapenerima,
+		    				nmpenerima: x.nmpenerima,
+		    				status_kiriman: x.status_kiriman,
+		    				id_external: x.id_external,
+		    				nmpengirim: x.nmpengirim,
+		    				wkt_posting: x.wkt_posting
+		    			};
+		    			return(
+		    				<React.Fragment key={i}>
+			    				<ListItem
+							      title={x.id_external}
+							      description={x.isikiriman}
+							      titleStyle={styles.listItemTitle}
+							      descriptionStyle={styles.listItemDescription}
+							      accessory={(e) => renderItemAccessory(e, detail, showDetail, visible)}
+							      onPress={() => showDetail(detail)}
+							    />
+							    { visible[x.id_external] && <React.Fragment>
+							    	{ x.id_external === detailProps[x.id_external].id_external &&  <DetailView listDetail={detailProps[x.id_external]} />}
+							    </React.Fragment> }
+							    <View style={{borderBottomWidth: 1, borderBottomColor: '#cbccc4'}}/>
+						    </React.Fragment>
+		    			)
+		    		}) }
+	    		</React.Fragment> : <Text style={{textAlign: 'center', marginTop: 15}}>No result found</Text> }
 	    	</React.Fragment>
 	    );
 } 
@@ -145,7 +147,7 @@ class ListOrder extends React.Component{
 		dataDetail: {
 			idorder: {}
 		},
-		scrollOffset: null
+		checked: false
 	}
 
 	onShowDetail = (e) => {
@@ -162,14 +164,33 @@ class ListOrder extends React.Component{
 		});
 	}
 
+	onCheckedChange = () => {
+		this.setState({ checked: !this.state.checked })
+	}
+
 	render(){
 		const { tanggalSearch } = this.props.navigation.state.params;
 		const { orderlist } = this.props;
-		const { dataDetail } = this.state;
+		const { dataDetail, checked } = this.state;
 
 		return(
 			<ScrollView>
 				<View style={styles.container}>
+					<View style={{flexDirection: 'row' }}>
+						<View style={{flex: 1, alignItems: 'flex-start', marginTop: 14, marginLeft: 15 }}>
+							<Text style={{fontFamily: 'open-sans-reg', fontWeight: '700'}}>
+								Data order dengan status ({ checked ? 'selesai transaksi' : 'belum transaksi' })
+							</Text>
+						</View>
+						<View style={{flex: 1, alignItems: 'flex-end', marginTop: 17, marginRight: 20 }}>
+							<Toggle
+						      checked={checked}
+						      onChange={this.onCheckedChange}
+						      status='info'
+						    />
+					    </View>
+				    </View>
+				    <View style={{borderBottomWidth: 1, borderBottomColor: '#cbccc4', marginTop: 14}}/>
 					{ orderlist ? <React.Fragment>
 							<List 
 								listdata={orderlist} 
@@ -177,8 +198,9 @@ class ListOrder extends React.Component{
 								showDetail={(e) => this.onShowDetail(e)}
 								visible={this.state.visible}
 								detailProps={this.state.dataDetail}
+								checked={checked}
 							/>
-						</React.Fragment> : <Text style={{marginTop: 20, textAlign: 'center'}}>Data Tidak Ditemukan</Text>}
+						</React.Fragment> : <Text style={{textAlign: 'center', marginTop: 15}}>No result found</Text>}
 				</View>
 			</ScrollView>
 		);

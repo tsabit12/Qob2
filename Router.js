@@ -32,8 +32,8 @@ import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
 import Barcode from './components/screens/helper/barcode';
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
-import HistoryPembayaran from "./components/screens/HistoryPembayaran";
-import DetailTrans from "./components/screens/DetailTrans";
+// import HistoryPembayaran from "./components/screens/HistoryPembayaran";
+// import DetailTrans from "./components/screens/DetailTrans";
 import CekTarif from "./components/screens/CekTarif";
 import LupaPin from "./components/screens/LupaPin";
 import ListOrder from "./components/screens/ListOrder";
@@ -202,12 +202,6 @@ const AppNavigator = createStackNavigator({
       },
       Account:{
         screen: AccountScreen,
-      },
-      History: {
-        screen: HistoryPembayaran
-      },
-      DetailTrans: {
-        screen: DetailTrans
       },
       CekTarif: {
         screen: CekTarif

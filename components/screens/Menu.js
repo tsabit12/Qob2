@@ -71,19 +71,8 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
 	                <Text style={styles.textIcon}>Generate Pembayaran</Text>
 	            </View>
             </TouchableHighlight>
-            <TouchableHighlight 
-            	underlayColor="#D8D8D8"
-            	onPress={() => navigation.navigate({
-	                routeName: 'History'
-	            })}
-            >
-            	<View style={styles.icon}>
-	        	    <Image source={iconRiwayat} style={styles.img}/>
-                    <Text style={styles.textIcon}>Riwayat Transaksi</Text>
-            	</View>
-            </TouchableHighlight>
 
-             <TouchableHighlight 
+            <TouchableHighlight 
                 underlayColor="#D8D8D8"
                 onPress={() => {
                     const curdate = getCurdateWithStrip();
@@ -105,8 +94,8 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                 }}
             >
                 <View style={styles.icon}>
-                    <Image source={cartIcon} style={styles.img}/>
-                    <Text style={styles.textIcon}>List {'\n'}Order</Text>
+                    <Image source={iconRiwayat} style={styles.img}/>
+                    <Text style={styles.textIcon}>Riwayat {'\n'}Order</Text>
                 </View>
             </TouchableHighlight>
         </View>
