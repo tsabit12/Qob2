@@ -10,7 +10,7 @@ const Judul = ({ navigation }) => {
 	const { params } = navigation.state;
 	return(
 		<View>
-			<Text style={styles.judul}>Riwayat Transaksi</Text>
+			<Text style={styles.judul}>Riwayat Order</Text>
 			<Text style={{fontFamily: 'open-sans-reg'}}>{params && navigation.state.params.tanggalSearch}</Text>
 		</View>
 	);
