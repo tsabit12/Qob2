@@ -28,10 +28,12 @@ const renderItemAccessory = (style, detail, showDetail, visible, id) => (
 )
 
 const List = ({ listdata, tanggal, showDetail, visible, detailProps }) => {
+	//only show with status 1 or null
+	const filterList = listdata.recordnya.filter(x => x.status_kiriman !== '2');
 	// console.log(detailProps.id_external);
 	 return(
 	    	<React.Fragment>
-	    		{ listdata.recordnya.map((x, i) => {
+	    		{ filterList.map((x, i) => {
 	    			let detail = {
 	    				alamatpenerima: x.alamatpenerima,
 	    				isikiriman: x.isikiriman,
@@ -74,6 +76,10 @@ const List = ({ listdata, tanggal, showDetail, visible, detailProps }) => {
 							    			<View style={{ paddingBottom: 5 }}>
 								    			<Text style={{fontFamily: 'open-sans-reg'}}>Waktu</Text>
 								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.wkt_posting.substring(11, 16)}</Text>
+							    			</View>
+							    			<View style={{ paddingBottom: 5 }}>
+								    			<Text style={{fontFamily: 'open-sans-reg'}}>Status Kiriman</Text>
+								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.status_kiriman}</Text>
 							    			</View>
 						    			</View>
 						    		</View> }
