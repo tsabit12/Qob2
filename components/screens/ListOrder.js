@@ -1,10 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Platform , ScrollView} from "react-native";
 import { connect } from "react-redux";
 import { ListItem, Button, Icon } from '@ui-kitten/components';
 import api from "../api";
 import { getOrder } from "../../actions/order";
 import Modal from "react-native-modal";
+import { QRCode } from 'react-native-custom-qr-codes-expo';
 
 const Judul = ({ navigation }) => {
 	const { params } = navigation.state;
@@ -100,7 +101,7 @@ class ListOrder extends React.Component{
 							/>
 						</React.Fragment> : <Text style={{marginTop: 20, textAlign: 'center'}}>Data Tidak Ditemukan</Text>}
 				        <Modal 
-				        	style={{margin: 50}}
+				        	
 				        	isVisible={this.state.visible}
 				        	onSwipeComplete={() => this.setState({ visible: false })}
 				        	swipeDirection="left"
@@ -109,7 +110,18 @@ class ListOrder extends React.Component{
 				        	backdropTransitionInTiming={800}
 				        >
 				          <View style={styles.contentModal}>
+						  <ScrollView>
 				          	<View style={{margin: 20}}>
+								
+								<View style={{ alignItems: 'center' }}>
+									<QRCode 
+										content={dataDetail.id_external}
+										codeStyle='sharp'
+										size={200}
+										logo={require('../../assets/logoQOB.png')}
+										logoSize={50}/>
+									<Text style={styles.subtitle}>{dataDetail.id_external}</Text>
+								</View>
 				          		<View style={styles.listModal}>
 					            	<Text style={styles.titleDetail}>Isi Kiriman</Text>
 					            	<Text style={styles.subtitle}>{dataDetail.isikiriman}</Text>
@@ -134,8 +146,10 @@ class ListOrder extends React.Component{
 					            	<Text style={styles.titleDetail}>Waktu Posting</Text>
 					            	<Text style={styles.subtitle}>{dataDetail.wkt_posting}</Text>
 					            </View>
+								
 				            </View>
-				            <View style={{padding: 50}}>
+							</ScrollView>
+				            <View>
 					        	<Button onPress={this.toggleModal}>Tutup</Button>
 					        </View>
 				          </View>
