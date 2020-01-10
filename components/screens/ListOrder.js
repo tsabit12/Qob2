@@ -52,6 +52,7 @@ const List = ({ listdata, tanggal, showDetail, visible, detailProps }) => {
 						      titleStyle={styles.listItemTitle}
 						      descriptionStyle={styles.listItemDescription}
 						      accessory={(e) => renderItemAccessory(e, detail, showDetail, visible, detailProps.id_external)}
+						      onPress={() => showDetail(detail)}
 						    />
 						    { visible && <React.Fragment>
 						    	{ x.id_external === detailProps.id_external && 
