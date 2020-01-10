@@ -1,10 +1,11 @@
 import React from "react";
-import {View, Text, AsyncStorage, SafeAreaView, Image } from "react-native";
+import {View, Text, AsyncStorage, SafeAreaView, Image, TouchableOpacity, ScrollView } from "react-native";
 import styles from "./styles";
 import api from "../../api";
 import { connect } from "react-redux";
 import { getDetailUser } from "../../../actions/auth";
-import { Button } from '@ui-kitten/components';
+import { getRekening } from "../../../actions/search";
+import { Icon } from '@ui-kitten/components';
 
 const imageIcon = require("../../icons/user.png");
 
@@ -22,14 +23,55 @@ const Judul = ({ navigation }) => {
 }
 
 const numberWithCommas = (number) => {
-	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-
-const Profile = ({ user, saldo }) => {
+const ListRekening = ({ listdata }) => {
+	const parsingPagar = listdata[2].split('#');
+	// console.log(parsingPagar);
 	return(
 		<React.Fragment>
-			<View style={{flexDirection: 'row', padding: 10, borderBottomWidth: 1, borderBottomColor: '#cbccc4' }}>
+			<View style={{ margin: 5, paddingBottom: 7 }}>
+				<View style={styles.oneRow}>
+					<Text style={{fontFamily: 'Roboto-Regular', fontSize: 15, color: '#a6a3a2'}}>Initial Balance</Text>
+					<Text style={{ marginLeft: 20, fontFamily: 'Roboto-Regular', fontSize: 15, color: '#a6a3a2' }}>: {numberWithCommas(listdata[0])}</Text>
+				</View>
+				<View style={styles.oneRow}>
+					<Text style={{fontFamily: 'Roboto-Regular', fontSize: 15, color: '#a6a3a2'}}>Final Balance</Text>
+					<Text style={{ marginLeft: 24, fontFamily: 'Roboto-Regular', fontSize: 15, color: '#a6a3a2' }}>: {numberWithCommas(listdata[1])}</Text>
+				</View>
+				<View style={{marginTop: 10}}>
+					<View style={{flexDirection: 'row', alignItems: 'flex-start', paddingBottom: 5}}>
+						<Text>Ket</Text>
+						<Text style={{marginLeft: 10}}>Tanggal</Text>
+						<Text style={{marginLeft: 49}}>Jam</Text>
+						<Text style={{marginLeft: 30}}>Total</Text>
+					</View>
+					{ parsingPagar.map((x, i) => {
+						if (x.length > 0) { //remove last array cause it's null
+							const parsingX = x.split('~');
+							console.log(parsingX);
+							return(
+								<View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
+									<Text>{numberWithCommas(parsingX[0])}</Text>
+									<Text style={{marginLeft: 20}}>{parsingX[2]}</Text>
+									<Text style={{marginLeft: 20}}>{parsingX[3]}</Text>
+									<Text style={{marginLeft: 28}}>{numberWithCommas(parsingX[5])}</Text>
+								</View>
+							);
+						}
+					}) }
+				</View>
+			</View>
+		</React.Fragment>
+	);
+}
+
+const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loading }) => {
+	// console.log(listRek[nomorRek]);
+	return(
+		<React.Fragment>
+			<View style={{flexDirection: 'row', padding: 10 }}>
 				<Image source={imageIcon} style={{width: 60, height: 60}} />
 				<View style={{flexWrap: 'wrap', alignItems: 'flex-start'}}>
 					<Text style={{ paddingLeft: 10, fontSize: 16, fontFamily: 'open-sans-bold' }}>{capitalize(user.namaPanggilan)}</Text>
@@ -37,40 +79,68 @@ const Profile = ({ user, saldo }) => {
 					<Text style={{ paddingLeft: 10, fontFamily: 'Roboto-Regular', fontSize: 13 }}>Nomor Rekening ({user.noRek})</Text>
 				</View>
 			</View>
-			<View style={{paddingTop: 10 }}>
-				<View style={{margin: 13}}>
-					<View style={{paddingBottom: 5}}>
-						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Email</Text>
-						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.email}</Text>
+			<View style={{borderBottomWidth: 1, margin: 10, borderBottomColor: '#cfcfcf'}} />
+			<View>
+				<Text style={{paddingLeft: 13, fontFamily: 'open-sans-bold' }}>Informasi Profil</Text>
+				<View style={{padding: 13, marginTop: -10}}>
+					<View style={styles.contentLabel}>
+						<Icon name='email-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
+						<View style={styles.leftContent}>
+							<Text style={styles.labelTitle}>Email</Text>
+							<Text style={styles.labelSubTitle}>{user.email}</Text>
+						</View>
 					</View>
-					<View style={{paddingBottom: 5}}>
-						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Telepon</Text>
-						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.noHp}</Text>
+
+					<View style={styles.contentLabel}>
+						<Icon name='phone-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
+						<View style={styles.leftContent}>
+							<Text style={styles.labelTitle}>Telepon</Text>
+							<Text style={styles.labelSubTitle}>{user.noHp}</Text>
+						</View>
 					</View>
-					<View style={{paddingBottom: 5}}>
-						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Detail Usaha</Text>
-						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.detailUsaha}</Text>
+
+					<View style={styles.contentLabel}>
+						<Icon name='shopping-cart-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
+						<View style={styles.leftContent}>
+							<Text style={styles.labelTitle}>Detail Usaha</Text>
+							<Text style={styles.labelSubTitle}>{user.detailUsaha}</Text>
+						</View>
 					</View>
-					<View style={{paddingBottom: 5}}>
-						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Alamat</Text>
-						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{capitalize(user.alamat)}, {capitalize(user.kota)}</Text>
+					<View style={styles.contentLabel}>
+						<Icon name='pin-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
+						<View style={styles.leftContent}>
+							<Text style={styles.labelTitle}>Alamat</Text>
+							<Text style={styles.labelSubTitle}>{capitalize(user.alamat)}, {capitalize(user.kota)}</Text>
+						</View>
 					</View>
-					<View style={{paddingBottom: 5}}>
-						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Kodepos</Text>
-						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.kodepos}</Text>
+					<View style={styles.contentLabel}>
+						<Icon name='info-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
+						<View style={styles.leftContent}>
+							<Text style={styles.labelTitle}>Kodepos</Text>
+							<Text style={styles.labelSubTitle}>{user.kodepos}</Text>
+						</View>
 					</View>
-					<View style={{paddingBottom: 5}}>
-						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Last Login</Text>
-						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{user.lastLogin}</Text>
+					<View style={styles.contentLabelBot}>
+						<Icon name='credit-card-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
+						<View style={styles.leftContent}>
+							<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Saldo Giro</Text>
+							<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{saldo}</Text>
+						</View>
+						<TouchableOpacity 
+							style={styles.linkIcon}
+							onPress={() => getRekening(user.noRek)}
+						>
+							<Icon name={ rekening ? 'arrow-ios-downward-outline' : 'arrow-ios-forward-outline' } width={25} height={25} fill='#232424'/>
+						</TouchableOpacity>
+
 					</View>
-					<View style={{paddingBottom: 5}}>
-						<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Saldo Giro</Text>
-						<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{saldo}</Text>
-					</View>
+					{ rekening && <React.Fragment>
+						{ listRek[nomorRek] ? <ListRekening listdata={listRek[nomorRek]} /> : <React.Fragment>
+								{ loading ? <Text>Loading...</Text> : <Text>Terdapat kesalahan</Text> }
+							</React.Fragment> }
+					</React.Fragment> }
+					<View style={{borderBottomWidth: 1, borderBottomColor: '#cfcfcf'}} />
 				</View>
-			</View>
-			<View style={{ paddingLeft: 10, paddingRight: 10, marginTop: 10 }}>
-				<Button status='info' size='small'>Tampilkan Rekening Koran</Button>
 			</View>
 		</React.Fragment>
 	);
@@ -82,7 +152,10 @@ class AccountScreen extends React.Component{
 	}) 
 
 	state = {
-		sisaSaldo: null
+		sisaSaldo: null,
+		showRekKoran: false,
+		nomorRek: '',
+		loading: false
 	}
 
 	async componentDidMount(){
@@ -93,15 +166,43 @@ class AccountScreen extends React.Component{
 			sisaSaldo: this.props.navigation.state.params.saldo
 		});
 		this.props.getDetailUser(userid)
-			// .then(() => console.log("oke"))
-			// .catch(err => console.log(err));
+			.then(() => console.log("oke"))
+			.catch(err => console.log(err));
+	}
+
+	UNSAFE_componentWillReceiveProps(nextProps){
+		if (nextProps.detail) {
+			const { detail } = nextProps;
+			this.setState({ nomorRek: detail.noRek })
+		}
+	}
+
+	getRekening = (e) => {
+		this.setState({ showRekKoran: !this.state.showRekKoran, loading: true });
+		this.props.getRekening(this.state.nomorRek)
+			.then(res => this.setState({ loading: false}))
+			.catch(err => this.setState({ loading: false}));
 	}
 
 	render(){
-		const { detail } = this.props;
+		const { detail, rekKoran } = this.props;
+		
 		return(
-			<SafeAreaView style={{ marginTop: 5 }}>
-				{ Object.keys(detail).length > 0 ? <Profile user={detail} saldo={this.state.sisaSaldo} /> : <Text>Loading..</Text> }
+			<SafeAreaView>
+				<ScrollView>
+				{ Object.keys(detail).length > 0 ? 
+					<View style={{marginTop: 5}}>
+						<Profile 
+							user={detail} 
+							saldo={this.state.sisaSaldo} 
+							getRekening={this.getRekening}
+							rekening={this.state.showRekKoran}
+							nomorRek={this.state.nomorRek}
+							listRek={rekKoran}
+							loading={this.state.loading}
+						/>
+					</View> : <Text>Loading..</Text> }
+				</ScrollView>
 			</SafeAreaView>
 		);
 	}
@@ -109,9 +210,10 @@ class AccountScreen extends React.Component{
 
 function mapStateToProps(state) {
 	return{
-		detail: state.auth.user
+		detail: state.auth.user,
+		rekKoran: state.search.rekening
 	}
 }
 
 
-export default connect(mapStateToProps, { getDetailUser })(AccountScreen);
+export default connect(mapStateToProps, { getDetailUser, getRekening })(AccountScreen);
