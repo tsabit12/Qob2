@@ -19,12 +19,65 @@ const Judul = ({ navigation }) => {
 
 
 
-const renderItemAccessory = (style, detail, showDetail, visible, id) => (
-	<TouchableOpacity
-		onPress={() => showDetail(detail)}
-	>
-		<Icon name={ visible && detail.id_external === id ? 'arrow-ios-downward-outline' : 'arrow-ios-forward-outline'} width={25} height={25} fill='#3366FF' />
-	</TouchableOpacity>
+const renderItemAccessory = (style, detail, showDetail, visible) => {
+	return(
+		<TouchableOpacity
+			onPress={() => showDetail(detail)}
+		>
+			<Icon 
+				name={ 
+					visible[detail.id_external] ? 
+						'arrow-ios-downward-outline' : 'arrow-ios-forward-outline' 
+				} 
+				width={25} 
+				height={25} 
+				fill='#3366FF' 
+			/>
+		</TouchableOpacity>
+	)
+}
+
+const DetailView = ({ listDetail }) => (
+	<View style={{ paddingBottom: 5 }}>
+		<View style={{paddingBottom: 5 }}>
+			<Barcode value={listDetail.id_external} format="CODE128" height={50} />
+			<Text style={{textAlign: 'center', marginTop: -10, color: '#83857e'}}>
+				{listDetail.id_external}
+			</Text>
+		</View>
+		<View style={{ marginLeft: 15 }}>
+			<View style={{ paddingBottom: 5 }}>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Nama Penerima</Text>
+    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
+    				{listDetail.nmpenerima}
+    			</Text>
+			</View>
+			<View style={{ paddingBottom: 5 }}>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Alamat Penerima</Text>
+    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
+    				{listDetail.alamatpenerima}
+    			</Text>
+			</View>
+			<View style={{ paddingBottom: 5 }}>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Kota Penerima</Text>
+    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
+    				{listDetail.kotapenerima}
+    			</Text>
+			</View>
+			<View style={{ paddingBottom: 5 }}>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Waktu</Text>
+    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
+    				{listDetail.wkt_posting.substring(11, 16)}
+    			</Text>
+			</View>
+			<View style={{ paddingBottom: 5 }}>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Status Kiriman</Text>
+    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
+    				{listDetail.status_kiriman}
+    			</Text>
+			</View>
+		</View>
+	</View>
 )
 
 const List = ({ listdata, tanggal, showDetail, visible, detailProps }) => {
@@ -51,39 +104,11 @@ const List = ({ listdata, tanggal, showDetail, visible, detailProps }) => {
 						      description={x.isikiriman}
 						      titleStyle={styles.listItemTitle}
 						      descriptionStyle={styles.listItemDescription}
-						      accessory={(e) => renderItemAccessory(e, detail, showDetail, visible, detailProps.id_external)}
+						      accessory={(e) => renderItemAccessory(e, detail, showDetail, visible)}
 						      onPress={() => showDetail(detail)}
 						    />
-						    { visible && <React.Fragment>
-						    	{ x.id_external === detailProps.id_external && 
-						    		<View style={{ paddingBottom: 5 }}>
-						    			<View style={{paddingBottom: 5 }}>
-						    				<Barcode value={detailProps.id_external} format="CODE128" height={50} />
-						    				<Text style={{textAlign: 'center', marginTop: -10, color: '#83857e'}}>{detailProps.id_external}</Text>
-					    				</View>
-					    				<View style={{ marginLeft: 15 }}>
-							    			<View style={{ paddingBottom: 5 }}>
-								    			<Text style={{fontFamily: 'open-sans-reg'}}>Nama Penerima</Text>
-								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.nmpenerima}</Text>
-							    			</View>
-							    			<View style={{ paddingBottom: 5 }}>
-								    			<Text style={{fontFamily: 'open-sans-reg'}}>Alamat Penerima</Text>
-								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.alamatpenerima}</Text>
-							    			</View>
-							    			<View style={{ paddingBottom: 5 }}>
-								    			<Text style={{fontFamily: 'open-sans-reg'}}>Kota Penerima</Text>
-								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.kotapenerima}</Text>
-							    			</View>
-							    			<View style={{ paddingBottom: 5 }}>
-								    			<Text style={{fontFamily: 'open-sans-reg'}}>Waktu</Text>
-								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.wkt_posting.substring(11, 16)}</Text>
-							    			</View>
-							    			<View style={{ paddingBottom: 5 }}>
-								    			<Text style={{fontFamily: 'open-sans-reg'}}>Status Kiriman</Text>
-								    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>{detailProps.status_kiriman}</Text>
-							    			</View>
-						    			</View>
-						    		</View> }
+						    { visible[x.id_external] && <React.Fragment>
+						    	{ x.id_external === detailProps[x.id_external].id_external &&  <DetailView listDetail={detailProps[x.id_external]} />}
 						    </React.Fragment> }
 						    <View style={{borderBottomWidth: 1, borderBottomColor: '#cbccc4'}}/>
 					    </React.Fragment>
@@ -114,13 +139,27 @@ class ListOrder extends React.Component{
 	scrollViewRef = React.createRef();
 
 	state = {
-		visible: false,
-		dataDetail: {},
+		visible: {
+			idorder: false
+		},
+		dataDetail: {
+			idorder: {}
+		},
 		scrollOffset: null
 	}
 
 	onShowDetail = (e) => {
-		this.setState({ visible: !this.state.visible, dataDetail: e });
+		// this.setState({ visible: !this.state.visible, dataDetail: e });
+		this.setState({ 
+			dataDetail: {
+				...this.state.dataDetail,
+				[e.id_external]: e 
+			},
+			visible: {
+				...this.state.visible,
+				[e.id_external]: !this.state.visible[e.id_external]
+			}
+		});
 	}
 
 	render(){
