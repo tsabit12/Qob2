@@ -7,3 +7,4 @@ export const SAVE_RES_REGISTER = 'SAVE_RES_REGISTER';
 export const USER_LOGGED_IN = 'USER_LOGGED_IN';
 export const GET_DETAIL_USER = 'GET_DETAIL_USER';
 export const GET_ORDER = 'GET_ORDER';
+export const USER_LOGGED_OUT = 'USER_LOGGED_OUT';

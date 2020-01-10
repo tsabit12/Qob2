@@ -3,7 +3,7 @@ import {View, Text, AsyncStorage, SafeAreaView, Image, TouchableOpacity, ScrollV
 import styles from "./styles";
 import api from "../../api";
 import { connect } from "react-redux";
-import { getDetailUser } from "../../../actions/auth";
+import { getDetailUser, loggedOut } from "../../../actions/auth";
 import { getRekening } from "../../../actions/search";
 import { Icon } from '@ui-kitten/components';
 
@@ -184,6 +184,13 @@ class AccountScreen extends React.Component{
 			.catch(err => this.setState({ loading: false}));
 	}
 
+	onLogout = () => {
+		this.props.loggedOut();
+		this.props.navigation.navigate({
+            routeName: 'Home'
+        })
+	}
+
 	render(){
 		const { detail, rekKoran } = this.props;
 		
@@ -202,6 +209,13 @@ class AccountScreen extends React.Component{
 							loading={this.state.loading}
 						/>
 					</View> : <Text>Loading..</Text> }
+					<View style={{ marginLeft: 14, marginRight: 15 }}>
+						<Text 
+							style={{fontFamily: 'open-sans-reg', fontSize: 15, color: 'blue' }}
+							onPress={this.onLogout}
+						>Logout</Text>
+						<View style={{borderBottomWidth: 1, borderBottomColor: '#cfcfcf', marginTop: 10}} />
+					</View>
 				</ScrollView>
 			</SafeAreaView>
 		);
@@ -216,4 +230,4 @@ function mapStateToProps(state) {
 }
 
 
-export default connect(mapStateToProps, { getDetailUser, getRekening })(AccountScreen);
+export default connect(mapStateToProps, { getDetailUser, getRekening, loggedOut })(AccountScreen);
