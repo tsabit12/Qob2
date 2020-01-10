@@ -76,13 +76,28 @@ class ListOrder extends React.Component{
 		headerRight: <Search navigation={navigation} />,
 	})
 
+	scrollViewRef = React.createRef();
+
 	state = {
 		visible: false,
-		dataDetail: {}
+		dataDetail: {},
+		scrollOffset: null
 	}
 
 	toggleModal = () => {
 		this.setState({ visible: !this.state.visible });
+	}
+
+	handleOnScroll = event => {
+	    this.setState({
+	      scrollOffset: event.nativeEvent.contentOffset.y,
+	    });
+	};
+
+	handleScrollTo = p => {
+	    if (this.scrollViewRef.current) {
+	      this.scrollViewRef.current.scrollTo(p);
+	    }
 	}
 
 	render(){
@@ -103,56 +118,60 @@ class ListOrder extends React.Component{
 				        <Modal 
 				        	
 				        	isVisible={this.state.visible}
-				        	onSwipeComplete={() => this.setState({ visible: false })}
-				        	swipeDirection="left"
-				        	animationIn="slideInLeft"
-				        	animationInTiming={500}
-				        	backdropTransitionInTiming={800}
+				        	// onSwipeComplete={() => this.setState({ visible: false })}
+				        	// swipeDirection="left"
+				        	scrollTo={this.handleScrollTo}
+				        	scrollOffsetMax={400 - 300} // content height - ScrollView height
+				        	scrollOffset={this.state.scrollOffset}
 				        >
-				          <View style={styles.contentModal}>
-						  <ScrollView>
-				          	<View style={{margin: 20}}>
-								
-								<View style={{ alignItems: 'center' }}>
-									<QRCode 
-										content={dataDetail.id_external}
-										codeStyle='sharp'
-										size={200}
-										logo={require('../../assets/logoQOB.png')}
-										logoSize={50}/>
-									<Text style={styles.subtitle}>{dataDetail.id_external}</Text>
-								</View>
-				          		<View style={styles.listModal}>
-					            	<Text style={styles.titleDetail}>Isi Kiriman</Text>
-					            	<Text style={styles.subtitle}>{dataDetail.isikiriman}</Text>
-					            </View>
-					            <View style={styles.listModal}>
-					            	<Text style={styles.titleDetail}>Alamat Penerima</Text>
-					            	<Text style={styles.subtitle}>{dataDetail.alamatpenerima}</Text>
-					            </View>
-					            <View style={styles.listModal}>
-					            	<Text style={styles.titleDetail}>Kota Penerima</Text>
-						            <Text style={styles.subtitle}>{dataDetail.kotapenerima}</Text>
-						        </View>
-						        <View style={styles.listModal}>
-						        	<Text style={styles.titleDetail}>Nama Penerima</Text>
-						         	<Text style={styles.subtitle}>{dataDetail.nmpenerima}</Text>
-						        </View>
-						        <View style={styles.listModal}>
-						        	<Text style={styles.titleDetail}>Status</Text>
-					            	<Text style={styles.subtitle}>{dataDetail.status_kiriman}</Text>
-					            </View>
-					            <View style={styles.listModal}>
-					            	<Text style={styles.titleDetail}>Waktu Posting</Text>
-					            	<Text style={styles.subtitle}>{dataDetail.wkt_posting}</Text>
-					            </View>
-								
-				            </View>
-							</ScrollView>
-				            <View>
-					        	<Button onPress={this.toggleModal}>Tutup</Button>
-					        </View>
-				          </View>
+				          		<View style={styles.contentModal}>
+				          			<TouchableOpacity onPress={this.toggleModal}>
+					          			<View style={{flex: 1, alignItems: 'flex-end', margin: 10}}>
+					          					<Icon name='close-outline' width={25} height={25} />
+					          			</View>
+				          			</TouchableOpacity>
+						          	<ScrollView 
+						          		ref={this.scrollViewRef}
+						          		onScroll={this.handleOnScroll}
+		        						scrollEventThrottle={16}
+		        					>
+							          	<View style={{margin: 20}}>
+											<View style={{ alignItems: 'center' }}>
+												<QRCode 
+													content={dataDetail.id_external}
+													codeStyle='sharp'
+													size={200}
+													logo={require('../../assets/logoQOB.png')}
+													logoSize={50}/>
+												<Text style={styles.subtitle}>{dataDetail.id_external}</Text>
+											</View>
+							          		<View style={styles.listModal}>
+								            	<Text style={styles.titleDetail}>Isi Kiriman</Text>
+								            	<Text style={styles.subtitle}>{dataDetail.isikiriman}</Text>
+								            </View>
+								            <View style={styles.listModal}>
+								            	<Text style={styles.titleDetail}>Alamat Penerima</Text>
+								            	<Text style={styles.subtitle}>{dataDetail.alamatpenerima}</Text>
+								            </View>
+								            <View style={styles.listModal}>
+								            	<Text style={styles.titleDetail}>Kota Penerima</Text>
+									            <Text style={styles.subtitle}>{dataDetail.kotapenerima}</Text>
+									        </View>
+									        <View style={styles.listModal}>
+									        	<Text style={styles.titleDetail}>Nama Penerima</Text>
+									         	<Text style={styles.subtitle}>{dataDetail.nmpenerima}</Text>
+									        </View>
+									        <View style={styles.listModal}>
+									        	<Text style={styles.titleDetail}>Status</Text>
+								            	<Text style={styles.subtitle}>{dataDetail.status_kiriman}</Text>
+								            </View>
+								            <View style={styles.listModal}>
+								            	<Text style={styles.titleDetail}>Waktu Posting</Text>
+								            	<Text style={styles.subtitle}>{dataDetail.wkt_posting}</Text>
+								            </View>
+							            </View>
+						   			</ScrollView>
+					          </View>
 				        </Modal>
 				</View>
 			</React.Fragment>
