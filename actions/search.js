@@ -1,5 +1,5 @@
 import api from "../components/api";
-import { GET_REKENING, REMOVE_REKENING } from "../types";
+import { GET_REKENING, REMOVE_REKENING, GET_TRACE } from "../types";
 
 export const rekeningFetched = (res, rekening) => ({
 	type: GET_REKENING,
@@ -34,3 +34,13 @@ export const removeRek = (keyShouldRemove) => dispatch => {
 	dispatch(removed(keyShouldRemove));
 	// return Promise.resolve(keyShouldRemove);	
 }
+
+export const getDataKiriman = (res, extId) => ({
+	type: GET_TRACE,
+	result: res,
+	extId
+})
+
+export const lacakKiriman = (extId) => dispatch => 
+	api.qob.lacakKiriman(extId)
+		.then(res => dispatch(getDataKiriman(res, extId)))

@@ -187,7 +187,11 @@ export default{
 					}else{
 						return Promise.reject(res.data);
 					}
-			})
+			}),
+		lacakKiriman: (extId) => 
+			axios.post('https://order.posindonesia.co.id/api/lacak', 
+				{ barcode: extId}, 
+				{ headers: {'Content-Type': 'application/json'}}).then(res => res.data.result)
 	},
 	Pembayaran: {
 		generate: (payload) =>

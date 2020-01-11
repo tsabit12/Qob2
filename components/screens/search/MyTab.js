@@ -5,7 +5,7 @@ import styles from "./styles";
 import SearchLayout from 'react-navigation-addon-search-layout';
 import { RectButton } from 'react-native-gesture-handler';
 import { connect } from "react-redux";
-import { getRekening } from "../../../actions/search";
+import { getRekening, lacakKiriman } from "../../../actions/search";
 
 class MyTab extends React.Component{
 	static navigationOptions = {
@@ -50,6 +50,15 @@ class MyTab extends React.Component{
 	    			alert(err.data.desk_mess);
 	    			this.setState({ errors: {global: err.data.desk_mess }});
 	    		})
+	    }else{
+	    	this.props.lacakKiriman(this.state.searchText)
+	    		.catch(err => console.log(err));
+	    	this.props.navigation.navigate({
+	    		routeName: 'LacakBarcode',
+                params: {
+                	externalId: this.state.searchText
+                }
+	    	})
 	    }
 	    // console.log(this.state.activePage);
 	}
@@ -91,4 +100,4 @@ class MyTab extends React.Component{
 	}
 }
 
-export default connect(null, { getRekening })(MyTab);
+export default connect(null, { getRekening, lacakKiriman })(MyTab);

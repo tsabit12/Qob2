@@ -30,5 +30,51 @@ export default StyleSheet.create({
   },
   labelList: {
     fontFamily: 'open-sans-reg'
+  },
+  circle: {
+    width: 30, 
+    height: 30,
+    borderRadius: 30/2, 
+    backgroundColor: '#32a899',
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  borderVertical: {
+    borderStyle: 'dotted',
+    borderLeftWidth:3,
+    marginLeft: 100,
+    borderLeftColor: '#d97716'
+  },
+  circleAktif:{
+    width: 20, 
+    height: 20,
+    borderRadius: 20/2, 
+    backgroundColor: '#d97716'
+  },
+  labelDate: {
+    fontFamily: 'Roboto-Regular',
+    margin: 5,
+    color: '#5e5d5c'
+  },
+  labelTime: {
+    fontFamily: 'open-sans-reg',
+    marginLeft: -50,
+    color: '#8f8e8d',
+    fontSize: 14
+  },
+  box: {
+    borderLeftWidth: 1, 
+    borderRightWidth: 1, 
+    borderBottomWidth: 1, 
+    borderTopWidth: 1,
+    margin: 5,
+    borderRadius: 10,
+    backgroundColor: '#edeceb'
+  },
+  description: {
+    marginLeft: 3, 
+    fontFamily: 'open-sans-reg', 
+    fontSize: 12,
+    color: '#8f8e8d'
   }
 });
