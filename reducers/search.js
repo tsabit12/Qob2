@@ -1,4 +1,5 @@
-import { GET_REKENING, REMOVE_REKENING, GET_TRACE } from "../types";
+import { GET_REKENING, REMOVE_REKENING, GET_TRACE, REMOVE_HISTORY_LACAK } from "../types";
+import { omit } from 'lodash';
 
 const intialState = {
 	rekening: {},
@@ -15,10 +16,10 @@ export default function search(state=intialState, action={}){
 				}
 			}
 		case REMOVE_REKENING:
-			const newState = delete state.rekening[action.rek]; 
+			// const newState = delete state.rekening[action.rek]; 
 			return{
 				...state,
-				rekening: newState
+				rekening: omit(state.rekening, action.rek)
 			}
 		case GET_TRACE:
 			return{
@@ -27,6 +28,11 @@ export default function search(state=intialState, action={}){
 					...state.trace,
 					[action.extId] : action.result
 				}
+			}
+		case REMOVE_HISTORY_LACAK:
+			return{
+				...state,
+				trace: omit(state.trace, action.extId)
 			}
 		default: return state;
 	}

@@ -9,3 +9,4 @@ export const GET_DETAIL_USER = 'GET_DETAIL_USER';
 export const GET_ORDER = 'GET_ORDER';
 export const USER_LOGGED_OUT = 'USER_LOGGED_OUT';
 export const GET_TRACE = 'GET_TRACE';
+export const REMOVE_HISTORY_LACAK = 'REMOVE_HISTORY_LACAK';
