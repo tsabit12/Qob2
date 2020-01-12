@@ -1,23 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, Dimensions } from 'react-native';
+import { Text, View, StyleSheet, Button, Dimensions, StatusBar, TouchableOpacity } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { Icon } from '@ui-kitten/components';
+import { connect } from "react-redux";
+import { lacakKiriman } from "../../../actions/search";
 
 const { width } = Dimensions.get('window');
 
-export default function barcode() {
+const barcode = (props) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  // const { navigate } = useNavigation();
 
   useEffect(() => {
     (async () => {
+      StatusBar.setHidden(true);
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
   }, []);
 
+  //unmount
+  useEffect( () => () => StatusBar.setHidden(false), [] );
+
   const handleBarCodeScanned = ({ data, type }) => {
     setScanned(true);
-    alert(`No Resi ${data} terdeteksi ${type}`);
+    props.lacakKiriman(data)
+      .then(() => StatusBar.setHidden(false))
+      .catch(err => StatusBar.setHidden(false));
+    props.navigation.navigate({
+      routeName: 'LacakBarcode',
+      params: {
+        externalId: data
+      }
+    })
+    // alert(`No Resi ${data} terdeteksi ${type}`);
   };
 
   if (hasPermission === null) {
@@ -28,24 +45,21 @@ export default function barcode() {
   }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-      }}>
-    <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={[StyleSheet.absoluteFill, styles.container]}
+    <View style={styles.container}>
+      <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
       >
-            <View style={styles.layerTop} />
-            <View style={styles.layerCenter}>
-            <View style={styles.layerLeft} />
-            <View style={styles.focused} />
-            <View style={styles.layerRight} />
-    </View>
-            <View style={styles.layerBottom} />
-    </BarCodeScanner>
+          <View style={{alignItems: 'flex-end', flex: 1, margin: 10}}>
+            <TouchableOpacity onPress={() => props.navigation.navigate({ routeName: 'IndexSearch' })}>
+              <Icon name='close-outline' width={25} height={25} fill='#FFF' />
+            </TouchableOpacity>
+          </View>
+        <View style={{ alignItems: 'center'}}>
+          <Text style={{color: 'white', textAlign: 'center'}}>Scan barcode untuk melacak kiriman anda</Text>
+          <View style={{height: 20}}/>
+        </View>
+      </BarCodeScanner>
       {scanned && (
         <Button title={'Ulangi Scan Barcode'} onPress={() => setScanned(false)} />
       )}
@@ -53,11 +67,15 @@ export default function barcode() {
   );
 }
 
+export default connect(null, { lacakKiriman })(barcode);
+
 const opacity = 'rgba(0, 0, 0, .6)';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column'
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000000'
   },
   layerTop: {
     flex: 1,
@@ -82,4 +100,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: opacity
   },
+  cameraContainer: {
+      marginHorizontal: 0, marginLeft: 0, marginStart: 0,
+      paddingHorizontal: 0, paddingLeft: 0, paddingStart: 0,
+      height: '115%',
+      padding: 0
+  }
 });
+
