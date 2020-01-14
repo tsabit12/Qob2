@@ -16,7 +16,9 @@ const Judul = ({ navigation }) => {
 	);
 }
 
-
+const capitalize = (string) => {
+	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+}
 
 
 const renderItemAccessory = (style, detail, showDetail, visible) => {
@@ -47,7 +49,7 @@ const DetailView = ({ listDetail }) => (
 		</View>
 		<View style={{ marginLeft: 15 }}>
 			<View style={{ paddingBottom: 5 }}>
-    			<Text style={{fontFamily: 'open-sans-reg'}}>Nama Penerima</Text>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Penerima</Text>
     			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
     				{listDetail.nmpenerima}
     			</Text>
@@ -55,13 +57,19 @@ const DetailView = ({ listDetail }) => (
 			<View style={{ paddingBottom: 5 }}>
     			<Text style={{fontFamily: 'open-sans-reg'}}>Alamat Penerima</Text>
     			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
-    				{listDetail.alamatpenerima}
+    				{listDetail.alamatpenerima}, {listDetail.kotapenerima}
     			</Text>
 			</View>
 			<View style={{ paddingBottom: 5 }}>
-    			<Text style={{fontFamily: 'open-sans-reg'}}>Kota Penerima</Text>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Pengirim</Text>
     			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
-    				{listDetail.kotapenerima}
+    				{capitalize(listDetail.nmpengirim)}
+    			</Text>
+			</View>
+			<View style={{ paddingBottom: 5 }}>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Alamat Pengirim</Text>
+    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
+    				{capitalize(listDetail.alamatpengirim)}, {capitalize(listDetail.kotapengirim)}
     			</Text>
 			</View>
 			<View style={{ paddingBottom: 5 }}>
@@ -73,7 +81,9 @@ const DetailView = ({ listDetail }) => (
 			<View style={{ paddingBottom: 5 }}>
     			<Text style={{fontFamily: 'open-sans-reg'}}>Status Kiriman</Text>
     			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
-    				{listDetail.status_kiriman}
+    				{ listDetail.status_kiriman === '1' && 'Kolekting' }
+    				{ listDetail.status_kiriman === null && 'Order' }
+    				{ listDetail.status_kiriman === '2' && 'Selesai Transaksi' }
     			</Text>
 			</View>
 		</View>
@@ -96,7 +106,10 @@ const List = ({ listdata, tanggal, showDetail, visible, detailProps, checked }) 
 		    				status_kiriman: x.status_kiriman,
 		    				id_external: x.id_external,
 		    				nmpengirim: x.nmpengirim,
-		    				wkt_posting: x.wkt_posting
+		    				wkt_posting: x.wkt_posting,
+		    				kotapengirim: x.kotapengirim,
+		    				nmpengirim: x.nmpengirim,
+		    				alamatpengirim: x.alamatpengirim
 		    			};
 		    			return(
 		    				<React.Fragment key={i}>

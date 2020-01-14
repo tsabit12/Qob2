@@ -36,9 +36,10 @@ class ResultOrder extends React.Component{
 
 		const { params } = this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, deskripsiPengirim, deskripsiPenerima } = params;
+		console.log(deskripsiPengirim);
 		let param1 = `${curdateTime()}|01|${toObje.userid}|-`;
 		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
-		let param3 = `${deskripsiPengirim.nama}|-|${deskripsiPengirim.alamat}|-|${deskripsiPengirim.kota}|Jawa Barat|Indonesia|${deskripsiPengirim.kodepos}|${toObje.nohp}|${toObje.email}`;
+		let param3 = `${deskripsiPengirim.nama}|${deskripsiPengirim.alamat}|KEC|-|${deskripsiPengirim.kota}|Jawa Barat|Indonesia|${deskripsiPengirim.kodepos}|${toObje.nohp}|${toObje.email}`;
 		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.alamat}|-|${deskripsiPenerima.kota}|Jawa Barat|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|${deskripsiPenerima.email}|-|-`;
 		let param5 = `0|0|-|0`;
 		const payload = {
@@ -48,7 +49,7 @@ class ResultOrder extends React.Component{
 			param4: param4,
 			param5: param5
 		};
-
+		console.log(payload);
 		this.setState({ payload });
 	}
 
