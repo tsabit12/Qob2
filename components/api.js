@@ -178,7 +178,7 @@ export default{
 					return Promise.reject(res.data);
 			}
 		}),
-		listOrder: (payload) => axios.post('https://magenpos.posindonesia.co.id:6466/getreport',{
+		listOrder: (payload) => axios.post('https://qcomm.posindonesia.co.id:10444/getreport',{
 				sp_nama: payload.sp_nama,
 				par_data: payload.par_data,
 				hashing: getHasing('ecom', payload.sp_nama , payload.par_data)

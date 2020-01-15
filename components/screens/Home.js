@@ -168,8 +168,7 @@ class Home extends React.Component {
 						<Text 
 							style={{color: 'blue', textAlign: 'center'}}
 							onPress={() => this.props.navigation.navigate({
-								// routeName: 'LupaPin'
-								routeName: 'Bantuan'
+								routeName: 'LupaPin'
 							})}
 						>Bantuan</Text>
 			   	</ImageBackground>

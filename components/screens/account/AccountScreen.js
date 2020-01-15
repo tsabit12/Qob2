@@ -29,7 +29,11 @@ const Judul = ({ navigation }) => {
 }
 
 const numberWithCommas = (number) => {
-	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	if (isNaN(number)) {
+		return '-';
+	}else{
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
 }
 
 const ListRekening = ({ listdata }) => {
@@ -56,7 +60,6 @@ const ListRekening = ({ listdata }) => {
 					{ parsingPagar.map((x, i) => {
 						if (x.length > 0) { //remove last array cause it's null
 							const parsingX = x.split('~');
-							console.log(parsingX);
 							return(
 								<View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
 									<Text>{numberWithCommas(parsingX[0])}</Text>

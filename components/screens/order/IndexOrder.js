@@ -27,9 +27,10 @@ class IndexOrder extends React.Component{
 		data: {
 			jenis: '',
 			berat: '',
-			panjang: '',
-			lebar:'',
-			tinggi: '',
+			panjang: '0',
+			lebar: '0',
+			tinggi: '0',
+			nilaiVal: '',
 			nilai: ''
 		},
 		errors: {}
@@ -39,7 +40,18 @@ class IndexOrder extends React.Component{
 		setTimeout(() => this.jenisRef.current.focus(), 500);	
 	}
 
+	numberWithCommas = (number) => {
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
+
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
+
+	onChangeNilai = (e) => {
+		var val = e.replace(/\D/g, '');
+		var x 	= Number(val);
+		const value = this.numberWithCommas(x);
+		this.setState({ data: { ...this.state.data, nilaiVal: value, nilai: val }})
+	}
 
 	onSubmit  = () => {
 		const errors = this.validate(this.state.data);
@@ -123,7 +135,7 @@ class IndexOrder extends React.Component{
 						    <Input
 						      placeholder='XX (CM)'
 						      ref={this.panjangRef}
-						      label='Panjang'
+						      label='Panjang (CM)'
 						      name='panjang'
 						      labelStyle={styles.label}
 						      keyboardType='numeric'
@@ -136,7 +148,7 @@ class IndexOrder extends React.Component{
 						    <Input
 						      placeholder='XX (CM)'
 						      ref={this.lebarRef}
-						      label='Lebar'
+						      label='Lebar (CM)'
 						      name='lebar'
 						      labelStyle={styles.label}
 						      keyboardType='numeric'
@@ -149,7 +161,7 @@ class IndexOrder extends React.Component{
 						    <Input
 						      placeholder='XX (CM)'
 						      ref={this.tinggiRef}
-						      label='Tinggi'
+						      label='Tinggi (CM)'
 						      name='tinggi'
 						      labelStyle={styles.label}
 						      keyboardType='numeric'
@@ -168,9 +180,9 @@ class IndexOrder extends React.Component{
 						      label='Nilai barang'
 						      labelStyle={styles.label}
 						      style={styles.input}
-						      value={data.nilai}
+						      value={data.nilaiVal}
 						      keyboardType='numeric'
-						      onChangeText={(e) => this.onChange(e, this.nilaiRef.current.props)}
+						      onChangeText={(e) => this.onChangeNilai(e)}
 						      status={errors.nilai && 'danger'}
 						      onSubmitEditing={this.onSubmit}
 						    />

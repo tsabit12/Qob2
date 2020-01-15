@@ -5,7 +5,11 @@ import { connect } from "react-redux";
 import { Card, CardHeader } from '@ui-kitten/components';
 
 const numberWithCommas = (number) => {
-	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	if (isNaN(number)) {
+		return '-';
+	}else{
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
 }
 
 const Judul = ({ navigation }) => (
@@ -53,11 +57,13 @@ const ListItem = ({ listitem }) => {
 									</View>
 									<View style={{paddingBottom: 5}}>
 										<Text style={{fontFamily: 'open-sans-bold'}}>Waktu</Text>
-										<Text style={styles.labelList}>{valuesOfDetail[2]} {valuesOfDetail[3]}</Text>
+										<Text style={styles.labelList}>
+											{ valuesOfDetail[2] ? `${valuesOfDetail[2]} ${valuesOfDetail[3]}` : '-' } 
+										</Text>
 									</View>
 									<View style={{paddingBottom: 5}}>
 										<Text style={{fontFamily: 'open-sans-bold'}}>Tujuan</Text>
-										<Text style={styles.labelList}>{valuesOfDetail[4]}</Text>
+										<Text style={styles.labelList}>{ valuesOfDetail[4] ? valuesOfDetail[4] : '-'}</Text>
 									</View>
 									<View style={{paddingBottom: 5}}>
 										<Text style={{fontFamily: 'open-sans-bold'}}>Nominal</Text>
