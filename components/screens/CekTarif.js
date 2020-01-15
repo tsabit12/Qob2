@@ -16,28 +16,27 @@ const numberWithCommas = (number) => {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const ListTarif = ({ list }) => (
-	<View>
+const ListTarif = ({ list }) => {
+	return(
+		<View>
 		{list.map((x, i) => {
+			const parsing = x.split('*');
+			let produk = parsing[0];
 			if (x.length > 0) {
-				const parsing = x.split('-');
-				var tarif 	= parsing[2];
-				tarif = tarif.split('*');
-				tarif = tarif[1];
-				tarif = tarif.split('|');
-				// console.log(tarif[4]);
-				let totalTarif = tarif[4];
+				const tarif = x.split('|');
+				let totalTarif = Math.floor(tarif[4]);
 				return(
 					<ListItem
 						key={i}
 					    title={`Rp. ${numberWithCommas(totalTarif)}`}
-					    description={`${parsing[0]} ${parsing[1]}`}
+					    description={`${produk}`}
 					/>
 				);
 			}
 		})}
 	</View>
-);
+	)
+} 
 
 class CekTarif extends React.Component{
 	static navigationOptions = ({ navigation }) => ({
@@ -88,11 +87,14 @@ class CekTarif extends React.Component{
 
 			api.qob.getTarif(payload)
 				.then(res => {
-					this.setState({ loading: false });
+					///console.log(res);
+					// console.log(res);
 					const response = res.split('#');
-					this.setState({ success: response });
+					this.setState({ loading: false, success: response });
+					// this.setState({ success: response });
 				})
 				.catch(err => {
+					// console.log(err);
 					this.setState({ loading: false, success:[], errors: {global: 'Data tarif tidak ditemukan'}});
 				});
 		}
