@@ -38,7 +38,6 @@ import CekTarif from "./components/screens/CekTarif";
 import LupaPin from "./components/screens/LupaPin";
 import ListOrder from "./components/screens/ListOrder";
 import SearchOrderScreen from "./components/screens/SearchOrderScreen";
-import BantuanScreen from "./components/screens/BantuanScreen";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -216,8 +215,8 @@ const AppNavigator = createStackNavigator({
           header: null
         }
       },
-  	},{
-  	initialRouteName: 'IndexSearch'
+    },{
+    initialRouteName: 'IndexSearch'
 });
 
 const LoginNavigator = createStackNavigator({
@@ -238,9 +237,6 @@ const LoginNavigator = createStackNavigator({
   },
   ValidasiRegRek: {
     screen: ValidasiRegRek
-  },
-  Bantuan: {
-    screen: BantuanScreen
   },
   initialRouteName: 'Home'
 });
