@@ -122,9 +122,11 @@ class PilihTarif extends React.Component{
 			<View>
 				<Loader loading={loading} />
 				{ tarif.length > 0 ? <ListTarif onAccept={this.onSelectTarif} list={tarif} /> : 
-					<Text style={{fontSize: 20, textAlign: 'center', fontFamily: 'open-sans-bold', marginTop: 10}}>
-						Tarif tidak ditemukan
-					</Text> }
+					<React.Fragment>
+						{ !loading && <Text style={{fontSize: 20, textAlign: 'center', fontFamily: 'open-sans-bold', marginTop: 10}}>
+							Tarif tidak ditemukan
+						</Text> }
+					</React.Fragment> }
 			</View>
 		);
 	}
