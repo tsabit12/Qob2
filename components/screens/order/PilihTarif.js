@@ -15,38 +15,42 @@ const numberWithCommas = (number) => {
 
 const ListTarif = ({ onAccept, list }) => (
 	<View style={{paddingBottom: 10}}>
-		{ list.length > 0 && <View>
 			{ list.map((x, i) => {
-				const parsing = x.split('-');
-				//I Hate STRING!
+				const parsing = x.split('*');
+				let produk = parsing[0];
 				if (x.length > 0) { //handle tarif last index cause parsing (#)
-					var tarif 	= parsing[2];
-					tarif = tarif.split('*');
-					tarif = tarif[1];
-					tarif = tarif.split('|');
-					// console.log(tarif[4]);
-					let totalTarif = tarif[4];
+					const tarif = x.split('|');
+					let fee 		= Math.floor(tarif[0]);
+					let ppn 		= Math.floor(tarif[1]);
+					let htnb 		= Math.floor(tarif[2]);
+					let ppnhtnb 	= Math.floor(tarif[3]);
+					let totalTarif 	= Math.floor(tarif[4]);
+					
+					//get id serve
+					let idService = produk.split('-');
+					idService = idService[0];
+
 					const payload = {
-						id: parsing[0],
-						description: parsing[1],
+						id: idService,
+						description: produk,
 						tarif: totalTarif,
-						beadasar: tarif[0],
-						ppn: tarif[1],
-						htnb: tarif[2],
-						ppnhtnb: tarif[3]
+						beadasar: fee,
+						ppn: ppn,
+						htnb: htnb,
+						ppnhtnb: ppnhtnb
 					};
+
 					return(
 						<ListItem
 							key={i}
 						    title={`Rp. ${numberWithCommas(totalTarif)}`}
-						    description={parsing[1]}
+						    description={produk}
 							accessory={(e) => renderItemAccessory(e, payload, onAccept)}
 							onPress={() => onAccept(payload)}
 						/>
 					)
 				}
 			})}
-		</View> }
 	</View>
 );
 
@@ -88,6 +92,7 @@ class PilihTarif extends React.Component{
 				kodePosB: params.deskripsiPenerima.kodepos,
 				berat: params.deskripsiOrder.berat
 			}
+
 			api.qob.getTarif(payload)
 				.then(res => {
 					this.setState({ loading: false });
@@ -116,7 +121,10 @@ class PilihTarif extends React.Component{
 		return(
 			<View>
 				<Loader loading={loading} />
-				<ListTarif onAccept={this.onSelectTarif} list={tarif} />
+				{ tarif.length > 0 ? <ListTarif onAccept={this.onSelectTarif} list={tarif} /> : 
+					<Text style={{fontSize: 20, textAlign: 'center', fontFamily: 'open-sans-bold', marginTop: 10}}>
+						Tarif tidak ditemukan
+					</Text> }
 			</View>
 		);
 	}

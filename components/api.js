@@ -3,7 +3,8 @@ import md5 from "react-native-md5";
 import { curdate } from "./utils/helper";
 import querystring from "querystring";
 
-const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb';
+// const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb'; //dev
+const url = 'https://qcomm.posindonesia.co.id:10444/a767e8eec95442bda80c4e35e0660dbb'; //live
 let config = {	
 	headers: { 
   		'content-type': 'application/x-www-form-urlencoded',
