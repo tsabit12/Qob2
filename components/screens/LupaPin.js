@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, AsyncStorage } from "react-native";
 import { SafeAreaView } from 'react-navigation';
-import { Button, Input, Select } from '@ui-kitten/components';
+import { Button, Input } from '@ui-kitten/components';
 import Loader from "../Loader";
 import api from "../api";
 import Modal from "../Modal";
@@ -10,6 +10,13 @@ import Constants from 'expo-constants';
 import { connect } from "react-redux";
 import { saveRegister } from "../../actions/register";
 import { Header } from 'react-navigation-stack';
+import { curdate } from "../utils/helper";
+
+const Judul = ({ navigation }) => (
+	<View>
+		<Text style={{fontFamily: 'open-sans-bold', fontSize: 16, fontWeight: '700'}}>{navigation.state.params.titlePemulihan}</Text>
+	</View>
+);
 
 const MessageSucces = ({ message, visible, onPress, backHome }) => (
 	<View>
@@ -25,13 +32,16 @@ const MessageSucces = ({ message, visible, onPress, backHome }) => (
     </View>
 );
 
-const optionsData = [
-  { text: 'Lupa pin', value: 1 },
-  { text: 'Pulihkan Akun', value: 2 },
-  { text: 'Buka Blokir', value: 3 },
-];
+// const optionsData = [
+//   { text: 'Lupa pin', value: 1 },
+//   { text: 'Pulihkan Akun', value: 2 },
+//   { text: 'Buka Blokir', value: 3 },
+// ];
 
 class LupaPin extends React.Component{
+	static navigationOptions = ({ navigation }) => ({
+		headerTitle: <Judul navigation={navigation}/>
+	}) 
 
 	useridRef = React.createRef();
 	namaRef = React.createRef();
@@ -57,19 +67,39 @@ class LupaPin extends React.Component{
 		},
 		visible: false,
 		kode: '',
-		jenis: 0
+		jenis: this.props.navigation.state.params.jenis
 	}
 
-	// async componentDidMount(){
-	// 	const value = await AsyncStorage.getItem('qobUserPrivasi');
-	// 	const toObje = JSON.parse(value);
-	// 	this.setState({
-	// 		data: {
-	// 			...this.state.data,
-	// 			imei: toObje.imei
-	// 		}
-	// 	});
-	// }
+	async componentDidMount(){
+		const curdateVal = curdate();
+		const { jenis, titlePemulihan } = this.props.navigation.state.params;
+		const value 	= await AsyncStorage.getItem(`${curdateVal}`);
+		const toJson 	= JSON.parse(value); 
+
+		if (toJson !== null) { //check session in storage
+			let curdateStorage 	= toJson.curdate;
+			let jenisStorage 	= toJson.jenis;
+			let statusStorage 	= toJson.status;
+			if (curdateStorage === curdateVal && jenisStorage === jenis && statusStorage === true) {
+				let valueStorage = toJson.value;
+				this.setState({ 
+					success: {
+						...this.state.success,
+						status: true,
+						message: `Kami mendeteksi bahwa anda sudah melakukan request ${titlePemulihan} sebelumnya. Silahkan masukan kode verifikasi dibawah ini`
+					},
+					data: {
+						...this.state.data,
+						userid: valueStorage.userid,
+						email: valueStorage.email,
+						nama: valueStorage.nama,
+						nohp: valueStorage.nohp
+					}
+				})
+			}
+		}
+	}
+
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
 
@@ -81,24 +111,43 @@ class LupaPin extends React.Component{
 			this.setState({ loading: true });
 
 			const { data } 	= this.state;
-
-			const payload = {
-				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
+			const valueSession = {
+				userid: data.userid,
+				nama: data.nama,
+				nohp: data.nohp,
+				email: data.email,
+				jenis: jenis
 			};
-			api.registrasi.lupaPin(payload)
+			//need to detect if user
+			//alerady submit request form 1 (request pemulihan)
+			this.saveSessionRequest(valueSession)
 				.then(res => {
-					console.log(res);
-					console.log(payload);
-					this.setState({ loading: false, visible: true, success: { status: true, message: res.desk_mess }});
-				}).catch(err => {
-					console.log(err);
-					console.log(payload);
-					if (Object.keys(err).length === 10) {
-						this.setState({ loading: false, errors: { global: err.desk_mess } });
-					}else{
-						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
-					}
+					console.log("oke");
+					this.setState({ loading: false });
 				})
+				.catch(err => {
+					this.setState({ loading: false });
+					console.log("gagal");
+				});
+
+
+			// const payload = {
+			// 	param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
+			// };
+			// api.registrasi.lupaPin(payload)
+			// 	.then(res => {
+			// 		// console.log(res);
+			// 		// console.log(payload);
+			// 		this.setState({ loading: false, visible: true, success: { status: true, message: res.desk_mess }});
+			// 	}).catch(err => {
+			// 		// console.log(err);
+			// 		// console.log(payload);
+			// 		if (Object.keys(err).length === 10) {
+			// 			this.setState({ loading: false, errors: { global: err.desk_mess } });
+			// 		}else{
+			// 			this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
+			// 		}
+			// 	})
 		}
 	}
 
@@ -112,15 +161,6 @@ class LupaPin extends React.Component{
 		return errors;
 	}
 
-	async getUserLocal(){
-		try{
-			const value = await AsyncStorage.getItem('qobUserPrivasi');
-			return Promise.resolve(value);
-		}catch(err){
-			return Promise.reject(err);
-		}
-	}
-
 	onBackHome = () => {
 		this.setState({ visible: false });
 		this.props.navigation.navigate({
@@ -129,6 +169,26 @@ class LupaPin extends React.Component{
 	}
 
 	onChangeKode = (e) => this.setState({ kode: e })
+
+	//save session request
+	//and set expire one day
+	//by variable storage it self
+	async saveSessionRequest(value){
+		try{
+			const curdateVal 	= curdate();
+			const { jenis } 	= this.state;
+			const payload 		= {
+				jenis: jenis,
+				status: true,
+				curdate: curdateVal,
+				value: value
+			};
+			await AsyncStorage.setItem(`${curdateVal}`, JSON.stringify(payload));
+			return Promise.resolve(true);
+		}catch(errors){
+			return Promise.resolve(false);
+		}
+	}
 
 	async saveToStorage(payload){
 		try{
@@ -139,63 +199,64 @@ class LupaPin extends React.Component{
 		}
 	}
 
-	onVerfikasi = () => {
-		const errors = this.validateKode(this.state.kode);
-		this.setState({ errors });
-		if (Object.keys(errors).length === 0) {
-			this.setState({ loading: true });
-			const { data, kode } = this.state;
-			let jenis = this.state.jenis;
- 			const payload = {
-				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${kode}|${jenis}`
-			};
-			api.auth.verifikasi(payload)
-				.then(res => {
-					//return res.data
-					// console.log(res);
-					const { response_data2 } = res;
-					let parsing = response_data2.split('|');
-					const payloadRes = {
-						// userid: parsing[0],
-						// pin: parsing[1],
-						// nama: parsing[2],
-						// nohp: parsing[3],
-						// email: parsing[4],
-						// imei: parsing[5],
-						// norek: parsing[6],
-
-						userid: parsing[0],
-						username: parsing[1],
-						pinMd5: parsing[2],
-						nama: parsing[3],
-						nohp: parsing[4],
-						email: parsing[5]
-					};
-					this.saveToStorage(payloadRes)
-						.then(() => {
-							this.setState({ 
-								loading: false, 
-								success: {
-									...this.state.success,
-									statusVer: true,
-									messageVer: res.response_data1
-								},
-								visible: true
-							})
-							this.props.saveRegister(payloadRes);
-						}).catch(() => alert("Oppps, something wrong with storage"));
-				}).catch(err => {
-					//090635
-					console.log(err);
-					if (Object.keys(err).length === 10) {
-						this.setState({ loading: false });
-						alert(err.desk_mess);
-					}else{
-						alert("Terdapat kesalahan harap cobalagi nanti");
-					}
-					
-				});	
+	async removeSession(){
+		try{
+			const curdateVal 	= curdate();
+			await AsyncStorage.removeItem(`${curdateVal}`);
+      		return Promise.resolve(true);
+		}catch(errors){
+			return Promise.reject(errors);
 		}
+	}
+
+	onVerfikasi = () => {
+		this.removeSession()
+			.then(() => console.log("removed"))
+			.catch(() => console.log("not removed"));
+		// const errors = this.validateKode(this.state.kode);
+		// this.setState({ errors });
+		// if (Object.keys(errors).length === 0) {
+		// 	this.setState({ loading: true });
+		// 	const { data, kode } = this.state;
+		// 	let jenis = this.state.jenis;
+ 	// 		const payload = {
+		// 		param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${kode}|${jenis}`
+		// 	};
+		// 	api.auth.verifikasi(payload)
+		// 		.then(res => {
+		// 			const { response_data2 } = res;
+		// 			let parsing = response_data2.split('|');
+		// 			const payloadRes = {
+		// 				userid: parsing[0],
+		// 				username: parsing[1],
+		// 				pinMd5: parsing[2],
+		// 				nama: parsing[3],
+		// 				nohp: parsing[4],
+		// 				email: parsing[5]
+		// 			};
+		// 			this.saveToStorage(payloadRes)
+		// 				.then(() => {
+		// 					this.setState({ 
+		// 						loading: false, 
+		// 						success: {
+		// 							...this.state.success,
+		// 							statusVer: true,
+		// 							messageVer: res.response_data1
+		// 						},
+		// 						visible: true
+		// 					})
+		// 					this.props.saveRegister(payloadRes);
+		// 				}).catch(() => alert("Oppps, something wrong with storage"));
+		// 		}).catch(err => {
+		// 			if (Object.keys(err).length === 10) {
+		// 				this.setState({ loading: false });
+		// 				alert(err.desk_mess);
+		// 			}else{
+		// 				alert("Terdapat kesalahan harap cobalagi nanti");
+		// 			}
+					
+		// 		});	
+		// }
 	}
 
 	validateKode = (kode) => {
@@ -204,7 +265,8 @@ class LupaPin extends React.Component{
 		return errors;
 	}
 
-	onsetSelectedOption = (e) => this.setState({ jenis: e.value });
+	onsetSelectedOption = (e) => this.setState({ jenis: e.value })
+
 
 	render(){
 		const { data, errors, loading, success, visible } = this.state;
@@ -226,81 +288,77 @@ class LupaPin extends React.Component{
 				>
 				<ScrollView>
 					<View style={{padding: 10}}>
-						<Select
-							label='Jenis Pemulihan'
-							labelStyle={styles.label}
-					        data={optionsData}
-					        style={{paddingBottom: 10 }}
-					        // selectedOption={selectedOption}
-					        onSelect={this.onsetSelectedOption}
-					        status={errors.jenis && 'danger'}
-					        size='medium'
-					    />
-					    { errors.jenis && <Text style={styles.labelErr}>{errors.jenis}</Text>}
-						<View>
-							<Input 
-								label='Userid'
-								ref={this.useridRef}
-								labelStyle={styles.label}
-								placeholder='Masukan userid anda'
-								onChangeText={(e) => this.onChange(e, this.useridRef.current.props)}
-								style={styles.input}
-								value={data.userid}
-								name='userid'
-								keyboardType='numeric'
-								onSubmitEditing={() => this.namaRef.current.focus() }
-								status={errors.userid && 'danger'}
-							/>
-							{ errors.userid && <Text style={styles.labelErr}>{errors.userid}</Text>}
-							<Input 
-								label='Nama Lengkap'
-								ref={this.namaRef}
-								labelStyle={styles.label}
-								placeholder='Masukan nama lengkap'
-								onChangeText={(e) => this.onChange(e, this.namaRef.current.props)}
-								style={styles.input}
-								value={data.nama}
-								name='nama'
-								onSubmitEditing={() => this.nohpRef.current.focus() }
-								status={errors.nama && 'danger'}
-							/>
-							{ errors.nama && <Text style={styles.labelErr}>{errors.nama}</Text>}
-							<Input 
-								label='Nomor Handphone'
-								ref={this.nohpRef}
-								labelStyle={styles.label}
-								placeholder='Masukan nomor handphone'
-								onChangeText={(e) => this.onChange(e, this.nohpRef.current.props)}
-								style={styles.input}
-								value={data.nohp}
-								name='nohp'
-								onSubmitEditing={() => this.emailRef.current.focus() }
-								status={errors.nohp && 'danger'}
-								keyboardType='numeric'
-							/>
-							{ errors.nohp && <Text style={styles.labelErr}>{errors.nohp}</Text>}
-							<Input 
-								label='Email'
-								ref={this.emailRef}
-								labelStyle={styles.label}
-								placeholder='Masukan email anda'
-								onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
-								style={styles.input}
-								value={data.email}
-								name='email'
-								onSubmitEditing={() => this.onSubmit() }
-								status={errors.email && 'danger'}
-							/>
-							{ errors.email && <Text style={styles.labelErr}>{errors.email}</Text>}
-						</View>
-						<Button status='danger' onPress={this.onSubmit}>Pulihkan</Button>
-						{ success.status && <View style={{marginTop: 8}}>
-							<Text style={{fontFamily: 'open-sans-reg'}}>{success.message}</Text>
+						{ !success.status ? <React.Fragment>
+							<View>
+								<Input 
+									label='Userid'
+									ref={this.useridRef}
+									labelStyle={styles.label}
+									placeholder='Masukan userid anda'
+									onChangeText={(e) => this.onChange(e, this.useridRef.current.props)}
+									style={styles.input}
+									value={data.userid}
+									name='userid'
+									keyboardType='numeric'
+									onSubmitEditing={() => this.namaRef.current.focus() }
+									status={errors.userid && 'danger'}
+								/>
+								{ errors.userid && <Text style={styles.labelErr}>{errors.userid}</Text>}
+								<Input 
+									label='Nama Lengkap'
+									ref={this.namaRef}
+									labelStyle={styles.label}
+									placeholder='Masukan nama lengkap'
+									onChangeText={(e) => this.onChange(e, this.namaRef.current.props)}
+									style={styles.input}
+									value={data.nama}
+									name='nama'
+									onSubmitEditing={() => this.nohpRef.current.focus() }
+									status={errors.nama && 'danger'}
+								/>
+								{ errors.nama && <Text style={styles.labelErr}>{errors.nama}</Text>}
+								<Input 
+									label='Nomor Handphone'
+									ref={this.nohpRef}
+									labelStyle={styles.label}
+									placeholder='Masukan nomor handphone'
+									onChangeText={(e) => this.onChange(e, this.nohpRef.current.props)}
+									style={styles.input}
+									value={data.nohp}
+									name='nohp'
+									onSubmitEditing={() => this.emailRef.current.focus() }
+									status={errors.nohp && 'danger'}
+									keyboardType='numeric'
+								/>
+								{ errors.nohp && <Text style={styles.labelErr}>{errors.nohp}</Text>}
+								<Input 
+									label='Email'
+									ref={this.emailRef}
+									labelStyle={styles.label}
+									placeholder='Masukan email anda'
+									onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
+									style={styles.input}
+									value={data.email}
+									name='email'
+									onSubmitEditing={() => this.onSubmit() }
+									status={errors.email && 'danger'}
+								/>
+								{ errors.email && <Text style={styles.labelErr}>{errors.email}</Text>}
+							</View>
+							<Button status='danger' onPress={this.onSubmit}>
+								{ this.state.jenis === 1 && 'Dapatkan PIN Baru' }
+								{ this.state.jenis === 2 && 'Pulihkan' }
+								{ this.state.jenis === 3 && 'Buka kembali akun saya' }
+							</Button>
+						</React.Fragment> : <React.Fragment>
+							<View style={{backgroundColor: '#c7e4eb', padding: 5, borderRadius: 3}}>
+								<Text style={{fontFamily: 'open-sans-reg'}}>{success.message}</Text>
+							</View>
 							<Input 
 								ref={this.kodeRef}
 								labelStyle={styles.label}
 								placeholder='Masukan kode verifikasi disini'
-								style={{ marginTop: 10 }}
+								style={{ marginTop: 20 }}
 								value={this.state.kode}
 								name='kode'
 								keyboardType='numeric'
@@ -310,7 +368,7 @@ class LupaPin extends React.Component{
 							/>
 							{ errors.kode && <Text style={{fontSize: 12, color: 'red'}}>{errors.kode}</Text>}
 							<Button status='info' style={{marginTop: 4}} onPress={this.onVerfikasi}>Verifikasi</Button>
-						</View> }
+						</React.Fragment> }
 					</View>
 				</ScrollView>
 				</KeyboardAvoidingView>
