@@ -232,6 +232,17 @@ export default{
 			}else{
 				return Promise.reject(res.data);
 			}
+		}),
+		genpwdweb: (userid) => axios.post(url,{
+			messtype: '213',
+			param1: userid,
+			hashing: getHasing('213', userid)
+		},config).then(res => {
+			if (res.data.rc_mess === '99') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
 		})
 	},
 	user: {

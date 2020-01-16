@@ -39,6 +39,7 @@ import PemulihanAkun from "./components/screens/PemulihanAkun";
 import ListOrder from "./components/screens/ListOrder";
 import SearchOrderScreen from "./components/screens/SearchOrderScreen";
 import BantuanScreen from "./components/screens/BantuanScreen";
+import genpwd from "./components/screens/genpwd";
 
 const iconBarcode = require("./assets/barcode.png");
 
@@ -144,6 +145,9 @@ const AppNavigator = createStackNavigator({
       },
       ResultOrder: {
         screen: ResultOrder
+      },
+      genpwd:{
+        screen: genpwd
       },
       LacakBarcode: {
         screen: LacakBarcode
