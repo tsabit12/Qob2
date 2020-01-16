@@ -42,6 +42,7 @@ export const getDetailUser = (userid) => dispatch =>
 				detailUsaha: y[6]
 			};
 			dispatch(detailFetched(payload));
+			console.log(payload);
 		})
 
 export const loggedOut = () => dispatch => {
