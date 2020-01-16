@@ -1,8 +1,14 @@
 import React from "react";
 import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import styles from "./styles";
-import { Layout, Text, Input, Button } from '@ui-kitten/components';
+import { Layout, Text, Input, Button, Select } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
+
+const optionsData = [
+  { text: 'Surat', value: 0 },
+  { text: 'Paket', value: 1 }
+];
+
 
 const Judul = () => (
 	<View>
@@ -22,6 +28,7 @@ class IndexOrder extends React.Component{
 	lebarRef = React.createRef();
 	tinggiRef = React.createRef();
 	nilaiRef = React.createRef();
+	tipeKirimanRef = React.createRef();
 
 	state = {
 		data: {
@@ -31,7 +38,8 @@ class IndexOrder extends React.Component{
 			lebar: '0',
 			tinggi: '0',
 			nilaiVal: '',
-			nilai: ''
+			nilai: '',
+			tipe: ''
 		},
 		errors: {}
 	}
@@ -81,6 +89,8 @@ class IndexOrder extends React.Component{
 		}
 	}
 
+	onSelectText = (e) => this.setState({ data: { ...this.state.data, tipe: e.value }})
+
 	validate = (data) => {
 		const errors = {};
 		if (!data.jenis) errors.jenis = "Masukan jenis kiriman";
@@ -89,6 +99,7 @@ class IndexOrder extends React.Component{
 		if (!data.lebar) errors.lebar = "Masukan lebar kiriman";
 		if (!data.tinggi) errors.tinggi = "Masukan tinggi kiriman";
 		if (!data.nilai) errors.nilai = "Masukan nilai";
+		if (!data.tipe) errors.tipe = "Jenis kiriman belum dipilih";
 		return errors;
 	}
 
@@ -117,6 +128,17 @@ class IndexOrder extends React.Component{
 						      status={errors.jenis && 'danger'}
 						      caption={errors.jenis && `${errors.jenis}`}
 						    />
+						    <Select
+						    	ref={this.tipeKirimanRef}
+						    	label='Jenis kiriman'
+						        data={optionsData}
+						        labelStyle={styles.label}
+						        placeholder='Pilih jenis kiriman'
+						        onSelect={this.onSelectText}
+						        status={errors.tipe && 'danger'}
+						        style={styles.input}
+						    />
+						    {errors.tipe && <Text style={{fontSize: 12, marginTop: -5, paddingBottom: 5, color: 'red'}}>{errors.tipe}</Text> }
 						    <Input
 						      placeholder='Berat kiriman dalam gram'
 						      ref={this.beratRef}
@@ -129,6 +151,7 @@ class IndexOrder extends React.Component{
 						      status={errors.berat && 'danger'}
 						      onChangeText={(e) => this.onChange(e, this.beratRef.current.props)}
 						      onSubmitEditing={() => this.panjangRef.current.focus() }
+						      caption={errors.berat && `${errors.berat}`}
 						    />
 					    </View>
 					    <View style={styles.hitung}>
@@ -185,6 +208,7 @@ class IndexOrder extends React.Component{
 						      onChangeText={(e) => this.onChangeNilai(e)}
 						      status={errors.nilai && 'danger'}
 						      onSubmitEditing={this.onSubmit}
+						      caption={errors.nilai && `${errors.nilai}`}
 						    />
 						</View>
 					    <Button style={{margin: 2}} onPress={this.onSubmit}>Selanjutnya</Button>

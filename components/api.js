@@ -137,13 +137,14 @@ export default{
 			).then(res => res.data),
 		getTarif: (payload) => axios.post(url, {
 			messtype: '703',
-			param1: `#1#0#${payload.kodePosA}#${payload.kodePosB}#${payload.berat}#0#0#0#0#0`,
+			param1: `#1#${payload.tipe}#${payload.kodePosA}#${payload.kodePosB}#${payload.berat}#0#0#0#0#${payload.nilai}`,
 			param2: '',
 			param3: '',
 			param4: '',
 			param5: '',
-			hashing: getHasing('703', `#1#0#${payload.kodePosA}#${payload.kodePosB}#${payload.berat}#0#0#0#0#0`)
+			hashing: getHasing('703', `#1#${payload.tipe}#${payload.kodePosA}#${payload.kodePosB}#${payload.berat}#0#0#0#0#${payload.nilai}`)
 		}, config).then(res => {
+			console.log(res);
 			const { rc_mess } = res.data;
 			if (rc_mess === '00') {
 				return res.data.response_data1.substring(2);
