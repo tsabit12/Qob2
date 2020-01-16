@@ -18,7 +18,6 @@ const Judul = ({ navigation }) => (
 );
 
 const data = [
-  { title: 'Verifikasi', titleStyle: styles.menuItemTitle },
   { title: 'Lupa pin', titleStyle: styles.menuItemTitle },
   { title: 'Pulihkan Akun', titleStyle: styles.menuItemTitle },
   { title: 'Buka Blokir', titleStyle: styles.menuItemTitle },
@@ -33,22 +32,22 @@ class BantuanScreen extends React.Component{
 
 	onSelect = (e) => {
 		// console.log(e);
-		if (e === 1) this.props.navigation.navigate({
-			routeName: 'LupaPin',
+		if (e === 0) this.props.navigation.navigate({
+			routeName: 'PemulihanAkun',
 			params: {
 				titlePemulihan: 'Lupa PIN',
 				jenis: 1
 			}
 		});
-		if (e === 2) this.props.navigation.navigate({
-			routeName: 'LupaPin',
+		if (e === 1) this.props.navigation.navigate({
+			routeName: 'PemulihanAkun',
 			params: {
 				titlePemulihan: 'Pemulihan Akun',
 				jenis: 2
 			}
 		});
-		if (e === 3) this.props.navigation.navigate({
-			routeName: 'LupaPin',
+		if (e === 2) this.props.navigation.navigate({
+			routeName: 'PemulihanAkun',
 			params: {
 				titlePemulihan: 'Buka Blokir',
 				jenis: 3

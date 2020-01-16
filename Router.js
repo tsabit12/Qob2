@@ -35,7 +35,7 @@ import AboutScreen from "./components/screens/about/AboutScreen";
 // import HistoryPembayaran from "./components/screens/HistoryPembayaran";
 // import DetailTrans from "./components/screens/DetailTrans";
 import CekTarif from "./components/screens/CekTarif";
-import LupaPin from "./components/screens/LupaPin";
+import PemulihanAkun from "./components/screens/PemulihanAkun";
 import ListOrder from "./components/screens/ListOrder";
 import SearchOrderScreen from "./components/screens/SearchOrderScreen";
 import BantuanScreen from "./components/screens/BantuanScreen";
@@ -230,8 +230,8 @@ const LoginNavigator = createStackNavigator({
   RegistrasiRek: {
     screen: ValidasiRekening
   },
-  LupaPin: {
-    screen: LupaPin
+  PemulihanAkun: {
+    screen: PemulihanAkun
   },
   RegistrasiKtp: {
     screen: RegistrasiKtp

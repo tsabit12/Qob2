@@ -1,5 +1,5 @@
 import api from "../components/api";
-import { GET_KTP, GET_REKENING_REG, SAVE_RES_REGISTER } from "../types";
+import { GET_KTP, GET_REKENING_REG, SAVE_RES_REGISTER, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST } from "../types";
 import { convertDataFromRek } from "../components/utils/helper";
 
 export const ktpFound = (ktp) => ({
@@ -74,18 +74,16 @@ export const generate = (payload) => dispatch =>
 			console.log(response);
 		})
 
-
-export const registerSaved = (response) => ({
-	//response = {
-		// userid: x[0],
-		// username: x[1],
-		// pinMd5: x[2],
-		// nama: x[3],
-		// nohp: x[4],
-		// email: x[5]
-	//}
+export const saveRegister = (response) => dispatch => dispatch({
 	type: SAVE_RES_REGISTER,
 	response
 })
 
-export const saveRegister = (response) => dispatch => dispatch(registerSaved(response))
+export const saveRequest = (storage) => dispatch => dispatch({
+	type: SAVE_STORAGE_REQUEST,
+	storage
+})
+
+export const clearRequestStore = () => dispatch => dispatch({
+	type: CLEARE_STORAGE_REQUEST
+})

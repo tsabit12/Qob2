@@ -8,7 +8,7 @@ import Modal from "../Modal";
 import Dialog from "react-native-dialog";
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
-import { saveRegister } from "../../actions/register";
+import { saveRegister, saveRequest, clearRequestStore } from "../../actions/register";
 import { Header } from 'react-navigation-stack';
 import { curdate } from "../utils/helper";
 
@@ -38,7 +38,7 @@ const MessageSucces = ({ message, visible, onPress, backHome }) => (
 //   { text: 'Buka Blokir', value: 3 },
 // ];
 
-class LupaPin extends React.Component{
+class PemulihanAkun extends React.Component{
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: <Judul navigation={navigation}/>
 	}) 
@@ -71,31 +71,48 @@ class LupaPin extends React.Component{
 	}
 
 	async componentDidMount(){
-		const curdateVal = curdate();
+		const curdateVal 			= curdate();
 		const { jenis, titlePemulihan } = this.props.navigation.state.params;
-		const value 	= await AsyncStorage.getItem(`${curdateVal}`);
-		const toJson 	= JSON.parse(value); 
+		let requestValueStore 		= [];
+		const { historyReqStore } 	= this.props;
+		if (historyReqStore.length > 0) {
+			requestValueStore = historyReqStore;
+		}else{ //then call from storage
+			const value 		= await AsyncStorage.getItem('historyRequest');
+			const toJson 		= JSON.parse(value); 
+			if (toJson !== null) {
+				requestValueStore = toJson;
+			}else{
+				requestValueStore = [];
+			}
+		}
 
-		if (toJson !== null) { //check session in storage
-			let curdateStorage 	= toJson.curdate;
-			let jenisStorage 	= toJson.jenis;
-			let statusStorage 	= toJson.status;
-			if (curdateStorage === curdateVal && jenisStorage === jenis && statusStorage === true) {
-				let valueStorage = toJson.value;
-				this.setState({ 
-					success: {
-						...this.state.success,
-						status: true,
-						message: `Kami mendeteksi bahwa anda sudah melakukan request ${titlePemulihan} sebelumnya. Silahkan masukan kode verifikasi dibawah ini`
-					},
-					data: {
-						...this.state.data,
-						userid: valueStorage.userid,
-						email: valueStorage.email,
-						nama: valueStorage.nama,
-						nohp: valueStorage.nohp
-					}
-				})
+		if (requestValueStore.length > 0) { 
+			//make sure we only get the latest data
+			const getOnlyCurdate = requestValueStore.filter(x => x.curdate === curdateVal);
+			if (getOnlyCurdate.length > 0) {
+				//i think it's must be one array
+				//so we get only first array
+				//dont need map here
+				const firstDataInStorage = getOnlyCurdate[0]; 
+				const jenisStorage 		 = firstDataInStorage.jenis;
+				if (jenisStorage === jenis) { //cause this page divided by 3 action so handle it by type
+					let valueStorage = firstDataInStorage.value;
+					this.setState({
+						data: {
+							...this.state.data,
+							userid: valueStorage.userid,
+							email: valueStorage.email,
+							nama: valueStorage.nama,
+							nohp: valueStorage.nohp
+						},
+						success: {
+							...this.state.success,
+							status: true,
+							message: `Kami mendeteksi bahwa anda sudah melakukan request ${titlePemulihan} sebelumnya. Silahkan masukan kode verifikasi dibawah ini`
+						},
+					})
+				}
 			}
 		}
 	}
@@ -111,6 +128,7 @@ class LupaPin extends React.Component{
 			this.setState({ loading: true });
 
 			const { data } 	= this.state;
+			const { titlePemulihan } = this.props.navigation.state.params;
 			const valueSession = {
 				userid: data.userid,
 				nama: data.nama,
@@ -120,34 +138,52 @@ class LupaPin extends React.Component{
 			};
 			//need to detect if user
 			//alerady submit request form 1 (request pemulihan)
-			this.saveSessionRequest(valueSession)
+			const payload = {
+				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
+			};
+
+			api.registrasi.lupaPin(payload)
 				.then(res => {
-					console.log("oke");
-					this.setState({ loading: false });
+					this.saveSessionRequest(valueSession)
+						.then(res => {
+							this.setState({ 
+								loading: false, 
+								visible: true, 
+								success: {
+									...this.state.success,
+									status: true,
+									message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, anda hanya tinggal menunggu kode verifikasi`
+								}
+							});
+						})
+						.catch(err => { //errors when save to storage
+							this.setState({ 
+								loading: false, 
+								visible: true, 
+								success: {
+									...this.state.success,
+									status: true,
+									message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, harap tunggu sampai kode verifikasi berhasil dikirim`
+								}
+							});
+						});
+				}).catch(err => {
+					if (Object.keys(err).length === 10) {
+						this.setState({ 
+							loading: false, 
+							errors: { 
+								global: `Response status(${err.rc_mess}) \nHarap pastikan bahwa data yang dientri sudah sesuai`
+							} 
+						});
+					}else{
+						this.setState({ 
+							loading: false, 
+							errors: {
+								global: 'Untuk sementara kami mengalami masalah saat menghubungkan ke server, harap cobalagi nanti'
+							}
+						});
+					}
 				})
-				.catch(err => {
-					this.setState({ loading: false });
-					console.log("gagal");
-				});
-
-
-			// const payload = {
-			// 	param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
-			// };
-			// api.registrasi.lupaPin(payload)
-			// 	.then(res => {
-			// 		// console.log(res);
-			// 		// console.log(payload);
-			// 		this.setState({ loading: false, visible: true, success: { status: true, message: res.desk_mess }});
-			// 	}).catch(err => {
-			// 		// console.log(err);
-			// 		// console.log(payload);
-			// 		if (Object.keys(err).length === 10) {
-			// 			this.setState({ loading: false, errors: { global: err.desk_mess } });
-			// 		}else{
-			// 			this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
-			// 		}
-			// 	})
 		}
 	}
 
@@ -170,24 +206,23 @@ class LupaPin extends React.Component{
 
 	onChangeKode = (e) => this.setState({ kode: e })
 
-	//save session request
-	//and set expire one day
-	//by variable storage it self
 	async saveSessionRequest(value){
-		try{
-			const curdateVal 	= curdate();
-			const { jenis } 	= this.state;
-			const payload 		= {
-				jenis: jenis,
-				status: true,
-				curdate: curdateVal,
-				value: value
-			};
-			await AsyncStorage.setItem(`${curdateVal}`, JSON.stringify(payload));
-			return Promise.resolve(true);
-		}catch(errors){
-			return Promise.resolve(false);
-		}
+		const { jenis } 	= this.state;
+		const curdateVal 	= curdate();
+		AsyncStorage.getItem('historyRequest')
+			.then(res => {
+				res = res == null ? [] : JSON.parse(res);
+				res.push({
+					jenis: jenis,
+					status: true,
+					curdate: curdateVal,
+					value: value
+				});
+				//handle not closing app
+				//after request by save to redux store
+				this.props.saveRequest(res);
+				return AsyncStorage.setItem('historyRequest', JSON.stringify(res))
+			})
 	}
 
 	async saveToStorage(payload){
@@ -201,62 +236,65 @@ class LupaPin extends React.Component{
 
 	async removeSession(){
 		try{
-			const curdateVal 	= curdate();
-			await AsyncStorage.removeItem(`${curdateVal}`);
+			await AsyncStorage.removeItem('historyRequest')
+			this.props.clearRequestStore();
       		return Promise.resolve(true);
 		}catch(errors){
 			return Promise.reject(errors);
 		}
 	}
 
-	onVerfikasi = () => {
-		this.removeSession()
-			.then(() => console.log("removed"))
-			.catch(() => console.log("not removed"));
-		// const errors = this.validateKode(this.state.kode);
-		// this.setState({ errors });
-		// if (Object.keys(errors).length === 0) {
-		// 	this.setState({ loading: true });
-		// 	const { data, kode } = this.state;
-		// 	let jenis = this.state.jenis;
- 	// 		const payload = {
-		// 		param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${kode}|${jenis}`
-		// 	};
-		// 	api.auth.verifikasi(payload)
-		// 		.then(res => {
-		// 			const { response_data2 } = res;
-		// 			let parsing = response_data2.split('|');
-		// 			const payloadRes = {
-		// 				userid: parsing[0],
-		// 				username: parsing[1],
-		// 				pinMd5: parsing[2],
-		// 				nama: parsing[3],
-		// 				nohp: parsing[4],
-		// 				email: parsing[5]
-		// 			};
-		// 			this.saveToStorage(payloadRes)
-		// 				.then(() => {
-		// 					this.setState({ 
-		// 						loading: false, 
-		// 						success: {
-		// 							...this.state.success,
-		// 							statusVer: true,
-		// 							messageVer: res.response_data1
-		// 						},
-		// 						visible: true
-		// 					})
-		// 					this.props.saveRegister(payloadRes);
-		// 				}).catch(() => alert("Oppps, something wrong with storage"));
-		// 		}).catch(err => {
-		// 			if (Object.keys(err).length === 10) {
-		// 				this.setState({ loading: false });
-		// 				alert(err.desk_mess);
-		// 			}else{
-		// 				alert("Terdapat kesalahan harap cobalagi nanti");
-		// 			}
+	onVerfikasi = () => {		
+		const errors = this.validateKode(this.state.kode);
+		this.setState({ errors });
+		if (Object.keys(errors).length === 0) {
+			this.setState({ loading: true });
+			
+			const { data, kode } 	= this.state;
+			let jenis 				= this.state.jenis;
+
+ 			const payload = {
+				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${kode}|${jenis}`
+			};
+			api.auth.verifikasi(payload)
+				.then(res => {
+					const { response_data2 } = res;
+					let parsing = response_data2.split('|');
+					const payloadRes = {
+						userid: parsing[0],
+						username: parsing[1],
+						pinMd5: parsing[2],
+						nama: parsing[3],
+						nohp: parsing[4],
+						email: parsing[5]
+					};
+					//update storage
+					this.saveToStorage(payloadRes)
+						.then(() => {
+							this.setState({ 
+								loading: false, 
+								success: {
+									...this.state.success,
+									statusVer: true,
+									messageVer: res.response_data1
+								},
+								visible: true
+							})
+							this.props.saveRegister(payloadRes);
+							this.removeSession(); //all history request
+						})
+						.catch(() => alert("Kami mengalami masalah saat menyimpan data. harap cobalagi dalam 24 jam"));
+				}).catch(err => {
+					this.setState({ loading: false });
 					
-		// 		});	
-		// }
+					if (Object.keys(err).length === 10) {
+						alert(err.desk_mess);
+					}else{
+						alert("Tidak dapat terhubung ke server, harap periksa koneksi internet anda");
+					}
+					
+				});	
+		}
 	}
 
 	validateKode = (kode) => {
@@ -270,6 +308,7 @@ class LupaPin extends React.Component{
 
 	render(){
 		const { data, errors, loading, success, visible } = this.state;
+
 		return(
 			<View style={{flex: 1}}>
 				<Loader loading={loading} />
@@ -377,8 +416,13 @@ class LupaPin extends React.Component{
 	}
 }
 
+function mapStateToProps(state) {
+	return{
+		historyReqStore: state.auth.request
+	}
+}
 
-export default connect(null, { saveRegister })(LupaPin);
+export default connect(mapStateToProps, { saveRegister, saveRequest, clearRequestStore })(PemulihanAkun);
 
 const styles = StyleSheet.create({
 	label: {
