@@ -43,7 +43,10 @@ class IndexRegister extends React.Component{
 					});
 					this.setState({ loading: false })
 				})
-				.catch(err => this.setState({ errors: {global: 'Data tidak ditemukan'}, visible: true, loading: false }))
+				.catch(err => {
+					this.setState({ errors: {global: 'Data tidak ditemukan'}, visible: true, loading: false });
+					console.log(err);
+				})
 		}
 	}
 

@@ -1,4 +1,4 @@
-import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT } from "../types";
+import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST } from "../types";
 
 const initialState = {
 	logged: false,
@@ -6,7 +6,8 @@ const initialState = {
 	dataLogin: {
 		userid: null,
 		norek: null
-	}
+	},
+	request: []
 }
 
 export default function auth(state=initialState, action={}){
@@ -34,6 +35,16 @@ export default function auth(state=initialState, action={}){
 					norek: null
 				},
 				user: {}
+			}
+		case SAVE_STORAGE_REQUEST:
+			return{
+				...state,
+				request: action.storage
+			}
+		case CLEARE_STORAGE_REQUEST:
+			return{
+				...state,
+				request: []
 			}
 		default: return state;
 	}

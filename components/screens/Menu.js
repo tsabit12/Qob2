@@ -27,7 +27,7 @@ const cartIcon = require("../../assets/cart.png");
 
 
 const Menu = ({ navigation, dataLogin, getOrder }) => (
-	<View style={styles.container}>
+    <View style={styles.container}>
         <View style={styles.content}>
             <TouchableHighlight 
             underlayColor="#D8D8D8"
@@ -60,16 +60,16 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                 </View>
             </TouchableHighlight>
         </View>
-		<View style={styles.content}>
-			<TouchableHighlight 
-			underlayColor="#D8D8D8"
-			onPress={() => navigation.navigate({
+        <View style={styles.content}>
+            <TouchableHighlight 
+            underlayColor="#D8D8D8"
+            onPress={() => navigation.navigate({
                 routeName: 'Pembayaran'
             })}>
-	            <View style={styles.icon}>
-	            	<Image source={iconPembayaran} style={styles.img}/>
-	                <Text style={styles.textIcon}>Generate Pembayaran</Text>
-	            </View>
+                <View style={styles.icon}>
+                    <Image source={iconPembayaran} style={styles.img}/>
+                    <Text style={styles.textIcon}>Generate Pembayaran</Text>
+                </View>
             </TouchableHighlight>
 
             <TouchableHighlight 
@@ -100,33 +100,33 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                 </View>
             </TouchableHighlight>
         </View>
-	</View>
+    </View>
 );
 
 const styles = StyleSheet.create({
-	container: {
-		margin: 5,
-		flex: 1
-	},
-	content: {
-		flexDirection: 'row',
-		margin: 10,
-		alignItems: 'center'
-	},
-	icon: {
-		width: device*0.3, 
-        height: device*0.3,
-		justifyContent: 'center', 
+    container: {
+        margin: 5,
+        flex: 1
+    },
+    content: {
+        flexDirection: 'row',
+        margin: 10,
         alignItems: 'center'
-	},
-	textIcon: {
-		fontSize: 14, 
-		textAlign: 'center',
-		fontFamily: 'Roboto-Regular'
-	},
-	img: {
-		width: 75, height: 75
-	}
+    },
+    icon: {
+        width: device*0.3, 
+        height: device*0.3,
+        justifyContent: 'center', 
+        alignItems: 'center'
+    },
+    textIcon: {
+        fontSize: 14, 
+        textAlign: 'center',
+        fontFamily: 'Roboto-Regular'
+    },
+    img: {
+        width: 75, height: 75
+    }
 })
 
 function mapStateToProps(state) {
