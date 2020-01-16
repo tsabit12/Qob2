@@ -13,6 +13,7 @@ import { Linking } from "expo";
 import { connect } from "react-redux";
 import { getCurdateWithStrip } from "../utils/helper";
 import { getOrder } from "../../actions/order";
+import api from "../api";
 
 var device = Dimensions.get('window').width;
 const iconBooking = require("../../assets/calendar.png");
@@ -97,6 +98,38 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                 <View style={styles.icon}>
                     <Image source={iconRiwayat} style={styles.img}/>
                     <Text style={styles.textIcon}>Riwayat {'\n'}Order</Text>
+                </View>
+            </TouchableHighlight>
+            <TouchableHighlight 
+                underlayColor="#D8D8D8"
+                onPress={() => {
+                    const { userid } = dataLogin;   
+                    console.log(userid);
+
+                    api.auth.genpwdweb(userid)
+                        .then(res => {
+                            const response = {
+                                desc: res.desk_mess,
+                                pwd : res.response_data1
+                            }
+
+                            console.log(response);
+                            
+                            navigation.navigate({
+                                routeName: 'genpwd',
+                                params: {
+                                    respwd : response
+                                }
+                            })   
+                        })
+                        // .catch(err => {
+                        //     alert(err.desk_mess)
+                        // });
+                }}
+            >
+                <View style={styles.icon}>
+                    <Image source={iconPhone} style={styles.img}/>
+                    <Text style={styles.textIcon}>Generate Password Web</Text>
                 </View>
             </TouchableHighlight>
         </View>
