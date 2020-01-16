@@ -12,6 +12,10 @@ const Judul = ({ navigation }) => (
 	</View>
 )
 
+String.prototype.replaceAll = function(str1, str2, ignore) {
+    return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+}
+
 class Penerima extends React.Component{
 	static navigationOptions = ({ navigation }) => ({
 		headerTitle: <Judul navigation={navigation.state.params}/>
@@ -30,7 +34,9 @@ class Penerima extends React.Component{
 			alamat2: '',
 			kota: '',
 			email: '',
-			nohp: ''
+			nohp: '',
+			kel: '',
+			kec: ''
 		},
 		loadingProv: false,
 		show: false,
@@ -87,10 +93,16 @@ class Penerima extends React.Component{
 			.then(res => {
 				const listAlamat = [];
 				res.forEach(x => {
+					const noSpaceText = x.text.replace('  ', '');
+					const removeTitik = noSpaceText.replaceAll(".", '');
+					const parsing = removeTitik.split('Kec');
+
 					listAlamat.push({
 						title: x.text.replace('   ',''),
 						kodepos: x.id,
-						kota: x.kota
+						kota: x.kota,
+						kel: parsing[0].replace(' ', ''),
+						kec: `Kec. ${parsing[1].replace(' ', '')}`	
 					})
 				})
 				this.setState({ listAlamat, show: true });
@@ -98,9 +110,16 @@ class Penerima extends React.Component{
 			.catch(err => console.log(err))
 	}
 
-	onClickAlamat = (title, kodepos, kota) => {
+	onClickAlamat = (title, kodepos, kota, kel, kec) => {
 		this.setState({ 
-			data: { ...this.state.data, alamat: title, kodepos: kodepos, kota: kota}, 
+			data: { 
+				...this.state.data, 
+				alamat: title, 
+				kodepos: kodepos, 
+				kota: kota,
+				kel: kel,
+				kec: kec
+			}, 
 			show: false
 		});
 		this.alamat2Ref.current.focus()	
@@ -160,7 +179,7 @@ class Penerima extends React.Component{
 									    	titleStyle={styles.listItemTitle}
 									    	descriptionStyle={styles.listItemDescription}
 									    	title={x.title}
-									    	onPress={() => this.onClickAlamat(x.title, x.kodepos, x.kota)}
+									    	onPress={() => this.onClickAlamat(x.title, x.kodepos, x.kota, x.kel, x.kec)}
 										/> )}
 							    </View>
 						    </ScrollView> }

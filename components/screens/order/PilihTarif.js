@@ -19,13 +19,17 @@ const ListTarif = ({ onAccept, list }) => (
 				const parsing = x.split('*');
 				let produk = parsing[0];
 				if (x.length > 0) { //handle tarif last index cause parsing (#)
-					const tarif = x.split('|');
+					// console.log(parsing);
+					let tarif = parsing[1];
+					tarif = tarif.split('|');
+					// console.log(tarif);
 					let fee 		= Math.floor(tarif[0]);
 					let ppn 		= Math.floor(tarif[1]);
 					let htnb 		= Math.floor(tarif[2]);
 					let ppnhtnb 	= Math.floor(tarif[3]);
 					let totalTarif 	= Math.floor(tarif[4]);
-					
+					console.log(fee, ppn, htnb, ppnhtnb, totalTarif);
+
 					//get id serve
 					let idService = produk.split('-');
 					idService = idService[0];
@@ -90,7 +94,9 @@ class PilihTarif extends React.Component{
 			const payload = {
 				kodePosA: toObje.kodepos,
 				kodePosB: params.deskripsiPenerima.kodepos,
-				berat: params.deskripsiOrder.berat
+				berat: params.deskripsiOrder.berat,
+				nilai: params.deskripsiOrder.nilai,
+				tipe: params.deskripsiOrder.tipe
 			}
 
 			api.qob.getTarif(payload)
