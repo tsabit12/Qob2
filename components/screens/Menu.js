@@ -80,6 +80,7 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                     const payload = {
                         sp_nama  : `Ipos_getPostingPebisol`,
                         par_data : `${userid}|${curdate}|${curdate}`
+                        // par_data : `440000016|${curdate}|${curdate}`
                     };
                     //get data order on this button
                     //with curdate
