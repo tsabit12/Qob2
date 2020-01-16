@@ -239,7 +239,7 @@ export default{
 			param1: userid,
 			hashing: getHasing('213', userid)
 		},config).then(res => {
-			if (res.data.rc_mess === '99') {
+			if (res.data.rc_mess === '00') {
 				return res.data;
 			}else{
 				return Promise.reject(res.data);
