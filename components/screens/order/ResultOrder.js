@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, AsyncStorage } from "react-native";
+import { View, Text } from "react-native";
 import styles from "./styles";
 import { Button } from '@ui-kitten/components';
 import Loader from "../../Loader";
@@ -7,6 +7,7 @@ import Modal from "../../Modal";
 import { curdateTime } from "../../utils/helper";
 import api from "../../api";
 import Dialog from "react-native-dialog";
+import { connect } from "react-redux";
 
 const capitalize = (string) => {
 	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -31,18 +32,16 @@ class ResultOrder extends React.Component{
 	}
 
 	async componentDidMount(){
-		const value 	= await AsyncStorage.getItem('qobUserPrivasi');
-		const toObje 	= JSON.parse(value);
-
+		const { dataLogin } = this.props;
 		const { params } = this.props.navigation.state;
-		const { selectedTarif, deskripsiOrder, deskripsiPengirim, deskripsiPenerima } = params;
-		// console.log(selectedTarif);
-		// console.log(deskripsiPenerima);
-		let param1 = `${curdateTime()}|01|${toObje.userid}|-`;
+		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
+		const codOrNot = deskripsiOrder.checked ? '1' : '0';
+		
+		let param1 = `${curdateTime()}|01|${dataLogin.userid}|-`;
 		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
-		let param3 = `${deskripsiPengirim.nama}|${deskripsiPengirim.alamat}|KEL|KEC|${deskripsiPengirim.kota}|PROV|Indonesia|${deskripsiPengirim.kodepos}|${toObje.nohp}|${toObje.email}`;
+		let param3 = `${pengirimnya.nama}|${pengirimnya.alamat}|${pengirimnya.kel}|${pengirimnya.kec}|${pengirimnya.kota}|PROV|Indonesia|${pengirimnya.kodepos}|${pengirimnya.nohp}|${pengirimnya.email}`;
 		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.kel}|${deskripsiPenerima.kec}|${deskripsiPenerima.kota}|${deskripsiPenerima.kota}|-|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|-|${deskripsiPenerima.email}|-|-`;
-		let param5 = `0|0|-|0`;
+		let param5 = `${codOrNot}|0|-|0`;
 		const payload = {
 			param1: param1,
 			param2: param2,
@@ -50,7 +49,7 @@ class ResultOrder extends React.Component{
 			param4: param4,
 			param5: param5
 		};
-		console.log(payload);
+		// console.log(payload);
 		this.setState({ payload });
 	}
 
@@ -69,19 +68,6 @@ class ResultOrder extends React.Component{
 					let x = response_data1.split('|');
 					// let idOrder = x
 					this.setState({ loading: false, success: true, idOrder: x[3] });
-
-					const { params } = this.props.navigation.state;
-					const { deskripsiPengirim, deskripsiPenerima, deskripsiOrder } = params;
-					
-					const payload = {
-						idorder: x[3],
-						nmPenrima:  deskripsiPenerima.nama,
-						nmPengirim: deskripsiPengirim.nama,
-						jenis: deskripsiOrder.jenis,
-						tgl: res.wkt_mess
-					};
-					//save to stroe redux
-					// this.props.orderAdded(x[3], payload);
 				})
 				.catch(err => {
 					// console.log(err);
@@ -91,7 +77,6 @@ class ResultOrder extends React.Component{
 						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
 					}
 				})
-		// setTimeout(() => this.setState({loading: false, success: true }), 1000);	
 	}
 
 	backHome = () => {
@@ -128,15 +113,21 @@ class ResultOrder extends React.Component{
 						<View style={{paddingTop: 10}}>
 							<View style={styles.viewResult}>
 								<Text style={styles.labelInformasi}>Pengirim</Text>
-								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 73 }}>: {capitalize(params.deskripsiPengirim.nama)}</Text>
+								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 73 }}>: {capitalize(params.pengirimnya.nama)}</Text>
 							</View>
 							<View style={styles.viewResult}>
 								<Text style={styles.labelInformasi}>Penerima</Text>
 								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 68 }}>: {capitalize(params.deskripsiPenerima.nama)}</Text>
 							</View>
 							<View style={styles.viewResult}>
+								<Text style={styles.labelInformasi}>Isi Kiriman</Text>
+								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 62 }}>: {params.deskripsiOrder.jenis}</Text>
+							</View>
+							<View style={styles.viewResult}>
 								<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
-								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 44 }}>: {params.deskripsiOrder.jenis}</Text>
+								<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 43 }}>: 
+									{ params.deskripsiOrder.checked ? ' Cod' : ' Non Cod' }
+								</Text>
 							</View>
 							<View style={styles.viewResult}>
 								<Text style={styles.labelInformasi}>Nilai Barang</Text>
@@ -169,4 +160,10 @@ class ResultOrder extends React.Component{
 	}
 }
 
-export default ResultOrder;
+function mapStateToProps(state) {
+	return{
+		dataLogin: state.auth.dataLogin
+	}
+}
+
+export default connect(mapStateToProps, null)(ResultOrder);

@@ -61,7 +61,7 @@ const ListRekening = ({ listdata }) => {
 						if (x.length > 0) { //remove last array cause it's null
 							const parsingX = x.split('~');
 							return(
-								<View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
+								<View style={{flexDirection: 'row', alignItems: 'flex-start'}} key={i}>
 									<Text>{parsingX[0]}</Text>
 									<Text style={{marginLeft: 20}}>{parsingX[2]}</Text>
 									<Text style={{marginLeft: 20}}>{parsingX[3]}</Text>
@@ -118,7 +118,11 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 						<Icon name='pin-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>
 							<Text style={styles.labelTitle}>Alamat</Text>
-							<Text style={styles.labelSubTitle}>{capitalize(user.alamat)}, {capitalize(user.kota)}</Text>
+							<View style={{marginRight: 10 }}>
+							<Text style={styles.labelSubTitle}>
+								{capitalize(user.alamat)}, {capitalize(user.kel)}, {capitalize(user.kec)}, {capitalize(user.kota)}
+							</Text>
+							</View>
 						</View>
 					</View>
 					<View style={styles.contentLabel}>

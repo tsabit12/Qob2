@@ -2,7 +2,11 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
-    padding: 10,
+    margin: 10,
+    borderWidth: 1,
+    // borderRightWidth: 1,
+    borderColor: '#cfcfcf',
+    borderRadius: 10,
   },
   text: {
   	fontFamily: 'open-sans-reg'

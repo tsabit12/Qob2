@@ -1,7 +1,7 @@
 import React from "react";
 import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import styles from "./styles";
-import { Layout, Text, Input, Button, Select } from '@ui-kitten/components';
+import { Layout, Text, Input, Button, CheckBox } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
 
 const optionsData = [
@@ -28,7 +28,7 @@ class IndexOrder extends React.Component{
 	lebarRef = React.createRef();
 	tinggiRef = React.createRef();
 	nilaiRef = React.createRef();
-	tipeKirimanRef = React.createRef();
+	// tipeKirimanRef = React.createRef();
 
 	state = {
 		data: {
@@ -39,7 +39,7 @@ class IndexOrder extends React.Component{
 			tinggi: '0',
 			nilaiVal: '',
 			nilai: '',
-			tipe: ''
+			checked: false
 		},
 		errors: {}
 	}
@@ -89,7 +89,10 @@ class IndexOrder extends React.Component{
 		}
 	}
 
-	onSelectText = (e) => this.setState({ data: { ...this.state.data, tipe: e.value }})
+	// onSelectText = (e) => {
+	// 	this.beratRef.current.focus();
+	// 	this.setState({ data: { ...this.state.data, tipe: e.value }});
+	// }
 
 	validate = (data) => {
 		const errors = {};
@@ -99,9 +102,10 @@ class IndexOrder extends React.Component{
 		if (!data.lebar) errors.lebar = "Masukan lebar kiriman";
 		if (!data.tinggi) errors.tinggi = "Masukan tinggi kiriman";
 		if (!data.nilai) errors.nilai = "Masukan nilai";
-		if (!data.tipe) errors.tipe = "Jenis kiriman belum dipilih";
 		return errors;
 	}
+
+	onCheckedChange = () => this.setState({ data: { ...this.state.data, checked: !this.state.data.checked }})
 
 	render(){
 		const { data, errors  } = this.state;
@@ -114,7 +118,7 @@ class IndexOrder extends React.Component{
 				>
 				<ScrollView keyboardShouldPersistTaps='always'>
 					<Layout style={styles.container}>
-						<View style={{padding: 4}}>
+						<View style={{padding: 10}}>
 							<Input
 						      placeholder='Laptop, baju, sepatu dll'
 						      ref={this.jenisRef}
@@ -124,21 +128,10 @@ class IndexOrder extends React.Component{
 						      style={styles.input}
 						      value={data.jenis}
 						      onChangeText={(e) => this.onChange(e, this.jenisRef.current.props)}
-						      onSubmitEditing={() => this.beratRef.current.focus() }
 						      status={errors.jenis && 'danger'}
+						      onSubmitEditing={() => this.beratRef.current.focus() }
 						      caption={errors.jenis && `${errors.jenis}`}
 						    />
-						    <Select
-						    	ref={this.tipeKirimanRef}
-						    	label='Jenis kiriman'
-						        data={optionsData}
-						        labelStyle={styles.label}
-						        placeholder='Pilih jenis kiriman'
-						        onSelect={this.onSelectText}
-						        status={errors.tipe && 'danger'}
-						        style={styles.input}
-						    />
-						    {errors.tipe && <Text style={{fontSize: 12, marginTop: -5, paddingBottom: 5, color: 'red'}}>{errors.tipe}</Text> }
 						    <Input
 						      placeholder='Berat kiriman dalam gram'
 						      ref={this.beratRef}
@@ -211,6 +204,13 @@ class IndexOrder extends React.Component{
 						      caption={errors.nilai && `${errors.nilai}`}
 						    />
 						</View>
+						<CheckBox
+					      text={data.checked ? 'Cod' : 'Non cod'}
+					      style={{ marginLeft: 5, marginTop: -5, paddingBottom: 5 }}
+					      textStyle={{ color: data.checked ? 'blue': 'red', fontFamily: 'open-sans-reg'}}
+					      checked={data.checked}
+					      onChange={this.onCheckedChange}
+					    />
 					    <Button style={{margin: 2}} onPress={this.onSubmit}>Selanjutnya</Button>
 					</Layout>
 				</ScrollView>

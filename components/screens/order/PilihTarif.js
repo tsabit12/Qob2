@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, AsyncStorage } from "react-native";
+import { View, Text } from "react-native";
 import styles from "./styles";
 import { ListItem, Button } from '@ui-kitten/components';
 import api from "../../api";
@@ -28,7 +28,6 @@ const ListTarif = ({ onAccept, list }) => (
 					let htnb 		= Math.floor(tarif[2]);
 					let ppnhtnb 	= Math.floor(tarif[3]);
 					let totalTarif 	= Math.floor(tarif[4]);
-					console.log(fee, ppn, htnb, ppnhtnb, totalTarif);
 
 					//get id serve
 					let idService = produk.split('-');
@@ -71,32 +70,18 @@ class PilihTarif extends React.Component{
 
 	state = {
 		loading: true,
-		tarif: [],
-		deskripsiPengirim: {}
+		tarif: []
 	}
 	
 	async componentDidMount(){
-		const value 	= await AsyncStorage.getItem('sessionLogin');
-		const toObje 	= JSON.parse(value);
-		
-		this.setState({
-			deskripsiPengirim: {
-				nama: toObje.nama,
-				namaOl: toObje.namaOl,
-				kodepos: toObje.kodepos,
-				alamat: toObje.alamatOl,
-				kota: toObje.kota
-			}
-		});
-
 		const { params } = this.props.navigation.state;
+
 		if (Object.keys(params).length > 0) {
 			const payload = {
-				kodePosA: toObje.kodepos,
+				kodePosA: params.pengirimnya.kodepos,
 				kodePosB: params.deskripsiPenerima.kodepos,
 				berat: params.deskripsiOrder.berat,
-				nilai: params.deskripsiOrder.nilai,
-				tipe: params.deskripsiOrder.tipe
+				nilai: params.deskripsiOrder.nilai
 			}
 
 			api.qob.getTarif(payload)
@@ -116,8 +101,7 @@ class PilihTarif extends React.Component{
 			routeName: 'ResultOrder',
 			params: {
 				...this.props.navigation.state.params,
-				selectedTarif: payload,
-				deskripsiPengirim: this.state.deskripsiPengirim
+				selectedTarif: payload
 			}
 		})
 	}
