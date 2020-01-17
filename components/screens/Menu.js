@@ -1,7 +1,6 @@
 import React from "react";
 import Constants from 'expo-constants';
 import { StyleSheet,
-    TouchableHighlight,
     TouchableOpacity,
     StatusBar, 
     Image, 
@@ -14,6 +13,7 @@ import { connect } from "react-redux";
 import { getCurdateWithStrip } from "../utils/helper";
 import { getOrder } from "../../actions/order";
 import api from "../api";
+import Loader from "../Loader";
 
 var device = Dimensions.get('window').width;
 const iconBooking = require("../../assets/calendar.png");
@@ -25,12 +25,14 @@ const iconRiwayat = require("../../assets/history.png");
 const iconProfile = require("../../assets/profile.png");
 const iconPhone = require("../../assets/phone2.png");
 const cartIcon = require("../../assets/cart.png");
+const genPwd = require("../../assets/generatePwd.png");
 
 
-const Menu = ({ navigation, dataLogin, getOrder }) => (
+const Menu = ({ navigation, dataLogin, getOrder, loading, onShowModal }) => (
     <View style={styles.container}>
+        <Loader loading={loading} />
         <View style={styles.content}>
-            <TouchableHighlight 
+            <TouchableOpacity 
             underlayColor="#D8D8D8"
             onPress={() => navigation.navigate({
                 routeName: 'Order'
@@ -39,8 +41,8 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                     <Image source={iconBooking} style={styles.img}/>
                     <Text style={styles.textIcon}>QOB</Text>
                 </View>
-            </TouchableHighlight>
-            <TouchableHighlight 
+            </TouchableOpacity>
+            <TouchableOpacity 
                 underlayColor="#D8D8D8"
                 onPress={() => navigation.navigate({
                     routeName: 'CekTarif'
@@ -50,8 +52,8 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                     <Image source={iconCekTarif} style={styles.img}/>
                     <Text style={styles.textIcon}>Cek Tarif</Text>
                 </View>
-            </TouchableHighlight>
-            <TouchableHighlight 
+            </TouchableOpacity>
+            <TouchableOpacity 
                 underlayColor="#D8D8D8"
                 onPress={() => Linking.openURL('tel:' + '161')}
             >
@@ -59,10 +61,10 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                     <Image source={iconPhone} style={styles.img}/>
                     <Text style={styles.textIcon}>Halo Pos</Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
         </View>
         <View style={styles.content}>
-            <TouchableHighlight 
+            <TouchableOpacity 
             underlayColor="#D8D8D8"
             onPress={() => navigation.navigate({
                 routeName: 'Pembayaran'
@@ -71,9 +73,9 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                     <Image source={iconPembayaran} style={styles.img}/>
                     <Text style={styles.textIcon}>Generate Pembayaran</Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
 
-            <TouchableHighlight 
+            <TouchableOpacity 
                 underlayColor="#D8D8D8"
                 onPress={() => {
                     const curdate = getCurdateWithStrip();
@@ -99,39 +101,16 @@ const Menu = ({ navigation, dataLogin, getOrder }) => (
                     <Image source={iconRiwayat} style={styles.img}/>
                     <Text style={styles.textIcon}>Riwayat {'\n'}Order</Text>
                 </View>
-            </TouchableHighlight>
-            <TouchableHighlight 
+            </TouchableOpacity>
+            <TouchableOpacity 
                 underlayColor="#D8D8D8"
-                onPress={() => {
-                    const { userid } = dataLogin;   
-                    console.log(userid);
-
-                    api.auth.genpwdweb(userid)
-                        .then(res => {
-                            const response = {
-                                desc: res.desk_mess,
-                                pwd : res.response_data1
-                            }
-
-                            console.log(response);
-                            
-                            navigation.navigate({
-                                routeName: 'genpwd',
-                                params: {
-                                    respwd : response
-                                }
-                            })   
-                        })
-                        // .catch(err => {
-                        //     alert(err.desk_mess)
-                        // });
-                }}
+                onPress={() => onShowModal(dataLogin.userid) } 
             >
                 <View style={styles.icon}>
-                    <Image source={iconPhone} style={styles.img}/>
+                    <Image source={genPwd} style={styles.img}/>
                     <Text style={styles.textIcon}>Generate Password Web</Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
         </View>
     </View>
 );

@@ -5,7 +5,7 @@ import api from "../../api";
 import { connect } from "react-redux";
 import { getDetailUser, loggedOut } from "../../../actions/auth";
 import { getRekening } from "../../../actions/search";
-import { Icon, Spinner } from '@ui-kitten/components';
+import { Icon, Spinner, Button } from '@ui-kitten/components';
 
 const imageIcon = require("../../icons/user.png");
 
@@ -62,7 +62,7 @@ const ListRekening = ({ listdata }) => {
 							const parsingX = x.split('~');
 							return(
 								<View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-									<Text>{numberWithCommas(parsingX[0])}</Text>
+									<Text>{parsingX[0]}</Text>
 									<Text style={{marginLeft: 20}}>{parsingX[2]}</Text>
 									<Text style={{marginLeft: 20}}>{parsingX[3]}</Text>
 									<Text style={{marginLeft: 28}}>{numberWithCommas(parsingX[5])}</Text>
@@ -77,7 +77,6 @@ const ListRekening = ({ listdata }) => {
 }
 
 const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loading }) => {
-	// console.log(listRek[nomorRek]);
 	return(
 		<React.Fragment>
 			<View style={{flexDirection: 'row', padding: 10 }}>
@@ -148,7 +147,6 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 								{ loading ? <Text>Loading...</Text> : <Text>Terdapat kesalahan</Text> }
 							</React.Fragment> }
 					</React.Fragment> }
-					<View style={{borderBottomWidth: 1, borderBottomColor: '#cfcfcf'}} />
 				</View>
 			</View>
 		</React.Fragment>
@@ -174,9 +172,7 @@ class AccountScreen extends React.Component{
 		this.setState({
 			sisaSaldo: this.props.navigation.state.params.saldo
 		});
-		this.props.getDetailUser(userid)
-			.then(() => console.log("oke"))
-			.catch(err => console.log(err));
+		this.props.getDetailUser(userid);
 	}
 
 	UNSAFE_componentWillReceiveProps(nextProps){
@@ -217,11 +213,8 @@ class AccountScreen extends React.Component{
 							loading={this.state.loading}
 						/>
 					</View>
-					<View style={{ marginLeft: 14, marginRight: 15 }}>
-						<Text 
-							style={{fontFamily: 'open-sans-reg', fontSize: 15, color: 'blue' }}
-							onPress={this.onLogout}
-						>Logout</Text>
+					<View style={{ marginLeft: 14, marginRight: 15, paddingBottom: 10 }}>
+						<Button size='small' status='info' onPress={this.onLogout}>Logout</Button>
 					</View>
 				</ScrollView> : <LoaderView />  }
 			</React.Fragment>
