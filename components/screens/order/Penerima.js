@@ -126,8 +126,6 @@ class Penerima extends React.Component{
 				this.alamatRef.current.focus();
 			}else if (errors.alamat2){
 				this.alamat2Ref.current.focus();
-			}else if (errors.email) {
-				this.emailRef.current.focus();
 			}else{
 				this.phoneRef.current.focus();
 			}
@@ -239,12 +237,12 @@ class Penerima extends React.Component{
 		if (!data.nama) errors.nama = "Harap diisi";
 		if (!data.alamat) errors.alamat = "Harap diisi";
 		if (!data.alamat2) errors.alamat2 = "Harap diisi";
-		if (!data.email) errors.email = "Harap diisi";
+		// if (!data.email) errors.email = "Harap diisi";
 		if (!data.nohp) errors.nohp = "Harap diisi";
 		if (!pengirim.nama) errors.namaSend = "Harap diisi";
 		if (!pengirim.alamat) errors.alamatSend = "Harap diisi";
 		if (!pengirim.alamatDet) errors.alamatDet = "Harap diisi";
-		if (!pengirim.email) errors.emailSend = "Harap diisi";
+		// if (!pengirim.email) errors.emailSend = "Harap diisi";
 		if (!pengirim.nohp) errors.noHpSend = "Harap diisi";
 		return errors;
 	}
@@ -332,7 +330,7 @@ class Penerima extends React.Component{
 							    { !checked && <React.Fragment>
 							    	<Input
 										placeholder='Nama pengirim'
-										label='Nama'
+										label='* Nama'
 										ref={this.namaSendRef}
 										name='nama'
 										labelStyle={styles.label}
@@ -346,7 +344,7 @@ class Penerima extends React.Component{
 								    	placeholder='jalan, gang, rt/rw'
 								    	ref={this.alamat2SendRef}
 								    	name='alamat'
-								    	label='Alamat'
+								    	label='* Alamat'
 								    	style={{ paddingTop: 7 }}
 								    	labelStyle={styles.label}
 								    	value={pengirim.alamat}
@@ -357,7 +355,7 @@ class Penerima extends React.Component{
 								    />
 								    <Input 
 								    	ref={this.kotaSendref}
-								    	label='Kota/kab/kec/kel'
+								    	label='* Kota/kab/kec/kel'
 								    	labelStyle={styles.label}
 								    	style={{paddingTop: 7}}
 								    	value={pengirim.alamatDet}
@@ -390,13 +388,12 @@ class Penerima extends React.Component{
 								    	value={pengirim.email}
 								    	onChangeText={(e) => this.onChangePengirim(e, this.emailSendRef.current.props)}
 								    	onSubmitEditing={() => this.phoneSendRef.current.focus() }
-								    	status={errors.emailSend && 'danger'}
 								    />
 								    <Input 
 								    	placeholder='Masukan nomor handphone'
 								    	ref={this.phoneSendRef}
 								    	name='nohp'
-										label='No Handphone'
+										label='* No Handphone'
 										keyboardType='numeric'
 								    	style={{ paddingTop: 7 }}
 								    	labelStyle={styles.label}
@@ -420,7 +417,7 @@ class Penerima extends React.Component{
 								</View>
 								<Input
 									placeholder='Nama penerima'
-									label='Nama'
+									label='* Nama'
 									ref={this.namaRef}
 									name='nama'
 									labelStyle={styles.label}
@@ -434,7 +431,7 @@ class Penerima extends React.Component{
 							    	placeholder='jalan, gang, rt/rw'
 							    	ref={this.alamat2Ref}
 							    	name='alamat2'
-							    	label='Alamat'
+							    	label='* Alamat'
 							    	style={{ paddingTop: 7 }}
 							    	labelStyle={styles.label}
 							    	value={data.alamat2}
@@ -445,7 +442,7 @@ class Penerima extends React.Component{
 							    />
 							    <Input 
 							    	ref={this.alamatRef}
-							    	label='Kota/kab/kec/kel'
+							    	label='* Kota/kab/kec/kel'
 							    	labelStyle={styles.label}
 							    	style={{paddingTop: 7}}
 							    	value={data.alamat}
@@ -478,13 +475,12 @@ class Penerima extends React.Component{
 							    	value={data.email}
 							    	onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
 							    	onSubmitEditing={() => this.phoneRef.current.focus() }
-							    	status={errors.email && 'danger'}
 							    />
 							    <Input 
 							    	placeholder='Masukan nomor handphone'
 							    	ref={this.phoneRef}
 							    	name='nohp'
-									label='No Handphone'
+									label='* No Handphone'
 									keyboardType='numeric'
 							    	style={{ paddingTop: 7 }}
 							    	labelStyle={styles.label}
