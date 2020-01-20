@@ -1,13 +1,24 @@
 import React from "react";
-import {View, Text, AsyncStorage, SafeAreaView, Image, TouchableOpacity, ScrollView } from "react-native";
+import {View, Text, AsyncStorage, SafeAreaView, Image, TouchableOpacity, ScrollView, StatusBar } from "react-native";
 import styles from "./styles";
 import api from "../../api";
 import { connect } from "react-redux";
 import { getDetailUser, loggedOut } from "../../../actions/auth";
 import { getRekening } from "../../../actions/search";
-import { Icon, Spinner, Button } from '@ui-kitten/components';
+import { Icon, Spinner, Button, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 
 const imageIcon = require("../../icons/user.png");
+
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
 
 const LoaderView = () => (
 	<View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -176,7 +187,7 @@ class AccountScreen extends React.Component{
 		this.setState({
 			sisaSaldo: this.props.navigation.state.params.saldo
 		});
-		this.props.getDetailUser(userid);
+		// this.props.getDetailUser(userid);
 	}
 
 	UNSAFE_componentWillReceiveProps(nextProps){
@@ -200,28 +211,42 @@ class AccountScreen extends React.Component{
         })
 	}
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	);
+
 	render(){
 		const { detail, rekKoran } = this.props;
 		
 		return(
-			<React.Fragment>
-			{ Object.keys(detail).length > 0 ? <ScrollView>
-					<View style={{marginTop: 5}}>
-						<Profile 
-							user={detail} 
-							saldo={this.state.sisaSaldo} 
-							getRekening={this.getRekening}
-							rekening={this.state.showRekKoran}
-							nomorRek={this.state.nomorRek}
-							listRek={rekKoran}
-							loading={this.state.loading}
-						/>
-					</View>
-					<View style={{ marginLeft: 14, marginRight: 15, paddingBottom: 10 }}>
-						<Button size='small' status='info' onPress={this.onLogout}>Logout</Button>
-					</View>
-				</ScrollView> : <LoaderView />  }
-			</React.Fragment>
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    title='Profil'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    subtitle={this.props.navigation.state.params.namaLengkap}
+				    subtitleStyle={{color: '#FFF'}}
+				/>
+				{ Object.keys(detail).length > 0 ? <ScrollView>
+						<View style={{marginTop: 5}}>
+							<Profile 
+								user={detail} 
+								saldo={this.state.sisaSaldo} 
+								getRekening={this.getRekening}
+								rekening={this.state.showRekKoran}
+								nomorRek={this.state.nomorRek}
+								listRek={rekKoran}
+								loading={this.state.loading}
+							/>
+						</View>
+						<View style={{ marginLeft: 14, marginRight: 15, paddingBottom: 10 }}>
+							<Button size='small' status='info' onPress={this.onLogout}>Logout</Button>
+						</View>
+					</ScrollView> : <LoaderView />  }
+			</View>
 		);
 	}
 }

@@ -1,27 +1,36 @@
 import React from "react";
-import { View, Text, ScrollView, KeyboardAvoidingView, Image} from "react-native";
-import { Layout, Input, Button, ListItem, Toggle } from '@ui-kitten/components';
+import { View, Text, ScrollView, KeyboardAvoidingView, Image, StatusBar } from "react-native";
+import { Layout, Input, Button, ListItem, Toggle, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
 import styles from "./styles";
 import api from "../../api";
 import { connect } from "react-redux";
 import { getDetailUser } from "../../../actions/auth";
 
-const Judul = ({ navigation }) => (
-	<View>
-		<Text style={styles.header}>{navigation.deskripsiOrder.jenis}</Text>
-		<Text style={{fontFamily: 'open-sans-reg'}}>Kelola detail kiriman</Text>
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
 	</View>
-)
+);
+
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
+
+// const Judul = ({ navigation }) => (
+// 	<View>
+// 		<Text style={styles.header}>{navigation.deskripsiOrder.jenis}</Text>
+// 		<Text style={{fontFamily: 'open-sans-reg'}}>Kelola detail kiriman</Text>
+// 	</View>
+// )
 
 String.prototype.replaceAll = function(str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
 }
 
 class Penerima extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <Judul navigation={navigation.state.params}/>
-	}) 
 
 	namaRef = React.createRef();
 	alamatRef = React.createRef();
@@ -272,199 +281,214 @@ class Penerima extends React.Component{
 
 	onChangePengirim = (e, { name }) => this.setState({ pengirim: { ...this.state.pengirim, [name]: e }})
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	)
+
 	render(){
 		const { data, listAlamat, show, errors, checked, pengirim, listAlamat2, show2 } = this.state;
 		
 		return(
-			<KeyboardAvoidingView 
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    subtitle='Pengirm & Penerima'
+				    title='Order'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    subtitleStyle={{color: '#FFF'}}
+				/>
+				<KeyboardAvoidingView 
 					style={{flex:1}} 
 					behavior="padding" 
-					keyboardVerticalOffset = {Header.HEIGHT + 40}
 					enabled
 				>
-				<ScrollView keyboardShouldPersistTaps='always'>
-					<Layout style={styles.container}>
-						<View style={{padding: 10 }}>
-							<View style={{ flexDirection: 'row', paddingBottom: 15}}>
-								<View style={{alignItems: 'flex-start', flex: 1}}>
-									<Text>Gunakan data saya sebagai data pengirim</Text>
-								</View>
-								<View style={{alignItems: 'flex-end', flex: 1}}>
-									<Toggle
-								      checked={this.state.checked}
-								      onChange={this.onCheckedChange}
-								    />
+					<ScrollView keyboardShouldPersistTaps='always'>
+						<Layout style={styles.container}>
+							<View style={{padding: 10 }}>
+								<View style={{ flexDirection: 'row', paddingBottom: 15}}>
+									<View style={{alignItems: 'flex-start', flex: 1}}>
+										<Text>Gunakan data saya sebagai data pengirim</Text>
+									</View>
+									<View style={{alignItems: 'flex-end', flex: 1}}>
+										<Toggle
+									      checked={this.state.checked}
+									      onChange={this.onCheckedChange}
+									    />
+								    </View>
 							    </View>
-						    </View>
-						    { !checked && <React.Fragment>
-						    	<Input
-									placeholder='Nama pengirim'
+							    { !checked && <React.Fragment>
+							    	<Input
+										placeholder='Nama pengirim'
+										label='Nama'
+										ref={this.namaSendRef}
+										name='nama'
+										labelStyle={styles.label}
+										value={pengirim.nama}
+										style={{paddingTop: 7}}
+										onChangeText={(e) => this.onChangePengirim(e, this.namaSendRef.current.props)}
+										onSubmitEditing={() => this.alamat2SendRef.current.focus() }
+										status={errors.namaSend && 'danger'}
+								    />
+								    <Input 
+								    	placeholder='jalan, gang, rt/rw'
+								    	ref={this.alamat2SendRef}
+								    	name='alamat'
+								    	label='Alamat'
+								    	style={{ paddingTop: 7 }}
+								    	labelStyle={styles.label}
+								    	value={pengirim.alamat}
+								    	icon={this.renderIcon}
+								    	onChangeText={(e) => this.onChangePengirim(e, this.alamat2SendRef.current.props)}
+								    	onSubmitEditing={() => this.kotaSendref.current.focus() }
+								    	status={errors.alamatSend && 'danger'}
+								    />
+								    <Input 
+								    	ref={this.kotaSendref}
+								    	label='Kota/kab/kec/kel'
+								    	labelStyle={styles.label}
+								    	style={{paddingTop: 7}}
+								    	value={pengirim.alamatDet}
+								    	onChangeText={this.onChangeAlamatSend}
+								    	icon={this.renderIcon}
+								    	status={errors.alamatDet && 'danger'}
+								    	placeholder='Cari...'
+								    />
+								    { listAlamat2.length > 0 && show2 && <ScrollView style={{height: 100}} nestedScrollEnabled={true}>
+									    <View style={styles.triangle}>
+										   	{ listAlamat2.map((x, i) => 
+										   		<ListItem
+										   			key={i}
+											    	style={styles.listItem}
+											    	titleStyle={styles.listItemTitle}
+											    	descriptionStyle={styles.listItemDescription}
+											    	title={x.title}
+											    	onPress={() => this.onClickAlamat(x.title, x.kodepos, x.kota, x.kel, x.kec, '1')}
+												/> )}
+									    </View>
+								    </ScrollView> }
+								    <Input 
+								    	placeholder='Masukan email'
+								    	ref={this.emailSendRef}
+								    	name='email'
+										label='Email'
+										keyboardType='email-address'
+								    	style={{ paddingTop: 7 }}
+								    	labelStyle={styles.label}
+								    	value={pengirim.email}
+								    	onChangeText={(e) => this.onChangePengirim(e, this.emailSendRef.current.props)}
+								    	onSubmitEditing={() => this.phoneSendRef.current.focus() }
+								    	status={errors.emailSend && 'danger'}
+								    />
+								    <Input 
+								    	placeholder='Masukan nomor handphone'
+								    	ref={this.phoneSendRef}
+								    	name='nohp'
+										label='No Handphone'
+										keyboardType='numeric'
+								    	style={{ paddingTop: 7 }}
+								    	labelStyle={styles.label}
+								    	value={pengirim.nohp}
+								    	onChangeText={(e) => this.onChangePengirim(e, this.phoneSendRef.current.props)}
+								    	onSubmitEditing={() => this.namaRef.current.focus() }
+								    	status={errors.noHpSend && 'danger'}
+								    />
+							    </React.Fragment> }
+
+								<View style={{flexDirection: 'row'}}>
+								    <View style={{backgroundColor: '#cfcfcf', height: 1, flex: 1, alignSelf: 'center'}} />
+								    <Text style={{ 
+								    	alignSelf:'center', 
+								    	paddingHorizontal:5, 
+								    	fontSize: 15, 
+								    	color: '#484a4a',
+								    	fontFamily: 'Roboto-Regular'
+								    }}>Penerima</Text>
+								    <View style={{backgroundColor: '#cfcfcf', height: 1, flex: 1, alignSelf: 'center'}} />
+								</View>
+								<Input
+									placeholder='Nama penerima'
 									label='Nama'
-									ref={this.namaSendRef}
+									ref={this.namaRef}
 									name='nama'
 									labelStyle={styles.label}
-									value={pengirim.nama}
+									value={data.nama}
 									style={{paddingTop: 7}}
-									onChangeText={(e) => this.onChangePengirim(e, this.namaSendRef.current.props)}
-									onSubmitEditing={() => this.alamat2SendRef.current.focus() }
-									status={errors.namaSend && 'danger'}
+									onChangeText={(e) => this.onChange(e, this.namaRef.current.props)}
+									onSubmitEditing={() => this.alamat2Ref.current.focus() }
+									status={errors.nama && 'danger'}
 							    />
 							    <Input 
 							    	placeholder='jalan, gang, rt/rw'
-							    	ref={this.alamat2SendRef}
-							    	name='alamat'
+							    	ref={this.alamat2Ref}
+							    	name='alamat2'
 							    	label='Alamat'
 							    	style={{ paddingTop: 7 }}
 							    	labelStyle={styles.label}
-							    	value={pengirim.alamat}
+							    	value={data.alamat2}
 							    	icon={this.renderIcon}
-							    	onChangeText={(e) => this.onChangePengirim(e, this.alamat2SendRef.current.props)}
-							    	onSubmitEditing={() => this.kotaSendref.current.focus() }
-							    	status={errors.alamatSend && 'danger'}
+							    	onChangeText={(e) => this.onChange(e, this.alamat2Ref.current.props)}
+							    	onSubmitEditing={() => this.alamatRef.current.focus() }
+							    	status={errors.alamat2 && 'danger'}
 							    />
 							    <Input 
-							    	ref={this.kotaSendref}
+							    	ref={this.alamatRef}
 							    	label='Kota/kab/kec/kel'
 							    	labelStyle={styles.label}
 							    	style={{paddingTop: 7}}
-							    	value={pengirim.alamatDet}
-							    	onChangeText={this.onChangeAlamatSend}
+							    	value={data.alamat}
+							    	onChangeText={this.onChangeAlamat}
 							    	icon={this.renderIcon}
-							    	status={errors.alamatDet && 'danger'}
+							    	status={errors.alamat && 'danger'}
 							    	placeholder='Cari...'
 							    />
-							    { listAlamat2.length > 0 && show2 && <ScrollView style={{height: 100}} nestedScrollEnabled={true}>
+							    { listAlamat.length > 0 && show && <ScrollView style={{height: 100}} nestedScrollEnabled={true}>
 								    <View style={styles.triangle}>
-									   	{ listAlamat2.map((x, i) => 
+									   	{ listAlamat.map((x, i) => 
 									   		<ListItem
 									   			key={i}
 										    	style={styles.listItem}
 										    	titleStyle={styles.listItemTitle}
 										    	descriptionStyle={styles.listItemDescription}
 										    	title={x.title}
-										    	onPress={() => this.onClickAlamat(x.title, x.kodepos, x.kota, x.kel, x.kec, '1')}
+										    	onPress={() => this.onClickAlamat(x.title, x.kodepos, x.kota, x.kel, x.kec, '2')}
 											/> )}
 								    </View>
 							    </ScrollView> }
 							    <Input 
 							    	placeholder='Masukan email'
-							    	ref={this.emailSendRef}
+							    	ref={this.emailRef}
 							    	name='email'
 									label='Email'
 									keyboardType='email-address'
 							    	style={{ paddingTop: 7 }}
 							    	labelStyle={styles.label}
-							    	value={pengirim.email}
-							    	onChangeText={(e) => this.onChangePengirim(e, this.emailSendRef.current.props)}
-							    	onSubmitEditing={() => this.phoneSendRef.current.focus() }
-							    	status={errors.emailSend && 'danger'}
+							    	value={data.email}
+							    	onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
+							    	onSubmitEditing={() => this.phoneRef.current.focus() }
+							    	status={errors.email && 'danger'}
 							    />
 							    <Input 
 							    	placeholder='Masukan nomor handphone'
-							    	ref={this.phoneSendRef}
+							    	ref={this.phoneRef}
 							    	name='nohp'
 									label='No Handphone'
 									keyboardType='numeric'
 							    	style={{ paddingTop: 7 }}
 							    	labelStyle={styles.label}
-							    	value={pengirim.nohp}
-							    	onChangeText={(e) => this.onChangePengirim(e, this.phoneSendRef.current.props)}
-							    	onSubmitEditing={() => this.namaRef.current.focus() }
-							    	status={errors.noHpSend && 'danger'}
+							    	value={data.nohp}
+							    	onChangeText={(e) => this.onChange(e, this.phoneRef.current.props)}
+							    	onSubmitEditing={this.onSubmit}
+							    	status={errors.nohp && 'danger'}
 							    />
-						    </React.Fragment> }
-
-							<View style={{flexDirection: 'row'}}>
-							    <View style={{backgroundColor: '#cfcfcf', height: 1, flex: 1, alignSelf: 'center'}} />
-							    <Text style={{ 
-							    	alignSelf:'center', 
-							    	paddingHorizontal:5, 
-							    	fontSize: 15, 
-							    	color: '#484a4a',
-							    	fontFamily: 'Roboto-Regular'
-							    }}>Penerima</Text>
-							    <View style={{backgroundColor: '#cfcfcf', height: 1, flex: 1, alignSelf: 'center'}} />
 							</View>
-							<Input
-								placeholder='Nama penerima'
-								label='Nama'
-								ref={this.namaRef}
-								name='nama'
-								labelStyle={styles.label}
-								value={data.nama}
-								style={{paddingTop: 7}}
-								onChangeText={(e) => this.onChange(e, this.namaRef.current.props)}
-								onSubmitEditing={() => this.alamat2Ref.current.focus() }
-								status={errors.nama && 'danger'}
-						    />
-						    <Input 
-						    	placeholder='jalan, gang, rt/rw'
-						    	ref={this.alamat2Ref}
-						    	name='alamat2'
-						    	label='Alamat'
-						    	style={{ paddingTop: 7 }}
-						    	labelStyle={styles.label}
-						    	value={data.alamat2}
-						    	icon={this.renderIcon}
-						    	onChangeText={(e) => this.onChange(e, this.alamat2Ref.current.props)}
-						    	onSubmitEditing={() => this.alamatRef.current.focus() }
-						    	status={errors.alamat2 && 'danger'}
-						    />
-						    <Input 
-						    	ref={this.alamatRef}
-						    	label='Kota/kab/kec/kel'
-						    	labelStyle={styles.label}
-						    	style={{paddingTop: 7}}
-						    	value={data.alamat}
-						    	onChangeText={this.onChangeAlamat}
-						    	icon={this.renderIcon}
-						    	status={errors.alamat && 'danger'}
-						    	placeholder='Cari...'
-						    />
-						    { listAlamat.length > 0 && show && <ScrollView style={{height: 100}} nestedScrollEnabled={true}>
-							    <View style={styles.triangle}>
-								   	{ listAlamat.map((x, i) => 
-								   		<ListItem
-								   			key={i}
-									    	style={styles.listItem}
-									    	titleStyle={styles.listItemTitle}
-									    	descriptionStyle={styles.listItemDescription}
-									    	title={x.title}
-									    	onPress={() => this.onClickAlamat(x.title, x.kodepos, x.kota, x.kel, x.kec, '2')}
-										/> )}
-							    </View>
-						    </ScrollView> }
-						    <Input 
-						    	placeholder='Masukan email'
-						    	ref={this.emailRef}
-						    	name='email'
-								label='Email'
-								keyboardType='email-address'
-						    	style={{ paddingTop: 7 }}
-						    	labelStyle={styles.label}
-						    	value={data.email}
-						    	onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
-						    	onSubmitEditing={() => this.phoneRef.current.focus() }
-						    	status={errors.email && 'danger'}
-						    />
-						    <Input 
-						    	placeholder='Masukan nomor handphone'
-						    	ref={this.phoneRef}
-						    	name='nohp'
-								label='No Handphone'
-								keyboardType='numeric'
-						    	style={{ paddingTop: 7 }}
-						    	labelStyle={styles.label}
-						    	value={data.nohp}
-						    	onChangeText={(e) => this.onChange(e, this.phoneRef.current.props)}
-						    	onSubmitEditing={this.onSubmit}
-						    	status={errors.nohp && 'danger'}
-						    />
-						</View>
-					</Layout>
-					<Button style={{margin: 10, marginTop: -5 }} onPress={this.onSubmit}>Selanjutnya</Button>
-				</ScrollView>
-			</KeyboardAvoidingView>
+						</Layout>
+						<Button style={{margin: 10, marginTop: -5 }} onPress={this.onSubmit}>Selanjutnya</Button>
+					</ScrollView>
+				</KeyboardAvoidingView>
+			</View>
 		);
 	}
 }

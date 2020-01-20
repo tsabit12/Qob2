@@ -58,7 +58,7 @@ class LacakScreen extends React.Component{
 		const { listLacak } = this.props;
 		// console.log(this.props.listLacak);
 		return(
-			<View style={{marginTop: 5}}>
+			<View>
 			    { Object.keys(listLacak).length > 0 ? 
 			    	<HistorySearch 
 			    		listdata={listLacak} 

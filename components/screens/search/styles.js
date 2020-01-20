@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import Constants from 'expo-constants';
 
 export default StyleSheet.create({
   container: {
@@ -10,7 +11,8 @@ export default StyleSheet.create({
   },
   tab: {
     fontSize: 20,
-    fontFamily: 'open-sans-reg'
+    fontFamily: 'open-sans-reg',
+    color: 'black'
   },
   judul: {
     fontFamily: 'open-sans-bold',
@@ -76,5 +78,9 @@ export default StyleSheet.create({
     fontFamily: 'open-sans-reg', 
     fontSize: 12,
     color: '#8f8e8d'
+  },
+  StatusBar: {
+    height: Constants.statusBarHeight,
+    backgroundColor: 'rgb(240, 132, 0)'
   }
 });

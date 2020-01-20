@@ -1,13 +1,24 @@
 import React from "react";
-import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform, StatusBar } from "react-native";
 import styles from "./styles";
-import { Layout, Text, Input, Button, CheckBox } from '@ui-kitten/components';
+import { Layout, Text, Input, Button, CheckBox, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
 
 const optionsData = [
   { text: 'Surat', value: 0 },
   { text: 'Paket', value: 1 }
 ];
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
+
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
 
 
 const Judul = () => (
@@ -39,7 +50,7 @@ class IndexOrder extends React.Component{
 			tinggi: '0',
 			nilaiVal: '',
 			nilai: '',
-			checked: false
+			checked: true
 		},
 		errors: {}
 	}
@@ -107,13 +118,28 @@ class IndexOrder extends React.Component{
 
 	onCheckedChange = () => this.setState({ data: { ...this.state.data, checked: !this.state.data.checked }})
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	)
+
 	render(){
 		const { data, errors  } = this.state;
 		return(
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    subtitle='Kelola deskripsi kiriman'
+				    title='Order'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    // subtitle={this.props.navigation.state.params.namaLengkap}
+				    subtitleStyle={{color: '#FFF'}}
+				/>
 				<KeyboardAvoidingView 
 					style={{flex:1}} 
 					behavior="padding" 
-					keyboardVerticalOffset = {Header.HEIGHT + 40}
 					enabled
 				>
 				<ScrollView keyboardShouldPersistTaps='always'>
@@ -200,21 +226,22 @@ class IndexOrder extends React.Component{
 						      keyboardType='numeric'
 						      onChangeText={(e) => this.onChangeNilai(e)}
 						      status={errors.nilai && 'danger'}
-						      onSubmitEditing={this.onSubmit}
 						      caption={errors.nilai && `${errors.nilai}`}
 						    />
 						</View>
 						<CheckBox
-					      text={data.checked ? 'Cod' : 'Non cod'}
+					      text='Non cod'
 					      style={{ marginLeft: 5, marginTop: -5, paddingBottom: 5 }}
-					      textStyle={{ color: data.checked ? 'blue': 'red', fontFamily: 'open-sans-reg'}}
+					      textStyle={{ color: 'red'}}
 					      checked={data.checked}
 					      onChange={this.onCheckedChange}
 					    />
 					    <Button style={{margin: 2}} onPress={this.onSubmit}>Selanjutnya</Button>
+					    <View style={{height: 10}} />
 					</Layout>
 				</ScrollView>
 			</KeyboardAvoidingView>
+			</View>
 		);
 	}
 }
