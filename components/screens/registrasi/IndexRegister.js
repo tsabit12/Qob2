@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, StatusBar } from "react-native";
 import { Input, Text, Button, ButtonGroup } from '@ui-kitten/components';
 import styles from "./styles";
 import { SafeAreaView } from 'react-navigation';
@@ -8,8 +8,10 @@ import { connect } from "react-redux";
 import { searchKtp } from "../../../actions/register";
 import Modal from "../../Modal";
 
-const Judul = () => (
-	<Text>Registrasi</Text>
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
 );
 
 class IndexRegister extends React.Component{
@@ -39,7 +41,10 @@ class IndexRegister extends React.Component{
 			this.props.searchKtp(this.state.nik)
 				.then(() => {
 					this.props.navigation.navigate({
-						routeName: 'RegistrasiKtp'
+						routeName: 'RegistrasiKtp',
+						params: {
+							judulHeader: this.state.nik
+						}
 					});
 					this.setState({ loading: false })
 				})
@@ -68,7 +73,8 @@ class IndexRegister extends React.Component{
 		// console.log(this.props.detail);
 		const { nik, success, errors, loading } = this.state;
 		return(
-			<SafeAreaView style={styles.safeContainer}>
+			<View style={{flex: 1}}>
+				<MyStatusBar />
 				<Loader loading={loading} />
 				{ errors.global && 
 					<Modal 
@@ -107,7 +113,7 @@ class IndexRegister extends React.Component{
 				        </Text>
 			        </View>
 				</View>
-			</SafeAreaView>
+			</View>
 		);
 	}
 }

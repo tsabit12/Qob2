@@ -17,9 +17,10 @@ export const detailFetched = (user) => ({
 export const getDetailUser = (userid) => dispatch =>
 	api.user.getDetail(userid)
 		.then(res => {
-			const { response_data1, response_data2 } = res;
+			const { response_data1, response_data2, response_data3 } = res;
 			const x = response_data1.split('|');
 			const y = response_data2.split('|');
+			const z = response_data3.split('|');
 			let payload = {
 				userid: x[0],
 				namaLengkap: x[1],
@@ -39,10 +40,12 @@ export const getDetailUser = (userid) => dispatch =>
 				kodepos: y[3],
 				kprk: y[4],
 				alamat: y[5],
-				detailUsaha: y[6]
+				detailUsaha: y[6],
+				kel: z[0],
+				kec: z[1]
+
 			};
 			dispatch(detailFetched(payload));
-			console.log(payload);
 		})
 
 export const loggedOut = () => dispatch => {

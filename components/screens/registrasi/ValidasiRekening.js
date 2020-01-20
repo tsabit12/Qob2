@@ -1,22 +1,22 @@
 import React from "react";
-import { View } from "react-native";
-import { Input, Text, Button } from '@ui-kitten/components';
+import { View, StatusBar } from "react-native";
+import { Input, Text, Button, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import api from "../../api";
 import styles from "./styles";
 import Loader from "../../Loader";
 
-const Judul = ({ navigation }) => (
-	<View>
-		<Text style={{fontFamily: 'open-sans-bold', fontSize: 16, fontWeight: '700'}}>Registrasi</Text>
-		<Text style={{fontFamily: 'open-sans-reg', fontSize: 12}}>Menggunakan akun giro</Text>
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
 	</View>
 );
 
-class ValidasiRekening extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <Judul navigation={navigation}/>
-	}) 
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF' />
+);
 
+
+class ValidasiRekening extends React.Component{
 	noRekRef = React.createRef();
 
 	state = {
@@ -99,25 +99,43 @@ class ValidasiRekening extends React.Component{
 		return errors;
 	}
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	);
+
 	render(){
 		const { noRek, errors, loading } = this.state;
 		return(
-			<View style={{margin: 10}}>
-				<Loader loading={loading} />
-				<Input 
-					ref={this.noRekRef}
-					name='noRek'
-					value={noRek}
-					placeholder="Masukan nomor rekening giro"
-					label='Rekening'
-					labelStyle={errors.noRek ? styles.labelRed : styles.label }
-					onChangeText={(e) => this.setState({ noRek: e })}
-					onSubmitEditing={this.onSubmit}
-					keyboardType='numeric'
-					status={errors.noRek && 'danger'}
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    title='Registrasi'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    elevation={5}
+				    style={styles.navigation}
+				    subtitleStyle={{color: '#FFF'}}
+				    subtitle='Menggunakan akun giro'
+				    style={{backgroundColor: 'rgb(4, 147, 214)'}}
 				/>
-				{ errors.noRek && <Text style={styles.labelErr}>{errors.noRek}</Text>}
-				<Button status='info' onPress={this.onSubmit}>Selanjutnya</Button>
+				<View style={{margin: 10}}>
+					<Loader loading={loading} />
+					<Input 
+						ref={this.noRekRef}
+						name='noRek'
+						value={noRek}
+						placeholder="Masukan nomor rekening giro"
+						label='Rekening'
+						labelStyle={errors.noRek ? styles.labelRed : styles.label }
+						onChangeText={(e) => this.setState({ noRek: e })}
+						onSubmitEditing={this.onSubmit}
+						keyboardType='numeric'
+						status={errors.noRek && 'danger'}
+					/>
+					{ errors.noRek && <Text style={styles.labelErr}>{errors.noRek}</Text>}
+					<Button status='info' onPress={this.onSubmit}>Selanjutnya</Button>
+				</View>
 			</View>
 		);
 	}

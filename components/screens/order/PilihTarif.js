@@ -1,9 +1,20 @@
 import React from "react";
-import { View, Text, AsyncStorage } from "react-native";
+import { View, Text, StatusBar } from "react-native";
 import styles from "./styles";
-import { ListItem, Button } from '@ui-kitten/components';
+import { ListItem, Button, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import api from "../../api";
 import Loader from "../../Loader";
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
+
 
 const renderItemAccessory = (style, payload, accept) => (
 	<Button style={style} size='small' status='info' onPress={() => accept(payload)}>Pilih</Button>
@@ -28,7 +39,6 @@ const ListTarif = ({ onAccept, list }) => (
 					let htnb 		= Math.floor(tarif[2]);
 					let ppnhtnb 	= Math.floor(tarif[3]);
 					let totalTarif 	= Math.floor(tarif[4]);
-					console.log(fee, ppn, htnb, ppnhtnb, totalTarif);
 
 					//get id serve
 					let idService = produk.split('-');
@@ -59,44 +69,21 @@ const ListTarif = ({ onAccept, list }) => (
 );
 
 
-
-const Judul = () => (
-	<Text style={styles.header}>Pilih Tarif</Text>
-)
-
 class PilihTarif extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <Judul/>
-	}) 
-
 	state = {
 		loading: true,
-		tarif: [],
-		deskripsiPengirim: {}
+		tarif: []
 	}
 	
 	async componentDidMount(){
-		const value 	= await AsyncStorage.getItem('sessionLogin');
-		const toObje 	= JSON.parse(value);
-		
-		this.setState({
-			deskripsiPengirim: {
-				nama: toObje.nama,
-				namaOl: toObje.namaOl,
-				kodepos: toObje.kodepos,
-				alamat: toObje.alamatOl,
-				kota: toObje.kota
-			}
-		});
-
 		const { params } = this.props.navigation.state;
+
 		if (Object.keys(params).length > 0) {
 			const payload = {
-				kodePosA: toObje.kodepos,
+				kodePosA: params.pengirimnya.kodepos,
 				kodePosB: params.deskripsiPenerima.kodepos,
 				berat: params.deskripsiOrder.berat,
-				nilai: params.deskripsiOrder.nilai,
-				tipe: params.deskripsiOrder.tipe
+				nilai: params.deskripsiOrder.nilai
 			}
 
 			api.qob.getTarif(payload)
@@ -116,23 +103,38 @@ class PilihTarif extends React.Component{
 			routeName: 'ResultOrder',
 			params: {
 				...this.props.navigation.state.params,
-				selectedTarif: payload,
-				deskripsiPengirim: this.state.deskripsiPengirim
+				selectedTarif: payload
 			}
 		})
 	}
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	)
+
 	render(){
 		const { loading, tarif } = this.state;
 		return(
-			<View>
-				<Loader loading={loading} />
-				{ tarif.length > 0 ? <ListTarif onAccept={this.onSelectTarif} list={tarif} /> : 
-					<React.Fragment>
-						{ !loading && <Text style={{fontSize: 20, textAlign: 'center', fontFamily: 'open-sans-bold', marginTop: 10}}>
-							Tarif tidak ditemukan
-						</Text> }
-					</React.Fragment> }
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    subtitle='Pilih tarif kiriman'
+				    title='Order'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    subtitleStyle={{color: '#FFF'}}
+				/>
+				<View>
+					<Loader loading={loading} />
+					{ tarif.length > 0 ? <ListTarif onAccept={this.onSelectTarif} list={tarif} /> : 
+						<React.Fragment>
+							{ !loading && <Text style={{fontSize: 20, textAlign: 'center', fontFamily: 'open-sans-bold', marginTop: 10}}>
+								Tarif tidak ditemukan
+							</Text> }
+						</React.Fragment> }
+				</View>
 			</View>
 		);
 	}

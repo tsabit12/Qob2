@@ -1,8 +1,13 @@
 import { StyleSheet } from 'react-native';
+import Constants from 'expo-constants';
 
 export default StyleSheet.create({
   container: {
-    padding: 10,
+    margin: 10,
+    borderWidth: 1,
+    // borderRightWidth: 1,
+    borderColor: '#cfcfcf',
+    borderRadius: 10,
   },
   text: {
   	fontFamily: 'open-sans-reg'
@@ -58,5 +63,9 @@ export default StyleSheet.create({
     borderBottomColor: '#cbccc4', 
     borderTopWidth: 1,
     borderTopColor: '#cbccc4', 
+  },
+  StatusBar: {
+      height: Constants.statusBarHeight,
+      backgroundColor: 'rgb(240, 132, 0)'
   }
 });

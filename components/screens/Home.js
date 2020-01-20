@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import { Text } from '@ui-kitten/components';
 import api from "../api";
-import { StyleSheet, View, AsyncStorage, ImageBackground } from 'react-native';
+import { StyleSheet, View, AsyncStorage, ImageBackground, StatusBar } from 'react-native';
 import { Button, Input } from '@ui-kitten/components';
 import Loader from "../Loader";
 import Modal from "../Modal";
@@ -11,6 +11,12 @@ import PinView from 'react-native-pin-view';
 import md5 from "react-native-md5";
 import Constants from 'expo-constants';
 import { setLoggedIn } from "../../actions/auth";
+
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
 
 class Home extends React.Component {
 	static navigationOptions = {
@@ -147,7 +153,8 @@ class Home extends React.Component {
     	// console.log(localUser);
     	
 		return (
-			<React.Fragment>
+			<View style={styles.container}>
+				<MyStatusBar />
 				<ImageBackground source={require('../../assets/backgroundHome.png')} style={styles.backgroundImage}>
 						<Loader loading={loading} />
 						{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
@@ -173,7 +180,7 @@ class Home extends React.Component {
 							})}
 						>Bantuan</Text>
 			   	</ImageBackground>
-		   	</React.Fragment>
+		   	</View>
 		);
 	}
 }
@@ -206,6 +213,13 @@ const styles = StyleSheet.create({
 	    width: null,
     	height: null,
 	    justifyContent : 'center',
-	}
+	},
+	StatusBar: {
+        height: Constants.statusBarHeight,
+        backgroundColor: 'rgb(4, 147, 214)'
+    },
+    container: {
+    	flex: 1
+    }
   });
   

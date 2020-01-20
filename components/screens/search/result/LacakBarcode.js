@@ -1,18 +1,30 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, StatusBar } from "react-native";
 import styles from "../styles";
-// import Timeline from 'react-native-timeline-flatlist';
 import { connect } from "react-redux";
+import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 
-const Judul = ({ navigation }) => {
-	const { externalId } = navigation.state.params;
-	return(
-		<View>
-			<Text style={styles.judul}>Lacak Kiriman</Text>
-			<Text>{externalId}</Text>
-		</View>
-	)
-}
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
+
+
+// const Judul = ({ navigation }) => {
+// 	const { externalId } = navigation.state.params;
+// 	return(
+// 		<View>
+// 			<Text style={styles.judul}>Lacak Kiriman</Text>
+// 			<Text>{externalId}</Text>
+// 		</View>
+// 	)
+// }
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back'/>
+);
+
 
 const capitalize = (string) => {
 	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -126,12 +138,9 @@ const ListTrace = ({ listdata }) => {
 }
 
 class LacakBarcode extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-	    headerTitle: <Judul navigation={navigation} />
-	});
+	
+	state={}
 
-	//sort list array 
-	//by event date desc
 	dynamicSort = (property) => {
 	    var sortOrder = 1;
 	    if(property[0] === "-") {
@@ -145,15 +154,31 @@ class LacakBarcode extends React.Component{
 	    }
 	}
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	);
+
 	render(){
 		const { listKiriman } = this.props;
 		const sorted = listKiriman ? listKiriman.sort(this.dynamicSort("-eventDate")) : [];
 		return(
-			<ScrollView>
-				<View style={styles.containerTime}>
-			       { listKiriman ? <ListTrace listdata={sorted} /> : <Text>No result found</Text> }
-			    </View>
-		    </ScrollView>
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    title='Lacak Kiriman'
+				    subtitle={this.props.navigation.state.params.externalId}
+				    subtitleStyle={{color: '#FFF'}}
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				/>
+				<ScrollView>
+					<View style={styles.containerTime}>
+				       { listKiriman ? <ListTrace listdata={sorted} /> : <Text>No result found</Text> }
+				    </View>
+			    </ScrollView>
+		    </View>
 		);
 	}
 }

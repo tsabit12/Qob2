@@ -1,13 +1,24 @@
 import React from "react";
-import {View, Text, AsyncStorage, SafeAreaView, Image, TouchableOpacity, ScrollView } from "react-native";
+import {View, Text, AsyncStorage, SafeAreaView, Image, TouchableOpacity, ScrollView, StatusBar } from "react-native";
 import styles from "./styles";
 import api from "../../api";
 import { connect } from "react-redux";
 import { getDetailUser, loggedOut } from "../../../actions/auth";
 import { getRekening } from "../../../actions/search";
-import { Icon, Spinner } from '@ui-kitten/components';
+import { Icon, Spinner, Button, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 
 const imageIcon = require("../../icons/user.png");
+
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
 
 const LoaderView = () => (
 	<View style={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -36,6 +47,14 @@ const numberWithCommas = (number) => {
 	}
 }
 
+const HasError = ({ errors }) => (
+	<View style={{flex: 1, alignItems: 'center', justifyContent: 'center', margin: 5}}>
+		<View style={{borderWidth: 0.5, borderRadius: 5, padding: 10}}>
+			<Text style={{fontFamily: 'open-sans-reg'}}>{errors}</Text>
+		</View>
+	</View>
+);
+
 const ListRekening = ({ listdata }) => {
 	const parsingPagar = listdata[2].split('#');
 	// console.log(parsingPagar);
@@ -61,8 +80,8 @@ const ListRekening = ({ listdata }) => {
 						if (x.length > 0) { //remove last array cause it's null
 							const parsingX = x.split('~');
 							return(
-								<View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-									<Text>{numberWithCommas(parsingX[0])}</Text>
+								<View style={{flexDirection: 'row', alignItems: 'flex-start'}} key={i}>
+									<Text>{parsingX[0]}</Text>
 									<Text style={{marginLeft: 20}}>{parsingX[2]}</Text>
 									<Text style={{marginLeft: 20}}>{parsingX[3]}</Text>
 									<Text style={{marginLeft: 28}}>{numberWithCommas(parsingX[5])}</Text>
@@ -77,7 +96,6 @@ const ListRekening = ({ listdata }) => {
 }
 
 const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loading }) => {
-	// console.log(listRek[nomorRek]);
 	return(
 		<React.Fragment>
 			<View style={{flexDirection: 'row', padding: 10 }}>
@@ -119,7 +137,11 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 						<Icon name='pin-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>
 							<Text style={styles.labelTitle}>Alamat</Text>
-							<Text style={styles.labelSubTitle}>{capitalize(user.alamat)}, {capitalize(user.kota)}</Text>
+							<View style={{marginRight: 10 }}>
+							<Text style={styles.labelSubTitle}>
+								{capitalize(user.alamat)}, {capitalize(user.kel)}, {capitalize(user.kec)}, {capitalize(user.kota)}
+							</Text>
+							</View>
 						</View>
 					</View>
 					<View style={styles.contentLabel}>
@@ -148,7 +170,6 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 								{ loading ? <Text>Loading...</Text> : <Text>Terdapat kesalahan</Text> }
 							</React.Fragment> }
 					</React.Fragment> }
-					<View style={{borderBottomWidth: 1, borderBottomColor: '#cfcfcf'}} />
 				</View>
 			</View>
 		</React.Fragment>
@@ -164,7 +185,8 @@ class AccountScreen extends React.Component{
 		sisaSaldo: null,
 		showRekKoran: false,
 		nomorRek: '',
-		loading: false
+		loading: false,
+		errors: {}
 	}
 
 	async componentDidMount(){
@@ -175,8 +197,8 @@ class AccountScreen extends React.Component{
 			sisaSaldo: this.props.navigation.state.params.saldo
 		});
 		this.props.getDetailUser(userid)
-			.then(() => console.log("oke"))
-			.catch(err => console.log(err));
+			.then(() => this.setState({ errors: {} }))
+			.catch(err => this.setState({ errors: { global: 'Whoopps terdapat kesalahan, harap pastikan kembali koneksi internet anda'}}));
 	}
 
 	UNSAFE_componentWillReceiveProps(nextProps){
@@ -200,31 +222,45 @@ class AccountScreen extends React.Component{
         })
 	}
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	);
+
 	render(){
 		const { detail, rekKoran } = this.props;
+		const { errors } = this.state;
 		
 		return(
-			<React.Fragment>
-			{ Object.keys(detail).length > 0 ? <ScrollView>
-					<View style={{marginTop: 5}}>
-						<Profile 
-							user={detail} 
-							saldo={this.state.sisaSaldo} 
-							getRekening={this.getRekening}
-							rekening={this.state.showRekKoran}
-							nomorRek={this.state.nomorRek}
-							listRek={rekKoran}
-							loading={this.state.loading}
-						/>
-					</View>
-					<View style={{ marginLeft: 14, marginRight: 15 }}>
-						<Text 
-							style={{fontFamily: 'open-sans-reg', fontSize: 15, color: 'blue' }}
-							onPress={this.onLogout}
-						>Logout</Text>
-					</View>
-				</ScrollView> : <LoaderView />  }
-			</React.Fragment>
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    title='Profil'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    subtitle={this.props.navigation.state.params.namaLengkap}
+				    subtitleStyle={{color: '#FFF'}}
+				/>
+				{ Object.keys(detail).length > 0 ? <ScrollView>
+						<View style={{marginTop: 5}}>
+							<Profile 
+								user={detail} 
+								saldo={this.state.sisaSaldo} 
+								getRekening={this.getRekening}
+								rekening={this.state.showRekKoran}
+								nomorRek={this.state.nomorRek}
+								listRek={rekKoran}
+								loading={this.state.loading}
+							/>
+						</View>
+						<View style={{ marginLeft: 14, marginRight: 15, paddingBottom: 10 }}>
+							<Button size='small' status='info' onPress={this.onLogout}>Logout</Button>
+						</View>
+					</ScrollView> : <React.Fragment>
+						{ errors.global ? <HasError errors={errors.global} /> : <LoaderView /> }
+					</React.Fragment> }
+			</View>
 		);
 	}
 }

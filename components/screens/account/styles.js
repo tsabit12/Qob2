@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import Constants from 'expo-constants';
 
 export default StyleSheet.create({
 	header: {
@@ -59,5 +60,9 @@ export default StyleSheet.create({
 	oneRow: {
 		flexDirection: 'row', 
 		alignItems: 'flex-start'
+	},
+	StatusBar: {
+	    height: Constants.statusBarHeight,
+	    backgroundColor: 'rgb(240, 132, 0)'
 	}
 })

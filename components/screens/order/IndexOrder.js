@@ -1,13 +1,24 @@
 import React from "react";
-import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform, StatusBar } from "react-native";
 import styles from "./styles";
-import { Layout, Text, Input, Button, Select } from '@ui-kitten/components';
+import { Layout, Text, Input, Button, CheckBox, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
 
 const optionsData = [
   { text: 'Surat', value: 0 },
   { text: 'Paket', value: 1 }
 ];
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
+
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
 
 
 const Judul = () => (
@@ -28,7 +39,7 @@ class IndexOrder extends React.Component{
 	lebarRef = React.createRef();
 	tinggiRef = React.createRef();
 	nilaiRef = React.createRef();
-	tipeKirimanRef = React.createRef();
+	// tipeKirimanRef = React.createRef();
 
 	state = {
 		data: {
@@ -39,7 +50,7 @@ class IndexOrder extends React.Component{
 			tinggi: '0',
 			nilaiVal: '',
 			nilai: '',
-			tipe: ''
+			checked: true
 		},
 		errors: {}
 	}
@@ -89,7 +100,10 @@ class IndexOrder extends React.Component{
 		}
 	}
 
-	onSelectText = (e) => this.setState({ data: { ...this.state.data, tipe: e.value }})
+	// onSelectText = (e) => {
+	// 	this.beratRef.current.focus();
+	// 	this.setState({ data: { ...this.state.data, tipe: e.value }});
+	// }
 
 	validate = (data) => {
 		const errors = {};
@@ -99,22 +113,38 @@ class IndexOrder extends React.Component{
 		if (!data.lebar) errors.lebar = "Masukan lebar kiriman";
 		if (!data.tinggi) errors.tinggi = "Masukan tinggi kiriman";
 		if (!data.nilai) errors.nilai = "Masukan nilai";
-		if (!data.tipe) errors.tipe = "Jenis kiriman belum dipilih";
 		return errors;
 	}
+
+	onCheckedChange = () => this.setState({ data: { ...this.state.data, checked: !this.state.data.checked }})
+
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	)
 
 	render(){
 		const { data, errors  } = this.state;
 		return(
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    subtitle='Kelola deskripsi kiriman'
+				    title='Order'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    // subtitle={this.props.navigation.state.params.namaLengkap}
+				    subtitleStyle={{color: '#FFF'}}
+				/>
 				<KeyboardAvoidingView 
 					style={{flex:1}} 
 					behavior="padding" 
-					keyboardVerticalOffset = {Header.HEIGHT + 40}
 					enabled
 				>
 				<ScrollView keyboardShouldPersistTaps='always'>
 					<Layout style={styles.container}>
-						<View style={{padding: 4}}>
+						<View style={{padding: 10}}>
 							<Input
 						      placeholder='Laptop, baju, sepatu dll'
 						      ref={this.jenisRef}
@@ -124,21 +154,10 @@ class IndexOrder extends React.Component{
 						      style={styles.input}
 						      value={data.jenis}
 						      onChangeText={(e) => this.onChange(e, this.jenisRef.current.props)}
-						      onSubmitEditing={() => this.beratRef.current.focus() }
 						      status={errors.jenis && 'danger'}
+						      onSubmitEditing={() => this.beratRef.current.focus() }
 						      caption={errors.jenis && `${errors.jenis}`}
 						    />
-						    <Select
-						    	ref={this.tipeKirimanRef}
-						    	label='Jenis kiriman'
-						        data={optionsData}
-						        labelStyle={styles.label}
-						        placeholder='Pilih jenis kiriman'
-						        onSelect={this.onSelectText}
-						        status={errors.tipe && 'danger'}
-						        style={styles.input}
-						    />
-						    {errors.tipe && <Text style={{fontSize: 12, marginTop: -5, paddingBottom: 5, color: 'red'}}>{errors.tipe}</Text> }
 						    <Input
 						      placeholder='Berat kiriman dalam gram'
 						      ref={this.beratRef}
@@ -207,14 +226,23 @@ class IndexOrder extends React.Component{
 						      keyboardType='numeric'
 						      onChangeText={(e) => this.onChangeNilai(e)}
 						      status={errors.nilai && 'danger'}
-						      onSubmitEditing={this.onSubmit}
 						      caption={errors.nilai && `${errors.nilai}`}
 						    />
 						</View>
-					    <Button style={{margin: 2}} onPress={this.onSubmit}>Selanjutnya</Button>
+						<CheckBox
+					      text='Non cod'
+					      style={{ marginLeft: 5, marginTop: -5, paddingBottom: 5 }}
+					      textStyle={{ color: 'red'}}
+					      status='warning'
+					      checked={data.checked}
+					      onChange={this.onCheckedChange}
+					    />
+					    <Button style={{margin: 2}} status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
+					    <View style={{height: 10}} />
 					</Layout>
 				</ScrollView>
 			</KeyboardAvoidingView>
+			</View>
 		);
 	}
 }

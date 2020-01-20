@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Menu } from '@ui-kitten/components';
+import { View, Text, StyleSheet, StatusBar, SafeAreaView } from "react-native";
+import { Menu, Icon, TopNavigation, TopNavigationAction, Layout } from '@ui-kitten/components';
+import Constants from 'expo-constants';
 
 
 const styles = StyleSheet.create({
@@ -9,13 +10,31 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'Roboto-Regular'
   },
+  StatusBar: {
+  	height: Constants.statusBarHeight,
+  	backgroundColor: 'rgb(4, 147, 214)'
+  },
+  navigation: {
+  	shadowColor: '#000000',
+  	shadowOpacity: 0.8,
+    shadowRadius: 2,
+    shadowOffset: {
+      height: 1,
+      width: 1
+    }
+  }
 });
 
-const Judul = ({ navigation }) => (
-	<View>
-		<Text style={{fontFamily: 'open-sans-bold', fontSize: 16, fontWeight: '700'}}>Bantuan</Text>
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
 	</View>
 );
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
 
 const data = [
   { title: 'Lupa pin', titleStyle: styles.menuItemTitle },
@@ -25,10 +44,7 @@ const data = [
 ];
 
 class BantuanScreen extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <Judul navigation={navigation}/>
-	}) 
-
+	state = {}
 
 	onSelect = (e) => {
 		// console.log(e);
@@ -55,15 +71,30 @@ class BantuanScreen extends React.Component{
 		});
 	}
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	);
+
+
 	render(){
 		return(
-			<View>
-				<View />
-				<Menu
-			      data={data}
-			      // selectedIndex={selectedIndex}
-			      onSelect={this.onSelect}
-			    />
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    title='Bantuan'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    elevation={5}
+				    style={{backgroundColor: 'rgb(4, 147, 214)'}}
+				/>
+			    <View>
+					<Menu
+				      data={data}
+				      // selectedIndex={selectedIndex}
+				      onSelect={this.onSelect}
+				    />
+			    </View>
 		    </View>
 		);
 	}
