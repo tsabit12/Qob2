@@ -24,7 +24,7 @@ const MyStatusBar = () => (
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back'/>
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
 
 
@@ -231,7 +231,7 @@ class RegistrasiKtp extends React.Component{
 		const { ktp } = this.props.dataktp;
 		const { validateMother, bug, data, secureTextEntry, errorsState, loading, saved } = this.state;
 		return(
-			<SafeAreaView style={{flex: 1}}>
+			<View style={{flex: 1}}>
 				<Loader loading={loading} />
 				
 				{ errorsState.global && 
@@ -259,8 +259,10 @@ class RegistrasiKtp extends React.Component{
 					    title='Registrasi'
 					    subtitle={this.props.navigation.state.params.judulHeader}
 					    alignment='start'
-					    titleStyle={{fontFamily: 'open-sans-bold'}}
+					    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 					    elevation={5}
+					    subtitleStyle={{color: '#FFF'}}
+					    style={{backgroundColor: 'rgb(4, 147, 214)'}}
 					/>
 				</React.Fragment>
 
@@ -458,7 +460,7 @@ class RegistrasiKtp extends React.Component{
 						</View> }
 				</ScrollView>
 				</KeyboardAvoidingView>
-			</SafeAreaView>
+			</View>
 		);
 	}
 }

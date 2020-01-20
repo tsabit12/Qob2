@@ -47,6 +47,14 @@ const numberWithCommas = (number) => {
 	}
 }
 
+const HasError = ({ errors }) => (
+	<View style={{flex: 1, alignItems: 'center', justifyContent: 'center', margin: 5}}>
+		<View style={{borderWidth: 0.5, borderRadius: 5, padding: 10}}>
+			<Text style={{fontFamily: 'open-sans-reg'}}>{errors}</Text>
+		</View>
+	</View>
+);
+
 const ListRekening = ({ listdata }) => {
 	const parsingPagar = listdata[2].split('#');
 	// console.log(parsingPagar);
@@ -177,7 +185,8 @@ class AccountScreen extends React.Component{
 		sisaSaldo: null,
 		showRekKoran: false,
 		nomorRek: '',
-		loading: false
+		loading: false,
+		errors: {}
 	}
 
 	async componentDidMount(){
@@ -187,7 +196,9 @@ class AccountScreen extends React.Component{
 		this.setState({
 			sisaSaldo: this.props.navigation.state.params.saldo
 		});
-		this.props.getDetailUser(userid);
+		this.props.getDetailUser(userid)
+			.then(() => this.setState({ errors: {} }))
+			.catch(err => this.setState({ errors: { global: 'Whoopps terdapat kesalahan, harap pastikan kembali koneksi internet anda'}}));
 	}
 
 	UNSAFE_componentWillReceiveProps(nextProps){
@@ -217,6 +228,7 @@ class AccountScreen extends React.Component{
 
 	render(){
 		const { detail, rekKoran } = this.props;
+		const { errors } = this.state;
 		
 		return(
 			<View style={{flex: 1}}>
@@ -245,7 +257,9 @@ class AccountScreen extends React.Component{
 						<View style={{ marginLeft: 14, marginRight: 15, paddingBottom: 10 }}>
 							<Button size='small' status='info' onPress={this.onLogout}>Logout</Button>
 						</View>
-					</ScrollView> : <LoaderView />  }
+					</ScrollView> : <React.Fragment>
+						{ errors.global ? <HasError errors={errors.global} /> : <LoaderView /> }
+					</React.Fragment> }
 			</View>
 		);
 	}

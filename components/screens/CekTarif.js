@@ -261,7 +261,7 @@ class CekTarif extends React.Component{
 		const { loading, success, data, errors, listAlamat1, show1, listAlamat2, show2 } = this.state;
 		// console.log(this.state.listAlamat1);
 		return(
-			<SafeAreaView style={{flex: 1}}>
+			<View style={{flex: 1}}>
 				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.BackAction()}
@@ -409,7 +409,7 @@ class CekTarif extends React.Component{
 						{ errors.global && <Text style={{fontSize: 20, textAlign: 'center', fontFamily: 'open-sans-bold'}}>{errors.global}</Text> }
 					</ScrollView>
 				</KeyboardAvoidingView>
-			</SafeAreaView>
+			</View>
 		);
 	}
 }

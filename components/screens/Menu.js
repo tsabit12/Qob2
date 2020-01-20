@@ -31,99 +31,101 @@ const genPwd = require("../../assets/generatePwd.png");
 const Menu = ({ navigation, dataLogin, getOrder, loading, onShowModal }) => (
     <View style={styles.container}>
         <Loader loading={loading} />
-        <View style={styles.content}>
-            <TouchableOpacity 
-            underlayColor="#D8D8D8"
-            onPress={() => navigation.navigate({
-                routeName: 'Order'
-            })}>
-                <View style={styles.icon}>
-                    <Image source={iconBooking} style={styles.img}/>
-                    <Text style={styles.textIcon}>QOB</Text>
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity 
+        <View style={{margin: 5}}>
+            <View style={styles.content}>
+                <TouchableOpacity 
+                    underlayColor="#D8D8D8"
+                    onPress={() => navigation.navigate({
+                        routeName: 'Order'
+                    })}
+                >
+                    <View style={styles.icon}>
+                        <Image source={iconBooking} style={styles.img}/>
+                        <Text style={styles.textIcon}>QOB</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    underlayColor="#D8D8D8"
+                    onPress={() => navigation.navigate({
+                        routeName: 'CekTarif'
+                    })}
+                >
+                    <View style={styles.icon}>
+                        <Image source={iconCekTarif} style={styles.img}/>
+                        <Text style={styles.textIcon}>Cek Tarif</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    underlayColor="#D8D8D8"
+                    onPress={() => Linking.openURL('tel:' + '161')}
+                >
+                    <View style={styles.icon}>
+                        <Image source={iconPhone} style={styles.img}/>
+                        <Text style={styles.textIcon}>Halo Pos</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.content}>
+                <TouchableOpacity 
                 underlayColor="#D8D8D8"
                 onPress={() => navigation.navigate({
-                    routeName: 'CekTarif'
-                })}
-            >
-                <View style={styles.icon}>
-                    <Image source={iconCekTarif} style={styles.img}/>
-                    <Text style={styles.textIcon}>Cek Tarif</Text>
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity 
-                underlayColor="#D8D8D8"
-                onPress={() => Linking.openURL('tel:' + '161')}
-            >
-                <View style={styles.icon}>
-                    <Image source={iconPhone} style={styles.img}/>
-                    <Text style={styles.textIcon}>Halo Pos</Text>
-                </View>
-            </TouchableOpacity>
-        </View>
-        <View style={styles.content}>
-            <TouchableOpacity 
-            underlayColor="#D8D8D8"
-            onPress={() => navigation.navigate({
-                routeName: 'Pembayaran'
-            })}>
-                <View style={styles.icon}>
-                    <Image source={iconPembayaran} style={styles.img}/>
-                    <Text style={styles.textIcon}>Generate Pembayaran</Text>
-                </View>
-            </TouchableOpacity>
+                    routeName: 'Pembayaran'
+                })}>
+                    <View style={styles.icon}>
+                        <Image source={iconPembayaran} style={styles.img}/>
+                        <Text style={styles.textIcon}>Generate{'\n'}Pembayaran</Text>
+                    </View>
+                </TouchableOpacity>
 
-            <TouchableOpacity 
-                underlayColor="#D8D8D8"
-                onPress={() => {
-                    const curdate = getCurdateWithStrip();
-                    const { userid, norek } = dataLogin;
-                    const payload = {
-                        sp_nama  : `Ipos_getPostingPebisol`,
-                        par_data : `${userid}|${curdate}|${curdate}`
-                        // par_data : `440000016|${curdate}|${curdate}`
-                    };
-                    //get data order on this button
-                    //with curdate
-                    getOrder(payload, curdate).catch(err => console.log("kosong"));
-                    
-                    navigation.navigate({
-                        routeName: 'ListOrder',
-                        params: {
-                            tanggalSearch: curdate
-                        }
-                    })
-                }}
-            >
-                <View style={styles.icon}>
-                    <Image source={iconRiwayat} style={styles.img}/>
-                    <Text style={styles.textIcon}>Riwayat {'\n'}Order</Text>
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity 
-                underlayColor="#D8D8D8"
-                onPress={() => onShowModal(dataLogin.userid) } 
-            >
-                <View style={styles.icon}>
-                    <Image source={genPwd} style={styles.img}/>
-                    <Text style={styles.textIcon}>Generate Password Web</Text>
-                </View>
-            </TouchableOpacity>
+                <TouchableOpacity 
+                    underlayColor="#D8D8D8"
+                    onPress={() => {
+                        const curdate = getCurdateWithStrip();
+                        const { userid, norek } = dataLogin;
+                        const payload = {
+                            sp_nama  : `Ipos_getPostingPebisol`,
+                            par_data : `${userid}|${curdate}|${curdate}`
+                            // par_data : `440000016|${curdate}|${curdate}`
+                        };
+                        //get data order on this button
+                        //with curdate
+                        getOrder(payload, curdate).catch(err => console.log("kosong"));
+                        
+                        navigation.navigate({
+                            routeName: 'ListOrder',
+                            params: {
+                                tanggalSearch: curdate
+                            }
+                        })
+                    }}
+                >
+                    <View style={styles.icon}>
+                        <Image source={iconRiwayat} style={styles.img}/>
+                        <Text style={styles.textIcon}>Riwayat{'\n'}Order</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    underlayColor="#D8D8D8"
+                    onPress={() => onShowModal(dataLogin.userid) } 
+                >
+                    <View style={styles.icon}>
+                        <Image source={genPwd} style={styles.img}/>
+                        <Text style={styles.textIcon}>Generate{'\n'}Password Web</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
         </View>
     </View>
 );
 
 const styles = StyleSheet.create({
     container: {
-        margin: 5,
         flex: 1
     },
     content: {
         flexDirection: 'row',
-        margin: 10,
-        alignItems: 'center'
+        margin: 5,
+        alignItems: 'center',
     },
     icon: {
         width: device*0.3, 
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto-Regular'
     },
     img: {
-        width: 75, height: 75
+        width: device*0.2, height: device*0.2
     }
 })
 

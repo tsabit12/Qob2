@@ -73,7 +73,7 @@ class IndexRegister extends React.Component{
 		// console.log(this.props.detail);
 		const { nik, success, errors, loading } = this.state;
 		return(
-			<SafeAreaView style={{flex: 1}}>
+			<View style={{flex: 1}}>
 				<MyStatusBar />
 				<Loader loading={loading} />
 				{ errors.global && 
@@ -113,7 +113,7 @@ class IndexRegister extends React.Component{
 				        </Text>
 			        </View>
 				</View>
-			</SafeAreaView>
+			</View>
 		);
 	}
 }

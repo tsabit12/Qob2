@@ -1,8 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, StatusBar } from "react-native";
+import { View, Text, StyleSheet, StatusBar, SafeAreaView } from "react-native";
 import { Menu, Icon, TopNavigation, TopNavigationAction, Layout } from '@ui-kitten/components';
 import Constants from 'expo-constants';
-import { SafeAreaView } from "react-navigation";
 
 
 const styles = StyleSheet.create({
@@ -33,7 +32,7 @@ const MyStatusBar = () => (
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back'/>
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
 
 
@@ -79,15 +78,15 @@ class BantuanScreen extends React.Component{
 
 	render(){
 		return(
-			<SafeAreaView style={{flex: 1}}>
+			<View style={{flex: 1}}>
 				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.BackAction()}
 				    title='Bantuan'
 				    alignment='start'
-				    titleStyle={{fontFamily: 'open-sans-bold'}}
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 				    elevation={5}
-				    style={styles.navigation}
+				    style={{backgroundColor: 'rgb(4, 147, 214)'}}
 				/>
 			    <View>
 					<Menu
@@ -96,7 +95,7 @@ class BantuanScreen extends React.Component{
 				      onSelect={this.onSelect}
 				    />
 			    </View>
-		    </SafeAreaView>
+		    </View>
 		);
 	}
 }

@@ -24,7 +24,7 @@ const MyStatusBar = () => (
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back'/>
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
 
 
@@ -209,9 +209,10 @@ class ValidasiRegRek extends React.Component{
 					    title='Validasi Rekening'
 					    subtitle={this.props.navigation.state.params.responseRek.noGiro}
 					    alignment='start'
-					    titleStyle={{fontFamily: 'open-sans-bold'}}
+					    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 					    elevation={5}
-					    style={styles.navigation}
+					    subtitleStyle={{color: '#FFF'}}
+					    style={{backgroundColor: 'rgb(4, 147, 214)'}}
 					/>
 					{ saved === 200 && 
 						<Modal 

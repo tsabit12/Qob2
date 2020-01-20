@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Text, StyleSheet, View, ScrollView, StatusBar, Image, AsyncStorage } from 'react-native';
+import { Button, Text, StyleSheet, View, ScrollView, StatusBar, Image, AsyncStorage, Dimensions } from 'react-native';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
 // import SearchLayout from 'react-navigation-addon-search-layout';
@@ -9,11 +9,12 @@ import Dialog from "react-native-dialog";
 import api from "../../api";
 import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 
+var device = Dimensions.get('window').width;
 const iconBarcode = require("../../../assets/barcode.png");
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="dark-content" />
+		<StatusBar translucent barStyle="light-content" />
 	</View>
 );
 
@@ -152,23 +153,37 @@ class IndexSearch extends React.Component{
 						/> }
 					</Dialog.Container> }
 				</React.Fragment>
+				<SliderBox images={[
+					require('../../../assets/qob.jpg'),
+					require('../../../assets/qob2.jpg'),
+					require('../../../assets/qob3.jpg')
+				]} 
+				sliderBoxHeight={device*0.7}
+				resizeMode={'stretch'}
+				circleLoop
+				autoplay={true}
+				paginationBoxStyle={{
+					alignItems: "center",
+					alignSelf: "center",
+					justifyContent: "center",
+				  }}
+				/>
 				<ScrollView>
-					<SliderBox images={[
-						require('../../../assets/qob.jpg'),
-						require('../../../assets/qob2.jpg'),
-						require('../../../assets/qob3.jpg')
-					]} 
-					sliderBoxHeight={230}
-					resizeMode={'stretch'}
-					circleLoop
-					autoplay={true}
-					paginationBoxStyle={{
-						alignItems: "center",
-						alignSelf: "center",
-						justifyContent: "center",
-					  }}
-					/>
-					<View style={styles.container}>
+					<View 
+						style={{
+							flex: 1, 
+							margin: 5, 
+							borderWidth: 1, 
+							borderRadius: 5, 
+							backgroundColor: '#FFF',
+							borderColor: '#edebe8',
+							shadowColor: '#edebe8',
+						    shadowOffset: { width: 0, height: 1 },
+						    shadowOpacity: 0.8,
+						    shadowRadius: 1, 
+						    elevation: 5
+						}}
+					>
 						<Menu 
 							navigation={this.props.navigation} 
 							loading={this.state.loading}

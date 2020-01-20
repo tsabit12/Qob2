@@ -12,7 +12,7 @@ const MyStatusBar = () => (
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back'/>
+  <Icon {...style} name='arrow-back' fill='#FFF' />
 );
 
 
@@ -112,10 +112,12 @@ class ValidasiRekening extends React.Component{
 				    leftControl={this.BackAction()}
 				    title='Registrasi'
 				    alignment='start'
-				    titleStyle={{fontFamily: 'open-sans-bold'}}
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 				    elevation={5}
 				    style={styles.navigation}
+				    subtitleStyle={{color: '#FFF'}}
 				    subtitle='Menggunakan akun giro'
+				    style={{backgroundColor: 'rgb(4, 147, 214)'}}
 				/>
 				<View style={{margin: 10}}>
 					<Loader loading={loading} />

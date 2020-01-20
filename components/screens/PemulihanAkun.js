@@ -25,7 +25,7 @@ const MyStatusBar = () => (
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back'/>
+  <Icon {...style} name='arrow-back' fill='#FFF' />
 );
 
 const MessageSucces = ({ message, visible, onPress, backHome }) => (
@@ -324,9 +324,9 @@ class PemulihanAkun extends React.Component{
 					    leftControl={this.BackAction()}
 					    title={this.props.navigation.state.params.titlePemulihan}
 					    alignment='start'
-					    titleStyle={{fontFamily: 'open-sans-bold'}}
+					    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 					    elevation={5}
-					    style={styles.navigation}
+					    style={{backgroundColor: 'rgb(4, 147, 214)'}}
 					/>
 					<Loader loading={loading} />
 					{ success.statusVer && <MessageSucces 
@@ -395,7 +395,7 @@ class PemulihanAkun extends React.Component{
 									{ errors.email && <Text style={styles.labelErr}>{errors.email}</Text>}
 								</View>
 								<View style={{padding: 6, marginTop: -6}}>
-									<Button status='danger' onPress={this.onSubmit}>
+									<Button status='info' onPress={this.onSubmit}>
 										{ this.state.jenis === 1 && 'Dapatkan PIN Baru' }
 										{ this.state.jenis === 2 && 'Pulihkan' }
 										{ this.state.jenis === 3 && 'Buka kembali akun saya' }
@@ -453,15 +453,6 @@ const styles = StyleSheet.create({
 	StatusBar: {
 	  	height: Constants.statusBarHeight,
 	  	backgroundColor: 'rgb(4, 147, 214)'
-	},
-	navigation: {
-	  	shadowColor: '#000000',
-	  	shadowOpacity: 0.8,
-	    shadowRadius: 2,
-	    shadowOffset: {
-	      height: 1,
-	      width: 1
-	    }
 	},
 	form: {
 		margin: 7,
