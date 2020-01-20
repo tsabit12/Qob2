@@ -187,7 +187,7 @@ class AccountScreen extends React.Component{
 		this.setState({
 			sisaSaldo: this.props.navigation.state.params.saldo
 		});
-		// this.props.getDetailUser(userid);
+		this.props.getDetailUser(userid);
 	}
 
 	UNSAFE_componentWillReceiveProps(nextProps){
