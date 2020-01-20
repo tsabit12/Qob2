@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text, ScrollView, KeyboardAvoidingView, Image, Platform, AsyncStorage } from "react-native";
+import { View, Text, ScrollView, KeyboardAvoidingView, Image, Platform, AsyncStorage, StatusBar } from "react-native";
 import { SafeAreaView } from 'react-navigation';
 import { connect } from "react-redux";
 import styles from "./styles";
-import { Input, Button, Select } from '@ui-kitten/components';
+import { Input, Button, Select, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import kepercayaan from "../../json/agama";
 import pekerjaan from "../../json/pekerjaan";
 import status from "../../json/status";
@@ -17,26 +17,28 @@ import { registerKtp, saveRegister } from "../../../actions/register";
 import Modal from "../../Modal";
 import Constants from 'expo-constants';
 
-const SubTitle = ({ judul }) => (
-		<Text>
-			{!judul.judulHeader ? "Data tidak ditemukan" : judul.judulHeader }
-		</Text>
-	)
-const Judul = ({ navigation }) => {
-	const { state } = navigation;	
-	return(
-		<View>
-			<Text style = {{fontSize: 16, fontWeight: '700'}}>Registrasi</Text>
-			{ !state.params ? <Text>Loading..</Text> : <SubTitle judul={state.params} /> }			
-		</View>
-	);
-}
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back'/>
+);
+
+
 
 class RegistrasiKtp extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <Judul navigation={navigation}/>
-	}) 
-
+	usernameRef = React.createRef();
+	passwordRef = React.createRef();
+	nmOlshopRef = React.createRef();
+	namaPanggilanRef = React.createRef();
+	noHpRef = React.createRef();
+	npwpRef = React.createRef();
+	emailRef = React.createRef();
+	kodeposRef = React.createRef();
+	
 	state = {
 		'validateMother': {
 			text: '',
@@ -69,29 +71,6 @@ class RegistrasiKtp extends React.Component{
 		visible: false,
 		saved: null,
 		responseText: ''
-	}
-
-	usernameRef = React.createRef();
-	passwordRef = React.createRef();
-	nmOlshopRef = React.createRef();
-	namaPanggilanRef = React.createRef();
-	noHpRef = React.createRef();
-	npwpRef = React.createRef();
-	emailRef = React.createRef();
-	kodeposRef = React.createRef();
-
-	componentDidMount(){
-		const { ktp } = this.props.dataktp;
-		if (Object.keys(ktp).length > 0) {
-			this.props.navigation.setParams({
-				judulHeader: ktp.nik
-			});
-			// console.log("oke");
-		}else{
-			this.props.navigation.setParams({
-				judulHeader: undefined
-			});
-		}
 	}
 
 	onChange = (e) => this.setState({ validateMother: { ...this.state.validateMother, text: e }})
@@ -243,11 +222,16 @@ class RegistrasiKtp extends React.Component{
 		return errorsState;
 	}
 
+
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	);
+
 	render(){
 		const { ktp } = this.props.dataktp;
 		const { validateMother, bug, data, secureTextEntry, errorsState, loading, saved } = this.state;
 		return(
-			<SafeAreaView>
+			<SafeAreaView style={{flex: 1}}>
 				<Loader loading={loading} />
 				
 				{ errorsState.global && 
@@ -268,15 +252,22 @@ class RegistrasiKtp extends React.Component{
 							});
 						}}
 					/> }
+				<React.Fragment>
+					<MyStatusBar/>
+					<TopNavigation
+					    leftControl={this.BackAction()}
+					    title='Registrasi'
+					    subtitle={this.props.navigation.state.params.judulHeader}
+					    alignment='start'
+					    titleStyle={{fontFamily: 'open-sans-bold'}}
+					    elevation={5}
+					/>
+				</React.Fragment>
+
 				<KeyboardAvoidingView 
 					behavior="padding" 
-					style={styles.container}
-					keyboardVerticalOffset={
-					  Platform.select({
-					     ios: () => 0,
-					     android: () => 90
-					  })()
-					}
+					enabled
+					style={{flexGrow:1}} 
 				>
 				<ScrollView>
 					{Object.keys(ktp).length > 0 && 

@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, AsyncStorage } from "react-native";
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, AsyncStorage, StatusBar } from "react-native";
 import { SafeAreaView } from 'react-navigation';
-import { Button, Input } from '@ui-kitten/components';
+import { Button, Input, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import Loader from "../Loader";
 import api from "../api";
 import Modal from "../Modal";
@@ -12,10 +12,20 @@ import { saveRegister, saveRequest, clearRequestStore } from "../../actions/regi
 import { Header } from 'react-navigation-stack';
 import { curdate } from "../utils/helper";
 
-const Judul = ({ navigation }) => (
-	<View>
-		<Text style={{fontFamily: 'open-sans-bold', fontSize: 16, fontWeight: '700'}}>{navigation.state.params.titlePemulihan}</Text>
+// const Judul = ({ navigation }) => (
+// 	<View>
+// 		<Text style={{fontFamily: 'open-sans-bold', fontSize: 16, fontWeight: '700'}}>{navigation.state.params.titlePemulihan}</Text>
+// 	</View>
+// );
+
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
 	</View>
+);
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back'/>
 );
 
 const MessageSucces = ({ message, visible, onPress, backHome }) => (
@@ -32,17 +42,7 @@ const MessageSucces = ({ message, visible, onPress, backHome }) => (
     </View>
 );
 
-// const optionsData = [
-//   { text: 'Lupa pin', value: 1 },
-//   { text: 'Pulihkan Akun', value: 2 },
-//   { text: 'Buka Blokir', value: 3 },
-// ];
-
 class PemulihanAkun extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <Judul navigation={navigation}/>
-	}) 
-
 	useridRef = React.createRef();
 	namaRef = React.createRef();
 	nohpRef = React.createRef();
@@ -305,113 +305,124 @@ class PemulihanAkun extends React.Component{
 
 	onsetSelectedOption = (e) => this.setState({ jenis: e.value })
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	);
 
 	render(){
 		const { data, errors, loading, success, visible } = this.state;
 
 		return(
-			<View style={{flex: 1}}>
-				<Loader loading={loading} />
-				{ success.statusVer && <MessageSucces 
-						message={success.messageVer} 
-						visible={visible} 
-						onPress={() => this.setState({ visible: false })}
-						backHome={this.onBackHome}
-					/> }
-				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
-				<KeyboardAvoidingView 
-					behavior="padding" 
-					enabled
-					style={{flexGrow:1}} 
-					keyboardVerticalOffset = {Header.HEIGHT + 20}
-				>
-				<ScrollView>
-					<View style={{padding: 10}}>
-						{ !success.status ? <React.Fragment>
-							<View>
+			<KeyboardAvoidingView 
+				behavior="padding" 
+				enabled
+				style={{flexGrow:1}} 
+			>
+				<View style={{flex: 1}}>
+					<MyStatusBar />
+					<TopNavigation
+					    leftControl={this.BackAction()}
+					    title={this.props.navigation.state.params.titlePemulihan}
+					    alignment='start'
+					    titleStyle={{fontFamily: 'open-sans-bold'}}
+					    elevation={5}
+					    style={styles.navigation}
+					/>
+					<Loader loading={loading} />
+					{ success.statusVer && <MessageSucces 
+							message={success.messageVer} 
+							visible={visible} 
+							onPress={() => this.setState({ visible: false })}
+							backHome={this.onBackHome}
+						/> }
+					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
+					<ScrollView>
+							{ !success.status ? <React.Fragment>
+								<View style={styles.form}>
+									<Input 
+										label='Userid'
+										ref={this.useridRef}
+										labelStyle={styles.label}
+										placeholder='Masukan userid anda'
+										onChangeText={(e) => this.onChange(e, this.useridRef.current.props)}
+										style={styles.input}
+										value={data.userid}
+										name='userid'
+										keyboardType='numeric'
+										onSubmitEditing={() => this.namaRef.current.focus() }
+										status={errors.userid && 'danger'}
+									/>
+									{ errors.userid && <Text style={styles.labelErr}>{errors.userid}</Text>}
+									<Input 
+										label='Nama Lengkap'
+										ref={this.namaRef}
+										labelStyle={styles.label}
+										placeholder='Masukan nama lengkap'
+										onChangeText={(e) => this.onChange(e, this.namaRef.current.props)}
+										style={styles.input}
+										value={data.nama}
+										name='nama'
+										onSubmitEditing={() => this.nohpRef.current.focus() }
+										status={errors.nama && 'danger'}
+									/>
+									{ errors.nama && <Text style={styles.labelErr}>{errors.nama}</Text>}
+									<Input 
+										label='Nomor Handphone'
+										ref={this.nohpRef}
+										labelStyle={styles.label}
+										placeholder='Masukan nomor handphone'
+										onChangeText={(e) => this.onChange(e, this.nohpRef.current.props)}
+										style={styles.input}
+										value={data.nohp}
+										name='nohp'
+										onSubmitEditing={() => this.emailRef.current.focus() }
+										status={errors.nohp && 'danger'}
+										keyboardType='numeric'
+									/>
+									{ errors.nohp && <Text style={styles.labelErr}>{errors.nohp}</Text>}
+									<Input 
+										label='Email'
+										ref={this.emailRef}
+										labelStyle={styles.label}
+										placeholder='Masukan email anda'
+										onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
+										style={styles.input}
+										value={data.email}
+										name='email'
+										onSubmitEditing={() => this.onSubmit() }
+										status={errors.email && 'danger'}
+									/>
+									{ errors.email && <Text style={styles.labelErr}>{errors.email}</Text>}
+								</View>
+								<View style={{padding: 6, marginTop: -6}}>
+									<Button status='danger' onPress={this.onSubmit}>
+										{ this.state.jenis === 1 && 'Dapatkan PIN Baru' }
+										{ this.state.jenis === 2 && 'Pulihkan' }
+										{ this.state.jenis === 3 && 'Buka kembali akun saya' }
+									</Button>
+								</View>
+							</React.Fragment> : <View style={{margin: 10}}>
+								<View style={{backgroundColor: '#c7e4eb', padding: 5, borderRadius: 3}}>
+									<Text style={{fontFamily: 'open-sans-reg'}}>{success.message}</Text>
+								</View>
 								<Input 
-									label='Userid'
-									ref={this.useridRef}
+									ref={this.kodeRef}
 									labelStyle={styles.label}
-									placeholder='Masukan userid anda'
-									onChangeText={(e) => this.onChange(e, this.useridRef.current.props)}
-									style={styles.input}
-									value={data.userid}
-									name='userid'
+									placeholder='Masukan kode verifikasi disini'
+									style={{ marginTop: 20 }}
+									value={this.state.kode}
+									name='kode'
 									keyboardType='numeric'
-									onSubmitEditing={() => this.namaRef.current.focus() }
-									status={errors.userid && 'danger'}
+									maxLength={6}
+									onChangeText={this.onChangeKode}
+									status={errors.kode && 'danger'}
 								/>
-								{ errors.userid && <Text style={styles.labelErr}>{errors.userid}</Text>}
-								<Input 
-									label='Nama Lengkap'
-									ref={this.namaRef}
-									labelStyle={styles.label}
-									placeholder='Masukan nama lengkap'
-									onChangeText={(e) => this.onChange(e, this.namaRef.current.props)}
-									style={styles.input}
-									value={data.nama}
-									name='nama'
-									onSubmitEditing={() => this.nohpRef.current.focus() }
-									status={errors.nama && 'danger'}
-								/>
-								{ errors.nama && <Text style={styles.labelErr}>{errors.nama}</Text>}
-								<Input 
-									label='Nomor Handphone'
-									ref={this.nohpRef}
-									labelStyle={styles.label}
-									placeholder='Masukan nomor handphone'
-									onChangeText={(e) => this.onChange(e, this.nohpRef.current.props)}
-									style={styles.input}
-									value={data.nohp}
-									name='nohp'
-									onSubmitEditing={() => this.emailRef.current.focus() }
-									status={errors.nohp && 'danger'}
-									keyboardType='numeric'
-								/>
-								{ errors.nohp && <Text style={styles.labelErr}>{errors.nohp}</Text>}
-								<Input 
-									label='Email'
-									ref={this.emailRef}
-									labelStyle={styles.label}
-									placeholder='Masukan email anda'
-									onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
-									style={styles.input}
-									value={data.email}
-									name='email'
-									onSubmitEditing={() => this.onSubmit() }
-									status={errors.email && 'danger'}
-								/>
-								{ errors.email && <Text style={styles.labelErr}>{errors.email}</Text>}
-							</View>
-							<Button status='danger' onPress={this.onSubmit}>
-								{ this.state.jenis === 1 && 'Dapatkan PIN Baru' }
-								{ this.state.jenis === 2 && 'Pulihkan' }
-								{ this.state.jenis === 3 && 'Buka kembali akun saya' }
-							</Button>
-						</React.Fragment> : <React.Fragment>
-							<View style={{backgroundColor: '#c7e4eb', padding: 5, borderRadius: 3}}>
-								<Text style={{fontFamily: 'open-sans-reg'}}>{success.message}</Text>
-							</View>
-							<Input 
-								ref={this.kodeRef}
-								labelStyle={styles.label}
-								placeholder='Masukan kode verifikasi disini'
-								style={{ marginTop: 20 }}
-								value={this.state.kode}
-								name='kode'
-								keyboardType='numeric'
-								maxLength={6}
-								onChangeText={this.onChangeKode}
-								status={errors.kode && 'danger'}
-							/>
-							{ errors.kode && <Text style={{fontSize: 12, color: 'red'}}>{errors.kode}</Text>}
-							<Button status='info' style={{marginTop: 4}} onPress={this.onVerfikasi}>Verifikasi</Button>
-						</React.Fragment> }
-					</View>
-				</ScrollView>
-				</KeyboardAvoidingView>
-			</View>
+								{ errors.kode && <Text style={{fontSize: 12, color: 'red'}}>{errors.kode}</Text>}
+								<Button status='info' style={{marginTop: 4}} onPress={this.onVerfikasi}>Verifikasi</Button>
+							</View> }
+					</ScrollView>
+				</View>
+			</KeyboardAvoidingView>
 		);
 	}
 }
@@ -438,5 +449,25 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		marginTop: -10,
 		paddingBottom: 5
+	},
+	StatusBar: {
+	  	height: Constants.statusBarHeight,
+	  	backgroundColor: 'rgb(4, 147, 214)'
+	},
+	navigation: {
+	  	shadowColor: '#000000',
+	  	shadowOpacity: 0.8,
+	    shadowRadius: 2,
+	    shadowOffset: {
+	      height: 1,
+	      width: 1
+	    }
+	},
+	form: {
+		margin: 7,
+		padding: 10,
+		borderWidth: 1,
+		borderRadius: 10,
+		borderColor: '#c9d1d1'
 	}
 });

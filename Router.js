@@ -228,19 +228,34 @@ const LoginNavigator = createStackNavigator({
     screen: IndexRegister
   },
   RegistrasiRek: {
-    screen: ValidasiRekening
+    screen: ValidasiRekening,
+    navigationOptions: { 
+      header: null
+    }
   },
   PemulihanAkun: {
-    screen: PemulihanAkun
+    screen: PemulihanAkun,
+    navigationOptions: { 
+      header: null
+    }
   },
   RegistrasiKtp: {
-    screen: RegistrasiKtp
+    screen: RegistrasiKtp,
+    navigationOptions: { 
+      header: null
+    }
   },
   ValidasiRegRek: {
-    screen: ValidasiRegRek
+    screen: ValidasiRegRek,
+    navigationOptions: { 
+      header: null
+    }
   },
   Bantuan: {
-    screen: BantuanScreen
+    screen: BantuanScreen,
+    navigationOptions: { 
+      header: null
+    }
   },
   initialRouteName: 'Home'
 });

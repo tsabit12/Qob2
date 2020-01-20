@@ -56,5 +56,9 @@ export default StyleSheet.create({
 		fontSize: 15,
 		top: 4,
 		padding: 2
-	}
+	},
+	StatusBar: {
+	  	height: Constants.statusBarHeight,
+	  	backgroundColor: 'rgb(4, 147, 214)'
+	},
 })
