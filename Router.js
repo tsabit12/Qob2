@@ -23,8 +23,8 @@ import MyTab from "./components/screens/search/MyTab";
 import LacakBarcode from "./components/screens/search/result/LacakBarcode";
 import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
-import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran";
-import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
+// import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran";
+// import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
 import Barcode from './components/screens/helper/barcode';
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
@@ -90,18 +90,6 @@ const AppNavigator = createStackNavigator({
       Pembayaran: {
         screen: Pembayaran,
         navigationOptions: {
-          title: "Generate Pembayaran"
-        }
-      },
-      KonfrimPembayaran: {
-        screen: KonfrimPembayaran,
-        navigationOptions: {
-          title: "Konfirmasi Pembayaran"
-        }
-      },
-      OutputPembayaran: {
-        screen: OutputPembayaran,
-        navigationOptions: {
           header: null
         }
       },
@@ -124,10 +112,16 @@ const AppNavigator = createStackNavigator({
         }
       },
       CekTarif: {
-        screen: CekTarif
+        screen: CekTarif,
+        navigationOptions: {
+          header: null
+        }
       },
       ListOrder: {
-        screen: ListOrder
+        screen: ListOrder,
+        navigationOptions: {
+          header: null
+        }
       },
       SearchOrder: {
         screen: SearchOrderScreen,

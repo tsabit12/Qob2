@@ -72,13 +72,18 @@ class Penerima extends React.Component{
 		listAlamat: [],
 		listAlamat2: [],
 		errors: {},
-		checked: false
+		checked: false,
+		hasFetchedUser: false
 	}
 
 	async componentDidMount(){
 		const { userid } = this.props.dataLogin;
 		this.props.getDetailUser(userid)
-			.catch(err => alert("Fetching user failed"))
+			.then(() => this.setState({ hasFetchedUser: true })) 
+			.catch(err => {
+				this.setState({ hasFetchedUser: false });
+				alert("Fetching user failed");
+			})
 	}
 
 	/* if cheked set to true*/
@@ -245,22 +250,27 @@ class Penerima extends React.Component{
 	}
 
 	onCheckedChange = (e) => {
-		const { checked } = this.state;
+		const { checked, hasFetchedUser } = this.state;
 		if (!checked) {
-			const { userDetail } = this.props;
-			const pengirim = {
-				nama: userDetail.namaLengkap,
-				alamat: userDetail.alamat,
-				kota: userDetail.kota,
-				kodepos: userDetail.kodepos,
-				nohp: userDetail.noHp,
-				alamatDet: '',
-				kel: userDetail.kel,
-				kec: userDetail.kec,
-				email: userDetail.email,
-				alamatDet: 'oke'
+			if (hasFetchedUser) {
+				const { userDetail } = this.props;
+				const pengirim = {
+					nama: userDetail.namaLengkap,
+					alamat: userDetail.alamat,
+					kota: userDetail.kota,
+					kodepos: userDetail.kodepos,
+					nohp: userDetail.noHp,
+					alamatDet: '',
+					kel: userDetail.kel,
+					kec: userDetail.kec,
+					email: userDetail.email,
+					alamatDet: 'oke'
+				}
+				this.setState({ pengirim, checked: true });
+			}else{
+				this.setState({ checked: false});
+				alert("Terdapat kesalahan saat memuat data anda, tutup aplikasi untuk mencoba lagi atau lakukan entri manual data pengirim");
 			}
-			this.setState({ pengirim, checked: true });
 		}else{
 			this.setState({
 				pengirim: {
@@ -293,7 +303,7 @@ class Penerima extends React.Component{
 				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.BackAction()}
-				    subtitle='Pengirm & Penerima'
+				    subtitle='Pengirim & Penerima'
 				    title='Order'
 				    alignment='start'
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
@@ -485,7 +495,7 @@ class Penerima extends React.Component{
 							    />
 							</View>
 						</Layout>
-						<Button style={{margin: 10, marginTop: -5 }} onPress={this.onSubmit}>Selanjutnya</Button>
+						<Button style={{margin: 10, marginTop: -5 }} status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
 					</ScrollView>
 				</KeyboardAvoidingView>
 			</View>

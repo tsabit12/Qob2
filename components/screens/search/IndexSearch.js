@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Text, StyleSheet, View, ScrollView, StatusBar, Image, AsyncStorage } from 'react-native';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
-import SearchLayout from 'react-navigation-addon-search-layout';
+// import SearchLayout from 'react-navigation-addon-search-layout';
 import Menu from "../Menu";
 import { SliderBox } from "react-native-image-slider-box";
 import Dialog from "react-native-dialog";

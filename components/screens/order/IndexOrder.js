@@ -233,10 +233,11 @@ class IndexOrder extends React.Component{
 					      text='Non cod'
 					      style={{ marginLeft: 5, marginTop: -5, paddingBottom: 5 }}
 					      textStyle={{ color: 'red'}}
+					      status='warning'
 					      checked={data.checked}
 					      onChange={this.onCheckedChange}
 					    />
-					    <Button style={{margin: 2}} onPress={this.onSubmit}>Selanjutnya</Button>
+					    <Button style={{margin: 2}} status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
 					    <View style={{height: 10}} />
 					</Layout>
 				</ScrollView>

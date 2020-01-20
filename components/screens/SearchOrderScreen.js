@@ -1,15 +1,26 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import SearchLayout from 'react-navigation-addon-search-layout';
+import { View, Text, StyleSheet, StatusBar, TextInput } from "react-native";
+// import SearchLayout from 'react-navigation-addon-search-layout';
 import { connect } from "react-redux";
-import { Icon, ListItem } from '@ui-kitten/components';
+import { Icon, ListItem, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { getCurdateWithStrip } from "../utils/helper";
 import { getOrder } from "../../actions/order";
 import Loader from "../Loader";
 import Modal from "../Modal";
+import Constants from 'expo-constants';
 
 const HistoryIcon = (style) => (
   <Icon {...style} name='checkmark-circle-outline'/>
+);
+
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
 
 class SearchOrderScreen extends React.Component{
@@ -80,32 +91,53 @@ class SearchOrderScreen extends React.Component{
         })
 	}
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	)
+
+	renderRightControls = () => (
+		<View style={styles.inputView}>
+			<TextInput 
+				placeholder='Cari... (YYYY-MM-DD)' 
+				autoFocus 
+				style={styles.input} 
+				value={this.state.searchParams}
+				placeholderTextColor='#f7f7f7'
+				onChangeText={(e) => this.setState({ searchParams: e })}
+				onSubmitEditing={this.executeSearch}
+			/>
+		</View>
+	);
+
 	render(){
 		const { dates, loading, errors } = this.state;
 
 		return(
-			<React.Fragment>
-				<Loader loading={loading} />
-				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> }
-				<SearchLayout
-					placeholder='YYYY-MM-DD'
-			        onChangeQuery={this.handleQueryChange}
-			        onSubmit={this.executeSearch}
-			        borederBotOpacity={6}
-			    >
-			    <View style={styles.container}>
-				    { dates.length > 0 ? <React.Fragment>
-				    		{ dates.map((x, i) => <View key={i} style={styles.viewList}>
-				    				<ListItem
-									    title={x.tanggal}
-									    icon={HistoryIcon}
-									    onPress={() => this.handlePress(x.tanggal)}
-									/>   
-				    			</View>)}
-				    	</React.Fragment> : <Text style={{marginTop: 20, textAlign: 'center'}}>Riwayat pencarian tidak ditemukan</Text> }
+			<View style={{flex: 1}}>
+				<MyStatusBar />
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    alignment='center'
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    rightControls={this.renderRightControls()}
+				    evaluation={5}
+				/>
+				<View>
+					<Loader loading={loading} />
+					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> }
+				    <View style={styles.container}>
+					    { dates.length > 0 ? <React.Fragment>
+					    		{ dates.map((x, i) => <View key={i} style={styles.viewList}>
+					    				<ListItem
+										    title={x.tanggal}
+										    icon={HistoryIcon}
+										    onPress={() => this.handlePress(x.tanggal)}
+										/>   
+					    			</View>)}
+					    	</React.Fragment> : <Text style={{marginTop: 20, textAlign: 'center'}}>Riwayat pencarian tidak ditemukan</Text> }
+				    </View>
 			    </View>
-			    </SearchLayout>
-			</React.Fragment>
+			</View>
 		);
 	}
 }
@@ -126,5 +158,19 @@ const styles = StyleSheet.create({
 	viewList: {
 		borderBottomWidth: 1,
 		borderBottomColor: '#cbccc4',
-	}
+	},
+	StatusBar: {
+	    height: Constants.statusBarHeight,
+	    backgroundColor: 'rgb(240, 132, 0)'
+	},
+	inputView: {
+		backgroundColor: 'rgba(0,0,0,0)',
+        width: '94%'
+	},
+	input: {
+        fontSize: 18,
+        height: 40,
+        color: '#f7f7f7',
+        backgroundColor: 'rgb(240, 132, 0)',
+    }
 })

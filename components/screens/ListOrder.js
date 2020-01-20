@@ -1,20 +1,41 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Platform , ScrollView} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Platform , ScrollView, StatusBar } from "react-native";
 import { connect } from "react-redux";
-import { ListItem, Button, Icon, Toggle } from '@ui-kitten/components';
+import { ListItem, Button, Icon, Toggle, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import api from "../api";
 import { getOrder } from "../../actions/order";
 import Barcode from 'react-native-barcode-builder';
+import Constants from 'expo-constants';
 
-const Judul = ({ navigation }) => {
-	const { params } = navigation.state;
-	return(
-		<View>
-			<Text style={styles.judul}>Riwayat Order</Text>
-			<Text style={{fontFamily: 'open-sans-reg'}}>{params && navigation.state.params.tanggalSearch}</Text>
-		</View>
-	);
-}
+const MyStatusBar = () => (
+	<View style={styles.StatusBar}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
+
+const SearchIcon = (style) => (
+	<Icon {...style} name='search-outline' fill='#FFF'/>
+);
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
+const SearchAction = (props) => (
+  <TopNavigationAction {...props} icon={SearchIcon}/>
+);
+
+
+
+// const Judul = ({ navigation }) => {
+// 	const { params } = navigation.state;
+// 	return(
+// 		<View>
+// 			<Text style={styles.judul}>Riwayat Order</Text>
+// 			<Text style={{fontFamily: 'open-sans-reg'}}>{params && navigation.state.params.tanggalSearch}</Text>
+// 		</View>
+// 	);
+// }
 
 const capitalize = (string) => {
 	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -133,23 +154,23 @@ const List = ({ listdata, tanggal, showDetail, visible, detailProps, checked }) 
 	    );
 } 
 
-const Search = ({ navigation }) => {
-	return(
-		<TouchableOpacity 
-			style={{marginRight: 8}}
-			onPress={() => navigation.navigate({ routeName: 'SearchOrder' })}
-		>
-	        <Icon name='search-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
-	    </TouchableOpacity>
-	)
-}
+// const Search = ({ navigation }) => {
+// 	return(
+// 		<TouchableOpacity 
+// 			style={{marginRight: 8}}
+// 			onPress={() => navigation.navigate({ routeName: 'SearchOrder' })}
+// 		>
+// 	        <Icon name='search-outline' fill={Platform.OS === 'ios' ? '#FFF' : 'black'} width={25} height={25} />
+// 	    </TouchableOpacity>
+// 	)
+// }
 
 
 class ListOrder extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <Judul navigation={navigation}/>,
-		headerRight: <Search navigation={navigation} />,
-	})
+	// static navigationOptions = ({ navigation }) => ({
+	// 	headerTitle: <Judul navigation={navigation}/>,
+	// 	headerRight: <Search navigation={navigation} />,
+	// })
 
 	scrollViewRef = React.createRef();
 
@@ -181,41 +202,61 @@ class ListOrder extends React.Component{
 		this.setState({ checked: !this.state.checked })
 	}
 
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	)
+
+	renderRightControls = () => (
+		<SearchAction onPress={() => this.props.navigation.navigate({ routeName: 'SearchOrder'})} />
+	)
+
+
 	render(){
 		const { tanggalSearch } = this.props.navigation.state.params;
 		const { orderlist } = this.props;
 		const { dataDetail, checked } = this.state;
 
 		return(
-			<ScrollView>
-				<View style={styles.container}>
-					<View style={{flexDirection: 'row' }}>
-						<View style={{flex: 1, alignItems: 'flex-start', marginTop: 14, marginLeft: 15 }}>
-							<Text style={{fontFamily: 'open-sans-reg', fontWeight: '700'}}>
-								Data order dengan status ({ checked ? 'selesai transaksi' : 'belum transaksi' })
-							</Text>
-						</View>
-						<View style={{flex: 1, alignItems: 'flex-end', marginTop: 17, marginRight: 20 }}>
-							<Toggle
-						      checked={checked}
-						      onChange={this.onCheckedChange}
-						      status='info'
-						    />
+			<View style={{flex: 1}}>
+				<MyStatusBar/>
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    title='Riwayat Order/Transaksi'
+				    alignment='center'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    rightControls={this.renderRightControls()}
+				/>
+				<ScrollView>
+					<View style={styles.container}>
+						<View style={{flexDirection: 'row' }}>
+							<View style={{flex: 1, alignItems: 'flex-start', marginTop: 14, marginLeft: 15 }}>
+								<Text style={{fontFamily: 'open-sans-reg', fontWeight: '700'}}>
+									Data order dengan status ({ checked ? 'selesai transaksi' : 'belum transaksi' })
+								</Text>
+							</View>
+							<View style={{flex: 1, alignItems: 'flex-end', marginTop: 17, marginRight: 20 }}>
+								<Toggle
+							      checked={checked}
+							      onChange={this.onCheckedChange}
+							      status='warning'
+							    />
+						    </View>
 					    </View>
-				    </View>
-				    <View style={{borderBottomWidth: 1, borderBottomColor: '#cbccc4', marginTop: 14}}/>
-					{ orderlist ? <React.Fragment>
-							<List 
-								listdata={orderlist} 
-								tanggal={tanggalSearch} 
-								showDetail={(e) => this.onShowDetail(e)}
-								visible={this.state.visible}
-								detailProps={this.state.dataDetail}
-								checked={checked}
-							/>
-						</React.Fragment> : <Text style={{textAlign: 'center', marginTop: 15}}>No result found</Text>}
-				</View>
-			</ScrollView>
+					    <View style={{borderBottomWidth: 1, borderBottomColor: '#cbccc4', marginTop: 14}}/>
+						{ orderlist ? <React.Fragment>
+								<List 
+									listdata={orderlist} 
+									tanggal={tanggalSearch} 
+									showDetail={(e) => this.onShowDetail(e)}
+									visible={this.state.visible}
+									detailProps={this.state.dataDetail}
+									checked={checked}
+								/>
+							</React.Fragment> : <Text style={{textAlign: 'center', marginTop: 15}}>Riwayat pencarian tidak ditemukan</Text>}
+					</View>
+				</ScrollView>
+			</View>
 		);
 	}
 }
@@ -277,5 +318,9 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: '#cbccc4',
 		marginTop: 5
+	},
+	StatusBar: {
+	    height: Constants.statusBarHeight,
+	    backgroundColor: 'rgb(240, 132, 0)'
 	}
 });
