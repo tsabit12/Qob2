@@ -4355,11 +4355,6 @@ react-native-image-slider-show@^1.0.3:
   resolved "https://registry.yarnpkg.com/react-native-image-slider-show/-/react-native-image-slider-show-1.0.3.tgz#4df4c0ba520074f7a5513cca9a83ea48ac8868a5"
   integrity sha512-9Tysqt4Q1I2OIYN1hJ+291Axy9JwsKFpr1a4uxu9uDMLGgkYsOLhbsMdgj7qVBmtLWZDQ9Kr45r+LNIRmmSvGg==
 
-react-native-iphone-x-helper@^1.2.0:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
-  integrity sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ==
-
 react-native-md5@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-native-md5/-/react-native-md5-1.0.0.tgz#2320be24d674938ae5ef4f492698edbbfa0e0205"
@@ -4379,11 +4374,6 @@ react-native-pin-view@^2.5.0:
   integrity sha512-fBG+/+cLWWhX44F0i8euRjXTk4Vd3Ivs22dKiLFPjMToMirJ/uMQaDouE3J/M9CfsmY6h5G0vTxkglJ3aGqzSg==
   dependencies:
     prop-types "^15.7.2"
-
-react-native-platform-touchable@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-platform-touchable/-/react-native-platform-touchable-1.1.1.tgz#fde4acc65eea585d28b164d0c3716a42129a68e4"
-  integrity sha1-/eSsxl7qWF0osWTQw3FqQhKaaOQ=
 
 react-native-reanimated@^1.4.0:
   version "1.4.0"
@@ -4489,13 +4479,6 @@ react-native-web@~0.11.7:
     scheduler "0.15.0"
     stacktrace-parser "^0.1.3"
     whatwg-fetch "^3.0.0"
-
-"react-navigation-addon-search-layout@https://github.com/tsabit12/search-layout":
-  version "0.13.1"
-  resolved "https://github.com/tsabit12/search-layout#26fae1b26634a72254a905d07365e9044567d065"
-  dependencies:
-    react-native-iphone-x-helper "^1.2.0"
-    react-native-platform-touchable "^1.1.1"
 
 react-navigation-drawer@^2.3.3:
   version "2.3.3"
