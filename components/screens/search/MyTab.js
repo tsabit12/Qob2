@@ -70,7 +70,7 @@ class MyTab extends React.Component{
 		    		})
 		    }else{
 		    	this.props.lacakKiriman(this.state.searchText)
-		    		.catch(err => console.log(err));
+		    		// .catch(err => console.log(err));
 		    	this.props.navigation.navigate({
 		    		routeName: 'LacakBarcode',
 	                params: {

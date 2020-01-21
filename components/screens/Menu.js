@@ -18,13 +18,9 @@ import Loader from "../Loader";
 var device = Dimensions.get('window').width;
 const iconBooking = require("../../assets/calendar.png");
 const iconCekTarif = require("../../assets/truck.png");
-const iconRekening = require("../../assets/rekening.png");
 const iconPembayaran = require("../../assets/banking.png");
-const iconBarcode = require("../../assets/barcode.png");
 const iconRiwayat = require("../../assets/history.png");
-const iconProfile = require("../../assets/profile.png");
 const iconPhone = require("../../assets/phone2.png");
-const cartIcon = require("../../assets/cart.png");
 const genPwd = require("../../assets/generatePwd.png");
 
 

@@ -10,7 +10,6 @@ import api from "../../api";
 import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 
 var device = Dimensions.get('window').width;
-const iconBarcode = require("../../../assets/barcode.png");
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
