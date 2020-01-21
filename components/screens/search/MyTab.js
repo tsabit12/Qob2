@@ -3,7 +3,6 @@ import { StatusBar, View, TouchableOpacity } from "react-native";
 import { Tab, TabBar, TabView, Text, Icon, TopNavigation, TopNavigationAction, Input } from '@ui-kitten/components';
 import { SafeAreaView } from 'react-navigation';
 import styles from "./styles";
-import SearchLayout from 'react-navigation-addon-search-layout';
 import { RectButton } from 'react-native-gesture-handler';
 import { connect } from "react-redux";
 import { getRekening, lacakKiriman } from "../../../actions/search";
