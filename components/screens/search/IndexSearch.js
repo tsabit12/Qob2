@@ -181,7 +181,7 @@ class IndexSearch extends React.Component{
 						    shadowOffset: { width: 0, height: 1 },
 						    shadowOpacity: 0.8,
 						    shadowRadius: 1, 
-						    elevation: 5
+						    elevation: 1
 						}}
 					>
 						<Menu 
