@@ -1,7 +1,7 @@
 import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST } from "../types";
 
 const initialState = {
-	logged: false,
+	logged: true,
 	user: {},
 	dataLogin: {
 		userid: null,
