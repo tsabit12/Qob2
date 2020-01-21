@@ -19,13 +19,6 @@ const BackIcon = (style) => (
 );
 
 
-// const Judul = ({ navigation }) => (
-// 	<View>
-// 		<Text style={styles.header}>{navigation.deskripsiOrder.jenis}</Text>
-// 		<Text style={{fontFamily: 'open-sans-reg'}}>Kelola detail kiriman</Text>
-// 	</View>
-// )
-
 String.prototype.replaceAll = function(str1, str2, ignore) {
     return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
 }
@@ -78,6 +71,24 @@ class Penerima extends React.Component{
 
 	async componentDidMount(){
 		const { userid } = this.props.dataLogin;
+		const { userDetail } = this.props;
+		//this should make run faster
+		if (Object.keys(userDetail).length > 0) {
+			const pengirim = {
+				nama: userDetail.namaLengkap,
+				alamat: userDetail.alamat,
+				kota: userDetail.kota,
+				kodepos: userDetail.kodepos,
+				nohp: userDetail.noHp,
+				alamatDet: '',
+				kel: userDetail.kel,
+				kec: userDetail.kec,
+				email: userDetail.email,
+				alamatDet: 'oke'
+			}
+			this.setState({ checked: true, pengirim });
+		}
+
 		this.props.getDetailUser(userid)
 			.then(() => this.setState({ hasFetchedUser: true })) 
 			.catch(err => {
@@ -86,24 +97,32 @@ class Penerima extends React.Component{
 			})
 	}
 
-	/* if cheked set to true*/
-	// UNSAFE_componentWillReceiveProps(nextProps){
-	// 	if (nextProps.userDetail) {
-	// 		const { userDetail } = nextProps;
-	// 		//make sure
-	// 		if (Object.keys(userDetail).length > 0) {
-	// 			const { userDetail } = nextProps;
-	// 			const pengirim = {
-	// 				nama: userDetail.namaLengkap,
-	// 				alamat: userDetail.alamat,
-	// 				kota: userDetail.kota,
-	// 				kodepos: userDetail.kodepos,
-	// 				nohp: userDetail.noHp
-	// 			}
-	// 			this.setState({ pengirim });
-	// 		}
-	// 	}
-	// }
+	/* 
+		if cheked set to true 
+		handle if userdetail is empty
+	*/
+	UNSAFE_componentWillReceiveProps(nextProps){
+		if (nextProps.userDetail) {
+			const { userDetail } = nextProps;
+			//make sure
+			if (Object.keys(userDetail).length > 0) {
+				const { userDetail } = nextProps;
+				const pengirim = {
+					nama: userDetail.namaLengkap,
+					alamat: userDetail.alamat,
+					kota: userDetail.kota,
+					kodepos: userDetail.kodepos,
+					nohp: userDetail.noHp,
+					alamatDet: '',
+					kel: userDetail.kel,
+					kec: userDetail.kec,
+					email: userDetail.email,
+					alamatDet: 'oke'
+				}
+				this.setState({ pengirim, checked: true });
+			}
+		}
+	}
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
 
