@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StatusBar, Keyboard, Image, Dimensions, TextInput, TouchableOpacity } from "react-native";
+import { View, StatusBar, Keyboard, Image, Dimensions, TextInput, TouchableOpacity, ImageBackground } from "react-native";
 import {Text, Button, ButtonGroup } from '@ui-kitten/components';
 import styles from "./styles";
 import { SafeAreaView } from 'react-navigation';
@@ -15,7 +15,7 @@ const device = Dimensions.get('window').width;
 const MyStatusBar = () => (
 	<View style={{
 		height: Constants.statusBarHeight,
-	  	backgroundColor: '#f7b228'
+	  	backgroundColor: '#ed5007'
 	}}>
 		<StatusBar translucent barStyle="dark-content" />
 	</View>
@@ -105,9 +105,7 @@ class IndexRegister extends React.Component{
 				<MyStatusBar />
 				<Loader loading={loading} />
 				
-				<LinearGradient
-		          colors={['#f7b228', '#f7a428', '#ff9d00']}
-		          style={{ flex: 1 }}>
+				<ImageBackground source={require('../../../assets/backgroundGradient.jpeg')} style={styles.backgroundImage}>
 					{ errors.global && 
 						<Modal 
 							loading={this.state.visible} 
@@ -125,13 +123,12 @@ class IndexRegister extends React.Component{
 						    />
 					    </View>
 					    <View style={{padding: 10}}>
-						    <View
+						    <LinearGradient
+						    	colors={['#FFF', '#fffefc', '#e6e3df']}
 						    	style={{
-						    		borderWidth: 0.5,
 						    		flex: 1,
 						    		margin: 10,
 						    		borderRadius: 5,
-						    		borderColor: '#656769',
 						    		backgroundColor: '#ededed',
 						    		position: 'absolute',
 						    		bottom: this.state.keyboardOffset,
@@ -170,9 +167,9 @@ class IndexRegister extends React.Component{
 								>
 									<Text style={{fontSize: 12, color: '#1361d4', fontFamily: 'Roboto-Regular'}}>Gunakan akun giro</Text>
 								</TouchableOpacity>
-							</View>
+							</LinearGradient>
 						</View>
-		        </LinearGradient>
+		        </ImageBackground>
 			</React.Fragment>
 		);
 	}

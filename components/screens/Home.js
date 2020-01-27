@@ -11,7 +11,6 @@ import PinView from 'react-native-pin-view';
 import md5 from "react-native-md5";
 import Constants from 'expo-constants';
 import { setLoggedIn } from "../../actions/auth";
-import { LinearGradient } from 'expo-linear-gradient';
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -156,9 +155,7 @@ class Home extends React.Component {
 		return (
 			<View style={styles.container}>
 				<MyStatusBar />
-				<LinearGradient
-		          colors={['#f7b228', '#f7a428', '#ff9d00']}
-		          style={{ flex: 1 }}>
+				<ImageBackground source={require('../../assets/backgroundGradient.jpeg')} style={styles.backgroundImage}>
 						<Loader loading={loading} />
 						{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
 						<PinView
@@ -182,7 +179,7 @@ class Home extends React.Component {
 								routeName: 'Bantuan'
 							})}
 						>Bantuan</Text>
-			   	</LinearGradient>
+			   	</ImageBackground>
 		   	</View>
 		);
 	}
@@ -219,7 +216,7 @@ const styles = StyleSheet.create({
 	},
 	StatusBar: {
         height: Constants.statusBarHeight,
-        backgroundColor: '#f7b228'
+        backgroundColor: '#ed5007'
     },
     container: {
     	flex: 1

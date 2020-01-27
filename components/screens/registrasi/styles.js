@@ -65,4 +65,10 @@ export default StyleSheet.create({
 	  	height: Constants.statusBarHeight,
 	  	backgroundColor: '#FFF'
 	},
+	backgroundImage: {
+	    flex: 1,
+	    width: null,
+    	height: null,
+	    justifyContent : 'center',
+	}
 })
