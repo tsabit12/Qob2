@@ -1,16 +1,23 @@
 import React from "react";
-import { View, StatusBar } from "react-native";
-import { Input, Text, Button, ButtonGroup } from '@ui-kitten/components';
+import { View, StatusBar, Keyboard, Image, Dimensions, TextInput, TouchableOpacity } from "react-native";
+import {Text, Button, ButtonGroup } from '@ui-kitten/components';
 import styles from "./styles";
 import { SafeAreaView } from 'react-navigation';
 import Loader from "../../Loader";
 import { connect } from "react-redux";
 import { searchKtp } from "../../../actions/register";
 import Modal from "../../Modal";
+import { LinearGradient } from 'expo-linear-gradient';
+import Constants from 'expo-constants';
+
+const device = Dimensions.get('window').width;
 
 const MyStatusBar = () => (
-	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="light-content" />
+	<View style={{
+		height: Constants.statusBarHeight,
+	  	backgroundColor: '#f7b228'
+	}}>
+		<StatusBar translucent barStyle="dark-content" />
 	</View>
 );
 
@@ -28,8 +35,29 @@ class IndexRegister extends React.Component{
 		errors: {},
 		loading: false,
 		checked: false,
-		visible: false
+		visible: false,
+		keyboardOpen: false,
+		keyboardOffset: 0
 	}
+
+	UNSAFE_componentWillMount () {
+	    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+	    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+	}
+
+	componentWillUnmount () {
+	    this.keyboardDidShowListener.remove();
+	    this.keyboardDidHideListener.remove();
+	}
+
+	keyboardDidShow = (event) => this.setState({ 
+		keyboardOpen: true, 
+		errors:{...this.state.errors, nik: undefined },
+		keyboardOffset: event.endCoordinates.height 
+	})
+
+	keyboardDidHide = () => this.setState({ keyboardOpen: false, keyboardOffset: 0 })
+
 
 	onChange = (e) => this.setState({ nik: e })
 
@@ -71,49 +99,81 @@ class IndexRegister extends React.Component{
 
 	render(){
 		// console.log(this.props.detail);
-		const { nik, success, errors, loading } = this.state;
+		const { nik, success, errors, loading, keyboardOpen } = this.state;
 		return(
-			<View style={{flex: 1}}>
+			<React.Fragment>
 				<MyStatusBar />
 				<Loader loading={loading} />
-				{ errors.global && 
-					<Modal 
-						loading={this.state.visible} 
-						text={errors.global} 
-						handleClose={() => this.setState({ visible: false })} 
-					/>}
-			    <View style={styles.centerForm}>
-				    <Input
-						placeholder='Masukan nomor KTP'
-						value={nik}
-						onChangeText={this.onChange}
-						keyboardType='numeric'
-						status={errors.nik && 'danger' }
-					/>
-					{ errors.nik && <Text style={{color: 'red'}}>{errors.nik}</Text>}
-					<Button 
-						size='medium'
-						status='info' 
-						style={styles.button}
-						disabled={success}
-						onPress={this.onSearchKtp}
-					>Cari</Button>
-					<View style={{flexDirection: 'row', top: 8}}>
-						<Text>Atau gunakan akun giro </Text>
-						<Text 
-				        	style={{color: 'blue'}}
-				        	onPress={() => {
-				        		this.props.navigation.navigate({
-					        		routeName: 'RegistrasiRek'
-					        	});
-					        	this.setState({ errors: {}})
-				        	}}
-				        >
-				        	disini
-				        </Text>
-			        </View>
-				</View>
-			</View>
+				
+				<LinearGradient
+		          colors={['#f7b228', '#f7a428', '#ff9d00']}
+		          style={{ flex: 1 }}>
+					{ errors.global && 
+						<Modal 
+							loading={this.state.visible} 
+							text={errors.global} 
+							handleClose={() => this.setState({ visible: false })} 
+						/> }
+						<View style={{flex: 1, alignItems: 'center', marginTop: 60}}>
+						    <Image 
+						    	source={require('../../../assets/q9/10.png')}
+						    	style={{
+								    width: device * 0.7,
+								    height: device * 0.7 * 1.2,
+								    resizeMode: 'stretch'
+						    	}}
+						    />
+					    </View>
+					    <View style={{padding: 10}}>
+						    <View
+						    	style={{
+						    		borderWidth: 0.5,
+						    		flex: 1,
+						    		margin: 10,
+						    		borderRadius: 5,
+						    		borderColor: '#656769',
+						    		backgroundColor: '#ededed',
+						    		position: 'absolute',
+						    		bottom: this.state.keyboardOffset,
+						    		width: '100%',
+						    		padding: 10
+						    	}}
+						    >
+								<TextInput 
+									name='nik'
+									id='nik'
+									value={nik}
+									style={{
+										borderWidth: 0.6, 
+										borderColor: errors.nik ? '#ff3b0f' : '#ffa600', 
+										height: 40,
+										fontSize: 15,
+										fontFamily: 'open-sans-reg',
+										color: 'black',
+										borderRadius: 4,
+										padding: 7
+									}}
+									onChangeText={this.onChange}
+									keyboardType='phone-pad'
+									placeholder='Masukkan nomor ktp anda'
+									placeholderTextColor='#ffa600'
+								/>
+								<Button style={styles.button} status='warning' onPress={this.onSearchKtp}>Selanjutnya</Button>
+								<TouchableOpacity
+									onPress={() => {
+										this.props.navigation.navigate({
+							        		routeName: 'RegistrasiRek'
+							        	});
+							        	this.setState({ errors: {}});
+									}}
+									activeOpacity={0.7}
+								>
+									<Text style={{fontSize: 12, color: '#1361d4', fontFamily: 'Roboto-Regular'}}>Gunakan akun giro</Text>
+								</TouchableOpacity>
+							</View>
+						</View>
+		        </LinearGradient>
+			</React.Fragment>
 		);
 	}
 }

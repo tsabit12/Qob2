@@ -20,12 +20,12 @@ import { curdate } from "../utils/helper";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="light-content" />
+		<StatusBar translucent barStyle="dark-content" />
 	</View>
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back' fill='#FFF' />
+  <Icon {...style} name='arrow-back' fill='black' />
 );
 
 const MessageSucces = ({ message, visible, onPress, backHome }) => (
@@ -324,9 +324,8 @@ class PemulihanAkun extends React.Component{
 					    leftControl={this.BackAction()}
 					    title={this.props.navigation.state.params.titlePemulihan}
 					    alignment='start'
-					    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
-					    elevation={5}
-					    style={{backgroundColor: 'rgb(4, 147, 214)'}}
+					    titleStyle={{fontFamily: 'open-sans-bold', color: 'black'}}
+					    style={{backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#e6e6e6'}}
 					/>
 					<Loader loading={loading} />
 					{ success.statusVer && <MessageSucces 
@@ -452,7 +451,7 @@ const styles = StyleSheet.create({
 	},
 	StatusBar: {
 	  	height: Constants.statusBarHeight,
-	  	backgroundColor: 'rgb(4, 147, 214)'
+	  	backgroundColor: '#FFF'
 	},
 	form: {
 		margin: 7,

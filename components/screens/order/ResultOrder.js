@@ -39,7 +39,7 @@ class ResultOrder extends React.Component{
 		const { dataLogin } = this.props;
 		const { params } = this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-		const codOrNot = deskripsiOrder.checked ? '0' : '1';
+		const codOrNot = deskripsiOrder.checked ? '1' : '0';
 		
 		let param1 = `${curdateTime()}|01|${dataLogin.userid}|-`;
 		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
@@ -146,7 +146,7 @@ class ResultOrder extends React.Component{
 								<View style={styles.viewResult}>
 									<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
 									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 43 }}>: 
-										{ params.deskripsiOrder.checked ? ' Non Cod' : ' Cod' }
+										{ params.deskripsiOrder.checked ? ' Cod' : ' Non Cod' }
 									</Text>
 								</View>
 								<View style={styles.viewResult}>
@@ -160,7 +160,7 @@ class ResultOrder extends React.Component{
 							</View>
 							<Button status='warning' style={{marginTop: 10}} onPress={this.onSubmit}>Simpan</Button>
 						</View> : <React.Fragment>
-							<View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+							<View style={{justifyContent: 'center', alignItems: 'center', flex: 1, marginTop: 30}}>
 								<Text style={{fontFamily: 'open-sans-reg', fontSize: 20, textAlign: 'center' }}>SUKSES!</Text>
 								<Button status='warning' onPress={() => this.backHome()}>Kembali ke home</Button>
 							</View>

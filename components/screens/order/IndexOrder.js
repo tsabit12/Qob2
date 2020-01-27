@@ -230,7 +230,7 @@ class IndexOrder extends React.Component{
 						    />
 						</View>
 						<CheckBox
-					      text='Non cod'
+					      text='Cod'
 					      style={{ marginLeft: 5, marginTop: -5, paddingBottom: 5 }}
 					      textStyle={{ color: 'red'}}
 					      status='warning'
