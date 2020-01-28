@@ -1,8 +1,9 @@
-import { SUCCESS_ORDER, GET_ORDER } from "../types";
+import { SUCCESS_ORDER, GET_ORDER, GET_ADD_POSTING } from "../types";
 
 const initialState = {
 	dataOrder: {},
-	searchParam: null
+	searchParam: null,
+	listPickup: []
 }
 
 export default function order(state=initialState, action={}){
@@ -15,6 +16,11 @@ export default function order(state=initialState, action={}){
 					[action.tanggal] : action.response
 				},
 				searchParam: action.tanggal
+			}
+		case GET_ADD_POSTING:
+			return{
+				...state,
+				listPickup: action.result
 			}
 		default: return state;
 	}

@@ -50,7 +50,7 @@ class IndexOrder extends React.Component{
 			tinggi: '0',
 			nilaiVal: '',
 			nilai: '',
-			checked: true
+			checked: false
 		},
 		errors: {}
 	}

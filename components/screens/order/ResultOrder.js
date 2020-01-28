@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Text, StatusBar } from "react-native";
 import styles from "./styles";
-import { Button, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { Button, Icon, TopNavigation, TopNavigationAction, CheckBox } from '@ui-kitten/components';
 import Loader from "../../Loader";
 import Modal from "../../Modal";
 import { curdateTime } from "../../utils/helper";
 import api from "../../api";
+import apiWs from "../../apiWs";
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
 
@@ -32,7 +33,8 @@ class ResultOrder extends React.Component{
 		payload: {},
 		errors: {},
 		idOrder: '',
-		visible: true
+		visible: true,
+		modal: false
 	}
 
 	async componentDidMount(){
@@ -64,23 +66,90 @@ class ResultOrder extends React.Component{
 	}
 
 	onSubmit = () => {
-		this.setState({ loading: true, success: false });
-			api.qob.booking(this.state.payload)
+		const { modal } = this.state;
+		if (modal) {
+			this.setState({ loading: true, success: false });
+				api.qob.booking(this.state.payload)
+					.then(res => {
+						console.log(res);
+						const { response_data1 } = res;
+						let x = response_data1.split('|');
+						// let idOrder = x
+						this.setState({ loading: false, success: true, idOrder: x[3] });
+					})
+					.catch(err => {
+						// console.log(err);
+						if (Object.keys(err).length === 10) {
+							this.setState({ loading: false, errors: {global: err.desk_mess }});	
+						}else{
+							this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
+						}
+					})
+		}else{
+			this.setState({ loading: true, success: false });
+			const { params } = this.props.navigation.state;
+			const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
+			const { dataLogin } = this.props;
+			//console.log(selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima);
+			// console.log(deskripsiPenerima);
+			const payloadWsdl = {
+				userid: dataLogin.userid,
+				fee: selectedTarif.beadasar,
+				feeTax: selectedTarif.ppn,
+				insurance: selectedTarif.htnb,
+				insuranceTax: selectedTarif.ppnhtnb,
+				itemValue: deskripsiOrder.nilaiVal,
+				contentDesc: deskripsiOrder.jenis,
+				berat: deskripsiOrder.berat,
+				serviceId: selectedTarif.id,
+				senderName: pengirimnya.nama,
+				senderAddress: pengirimnya.alamat,
+				senderKec: pengirimnya.kec,
+				senderCity: pengirimnya.kota,
+				senderProv: '-',
+				senderPos: pengirimnya.kodepos,
+				senderMail: pengirimnya.email,
+				senderPhone: pengirimnya.nohp,
+				receiverName: deskripsiPenerima.nama,
+				receiverAddress: deskripsiPenerima.alamat2,
+				receiverKec: deskripsiPenerima.kec,
+				receiverCity: deskripsiPenerima.kota,
+				receiverProv: '-',
+				receiverPos: deskripsiPenerima.kodepos,
+				receiverMail: deskripsiPenerima.email,
+				receiverPhone: deskripsiPenerima.nohp
+			};
+			apiWs.qob.booking(payloadWsdl)
 				.then(res => {
-					console.log(res);
-					const { response_data1 } = res;
-					let x = response_data1.split('|');
-					// let idOrder = x
-					this.setState({ loading: false, success: true, idOrder: x[3] });
+					const { idOrder } = res;
+					// const payloadPos = Object.assign(payloadWsdl, {
+					// 	length: deskripsiOrder.panjang, 
+					// 	width: deskripsiOrder.lebar, 
+					// 	height: deskripsiOrder.tinggi,
+					// 	cod: deskripsiOrder.checked === false ? '0' : '1',
+					// 	idOrder: idOrder,
+					// 	senderKel: pengirimnya.kel
+					// });
+					this.setState({ loading: false, success: true, idOrder: idOrder });
+					// apiWs.qob.fastPos(payloadPos)
+					// 	.then(res => {
+					// 		console.log(res);
+					
+					// 	}).catch(err => {
+					// 		console.log(err);
+					// 		this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti 500 (on faster)'}});
+					// 	})
 				})
 				.catch(err => {
-					// console.log(err);
-					if (Object.keys(err).length === 10) {
-						this.setState({ loading: false, errors: {global: err.desk_mess }});	
-					}else{
-						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
-					}
-				})
+					console.log(err);
+					console.log(err.response);
+					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
+				});
+		}
+	}
+
+	onCheckedChange = () => {
+		this.setState({ modal: !this.state.modal });
 	}
 
 	backHome = () => {
@@ -119,48 +188,56 @@ class ResultOrder extends React.Component{
 				<View>
 					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> } 
 					<Loader loading={this.state.loading} />
-					{ !this.state.success ? <View style={{margin: 15}}>
-							<View style={styles.labelTarif}>
-								<Text style={{
-									fontFamily: 'open-sans-reg', 
-									fontWeight: '700',
-									textAlign: 'center',
-									fontSize: 16,
-									paddingBottom: 12,
-									paddingTop: 12
-								}}>{params.selectedTarif.description}</Text>
+					{ !this.state.success ? 
+						<React.Fragment>
+							<View style={{margin: 15, borderWidth: 1, borderColor: '#cbccc4'}}>
+								<View style={styles.labelTarif}>
+									<Text style={{
+										fontFamily: 'open-sans-reg', 
+										fontWeight: '700',
+										textAlign: 'center',
+										fontSize: 16,
+										paddingBottom: 12,
+										paddingTop: 12
+									}}>{params.selectedTarif.description}</Text>
+								</View>
+								<View style={{paddingTop: 10, padding: 5}}>
+									<View style={styles.viewResult}>
+										<Text style={styles.labelInformasi}>Pengirim</Text>
+										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 73 }}>: {capitalize(params.pengirimnya.nama)}</Text>
+									</View>
+									<View style={styles.viewResult}>
+										<Text style={styles.labelInformasi}>Penerima</Text>
+										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 68 }}>: {capitalize(params.deskripsiPenerima.nama)}</Text>
+									</View>
+									<View style={styles.viewResult}>
+										<Text style={styles.labelInformasi}>Isi Kiriman</Text>
+										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 62 }}>: {params.deskripsiOrder.jenis}</Text>
+									</View>
+									<View style={styles.viewResult}>
+										<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
+										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 43 }}>: 
+											{ params.deskripsiOrder.checked ? ' Cod' : ' Non Cod' }
+										</Text>
+									</View>
+									<View style={styles.viewResult}>
+										<Text style={styles.labelInformasi}>Nilai Barang</Text>
+										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 50 }}>: Rp {this.numberWithCommas(params.deskripsiOrder.nilai)}</Text>
+									</View>
+									<View style={styles.viewResult}>
+										<Text style={styles.labelInformasi}>Estimasi Tarif</Text>
+										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 40 }}>: Rp {this.numberWithCommas(params.selectedTarif.tarif)}</Text>
+									</View>
+									<CheckBox
+								      text='Order sebagai member'
+								      checked={this.state.modal}
+								      onChange={this.onCheckedChange}
+								    />
+								</View>
 							</View>
-							<View style={{paddingTop: 10}}>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Pengirim</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 73 }}>: {capitalize(params.pengirimnya.nama)}</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Penerima</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 68 }}>: {capitalize(params.deskripsiPenerima.nama)}</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Isi Kiriman</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 62 }}>: {params.deskripsiOrder.jenis}</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 43 }}>: 
-										{ params.deskripsiOrder.checked ? ' Cod' : ' Non Cod' }
-									</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Nilai Barang</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 50 }}>: Rp {this.numberWithCommas(params.deskripsiOrder.nilai)}</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Estimasi Tarif</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 40 }}>: Rp {this.numberWithCommas(params.selectedTarif.tarif)}</Text>
-								</View>
-							</View>
-							<Button status='warning' style={{marginTop: 10}} onPress={this.onSubmit}>Simpan</Button>
-						</View> : <React.Fragment>
-							<View style={{justifyContent: 'center', alignItems: 'center', flex: 1, marginTop: 30}}>
+							<Button status='warning' style={{margin: 14, marginTop: -10}} onPress={this.onSubmit}>Simpan</Button>
+						</React.Fragment> : <React.Fragment>
+							<View style={{ alignItems: 'center', flex: 1, marginTop: 70 }}>
 								<Text style={{fontFamily: 'open-sans-reg', fontSize: 20, textAlign: 'center' }}>SUKSES!</Text>
 								<Button status='warning' onPress={() => this.backHome()}>Kembali ke home</Button>
 							</View>
@@ -174,7 +251,7 @@ class ResultOrder extends React.Component{
 						          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
 						        </Dialog.Container>
 							</View>
-						</React.Fragment>}
+						</React.Fragment> }
 					</View>
 			</View>
 		);

@@ -61,8 +61,6 @@ export default StyleSheet.create({
   labelTarif: {
     borderBottomWidth: 1, 
     borderBottomColor: '#cbccc4', 
-    borderTopWidth: 1,
-    borderTopColor: '#cbccc4', 
   },
   StatusBar: {
       height: Constants.statusBarHeight,

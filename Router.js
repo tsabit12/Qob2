@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Button, TouchableOpacity, Image, Platform, AsyncStorage } from 'react-native'
+import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-native'
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
@@ -15,7 +15,6 @@ import IndexOrder from "./components/screens/order/IndexOrder";
 import Penerima from "./components/screens/order/Penerima";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
-import LacakKiriman from "./components/screens/LacakKiriman";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import LacakScreen from "./components/screens/search/tab/LacakScreen";
 import RekeningScreen from "./components/screens/search/tab/RekeningScreen";
@@ -33,6 +32,7 @@ import PemulihanAkun from "./components/screens/PemulihanAkun";
 import ListOrder from "./components/screens/ListOrder";
 import SearchOrderScreen from "./components/screens/SearchOrderScreen";
 import BantuanScreen from "./components/screens/BantuanScreen";
+import RequestPickupScreen from "./components/screens/RequestPickupScreen";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -129,6 +129,12 @@ const AppNavigator = createStackNavigator({
           header: null
         }
       },
+      RequestPickup: {
+        screen: RequestPickupScreen,
+        navigationOptions: {
+          header: null
+        }
+      }
   	},{
   	initialRouteName: 'IndexSearch'
 });
@@ -177,10 +183,10 @@ const AppContainer = createAppContainer(AppNavigator);
 
 const LoginContainer = createAppContainer(LoginNavigator);
 
-const Router = ({ isLoggedIn }) => {
+const Router = ({ isLoggedIn }) => {  
   return(
     <React.Fragment>
-        { isLoggedIn ? <AppContainer /> : <LoginContainer />} 
+        { isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
     </React.Fragment>
   )
 }

@@ -1,11 +1,16 @@
 import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST } from "../types";
-
+//5870
+//250
 const initialState = {
 	logged: false,
 	user: {},
+	// dataLogin: {
+	// 	userid: '440000131',
+	// 	norek: '010089945'
+	// },
 	dataLogin: {
-		userid: null,
-		norek: null
+		userid: '',
+		norek: ''
 	},
 	request: []
 }

@@ -110,6 +110,18 @@ const Menu = ({ navigation, dataLogin, getOrder, loading, onShowModal }) => (
                     </View>
                 </TouchableOpacity>
             </View>
+            <View style={styles.content}>
+                <TouchableOpacity 
+                    underlayColor="#D8D8D8"
+                    onPress={() => navigation.navigate({
+                        routeName: 'RequestPickup'
+                    })}>
+                        <View style={styles.icon}>
+                            <Image source={iconPembayaran} style={styles.img}/>
+                            <Text style={styles.textIcon}>Request{'\n'}Pickup</Text>
+                        </View>
+                </TouchableOpacity>
+            </View>
         </View>
     </View>
 );
