@@ -9,11 +9,17 @@ let configFast = {
   	}
 }
 
+const url2 = 'https://magenpos.posindonesia.co.id:5870/a767e8eec95442bda80c4e35e0660dbb'
+
 export default{
 	qob: {
 		booking: (payload) => axios.post(`${url}/qob`, {
-			userid: payload.userid,
+			userId: payload.userid,
 			fee: payload.fee,
+			length: payload.length,
+			width: payload.width,
+			height: payload.height,
+			cod: payload.cod,
 			feeTax: payload.feeTax,
 			insurance: payload.insurance,
 			insuranceTax: payload.insuranceTax,
@@ -39,8 +45,19 @@ export default{
 			receiverPhone: payload.receiverPhone
 		}).then(res => res.data),
 		addPickup: (payload) => axios.post('https://fasterv2.fastkurir.com/api/customer/bidding_v2', {
-			payload
-		}, configFast).then(res => res)
+			shipper: payload.shipper,
+			item: payload.item
+		}, configFast).then(res => {
+			if (res.data.rc === 200) {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
+		}),
+		updateStatus: (arrayExtId, pickupNumber) => axios.post(`${url}/qob/updatePickup`, {
+			externalId: arrayExtId,
+			pickup_number: pickupNumber
+		}).then(res => res.data)
 	},
 	fetch: {
 		getAddPosting: (userid) => axios.post(`${url}/qob/getAddPosting`, {

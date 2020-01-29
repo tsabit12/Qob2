@@ -10,6 +10,7 @@ import { registerKtp, saveRegister } from "../../../actions/register";
 import Modal from "../../Modal";
 import IsMemberForm from "./IsMemberForm";
 import NotMemberForm from "./NotMemberForm";
+import api from "../../api";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -66,7 +67,7 @@ class RegistrasiKtp extends React.Component{
 			success: false,
 			loading: false
 		},
-		isMember: true,
+		isMember: false,
 		bug: {},
 		loading: false,
 		modal: true,
@@ -210,7 +211,10 @@ class RegistrasiKtp extends React.Component{
 					});
 					//save to redux store
 					this.props.saveRegister(toSave);
-				}).catch(err => alert("failed saving data to storage"));
+				}).catch(err =>{
+					alert("failed saving data to storage");
+					this.setState({ loading: false });
+				});
 
 		})
 		.catch(err => {
@@ -225,10 +229,66 @@ class RegistrasiKtp extends React.Component{
 		})
 	}
 
+	onSubmitNonMember = (e) => {
+		const { ktp } 	= this.props.dataktp;
+		const payload = {
+			param1: `-|-|${ktp.fullname}|${e.namaPanggilan}|${e.noHp}|${e.email}|-|${e.imei}`,
+			param2: '',
+			param3: `||${ktp.alamat}|${ktp.desa}|${ktp.kec}|${ktp.city}|${ktp.prov}|${e.kodePos}`,
+			param4: `${ktp.nik}`
+		};
+		this.setState({ loading: true });
+		api.registrasi.registrasiNonMember(payload)
+			.then(res => {
+				const { response_data1 } = res;
+				const x = response_data1.split('|');
+				const toSave = {
+					userid: x[0],
+					username: x[1],
+					pinMd5: x[2],
+					nama: x[3],
+					nohp: x[4],
+					email: x[5]
+				};
+				this.saveToStorage(toSave)
+					.then(() => {
+						this.setState({ 
+							loading: false, 
+							visible: false, 
+							saved: 200,
+							responseText: res.desk_mess,
+							resError: {}
+						});
+						this.props.saveRegister(toSave);
+					}).catch(err => {
+						alert(`Gagal menyimpan cache, silahkan ke menu pulihkan akun dengan useriid anda adalah ${toSave.userid}`);
+						this.setState({ loading: false });
+					})
+			}).catch(err => {
+				if (err.desk_mess) {
+					this.setState({ 
+						loading: false, 
+						resError: {
+							global: `${err.desk_mess}`
+						}, 
+						visible: true 
+					});
+				}else{
+					this.setState({ 
+						loading: false, 
+						resError: {
+							global: `Terdapat kesalahan saat registrasi. Harap cobalagi nanti`
+						}, 
+						visible: true 
+					});
+				}
+			})
+	}
+
 	render(){
 		const { ktp } = this.props.dataktp;
 		const { validateMother, bug, loading, saved, resError } = this.state;
-		console.log(ktp);
+
 		return(
 			<View style={{flex: 1}}>
 				<Loader loading={loading} />

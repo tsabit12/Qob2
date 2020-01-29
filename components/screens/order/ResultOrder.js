@@ -55,7 +55,7 @@ class ResultOrder extends React.Component{
 			param4: param4,
 			param5: param5
 		};
-		// console.log(payload);
+		console.log(deskripsiOrder);
 		this.setState({ payload });
 	}
 
@@ -90,8 +90,7 @@ class ResultOrder extends React.Component{
 			const { params } = this.props.navigation.state;
 			const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
 			const { dataLogin } = this.props;
-			//console.log(selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima);
-			// console.log(deskripsiPenerima);
+
 			const payloadWsdl = {
 				userid: dataLogin.userid,
 				fee: selectedTarif.beadasar,
@@ -107,6 +106,10 @@ class ResultOrder extends React.Component{
 				senderKec: pengirimnya.kec,
 				senderCity: pengirimnya.kota,
 				senderProv: '-',
+				length: deskripsiOrder.panjang,
+				width: deskripsiOrder.lebar,
+				height: deskripsiOrder.tinggi,
+				cod: deskripsiOrder.checked ? '1' : '0',
 				senderPos: pengirimnya.kodepos,
 				senderMail: pengirimnya.email,
 				senderPhone: pengirimnya.nohp,
@@ -121,24 +124,9 @@ class ResultOrder extends React.Component{
 			};
 			apiWs.qob.booking(payloadWsdl)
 				.then(res => {
+					console.log(res);
 					const { idOrder } = res;
-					// const payloadPos = Object.assign(payloadWsdl, {
-					// 	length: deskripsiOrder.panjang, 
-					// 	width: deskripsiOrder.lebar, 
-					// 	height: deskripsiOrder.tinggi,
-					// 	cod: deskripsiOrder.checked === false ? '0' : '1',
-					// 	idOrder: idOrder,
-					// 	senderKel: pengirimnya.kel
-					// });
 					this.setState({ loading: false, success: true, idOrder: idOrder });
-					// apiWs.qob.fastPos(payloadPos)
-					// 	.then(res => {
-					// 		console.log(res);
-					
-					// 	}).catch(err => {
-					// 		console.log(err);
-					// 		this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti 500 (on faster)'}});
-					// 	})
 				})
 				.catch(err => {
 					console.log(err);
@@ -237,7 +225,7 @@ class ResultOrder extends React.Component{
 							</View>
 							<Button status='warning' style={{margin: 14, marginTop: -10}} onPress={this.onSubmit}>Simpan</Button>
 						</React.Fragment> : <React.Fragment>
-							<View style={{ alignItems: 'center', flex: 1, marginTop: 70 }}>
+							<View style={{ alignItems: 'center'}}>
 								<Text style={{fontFamily: 'open-sans-reg', fontSize: 20, textAlign: 'center' }}>SUKSES!</Text>
 								<Button status='warning' onPress={() => this.backHome()}>Kembali ke home</Button>
 							</View>

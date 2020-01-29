@@ -93,6 +93,10 @@ class RequestPickupScreen extends React.Component{
 			});
 	}
 
+	// UNSAFE_componentWillReceiveProps(nextProps){
+	// 	console.log(nextProps);
+	// }
+
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
 	)
@@ -124,6 +128,8 @@ class RequestPickupScreen extends React.Component{
 		for (var k in checked) keys.push(k);
 		//filter list by checked
 		const filter = listPickup.filter(x => keys.includes(x.externalId));
+		const unFilterState = listPickup.filter(x => !keys.includes(x.externalId));
+
 		var payloadItem = [];
 		filter.forEach(x => {
 			payloadItem.push({
@@ -134,9 +140,9 @@ class RequestPickupScreen extends React.Component{
 	            uomload: 5,
 	            weight: x.weight,
 	            uomvolumetric: 2,
-	            length: x.lenght,
-	            width: x.width,
-	            height: x.height,
+	            length: x.panjang,
+	            width: x.lebar,
+	            height: x.tinggi,
 	            codvalue: x.cod,
 	            fee: x.fee,
 	            feetax: x.feeTax,
@@ -159,12 +165,28 @@ class RequestPickupScreen extends React.Component{
 			},
 			item: payloadItem
 		} 
-		this.props.addPickup(allPayload)
-			.then(() => this.setState({ loading: false }))		
+		this.props.addPickup(allPayload, unFilterState)
+			.then(() => {
+				const { pickupNumber } = this.props;
+				apiWs.qob.updateStatus(keys, pickupNumber)
+					.then(res => {
+						alert(`Pickup sukses dengan nomor pickup : ${pickupNumber} `);
+						this.setState({ loading: false });
+					})
+					.catch(err => {
+						console.log(err.response);
+						if (err.response.errors) {
+							this.setState({ loading: false });
+							alert(err.response.errors.global);
+						}else{
+							alert("Terdapat kesalahan");
+							this.setState({ loading: false });
+						}
+					})
+			})		
 			.catch(err => {
-				console.log(err);
 				console.log(err.response);
-				alert("WHoooooppps");	
+				alert("WHoooooppps terdapat kesalahan");	
 				this.setState({ loading: false });
 			})
 	}
@@ -209,7 +231,8 @@ class RequestPickupScreen extends React.Component{
 function mapStateToProps(state) {
 	return{
 		dataLogin: state.auth.dataLogin,
-		listPickup: state.order.listPickup
+		listPickup: state.order.listPickup,
+		pickupNumber: state.order.pickupNumber
 	}
 }
 

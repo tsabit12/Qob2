@@ -114,27 +114,32 @@ class Home extends React.Component {
 		api.auth.login(payload)
 			.then(res => {
 				const { response_data4, response_data1, response_data5 } = res;
-				const x 	= response_data4.split('|');
-				const x2 	= response_data1.split('|'); 
-				// const x3 	= response_data5.split('|'); 
-				const payload2 = {
-					norek: x2[0],
-					nama: x2[1],
-					namaOl: x[0],
-					alamatOl: x[1],
-					kota: x[2],
-					kodepos: x[3],
-					saldo: response_data5
-				};
+				//detect non member
+				if (response_data4.length === 0) {
+					this.props.setLoggedIn(userid, '1');
+				}else{
+					const x 	= response_data4.split('|');
+					const x2 	= response_data1.split('|'); 
+					// const x3 	= response_data5.split('|'); 
+					const payload2 = {
+						norek: x2[0],
+						nama: x2[1],
+						namaOl: x[0],
+						alamatOl: x[1],
+						kota: x[2],
+						kodepos: x[3],
+						saldo: response_data5
+					};
 
-				this.saveToStorage(payload2)
-					.then(() => {
-						this.setState({ loading: false });
-						this.props.setLoggedIn(userid, x2[0]);
-					}).catch(err => {
-						this.setState({ loading: false });	
-						alert("Failed save data to storage");
-					});
+					this.saveToStorage(payload2)
+						.then(() => {
+							this.setState({ loading: false });
+							this.props.setLoggedIn(userid, x2[0]);
+						}).catch(err => {
+							this.setState({ loading: false });	
+							alert("Failed save data to storage");
+						});
+				}
 			})
 			.catch(err => {
 				clear();

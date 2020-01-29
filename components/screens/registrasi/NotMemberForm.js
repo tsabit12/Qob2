@@ -2,17 +2,21 @@ import React from "react";
 import { View, Text } from "react-native";
 import { Input, Button } from '@ui-kitten/components';
 import styles from "./styles";
+import Constants from 'expo-constants';
 
 class NotMemberForm extends React.Component{
 	namaPanggilanRef = React.createRef();
 	noHpRef = React.createRef();
 	emailRef = React.createRef();
+	kodePosRef = React.createRef();
 
 	state = {
 		data: {
 			namaPanggilan: '',
 			noHp: '',
-			email: ''
+			email: '',
+			imei: Constants.deviceId,
+			kodePos: ''
 		},
 		errors: {}
 	}
@@ -35,6 +39,7 @@ class NotMemberForm extends React.Component{
 		if (!data.noHp) errors.noHp = "Nomor handphone tidak boleh kosong";
 		if (!data.email) errors.email = "Email tidak boleh kosong";
 		if (!data.namaPanggilan) errors.namaPanggilan = "Nama panggilan tidak boleh kosong";
+		if (!data.kodePos) errors.kodePos = "Kode pos tidak boleh kosong";
 		return errors;
 	}
 
@@ -43,7 +48,7 @@ class NotMemberForm extends React.Component{
 	render(){
 		const { data, errors } = this.state;
 		return(
-			<View>
+			<View style={{borderWidth: 0.6, padding: 5, borderRadius: 5, borderColor: '#d5d7db'}}>
 				<Input
 			    	ref={this.namaPanggilanRef}
 			    	name='namaPanggilan'
@@ -78,7 +83,20 @@ class NotMemberForm extends React.Component{
 				  placeholder='example@example.com'
 				  onChangeText={(e) => this.onChangeText(e, this.emailRef)}
 				  status={errors.email && 'danger'}
+				  onSubmitEditing={() => this.kodePosRef.current.focus() }
 				  caption={errors.email && `${errors.email}`}
+				/>
+				<Input
+				  ref={this.kodePosRef}
+				  value={data.kodePos}
+				  name='kodePos'
+				  label='Kodepos'
+				  keyboardType='phone-pad'
+				  labelStyle={styles.label}
+				  placeholder='Masukan kodepos'
+				  onChangeText={(e) => this.onChangeText(e, this.kodePosRef)}
+				  status={errors.kodePos && 'danger'}
+				  caption={errors.kodePos && `${errors.kodePos}`}
 				/>
 				<Button 
 					style={styles.button}

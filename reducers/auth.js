@@ -5,8 +5,8 @@ const initialState = {
 	logged: false,
 	user: {},
 	// dataLogin: {
-	// 	userid: '440000131',
-	// 	norek: '010089945'
+	// 	userid: '540000032',
+	// 	norek: '-'
 	// },
 	dataLogin: {
 		userid: '',
