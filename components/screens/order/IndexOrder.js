@@ -180,6 +180,7 @@ class IndexOrder extends React.Component{
 						      label='Panjang (CM)'
 						      name='panjang'
 						      labelStyle={styles.label}
+						      onFocus={() => this.setState({ data: { ...this.state.data, panjang: ''}})}
 						      keyboardType='numeric'
 						      style={styles.inputHitung}
 						      value={data.panjang}

@@ -68,6 +68,13 @@ const ViewModalDialog = ({ handleClose, total, submitPikcup }) => (
     </View>
 );
 
+const EmptyOrErrorMessage = ({ message }) => (
+	<View style={{margin: 10, flex: 1}}>
+		<View style={{borderWidth: 0.3, height: 50, justifyContent: 'center', alignItems: 'center'}}>
+			<Text>{message}</Text>
+		</View>
+	</View>
+); 
 
 class RequestPickupScreen extends React.Component{
 	state = {
@@ -81,12 +88,13 @@ class RequestPickupScreen extends React.Component{
 		const { userid, norek } = this.props.dataLogin;
 		this.props.getAddPosting(userid)
 			.catch(err => {
-				if (err.response.errors) {
-					this.setState({ errors: err.response.errors })
+				console.log(err.response);
+				if (err.response.data.errors) {
+					this.setState({ errors: err.response.data.errors })
 				}else{
 					this.setState({ 
 						errors: { 
-							global: 'Terdapat kesalahan'
+							global: 'Terdapat kesalahan oke'
 						}
 					});
 				}
@@ -213,7 +221,7 @@ class RequestPickupScreen extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    // subtitleStyle={{color: '#FFF'}}
 				/>
-				{ errors.global ? <Text>{errors.global}</Text> :  
+				{ errors.global ? <EmptyOrErrorMessage message={errors.global} /> :  
 					<React.Fragment>
 						{ listPickup.length > 0 ? 
 							<RenderListData 

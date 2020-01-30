@@ -160,7 +160,7 @@ class Home extends React.Component {
 		return (
 			<View style={styles.container}>
 				<MyStatusBar />
-				<ImageBackground source={require('../../assets/backgroundGradient.jpeg')} style={styles.backgroundImage}>
+				<ImageBackground source={require('../../assets/HomeScreen.png')} style={styles.backgroundImage}>
 						<Loader loading={loading} />
 						{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
 						<PinView
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
 	},
 	StatusBar: {
         height: Constants.statusBarHeight,
-        backgroundColor: '#ed5007'
+        backgroundColor: '#fca903'
     },
     container: {
     	flex: 1

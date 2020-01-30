@@ -23,7 +23,7 @@ export default{
 			feeTax: payload.feeTax,
 			insurance: payload.insurance,
 			insuranceTax: payload.insuranceTax,
-			itemValue: payload.itemValue,
+			itemValue: payload.itemValue.replace(/\D/g, ''),
 			contentDesc: payload.contentDesc,
 			berat: payload.berat,
 			serviceCode: payload.serviceId,

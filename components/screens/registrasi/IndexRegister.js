@@ -15,7 +15,7 @@ const device = Dimensions.get('window').width;
 const MyStatusBar = () => (
 	<View style={{
 		height: Constants.statusBarHeight,
-	  	backgroundColor: '#ed5007'
+	  	backgroundColor: '#FFF'
 	}}>
 		<StatusBar translucent barStyle="dark-content" />
 	</View>
@@ -53,7 +53,7 @@ class IndexRegister extends React.Component{
 	keyboardDidShow = (event) => this.setState({ 
 		keyboardOpen: true, 
 		errors:{...this.state.errors, nik: undefined },
-		keyboardOffset: event.endCoordinates.height 
+		keyboardOffset: event.endCoordinates.height - 80
 	})
 
 	keyboardDidHide = () => this.setState({ keyboardOpen: false, keyboardOffset: 0 })
@@ -105,24 +105,14 @@ class IndexRegister extends React.Component{
 				<MyStatusBar />
 				<Loader loading={loading} />
 				
-				<ImageBackground source={require('../../../assets/backgroundGradient.jpeg')} style={styles.backgroundImage}>
+				<ImageBackground source={require('../../../assets/backgroundGradient.png')} style={styles.backgroundImage}>
 					{ errors.global && 
 						<Modal 
 							loading={this.state.visible} 
 							text={errors.global} 
 							handleClose={() => this.setState({ visible: false })} 
 						/> }
-						<View style={{flex: 1, alignItems: 'center', marginTop: 60}}>
-						    <Image 
-						    	source={require('../../../assets/q9/10.png')}
-						    	style={{
-								    width: device * 0.7,
-								    height: device * 0.7 * 1.2,
-								    resizeMode: 'stretch'
-						    	}}
-						    />
-					    </View>
-					    <View style={{padding: 10}}>
+					    <View style={{padding: 10, flex: 1}}>
 						    <LinearGradient
 						    	colors={['#FFF', '#fffefc', '#e6e3df']}
 						    	style={{
@@ -131,30 +121,39 @@ class IndexRegister extends React.Component{
 						    		borderRadius: 5,
 						    		backgroundColor: '#ededed',
 						    		position: 'absolute',
-						    		bottom: this.state.keyboardOffset,
+						    		bottom: 0,
 						    		width: '100%',
 						    		padding: 10
 						    	}}
 						    >
-								<TextInput 
-									name='nik'
-									id='nik'
-									value={nik}
-									style={{
-										borderWidth: 0.6, 
-										borderColor: errors.nik ? '#ff3b0f' : '#ffa600', 
-										height: 40,
-										fontSize: 15,
-										fontFamily: 'open-sans-reg',
-										color: 'black',
-										borderRadius: 4,
-										padding: 7
-									}}
-									onChangeText={this.onChange}
-									keyboardType='phone-pad'
-									placeholder='Masukkan nomor ktp anda'
-									placeholderTextColor='#ffa600'
-								/>
+						    	<View style={{marginBottom: this.state.keyboardOffset}}>
+							    	<Text style={{
+							    		paddingBottom: 10, 
+							    		fontSize: 16, 
+							    		fontFamily: 'Roboto-Regular', 
+							    		textAlign: 'center',
+							    		fontWeight: '700'
+							    	}}>TAMBAH AKUN</Text>
+									<TextInput 
+										name='nik'
+										id='nik'
+										value={nik}
+										style={{
+											borderWidth: 0.6, 
+											borderColor: errors.nik ? '#ff3b0f' : '#ffa600', 
+											height: 40,
+											fontSize: 15,
+											fontFamily: 'open-sans-reg',
+											color: 'black',
+											borderRadius: 4,
+											padding: 7
+										}}
+										onChangeText={this.onChange}
+										keyboardType='phone-pad'
+										placeholder='Masukkan nomor ktp anda'
+										placeholderTextColor='#ffa600'
+									/>
+								</View>
 								<Button style={styles.button} status='warning' onPress={this.onSearchKtp}>Selanjutnya</Button>
 								<TouchableOpacity
 									onPress={() => {
