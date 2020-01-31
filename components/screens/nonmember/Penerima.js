@@ -3,6 +3,7 @@ import { View, Text, StatusBar, KeyboardAvoidingView, ScrollView } from "react-n
 import styles from "./styles";
 import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import PenerimaForm from "./forms/PenerimaForm";
+import { connect } from "react-redux";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -17,22 +18,37 @@ const BackIcon = (style) => (
 class Penerima extends React.Component{
 	state = {}
 
-	componentDidMount(){
-		console.log(this.props.navigation.state.params);
-	}
+	// componentDidMount(){
+	// 	console.log(this.props.dataLogin);
+	// }
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
 	)
 
 	onSubmit = (deskripsiPenerima) => {
-		// this.props.navigation.navigate({
-		// 	// routeName: 'PilihTarif',
-		// 	params: {
-		// 		...this.props.navigation.state.params,
-		// 		deskripsiPenerima
-		// 	}
-		// })
+		const { dataLogin } = this.props;
+		const pengirimnya = {
+			nama: dataLogin.detail.nama,
+			alamat: dataLogin.detail.alamatOl,
+			kota: dataLogin.detail.kota,
+			kodepos: dataLogin.detail.kodepos,
+			nohp: dataLogin.detail.nohp,
+			alamatDet: '-',
+			kel: dataLogin.detail.kelurahan,
+			kec: dataLogin.detail.kecamatan,
+			email: dataLogin.detail.email,
+			provinsi: dataLogin.detail.provinsi
+		};
+		
+		this.props.navigation.navigate({
+			routeName: 'PilihTarif',
+			params: {
+				...this.props.navigation.state.params,
+				deskripsiPenerima,
+				pengirimnya
+			}
+		})
 	}
 
 	render(){
@@ -62,4 +78,10 @@ class Penerima extends React.Component{
 	}
 }
 
-export default Penerima;
+function mapStateToProps(state) {
+	return{
+		dataLogin: state.auth.dataLogin
+	}
+}
+
+export default connect(mapStateToProps, null)(Penerima);

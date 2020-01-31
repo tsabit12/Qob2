@@ -59,7 +59,6 @@ class IndexSearch extends React.Component{
 	}
 
 	async componentDidMount(){
-		console.log(this.props.dataLogin);
 		const value = await AsyncStorage.getItem('sessionLogin');
 		const toObj = JSON.parse(value);
 	    const nama  = toObj.nama.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -110,7 +109,6 @@ class IndexSearch extends React.Component{
 
 	renderRightControls = () => {
 		const { userid } = this.props.dataLogin;
-		console.log(userid);
 		if (userid.substring(0, 3) === '540') {
 			return(
 					<ProfileAction onPress={() => 

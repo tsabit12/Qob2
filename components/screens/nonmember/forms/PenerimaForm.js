@@ -12,8 +12,9 @@ const OptionsKodepos = ({ list, handleChange, selectedIndex }) => (
 			selectedIndex={selectedIndex}
         	onChange={(e) => handleChange(e)}
 		>
-		{ list.map(x => 
+		{ list.map((x, i) => 
 			<Radio
+				key={i}
 		        style={styles.radio}
 		        status='warning'
 		        text={x.kelurahan}
@@ -52,7 +53,7 @@ class PenerimaForm extends React.Component{
 			alert("Kode pos harap diisi");
 		}else{
 			Keyboard.dismiss();
-			this.setState({ loading: true });
+			this.setState({ loading: true, errors: {} });
 			apiWs.qob.getKodePos(kodepos)
 				.then(res => {
 					const { result } = res;
@@ -71,7 +72,7 @@ class PenerimaForm extends React.Component{
 					if (err.response.status === '500') {
 						this.setState({ loading: false, errors: { global: 'Internal Server error' } });
 					}else{
-						this.setState({ loading: false, errors: { global: 'Data tidak ditemukan'} });
+						this.setState({ loading: false, errors: { global: 'Data kodepos tidak ditemukan'} });
 					}
 				})
 		}
@@ -131,7 +132,6 @@ class PenerimaForm extends React.Component{
 		return(
 			<React.Fragment>
 				<View style={styles.container}>
-					{ errors.global && <Text>{errors.global}</Text>}
 					<Input 
 				      ref={this.namRef}
 				      placeholder='Masukkan nama penerima'
@@ -173,12 +173,13 @@ class PenerimaForm extends React.Component{
 							icon={(style) => this.renderIcon(style)}
 							onChangeText={(e) => this.onChange(e, this.kodeposRef.current.props)}
 							caption={errors.kodepos && `${errors.kodepos}`}
-							status={errors.kodepos && 'danger'}
+							status={errors.kodepos || errors.global && 'danger'}
 						/>
 						<Button 
 							status='info' 
 							style={{height: 44, marginLeft: 5, marginTop: 20}}
 							onPress={this.searchKodepos}
+							disabled={this.state.disabledKodePos}
 						>{ loading ? 'Searching...' : 'Cari'}</Button>
 					</View>
 					{ responseKodepos.length > 0 && 
@@ -187,6 +188,7 @@ class PenerimaForm extends React.Component{
 							handleChange={this.onChangeOptions}
 							selectedIndex={this.state.choosed}
 						/> }
+					{ errors.global && <Text style={{color:'red', fontSize: 12, marginTop: -7}}>{errors.global}</Text>}
 					<Input 
 				    	placeholder='Masukan email'
 				    	ref={this.emailRef}
@@ -204,7 +206,7 @@ class PenerimaForm extends React.Component{
 				    	ref={this.phoneRef}
 				    	name='nohp'
 						label='* No Handphone penerima'
-						keyboardType='numeric'
+						keyboardType='phone-pad'
 				    	style={{ paddingTop: 7 }}
 				    	labelStyle={styles.label}
 				    	value={data.nohp}

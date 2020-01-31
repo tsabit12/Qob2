@@ -48,8 +48,7 @@ class IndexOrder extends React.Component{
 			panjang: '0',
 			lebar: '0',
 			tinggi: '0',
-			nilaiVal: '',
-			nilai: '',
+			nilai: '0',
 			checked: false
 		},
 		errors: {}
@@ -69,17 +68,28 @@ class IndexOrder extends React.Component{
 		var val = e.replace(/\D/g, '');
 		var x 	= Number(val);
 		const value = this.numberWithCommas(x);
-		this.setState({ data: { ...this.state.data, nilaiVal: value, nilai: val }})
+		this.setState({ data: { ...this.state.data, nilai: value }})
 	}
 
 	onSubmit  = () => {
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
+			const { data } = this.state;
+			const payload = {
+				isiKiriman: data.jenis,
+				berat: data.berat.replace(/\D/g, ''),
+				panjang: data.panjang.replace(/\D/g, ''),
+				lebar: data.lebar.replace(/\D/g, ''),
+				tinggi: data.tinggi.replace(/\D/g, ''),
+				nilai: data.nilai.replace(/\D/g, ''),
+				cod: data.checked
+			};
+
 			this.props.navigation.navigate({
 				routeName: 'OrderPenerima',
 				params: {
-					deskripsiOrder: this.state.data
+					deskripsiOrder: payload
 				}
 			})
 		}else{
@@ -223,7 +233,7 @@ class IndexOrder extends React.Component{
 						      label='Nilai barang'
 						      labelStyle={styles.label}
 						      style={styles.input}
-						      value={data.nilaiVal}
+						      value={data.nilai}
 						      keyboardType='numeric'
 						      onChangeText={(e) => this.onChangeNilai(e)}
 						      status={errors.nilai && 'danger'}

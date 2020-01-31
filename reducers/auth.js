@@ -1,16 +1,11 @@
 import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST } from "../types";
-//5870
-//250
 const initialState = {
 	logged: false,
 	user: {},
-	// dataLogin: {
-	// 	userid: '540000032',
-	// 	norek: '-'
-	// },
 	dataLogin: {
 		userid: '',
-		norek: ''
+		norek: '',
+		detail: {}
 	},
 	request: []
 }
@@ -23,7 +18,8 @@ export default function auth(state=initialState, action={}){
 				logged: true,
 				dataLogin: {
 					userid: action.userid,
-					norek: action.noRek
+					norek: action.response.norek,
+					detail: action.response
 				}
 			}
 		case GET_DETAIL_USER:
@@ -37,7 +33,8 @@ export default function auth(state=initialState, action={}){
 				logged: false,
 				dataLogin: {
 					userid: null,
-					norek: null
+					norek: null,
+					detail: {}
 				},
 				user: {}
 			}

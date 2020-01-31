@@ -36,7 +36,8 @@ class Home extends React.Component {
 			nohp: '-',
 			pin: '-',
 			userid: '-',
-			username: '-'
+			username: '-',
+			kecamatan: '-'
 		}
 	}
 
@@ -56,7 +57,8 @@ class Home extends React.Component {
 						nohp: toObje.nohp,
 						pin: toObje.pinMd5,
 						userid: toObje.userid,
-						username: toObje.username
+						username: toObje.username,
+						kecamatan: toObje.kecamatan ? toObje.kecamatan : '-'
 					}
 				});
 			}
@@ -68,7 +70,8 @@ class Home extends React.Component {
 					nohp: session.nohp,
 					pin: session.pinMd5,
 					userid: session.userid,
-					username: session.username
+					username: session.username,
+					kecamatan: session.kecamatan ? session.kecamatan : '-'
 				}
 			})
 		}
@@ -84,7 +87,8 @@ class Home extends React.Component {
 					nohp: session.nohp,
 					pin: session.pinMd5,
 					userid: session.userid,
-					username: session.username
+					username: session.username,
+					kecamatan: session.kecamatan ? session.kecamatan : '-'
 				}
 			})
 		}
@@ -113,25 +117,48 @@ class Home extends React.Component {
 		
 		api.auth.login(payload)
 			.then(res => {
-				console.log(res);
-				const { response_data4, response_data1, response_data5 } = res;
+				// console.log(res);
+				const { response_data1, response_data4, response_data5 } = res;
 				const x 	= response_data4.split('|');
 				const x2 	= response_data1.split('|'); 
-				// const x3 	= response_data5.split('|'); 
-				const payload2 = {
-					norek: x2[0],
-					nama: x2[1],
-					namaOl: x[0],
-					alamatOl: x[1],
-					kota: x[2],
-					kodepos: x[3],
-					saldo: response_data5
-				};
+				let payload2 = {};
+				// console.log(x);
+				if (userid.substring(0, 3) === '540') {
+					payload2 = {
+						norek: '-',
+						nama: x[0],
+						alamatOl: x[1],
+						kelurahan: x[2],
+						kota: x[3],
+						provinsi: x[4],
+						kodepos: x[5],
+						namaOl: '-',
+						saldo: 0,
+						nohp: nohp,
+						kecamatan: this.state.localUser.kecamatan,
+						email: email
+					};
+				}else{ //member
+					payload2 = {
+						norek: x2[0],
+						nama: x2[1],
+						namaOl: x[0],
+						alamatOl: x[1],
+						kota: x[2],
+						kodepos: x[3],
+						saldo: response_data5,
+						kelurahan: '-',
+						provinsi: '-',
+						nohp: nohp,
+						kecamatan: this.state.localUser.kecamatan,
+						email: email
+					};
+				}
 
 				this.saveToStorage(payload2)
 					.then(() => {
 						this.setState({ loading: false });
-						this.props.setLoggedIn(userid, x2[0]);
+						this.props.setLoggedIn(userid, payload2);
 					}).catch(err => {
 						this.setState({ loading: false });	
 						alert("Failed save data to storage");

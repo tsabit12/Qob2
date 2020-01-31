@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StatusBar, Keyboard, Image, Dimensions, TextInput, TouchableOpacity, ImageBackground } from "react-native";
+import { View, StatusBar, Keyboard, Image, Dimensions, TextInput, TouchableOpacity, ImageBackground, TouchableWithoutFeedback } from "react-native";
 import {Text, Button, ButtonGroup } from '@ui-kitten/components';
 import styles from "./styles";
 import { SafeAreaView } from 'react-navigation';
@@ -12,10 +12,16 @@ import Constants from 'expo-constants';
 
 const device = Dimensions.get('window').width;
 
+const DismissKeyboard = ({ children }) => (
+	<TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
+		{ children }
+	</TouchableWithoutFeedback>
+);
+
 const MyStatusBar = () => (
 	<View style={{
 		height: Constants.statusBarHeight,
-	  	backgroundColor: '#FFF'
+	  	backgroundColor: '#f2f5ec'
 	}}>
 		<StatusBar translucent barStyle="dark-content" />
 	</View>
@@ -101,75 +107,77 @@ class IndexRegister extends React.Component{
 		// console.log(this.props.detail);
 		const { nik, success, errors, loading, keyboardOpen } = this.state;
 		return(
-			<React.Fragment>
-				<MyStatusBar />
-				<Loader loading={loading} />
-				
-				<ImageBackground source={require('../../../assets/backgroundGradient.png')} style={styles.backgroundImage}>
-					{ errors.global && 
-						<Modal 
-							loading={this.state.visible} 
-							text={errors.global} 
-							handleClose={() => this.setState({ visible: false })} 
-						/> }
-					    <View style={{padding: 10, flex: 1}}>
-						    <LinearGradient
-						    	colors={['#FFF', '#fffefc', '#e6e3df']}
-						    	style={{
-						    		flex: 1,
-						    		margin: 10,
-						    		borderRadius: 5,
-						    		backgroundColor: '#ededed',
-						    		position: 'absolute',
-						    		bottom: 0,
-						    		width: '100%',
-						    		padding: 10
-						    	}}
-						    >
-						    	<View style={{marginBottom: this.state.keyboardOffset}}>
-							    	<Text style={{
-							    		paddingBottom: 10, 
-							    		fontSize: 16, 
-							    		fontFamily: 'Roboto-Regular', 
-							    		textAlign: 'center',
-							    		fontWeight: '700'
-							    	}}>REGISTRASI</Text>
-									<TextInput 
-										name='nik'
-										id='nik'
-										value={nik}
-										style={{
-											borderWidth: 0.6, 
-											borderColor: errors.nik ? '#ff3b0f' : '#ffa600', 
-											height: 40,
-											fontSize: 15,
-											fontFamily: 'open-sans-reg',
-											color: 'black',
-											borderRadius: 4,
-											padding: 7
+			<DismissKeyboard>
+				<React.Fragment>
+					<MyStatusBar />
+					<Loader loading={loading} />
+					
+					<ImageBackground source={require('../../../assets/backgroundGradient.png')} style={styles.backgroundImage}>
+						{ errors.global && 
+							<Modal 
+								loading={this.state.visible} 
+								text={errors.global} 
+								handleClose={() => this.setState({ visible: false })} 
+							/> }
+						    <View style={{padding: 10, flex: 1}}>
+							    <LinearGradient
+							    	colors={['#FFF', '#fffefc', '#e6e3df']}
+							    	style={{
+							    		flex: 1,
+							    		margin: 10,
+							    		borderRadius: 5,
+							    		backgroundColor: '#ededed',
+							    		position: 'absolute',
+							    		bottom: 0,
+							    		width: '100%',
+							    		padding: 10
+							    	}}
+							    >
+							    	<View style={{marginBottom: this.state.keyboardOffset}}>
+								    	<Text style={{
+								    		paddingBottom: 10, 
+								    		fontSize: 16, 
+								    		fontFamily: 'Roboto-Regular', 
+								    		textAlign: 'center',
+								    		fontWeight: '700'
+								    	}}>REGISTRASI</Text>
+										<TextInput 
+											name='nik'
+											id='nik'
+											value={nik}
+											style={{
+												borderWidth: 0.6, 
+												borderColor: errors.nik ? '#ff3b0f' : '#ffa600', 
+												height: 40,
+												fontSize: 15,
+												fontFamily: 'open-sans-reg',
+												color: 'black',
+												borderRadius: 4,
+												padding: 7
+											}}
+											onChangeText={this.onChange}
+											keyboardType='phone-pad'
+											placeholder='Masukkan nomor ktp anda'
+											placeholderTextColor='#ffa600'
+										/>
+									</View>
+									<Button style={styles.button} status='warning' onPress={this.onSearchKtp}>Selanjutnya</Button>
+									<TouchableOpacity
+										onPress={() => {
+											this.props.navigation.navigate({
+								        		routeName: 'RegistrasiRek'
+								        	});
+								        	this.setState({ errors: {}});
 										}}
-										onChangeText={this.onChange}
-										keyboardType='phone-pad'
-										placeholder='Masukkan nomor ktp anda'
-										placeholderTextColor='#ffa600'
-									/>
-								</View>
-								<Button style={styles.button} status='warning' onPress={this.onSearchKtp}>Selanjutnya</Button>
-								<TouchableOpacity
-									onPress={() => {
-										this.props.navigation.navigate({
-							        		routeName: 'RegistrasiRek'
-							        	});
-							        	this.setState({ errors: {}});
-									}}
-									activeOpacity={0.7}
-								>
-									<Text style={{fontSize: 12, color: '#1361d4', fontFamily: 'Roboto-Regular'}}>Gunakan akun giro</Text>
-								</TouchableOpacity>
-							</LinearGradient>
-						</View>
-		        </ImageBackground>
-			</React.Fragment>
+										activeOpacity={0.7}
+									>
+										<Text style={{fontSize: 12, color: '#1361d4', fontFamily: 'Roboto-Regular'}}>Gunakan akun giro</Text>
+									</TouchableOpacity>
+								</LinearGradient>
+							</View>
+			        </ImageBackground>
+		        </React.Fragment>
+			</DismissKeyboard>
 		);
 	}
 }

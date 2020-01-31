@@ -41,12 +41,12 @@ class ResultOrder extends React.Component{
 		const { dataLogin } = this.props;
 		const { params } = this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-		const codOrNot = deskripsiOrder.checked ? '1' : '0';
+		const codOrNot = deskripsiOrder.cod ? '1' : '0';
 		
 		let param1 = `${curdateTime()}|01|${dataLogin.userid}|-`;
-		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
-		let param3 = `${pengirimnya.nama}|${pengirimnya.alamat}|${pengirimnya.kel}|${pengirimnya.kec}|${pengirimnya.kota}|PROV|Indonesia|${pengirimnya.kodepos}|${pengirimnya.nohp}|${pengirimnya.email}`;
-		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.kel}|${deskripsiPenerima.kec}|${deskripsiPenerima.kota}|${deskripsiPenerima.kota}|-|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|-|${deskripsiPenerima.email}|-|-`;
+		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.isiKiriman}|${deskripsiOrder.nilai}|-|-`;
+		let param3 = `${pengirimnya.nama}|${pengirimnya.alamat}|${pengirimnya.kel}|${pengirimnya.kec}|${pengirimnya.kota}|${pengirimnya.provinsi}|Indonesia|${pengirimnya.kodepos}|${pengirimnya.nohp}|${pengirimnya.email}`;
+		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamatUtama}|-|-|${deskripsiPenerima.kelurahan}|${deskripsiPenerima.kecamatan}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.provinsi}|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|-|${deskripsiPenerima.email}|-|-`;
 		let param5 = `${codOrNot}|0|-|0`;
 		const payload = {
 			param1: param1,
@@ -55,7 +55,7 @@ class ResultOrder extends React.Component{
 			param4: param4,
 			param5: param5
 		};
-		console.log(deskripsiOrder);
+		
 		this.setState({ payload });
 	}
 
@@ -67,6 +67,56 @@ class ResultOrder extends React.Component{
 
 	onSubmit = () => {
 		this.setState({ loading: true, success: false });
+		const { dataLogin } = this.props;
+		if (dataLogin.userid.substring(0, 3) === '540') { //non member
+			const { params } = this.props.navigation.state;
+			const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
+			const { dataLogin } = this.props;
+
+			const payloadWsdl = {
+				userid: dataLogin.userid,
+				fee: selectedTarif.beadasar,
+				feeTax: selectedTarif.ppn,
+				insurance: selectedTarif.htnb,
+				insuranceTax: selectedTarif.ppnhtnb,
+				itemValue: deskripsiOrder.nilai,
+				contentDesc: deskripsiOrder.isiKiriman,
+				berat: deskripsiOrder.berat,
+				serviceId: selectedTarif.id,
+				senderName: pengirimnya.nama,
+				senderAddress: pengirimnya.alamat,
+				senderKec: pengirimnya.kec,
+				senderCity: pengirimnya.kota,
+				senderProv: '-',
+				length: deskripsiOrder.panjang,
+				width: deskripsiOrder.lebar,
+				height: deskripsiOrder.tinggi,
+				cod: deskripsiOrder.cod ? '1' : '0',
+				senderPos: pengirimnya.kodepos,
+				senderMail: pengirimnya.email,
+				senderPhone: pengirimnya.nohp,
+				receiverName: deskripsiPenerima.nama,
+				receiverAddress: deskripsiPenerima.alamatUtama,
+				receiverKec: deskripsiPenerima.kecamatan,
+				receiverCity: deskripsiPenerima.kabupaten,
+				receiverProv: deskripsiPenerima.provinsi,
+				receiverPos: deskripsiPenerima.kodepos,
+				receiverMail: deskripsiPenerima.email,
+				receiverPhone: deskripsiPenerima.nohp
+			};
+			apiWs.qob.booking(payloadWsdl)
+				.then(res => {
+					console.log(res);
+					const { idOrder } = res;
+					this.setState({ loading: false, success: true, idOrder: idOrder });
+				})
+				.catch(err => {
+					console.log(err);
+					console.log(err.response);
+					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
+				});
+
+		}else{//member
 			api.qob.booking(this.state.payload)
 				.then(res => {
 					console.log(res);
@@ -82,55 +132,8 @@ class ResultOrder extends React.Component{
 					}else{
 						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
 					}
-				})
-			//non member
-			// this.setState({ loading: true, success: false });
-			// const { params } = this.props.navigation.state;
-			// const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-			// const { dataLogin } = this.props;
-
-			// const payloadWsdl = {
-			// 	userid: dataLogin.userid,
-			// 	fee: selectedTarif.beadasar,
-			// 	feeTax: selectedTarif.ppn,
-			// 	insurance: selectedTarif.htnb,
-			// 	insuranceTax: selectedTarif.ppnhtnb,
-			// 	itemValue: deskripsiOrder.nilaiVal,
-			// 	contentDesc: deskripsiOrder.jenis,
-			// 	berat: deskripsiOrder.berat,
-			// 	serviceId: selectedTarif.id,
-			// 	senderName: pengirimnya.nama,
-			// 	senderAddress: pengirimnya.alamat,
-			// 	senderKec: pengirimnya.kec,
-			// 	senderCity: pengirimnya.kota,
-			// 	senderProv: '-',
-			// 	length: deskripsiOrder.panjang,
-			// 	width: deskripsiOrder.lebar,
-			// 	height: deskripsiOrder.tinggi,
-			// 	cod: deskripsiOrder.checked ? '1' : '0',
-			// 	senderPos: pengirimnya.kodepos,
-			// 	senderMail: pengirimnya.email,
-			// 	senderPhone: pengirimnya.nohp,
-			// 	receiverName: deskripsiPenerima.nama,
-			// 	receiverAddress: deskripsiPenerima.alamat2,
-			// 	receiverKec: deskripsiPenerima.kec,
-			// 	receiverCity: deskripsiPenerima.kota,
-			// 	receiverProv: '-',
-			// 	receiverPos: deskripsiPenerima.kodepos,
-			// 	receiverMail: deskripsiPenerima.email,
-			// 	receiverPhone: deskripsiPenerima.nohp
-			// };
-			// apiWs.qob.booking(payloadWsdl)
-			// 	.then(res => {
-			// 		console.log(res);
-			// 		const { idOrder } = res;
-			// 		this.setState({ loading: false, success: true, idOrder: idOrder });
-			// 	})
-			// 	.catch(err => {
-			// 		console.log(err);
-			// 		console.log(err.response);
-			// 		this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
-			// 	});
+			})
+		}
 	}
 
 	onCheckedChange = () => {
@@ -197,12 +200,12 @@ class ResultOrder extends React.Component{
 									</View>
 									<View style={styles.viewResult}>
 										<Text style={styles.labelInformasi}>Isi Kiriman</Text>
-										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 62 }}>: {params.deskripsiOrder.jenis}</Text>
+										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 62 }}>: {params.deskripsiOrder.isiKiriman}</Text>
 									</View>
 									<View style={styles.viewResult}>
 										<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
 										<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 43 }}>: 
-											{ params.deskripsiOrder.checked ? ' Cod' : ' Non Cod' }
+											{ params.deskripsiOrder.cod ? ' Cod' : ' Non Cod' }
 										</Text>
 									</View>
 									<View style={styles.viewResult}>
@@ -226,7 +229,7 @@ class ResultOrder extends React.Component{
 									<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
 							        <Dialog.Description>
 								          	Nomor order   : {this.state.idOrder} {'\n'}
-								          	Isi Kiriman     : {params.deskripsiOrder.jenis}
+								          	Isi Kiriman     : {params.deskripsiOrder.isiKiriman}
 							        </Dialog.Description>
 						          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
 						        </Dialog.Container>
