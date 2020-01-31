@@ -108,18 +108,38 @@ class IndexSearch extends React.Component{
 		<CameraBarcodeAction onPress={this.onCameraPress}/>
 	)
 
-	renderRightControls = () => [
-		<SearchAction onPress={() => this.props.navigation.navigate({ routeName: 'DetailSearch'})} />,
-		<ProfileAction onPress={() => 
-			this.props.navigation.navigate({ 
-				routeName: 'Account', 
-				params: {
-					namaLengkap:  this.state.user.nama,
-					saldo: this.state.user.sisaSaldo
-				} 
-			})} 
-		/>
-	]
+	renderRightControls = () => {
+		const { userid } = this.props.dataLogin;
+		console.log(userid);
+		if (userid.substring(0, 3) === '540') {
+			return(
+					<ProfileAction onPress={() => 
+						this.props.navigation.navigate({ 
+							routeName: 'Account', 
+							params: {
+								namaLengkap:  this.state.user.nama,
+								saldo: this.state.user.sisaSaldo
+							} 
+						})} 
+					/>
+			);
+		}else{
+			return(
+				[
+					<SearchAction onPress={() => this.props.navigation.navigate({ routeName: 'DetailSearch'})} />,
+					<ProfileAction onPress={() => 
+						this.props.navigation.navigate({ 
+							routeName: 'Account', 
+							params: {
+								namaLengkap:  this.state.user.nama,
+								saldo: this.state.user.sisaSaldo
+							} 
+						})} 
+					/>
+				]
+			)
+		}
+	}
 
 	render(){
 		const { show, msgModal, titleModal, success } = this.state;
@@ -174,7 +194,9 @@ class IndexSearch extends React.Component{
 				/>
 					<View style={{flex: 1}}>
 					{ userid.substring(0, 3) === '540' ? 
-						<MenuNotMember /> : 
+						<MenuNotMember 
+							navigation={this.props.navigation}
+						/> : 
 						<Menu 
 							navigation={this.props.navigation} 
 							loading={this.state.loading}

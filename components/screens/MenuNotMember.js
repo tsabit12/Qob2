@@ -1,14 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from "react-native";
 import { Button } from '@ui-kitten/components';
+import { Linking } from "expo";
 
 var device = Dimensions.get('window').width;
 
-const MenuNotMember = () => (
+const MenuNotMember = ({ navigation }) => (
 	<React.Fragment>
-		<View style={{flex: 1, paddingTop: 10, paddingBottom: 0, alignItems: 'center' }}>
-			<Text style={styles.textMenuTitle}>DAFTAR MENU</Text>
-		</View>
 		<View style={styles.container}>
 			<View style={styles.content}>
 				<TouchableOpacity style={styles.iconPress}>
@@ -17,54 +15,67 @@ const MenuNotMember = () => (
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={{color: 'black', fontWeight: '700', textAlign: 'center'}}>QOB</Text>
+						<Text style={styles.titleText}>QOB</Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity style={styles.iconPress}>
+				<TouchableOpacity 
+					style={styles.iconPress}
+					 onPress={() => navigation.navigate({
+                        routeName: 'CekTarif'
+                    })}
+				>
 					<Image 
 						source={require("../../assets/truck.png")}
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={{color: 'black', fontWeight: '700', textAlign: 'center'}}>Cek Tarif</Text>
+						<Text style={styles.titleText}>Cek Tarif</Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity style={styles.iconPress}>
+				<TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => Linking.openURL('tel:' + '161')}
+				>
 					<Image 
 						source={require("../../assets/phone2.png")}
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={{color: 'black', fontWeight: '700', textAlign: 'center'}}>Halo Pos</Text>
+						<Text style={styles.titleText}>Halo Pos</Text>
 					</View>
 				</TouchableOpacity>
 			</View>
 			<View style={styles.content}>
-				<TouchableOpacity style={styles.iconPress}>
+				<TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => navigation.navigate({
+                        routeName: 'RequestPickup'
+                    })}
+				>
 					<Image 
-						source={require("../../assets/calendar.png")}
+						source={require("../../assets/pickup.png")}
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={{color: 'black', fontWeight: '700', textAlign: 'center'}}>Request Pickup</Text>
+						<Text style={styles.titleText}>Request Pickup</Text>
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.iconPress}>
 					<Image 
-						source={require("../../assets/history.png")}
+						source={require("../../assets/historyPickup.png")}
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={{color: 'black', fontWeight: '700', textAlign: 'center'}}>Riwayat Pickup</Text>
+						<Text style={styles.titleText}>Riwayat Pickup</Text>
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.iconPress}>
 					<Image 
-						source={require("../../assets/phone2.png")}
+						source={require("../../assets/location.png")}
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={{color: 'black', fontWeight: '700', textAlign: 'center'}}>Lacak Kiriman</Text>
+						<Text style={styles.titleText}>Lacak{'\n'}Kiriman</Text>
 					</View>
 				</TouchableOpacity>
 			</View>
@@ -77,7 +88,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		margin: 3,
-		marginTop: 10,
+		marginTop: 20,
 		height: '100%'
 	},
 	content:{
@@ -91,7 +102,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		margin: 7,
-		borderWidth: 0.5,
+		marginTop: -15,
 		borderColor: 'black'
 	},
 	img: {
@@ -106,6 +117,11 @@ const styles = StyleSheet.create({
 	textMenuTitle: {
 		fontFamily: 'open-sans-bold',
 		fontSize: 16
+	},
+	titleText: {
+		color: 'black', 
+		textAlign: 'center',
+		fontFamily: 'Roboto-Regular'
 	}
 })
 

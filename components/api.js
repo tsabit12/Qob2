@@ -224,7 +224,7 @@ export default{
 			})
 	},
 	auth: {
-		login: (payload) => axios.post(url, {
+		login: (payload) => axios.post(url2, {
 			messtype: '200',
 			param1: payload.param1,
 			hashing: getHasing('200', payload.param1)
