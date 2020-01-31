@@ -113,8 +113,6 @@ class IndexRegister extends React.Component{
 							handleClose={() => this.setState({ visible: false })} 
 						/> }
 					    <View style={{padding: 10, flex: 1}}>
-					    	<Text style={{fontSize: 16, fontFamily: 'open-sans-reg'}}>Build great things and not waiting for great things to build! {'\n\n'}Zoldyck</Text>
-					    	<Text style={{fontSize: 12, fontFamily: 'open-sans-reg'}}>V 0.1 (beta)</Text>
 						    <LinearGradient
 						    	colors={['#FFF', '#fffefc', '#e6e3df']}
 						    	style={{

@@ -33,6 +33,8 @@ import ListOrder from "./components/screens/ListOrder";
 import SearchOrderScreen from "./components/screens/SearchOrderScreen";
 import BantuanScreen from "./components/screens/BantuanScreen";
 import RequestPickupScreen from "./components/screens/RequestPickupScreen";
+import OrderNonMember from "./components/screens/nonmember/Order";
+import OrderPenerimaNonMember from "./components/screens/nonmember/Penerima";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -134,7 +136,19 @@ const AppNavigator = createStackNavigator({
         navigationOptions: {
           header: null
         }
-      }
+      },
+      OrderNonMember: {
+        screen: OrderNonMember,
+        navigationOptions: {
+          header: null
+        }
+      },
+      OrderPenerimaNonMember: {
+        screen: OrderPenerimaNonMember,
+        navigationOptions: {
+          header: null
+        }
+      },
   	},{
   	initialRouteName: 'IndexSearch'
 });

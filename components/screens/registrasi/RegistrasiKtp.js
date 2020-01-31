@@ -128,7 +128,10 @@ class RegistrasiKtp extends React.Component{
 						pinMd5: x[2],
 						nama: x[3],
 						nohp: x[4],
-						email: x[5]
+						email: x[5],
+						kecamatan: ktp.kec,
+						provinsi: ktp.prov,
+						kelurahan: ktp.desa 
 					};
 
 					this.saveToStorage(toSave)

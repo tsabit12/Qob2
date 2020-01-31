@@ -57,6 +57,9 @@ export default{
 		updateStatus: (arrayExtId, pickupNumber) => axios.post(`${url}/qob/updatePickup`, {
 			externalId: arrayExtId,
 			pickup_number: pickupNumber
+		}).then(res => res.data),
+		getKodePos: (kodepos) => axios.post(`${url}/qob/getPostalCode`, {
+			kodepos: kodepos
 		}).then(res => res.data)
 	},
 	fetch: {

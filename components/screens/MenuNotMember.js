@@ -9,7 +9,12 @@ const MenuNotMember = ({ navigation }) => (
 	<React.Fragment>
 		<View style={styles.container}>
 			<View style={styles.content}>
-				<TouchableOpacity style={styles.iconPress}>
+				<TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => navigation.navigate({
+                        routeName: 'OrderNonMember'
+                    })}
+				>
 					<Image 
 						source={require("../../assets/calendar.png")}
 						style={styles.img}
