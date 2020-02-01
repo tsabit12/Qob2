@@ -44,7 +44,7 @@ class IndexOrder extends React.Component{
 	state = {
 		data: {
 			jenis: '',
-			berat: '',
+			berat: '0',
 			panjang: '0',
 			lebar: '0',
 			tinggi: '0',
@@ -62,14 +62,17 @@ class IndexOrder extends React.Component{
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 	}
 
-	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
-
-	onChangeNilai = (e) => {
-		var val = e.replace(/\D/g, '');
-		var x 	= Number(val);
-		const value = this.numberWithCommas(x);
-		this.setState({ data: { ...this.state.data, nilai: value }})
+	onChange = (e, { name }) => {
+		if (name === 'jenis') {
+			this.setState({ data: { ...this.state.data, [name]: e }});
+		}else{
+			var val = e.replace(/\D/g, '');
+			var x 	= Number(val);
+			const value = this.numberWithCommas(x);
+			this.setState({ data: { ...this.state.data, [name]: value }});
+		}
 	}
+
 
 	onSubmit  = () => {
 		const errors = this.validate(this.state.data);
@@ -190,7 +193,6 @@ class IndexOrder extends React.Component{
 						      label='Panjang (CM)'
 						      name='panjang'
 						      labelStyle={styles.label}
-						      onFocus={() => this.setState({ data: { ...this.state.data, panjang: ''}})}
 						      keyboardType='numeric'
 						      style={styles.inputHitung}
 						      value={data.panjang}
@@ -235,7 +237,7 @@ class IndexOrder extends React.Component{
 						      style={styles.input}
 						      value={data.nilai}
 						      keyboardType='numeric'
-						      onChangeText={(e) => this.onChangeNilai(e)}
+						      onChangeText={(e) => this.onChange(e, this.nilaiRef.current.props)}
 						      status={errors.nilai && 'danger'}
 						      caption={errors.nilai && `${errors.nilai}`}
 						    />

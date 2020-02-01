@@ -191,7 +191,7 @@ class IndexSearch extends React.Component{
 				  }}
 				/>
 					<View style={{flex: 1}}>
-					{ userid.substring(0, 3) === '540' ? 
+					{ userid.substring(0, 3) === '530' ? 
 						<MenuNotMember 
 							navigation={this.props.navigation}
 						/> : 
