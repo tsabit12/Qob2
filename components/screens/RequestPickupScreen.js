@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StatusBar } from "react-native";
+import { View, Text, StatusBar, TouchableOpacity, Modal, StyleSheet, Dimensions, Animated } from "react-native";
 import Constants from 'expo-constants';
 import apiWs from "../apiWs";
 import { connect } from "react-redux";
@@ -8,6 +8,14 @@ import { Icon, TopNavigation, TopNavigationAction, Spinner, ListItem, Button, Ch
 import { omit } from 'lodash';
 import Dialog from "react-native-dialog";
 import Loader from "../Loader";
+import { Backdrop } from "react-native-backdrop";
+
+let deviceHeight = Dimensions.get('window').height
+var deviceWidth = Dimensions.get('window').width
+
+const numberWithCommas = (number) => {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 const MyStatusBar = () => (
 	<View style={{
@@ -37,7 +45,7 @@ const renderItemAccessory = (style, id, onCheckedChange, checked) => {
 	)
 } 
 
-const RenderListData = ({ list, onCheckedChange, checked, onPickup }) => (
+const RenderListData = ({ list, onCheckedChange, checked, onPickup, showDetail }) => (
 	<View style={{flex: 1}}>
 		{ list.map((x, i) => 
 			<ListItem 
@@ -46,6 +54,7 @@ const RenderListData = ({ list, onCheckedChange, checked, onPickup }) => (
 				description={x.orderDate.substring(0, 10)}
 				titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
 				style={{borderBottomWidth: 0.3, borderBottomColor: '#3366ff'}}
+				onPress={() => showDetail(x.externalId)}
 				accessory={(e) => renderItemAccessory(e, x.externalId, onCheckedChange, checked)}
 			/>
 		)}
@@ -55,7 +64,16 @@ const RenderListData = ({ list, onCheckedChange, checked, onPickup }) => (
 
 const ViewModalDialog = ({ handleClose, total, submitPikcup }) => (
 	<View>
-        <Dialog.Container visible={true}>
+		{ total === 0 ? <Dialog.Container visible={true}>
+        	<Dialog.Title>NOTIFIKASI</Dialog.Title>
+        	<Dialog.Description>
+        		<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>
+        			Harap centang terlebih dahulu salah satu nomor order diatas
+        		</Text>
+        	</Dialog.Description>
+          <Dialog.Button label="Tutup" onPress={() => handleClose()} />
+        </Dialog.Container> : 
+    	<Dialog.Container visible={true}>
         	<Dialog.Title>NOTIFIKASI</Dialog.Title>
         	<Dialog.Description>
         		<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>
@@ -64,7 +82,7 @@ const ViewModalDialog = ({ handleClose, total, submitPikcup }) => (
         	</Dialog.Description>
           <Dialog.Button label="Tutup" onPress={() => handleClose()} />
           <Dialog.Button label="Pickup" onPress={() => submitPikcup()} />
-        </Dialog.Container>
+        </Dialog.Container> }
     </View>
 );
 
@@ -76,19 +94,44 @@ const EmptyOrErrorMessage = ({ message }) => (
 	</View>
 ); 
 
+const DataDetail = ({ item }) => (
+	<View>
+		<View style={styles.listDetail}>
+			<Text style={styles.titleDetail}>Isi Kiriman</Text>
+			<Text style={styles.subtitleDetail}>{item.contentDesc}</Text>
+		</View>
+		<View style={styles.listDetail}>
+			<Text style={styles.titleDetail}>Nilai Barang</Text>
+			<Text style={styles.subtitleDetail}>Rp {numberWithCommas(item.itemValue)}</Text>
+		</View>
+		<View style={styles.listDetail}>
+			<Text style={styles.titleDetail}>Berat Kiriman</Text>
+			<Text style={styles.subtitleDetail}>{numberWithCommas(item.weight)} gram</Text>
+		</View>
+		<View style={styles.listDetailLast}>
+			<Text style={styles.titleDetail}>Data Penerima</Text>
+			<Text style={styles.subtitleDetail}>{item.receiverName}</Text>
+			<Text style={styles.subtitleDetail}>{item.receiverAddr}, {item.receiverVill}, {item.receiverSubDist}, {item.receiverCity}, {item.receiverProv}</Text>
+		</View>
+	</View>
+);
+
 class RequestPickupScreen extends React.Component{
 	state = {
 		errors: {},
 		checked: {},
 		showModal: false,
-		loading: false
+		loading: false,
+		openDetail: {
+			status: false,
+			data: {}
+		}
 	}
 
 	componentDidMount(){
 		const { userid, norek } = this.props.dataLogin;
 		this.props.getAddPosting(userid)
 			.catch(err => {
-				console.log(err.response);
 				if (err.response.data.errors) {
 					this.setState({ errors: err.response.data.errors })
 				}else{
@@ -199,9 +242,16 @@ class RequestPickupScreen extends React.Component{
 			})
 	}
 
+	onShowDetail = (extid) => {
+		const { listPickup } = this.props;
+		const findListByExtid = listPickup.find(x => x.externalId === extid);
+
+		this.setState({ openDetail: { status: true, data: findListByExtid }})
+	} 
+
 	render(){
 		const { listPickup } = this.props;
-		const { errors, detail, showModal, loading } = this.state;
+		const { errors, detail, showModal, loading, openDetail } = this.state;
 
 		return(
 			<View style={{flex: 1}}>
@@ -221,6 +271,7 @@ class RequestPickupScreen extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    // subtitleStyle={{color: '#FFF'}}
 				/>
+				<React.Fragment>
 				{ errors.global ? <EmptyOrErrorMessage message={errors.global} /> :  
 					<React.Fragment>
 						{ listPickup.length > 0 ? 
@@ -229,8 +280,30 @@ class RequestPickupScreen extends React.Component{
 								onCheckedChange={(id) => this.onCheckedChange(id)}
 								checked={this.state.checked}
 								onPickup={this.onPickup}
+								showDetail={this.onShowDetail}
 							/> : <Loading /> }
 					</React.Fragment> }
+					<Backdrop
+				        visible={openDetail.status}
+				        // handleOpen={handleOpen}
+				        handleClose={() => this.setState({ openDetail: { status: false, data: ''}})}
+				        onClose={() => this.setState({ openDetail: { status: false, data: ''}})}
+				        swipeConfig={{
+				          velocityThreshold: 0.3,
+				          directionalOffsetThreshold: 80,
+				        }}
+				        animationConfig={{
+				          speed: 14,
+				          bounciness: 4,
+				        }}
+				        overlayColor="rgba(0,0,0,0.32)"
+				        backdropStyle={{
+				          backgroundColor: '#fff',
+				          margin: 7
+				        }}>
+				          	{ Object.keys(openDetail.data).length > 0 ? <DataDetail item={openDetail.data} /> : <Text>Not found</Text> }
+				    </Backdrop>
+				</React.Fragment>
 			</View>
 		);
 	}
@@ -243,5 +316,44 @@ function mapStateToProps(state) {
 		pickupNumber: state.order.pickupNumber
 	}
 }
+
+const styles = StyleSheet.create({
+	modal: {
+	    height: deviceHeight - 340,
+	    position: 'absolute',
+	    bottom:0,
+	    left: 10,
+	    right: 10,
+	    borderTopLeftRadius: 10,
+	    borderTopRightRadius: 10,
+	    alignItems: 'center',
+	    backgroundColor: '#ededed',
+	    justifyContent: 'center',
+	},
+	container: {
+		backgroundColor: 'transparent', 
+		flex: 1
+	},
+	titleDetail: {
+		fontSize: 16,
+		fontFamily: 'open-sans-reg',
+		color: '#4a4949'
+	},
+	subtitleDetail: {
+		fontSize: 13,
+		fontFamily: 'open-sans-reg',
+		color: '#a19f9f'
+	},
+	listDetail: {
+		borderBottomWidth: 0.3, 
+		borderBottomColor: '#a1a1a1', 
+		paddingBottom: 7,
+		paddingTop: 5
+	},
+	listDetailLast: {
+		paddingBottom: 7,
+		paddingTop: 5
+	}
+})
 
 export default connect(mapStateToProps, { getAddPosting, addPickup })(RequestPickupScreen);

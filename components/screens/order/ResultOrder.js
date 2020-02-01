@@ -102,7 +102,8 @@ class ResultOrder extends React.Component{
 				receiverProv: deskripsiPenerima.provinsi,
 				receiverPos: deskripsiPenerima.kodepos,
 				receiverMail: deskripsiPenerima.email,
-				receiverPhone: deskripsiPenerima.nohp
+				receiverPhone: deskripsiPenerima.nohp,
+				receiverVill: deskripsiPenerima.kelurahan
 			};
 			apiWs.qob.booking(payloadWsdl)
 				.then(res => {

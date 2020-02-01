@@ -140,6 +140,7 @@ class PenerimaForm extends React.Component{
 				      labelStyle={styles.label}
 				      style={styles.input}
 				      value={data.nama}
+				      autoCapitalize='words'
 				      onChangeText={(e) => this.onChange(e, this.namRef.current.props)}
 				      status={errors.nama && 'danger'}
 				      onSubmitEditing={() => this.alamatUtamaRef.current.focus() }

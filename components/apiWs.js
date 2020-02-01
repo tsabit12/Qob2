@@ -42,6 +42,7 @@ export default{
 			receiverProv: payload.receiverProv,
 			receiverPos: payload.receiverPos,
 			receiverMail: payload.receiverMail,
+			receiverVill: payload.receiverVill,
 			receiverPhone: payload.receiverPhone
 		}).then(res => res.data),
 		addPickup: (payload) => axios.post('https://fasterv2.fastkurir.com/api/customer/bidding_v2', {
