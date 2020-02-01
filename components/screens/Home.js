@@ -115,7 +115,7 @@ class Home extends React.Component {
 			param1: `${userid}|${pinMd5}|${nohp}|${email}|${imei}`
 		};
 		
-		api.auth.login(payload)
+		api.auth.login(payload, userid)
 			.then(res => {
 				// console.log(res);
 				const { response_data1, response_data4, response_data5 } = res;
