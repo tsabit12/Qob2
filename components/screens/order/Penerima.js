@@ -36,8 +36,16 @@ class Penerima extends React.Component{
 
 	getProfile = () => {
 		const { userid } = this.props.dataLogin;
+		// const userid = '440000123';
 		this.props.getDetailUser(userid)
-			.catch(err => alert("Whoppps, tidak dapat mengambil data anda. Harap pastikan koneksi internet anda, atau coba terlebih dahulu masuk ke halaman profil anda"));
+			.catch(err => {
+				const { dataDetailUser } = this.props;
+				if (Object.keys(dataDetailUser).length > 0) {
+					alert("Whoppps, kami tidak dapat mengambil data anda. Tapi anda masih bisa tetap order dengan data yang sudah kami simpan sebelumnya");
+				}else{
+					alert("Whoppps, kami tidak dapat mengambil data anda. Harap pastikan koneksi internet anda, atau coba terlebih dahulu masuk ke halaman profil anda");
+				}
+			});
 	}
 
 	onSubmit = (data) => {

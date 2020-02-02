@@ -79,6 +79,7 @@ class PenerimaForm extends React.Component{
 
 	//handle refresh data
 	UNSAFE_componentWillReceiveProps(nextProps){
+		console.log(nextProps);
 		if (nextProps.detailPengirim) {
 			const { detailPengirim } = nextProps;
 			this.setState({
@@ -93,7 +94,8 @@ class PenerimaForm extends React.Component{
 					provinsi: '-',
 					email: detailPengirim.email,
 					nohp: detailPengirim.noHp
-				}
+				},
+				checked: true
 			})
 		}
 	}
@@ -138,6 +140,8 @@ class PenerimaForm extends React.Component{
 						nohp: defaultPengirim.noHp
 					}
 				})
+			}else{
+				this.setState({ checked: false });
 			}
 		}
 	}
