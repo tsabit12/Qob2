@@ -66,7 +66,7 @@ class Penerima extends React.Component{
 
 	render(){
 		return(
-			<React.Fragment>
+			<View style={{flex: 1}}>
 				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.BackAction()}
@@ -80,7 +80,7 @@ class Penerima extends React.Component{
 				<KeyboardAvoidingView
 					style={{flex:1}} 
 					enabled
-					behavior={'height'}
+					behavior={'padding'}
 				>
 					<ScrollView keyboardShouldPersistTaps='always'>	
 						<PenerimaForm 
@@ -90,7 +90,7 @@ class Penerima extends React.Component{
 						/>
 					</ScrollView>
 				</KeyboardAvoidingView>
-			</React.Fragment>
+			</View>
 		);
 	}
 }

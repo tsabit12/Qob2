@@ -156,9 +156,10 @@ class IndexRegister extends React.Component{
 												padding: 7
 											}}
 											onChangeText={this.onChange}
-											keyboardType='phone-pad'
+											keyboardType='number-pad'
 											placeholder='Masukkan nomor ktp anda'
 											placeholderTextColor='#ffa600'
+											returnKeyType="done"
 										/>
 									</View>
 									<Button style={styles.button} status='warning' onPress={this.onSearchKtp}>Selanjutnya</Button>

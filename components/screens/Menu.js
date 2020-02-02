@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     content:{
         flex: 1,
         flexDirection: 'row',
-        marginTop: 5
+        marginTop: device*0.2 -60
     },
     iconPress: {
         width: device*0.3 - 10,

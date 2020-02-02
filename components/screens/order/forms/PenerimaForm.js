@@ -333,6 +333,7 @@ class PenerimaForm extends React.Component{
 				      style={styles.input}
 				      value={pengirim.kodepos}
 				      keyboardType='phone-pad'
+				      returnKeyType='done'
 				      icon={(style) => this.renderIcon(style)}
 				      onChangeText={(e) => this.onChangePengirim(e, this.kodeposPengirimRef.current.props)}
 				      onIconPress={this.onIconPress}
@@ -369,14 +370,14 @@ class PenerimaForm extends React.Component{
 				      ref={this.phonePengirimRef}
 				      placeholder='Masukkan nomor handphone'
 				      name='nohp'
-				      label='* Nomro Handphone'
+				      label='* Nomor Handphone'
 				      labelStyle={styles.label}
 				      style={styles.input}
 				      value={pengirim.nohp}
 				      keyboardType='phone-pad'
 				      onChangeText={(e) => this.onChangePengirim(e, this.phonePengirimRef.current.props)}
 				      status={errors.nohpPengirim && 'danger'}
-				      // onSubmitEditing={() => this.kodeposPengirimRef.current.focus() }
+				      returnKeyType='done'
 				      caption={errors.nohpPengirim && `${errors.nohpPengirim}`}
 				      disabled={checked}
 					/>
@@ -426,6 +427,7 @@ class PenerimaForm extends React.Component{
 				      style={styles.input}
 				      keyboardType='phone-pad'
 				      value={data.kodepos}
+				      returnKeyType='done'
 				      onChangeText={(e) => this.onChange(e, this.kodeposRef.current.props)}
 				      status={errors.kodepos && 'danger'}
 				      icon={(style) => this.renderIcon2(style)}
@@ -461,11 +463,12 @@ class PenerimaForm extends React.Component{
 				      ref={this.phoneRef}
 				      placeholder='Masukkan nomor handphone'
 				      name='nohp'
-				      label='* Nomro Handphone'
+				      label='* Nomor Handphone'
 				      labelStyle={styles.label}
 				      style={styles.input}
 				      value={data.nohp}
 				      keyboardType='phone-pad'
+				      returnKeyType='done'
 				      onChangeText={(e) => this.onChange(e, this.phoneRef.current.props)}
 				      status={errors.nohp && 'danger'}
 				      caption={errors.nohp && `${errors.nohp}`}

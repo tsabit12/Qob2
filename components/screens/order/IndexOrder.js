@@ -250,9 +250,11 @@ class IndexOrder extends React.Component{
 					      checked={data.checked}
 					      onChange={this.onCheckedChange}
 					    />
-					    <Button style={{margin: 2}} status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
 					    <View style={{height: 10}} />
 					</Layout>
+					<View style={{margin: 8, marginTop: -5}}>
+						<Button style={{margin: 2}} status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
+					</View>
 				</ScrollView>
 			</KeyboardAvoidingView>
 			</View>

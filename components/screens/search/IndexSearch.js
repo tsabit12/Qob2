@@ -190,7 +190,7 @@ class IndexSearch extends React.Component{
 					justifyContent: "center",
 				  }}
 				/>
-					<View style={{flex: 1}}>
+					<View style={{flex: 1, justifyContent: 'flex-end'}}>
 					{ userid.substring(0, 3) === '540' ? 
 						<MenuNotMember 
 							navigation={this.props.navigation}
