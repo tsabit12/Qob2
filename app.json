@@ -32,6 +32,9 @@
     },
     "description": "",
     "githubUrl": "https://github.com/tsabit12/Qob2/",
-    "primaryColor": "#f08400"
+    "primaryColor": "#f08400",
+    "notification": {
+      "icon": "./assets/q9/notification.png"
+    }
   }
 }
