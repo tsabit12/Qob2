@@ -32,10 +32,9 @@ export default async function registerForPushNotificationsAsync(userid) {
       userid: userid
     }),
   })
-  .then(response => response.json())
-  .then(res => {
-    console.log(res);
-    return res;
-  })
-  .catch(err => err.response);
+  // .then(response => response.json())
+  // .then(res => {
+  //   return res;
+  // })
+  // .catch(err => err.response);
 }

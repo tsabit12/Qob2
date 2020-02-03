@@ -2,9 +2,6 @@ import React from "react";
 import { View, Text, StatusBar } from "react-native";
 import styles from "./styles";
 import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { connect } from "react-redux";
-
-import registerForPushNotificationsAsync from '../../registerForPushNotificationsAsync';
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -18,13 +15,8 @@ const BackIcon = (style) => (
 
 
 class Index extends React.Component{
-	state = {}
-
-	componentDidMount(){
-		const { userid } = this.props;
-		registerForPushNotificationsAsync(userid)
-			.then(res => console.log(res, "sukses"))
-			.catch(err => console.log(err, "oke"));
+	state = {
+	    notification: {},
 	}
 
 	BackAction = () => (
@@ -43,17 +35,12 @@ class Index extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				/>
 				<View style={styles.container}>
-					<Text>Hello world</Text>
+					<Text>Origin: {this.state.notification.origin}</Text>
+        			<Text>Data: {JSON.stringify(this.state.notification.data)}</Text>
 				</View>
 			</View>
 		);
 	}
 }
 
-function mapStateToProps(state) {
-	return{
-		userid: state.auth.dataLogin.userid
-	}
-}
-
-export default connect(mapStateToProps, null)(Index);
+export default Index;

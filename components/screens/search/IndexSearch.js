@@ -9,6 +9,9 @@ import api from "../../api";
 import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { connect } from "react-redux";
 import MenuNotMember from "../MenuNotMember";
+import { Notifications } from 'expo';
+
+import registerForPushNotificationsAsync from "../../../registerForPushNotificationsAsync";
 
 var device = Dimensions.get('window').width;
 
@@ -55,10 +58,21 @@ class IndexSearch extends React.Component{
 		user: {
 			nama: '',
 			sisaSaldo: ''
-		}
+		},
+		notification: {}
 	}
 
 	async componentDidMount(){
+		const { userid } = this.props;
+		registerForPushNotificationsAsync(userid)
+			.then(res => {
+				if (res.status === 400) {
+					alert("Whoooops");
+				}else{
+					alert("Oke");
+				}
+			})
+
 		const value = await AsyncStorage.getItem('sessionLogin');
 		const toObj = JSON.parse(value);
 	    const nama  = toObj.nama.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -69,8 +83,13 @@ class IndexSearch extends React.Component{
 		    	nama: nama,
 		    	sisaSaldo: saldo
 	    	}
-	    })
+	    });
 	}
+
+	// _handleNotification = notification => {
+	//     // do whatever you want to do with the notification
+	//     this.setState({ notification: notification });
+	// }
 
 	onGeneratePwd = () => {
 		const { userid } = this.state;
