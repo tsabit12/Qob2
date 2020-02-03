@@ -8,6 +8,7 @@ import { mapping, light as lightTheme } from '@eva-design/eva';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { encode } from 'base-64';
 import * as Font from "expo-font";
+import * as Permissions from 'expo-permissions';
  
 const LoadFont = () => (
     <Spinner size='medium' />
@@ -26,6 +27,11 @@ class App extends React.Component{
       'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
     });
     this.setState({ fontLoaded: true });
+
+    const { status } = await Permissions.getAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      const response = await Permissions.askAsync(Permissions.LOCATION);
+    }
   }
 
   render(){

@@ -63,7 +63,7 @@ class IndexSearch extends React.Component{
 	}
 
 	async componentDidMount(){
-		const { userid } = this.props;
+		const { userid } = this.props.dataLogin;
 		registerForPushNotificationsAsync(userid)
 			.then(res => {
 				if (res.status === 400) {

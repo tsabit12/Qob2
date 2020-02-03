@@ -46,10 +46,13 @@ class RiwayatPickup extends React.Component{
 	}
 
 	async componentDidMount(){
-		const { status } = await Permissions.getAsync(Permissions.LOCATION);
-		if (status !== 'granted') {
-			const response = await Permissions.askAsync(Permissions.LOCATION);
-		}
+		//this is bug!!
+		//move to the root
+		
+		// const { status } = await Permissions.getAsync(Permissions.LOCATION);
+		// if (status !== 'granted') {
+		// 	const response = await Permissions.askAsync(Permissions.LOCATION);
+		// }
 
 		this.getRoute();
         // here we are getting all route coordinates from API response
