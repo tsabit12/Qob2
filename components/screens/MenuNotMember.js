@@ -65,7 +65,12 @@ const MenuNotMember = ({ navigation }) => (
 						<Text style={styles.titleText}>Request Pickup</Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity style={styles.iconPress}>
+				<TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => navigation.navigate({
+                        routeName: 'RiwayatPickup'
+                    })}
+				>
 					<Image 
 						source={require("../../assets/historyPickup.png")}
 						style={styles.img}

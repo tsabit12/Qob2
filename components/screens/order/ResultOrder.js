@@ -112,9 +112,13 @@ class ResultOrder extends React.Component{
 					this.setState({ loading: false, success: true, idOrder: idOrder });
 				})
 				.catch(err => {
-					console.log(err);
-					console.log(err.response);
-					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
+					// console.log(err);
+					// console.log(err.response);
+					if (err.response.data.errors.global) {
+						this.setState({ loading: false, errors: err.response.data.errors });
+					}else{
+						this.setState({ loading: false, errors: {global: 'Whooopps, untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti'}});
+					}
 				});
 
 		}else{//member
