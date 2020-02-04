@@ -28,7 +28,12 @@
       "bundleIdentifier": "com.posindonesia.cob"
     },
     "android": {
-      "package": "com.posindonesia.cob"
+      "package": "com.posindonesia.cob",
+      "config": {
+      "googleMaps": {
+          "apiKey": "AIzaSyBB9uaz0lymJc7yKIN_XAX5W52h-CzEUG4"
+        }
+      }
     },
     "description": "",
     "githubUrl": "https://github.com/tsabit12/Qob2/",
