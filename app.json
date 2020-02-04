@@ -39,7 +39,10 @@
     "githubUrl": "https://github.com/tsabit12/Qob2/",
     "primaryColor": "#f08400",
     "notification": {
-      "icon": "./assets/q9/notification.png"
+      "icon": "./assets/q9/notification.png",
+      "color": "#f68527",
+      "androidMode": "default",
+      "iosDisplayInForeground": true
     }
   }
 }

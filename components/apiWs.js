@@ -55,9 +55,10 @@ export default{
 				return Promise.reject(res.data);
 			}
 		}),
-		updateStatus: (arrayExtId, pickupNumber) => axios.post(`${url}/qob/updatePickup`, {
+		updateStatus: (arrayExtId, pickupNumber, coords) => axios.post(`${url}/qob/updatePickup`, {
 			externalId: arrayExtId,
-			pickup_number: pickupNumber
+			pickup_number: pickupNumber,
+			shipper_latlong: `${coords.latitude}|${coords.longitude}`
 		}).then(res => res.data),
 		getKodePos: (kodepos) => axios.post(`${url}/qob/getPostalCode`, {
 			kodepos: kodepos

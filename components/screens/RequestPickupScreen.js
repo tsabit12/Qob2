@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StatusBar, TouchableOpacity, Modal, StyleSheet, Dimensions, Animated } from "react-native";
+import { View, Text, StatusBar, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import Constants from 'expo-constants';
 import apiWs from "../apiWs";
 import { connect } from "react-redux";
@@ -9,9 +9,8 @@ import { omit } from 'lodash';
 import Dialog from "react-native-dialog";
 import Loader from "../Loader";
 import { Backdrop } from "react-native-backdrop";
-
-let deviceHeight = Dimensions.get('window').height
-var deviceWidth = Dimensions.get('window').width
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
 
 const numberWithCommas = (number) => {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -45,8 +44,8 @@ const renderItemAccessory = (style, id, onCheckedChange, checked) => {
 	)
 } 
 
-const RenderListData = ({ list, onCheckedChange, checked, onPickup, showDetail }) => (
-	<View style={{flex: 1}}>
+const RenderListData = ({ list, onCheckedChange, checked, showDetail }) => (
+	<View>
 		{ list.map((x, i) => 
 			<ListItem 
 				key={i} 
@@ -58,7 +57,6 @@ const RenderListData = ({ list, onCheckedChange, checked, onPickup, showDetail }
 				accessory={(e) => renderItemAccessory(e, x.externalId, onCheckedChange, checked)}
 			/>
 		)}
-		<Button status='warning' style={{ margin: 7 }} onPress={() => onPickup()}>Pickup</Button>
 	</View>
 );
 
@@ -125,11 +123,22 @@ class RequestPickupScreen extends React.Component{
 		openDetail: {
 			status: false,
 			data: {}
-		}
+		},
+		location: {},
+		isLoading: true
 	}
 
-	componentDidMount(){
+	async componentDidMount(){
 		const { userid, norek } = this.props.dataLogin;
+		const { status } = await Permissions.getAsync(Permissions.LOCATION);
+	    if (status !== 'granted') {
+	      const response = await Permissions.askAsync(Permissions.LOCATION);
+	    }else{
+	    	this._getLocationAsync()
+	    		.then(() => this.setState({ isLoading: false }))
+	    		.catch(() => this.setState({ isLoading: false }))
+	    }
+
 		this.props.getAddPosting(userid)
 			.catch(err => {
 				if (err.response.data.errors) {
@@ -137,16 +146,24 @@ class RequestPickupScreen extends React.Component{
 				}else{
 					this.setState({ 
 						errors: { 
-							global: 'Terdapat kesalahan oke'
+							global: 'Terdapat kesalahan'
 						}
 					});
 				}
 			});
 	}
 
-	// UNSAFE_componentWillReceiveProps(nextProps){
-	// 	console.log(nextProps);
-	// }
+	_getLocationAsync = async () => {
+	    let location = await Location.getCurrentPositionAsync({});
+	    this.setState({ location });
+	}
+
+	getCurLocation = () => {
+		this.setState({ isLoading: true });
+		this._getLocationAsync()
+    		.then(() => this.setState({ isLoading: false }))
+    		.catch(() => this.setState({ isLoading: false }))
+	}
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -206,6 +223,7 @@ class RequestPickupScreen extends React.Component{
 		})
 		const allPayload = {
 			shipper: {
+				userId: this.props.dataLogin.userid,
 				name: filter[0].senderName,
 		        phone: filter[0].senderPhone,
 		        address: filter[0].senderAddr,
@@ -216,10 +234,11 @@ class RequestPickupScreen extends React.Component{
 			},
 			item: payloadItem
 		} 
+
 		this.props.addPickup(allPayload, unFilterState)
 			.then(() => {
 				const { pickupNumber } = this.props;
-				apiWs.qob.updateStatus(keys, pickupNumber)
+				apiWs.qob.updateStatus(keys, pickupNumber, this.state.location.coords)
 					.then(res => {
 						alert(`Pickup sukses dengan nomor pickup : ${pickupNumber} `);
 						this.setState({ loading: false });
@@ -251,8 +270,8 @@ class RequestPickupScreen extends React.Component{
 
 	render(){
 		const { listPickup } = this.props;
-		const { errors, detail, showModal, loading, openDetail } = this.state;
-
+		const { errors, detail, showModal, loading, openDetail, location, isLoading } = this.state;
+		console.log(this.state.location);
 		return(
 			<View style={{flex: 1}}>
 				{ showModal && 
@@ -272,37 +291,52 @@ class RequestPickupScreen extends React.Component{
 				    // subtitleStyle={{color: '#FFF'}}
 				/>
 				<React.Fragment>
-				{ errors.global ? <EmptyOrErrorMessage message={errors.global} /> :  
-					<React.Fragment>
-						{ listPickup.length > 0 ? 
-							<RenderListData 
-								list={listPickup} 
-								onCheckedChange={(id) => this.onCheckedChange(id)}
-								checked={this.state.checked}
-								onPickup={this.onPickup}
-								showDetail={this.onShowDetail}
-							/> : <Loading /> }
-					</React.Fragment> }
-					<Backdrop
-				        visible={openDetail.status}
-				        // handleOpen={handleOpen}
-				        handleClose={() => this.setState({ openDetail: { status: false, data: ''}})}
-				        onClose={() => this.setState({ openDetail: { status: false, data: ''}})}
-				        swipeConfig={{
-				          velocityThreshold: 0.3,
-				          directionalOffsetThreshold: 80,
-				        }}
-				        animationConfig={{
-				          speed: 14,
-				          bounciness: 4,
-				        }}
-				        overlayColor="rgba(0,0,0,0.32)"
-				        backdropStyle={{
-				          backgroundColor: '#fff',
-				          margin: 7
-				        }}>
-				          	{ Object.keys(openDetail.data).length > 0 ? <DataDetail item={openDetail.data} /> : <Text>Not found</Text> }
-				    </Backdrop>
+					<ScrollView style={{flex: 1}}>
+						{ errors.global ? <EmptyOrErrorMessage message={errors.global} /> :  
+							<React.Fragment>
+								{ listPickup.length > 0 ? 
+									<RenderListData 
+										list={listPickup} 
+										onCheckedChange={(id) => this.onCheckedChange(id)}
+										checked={this.state.checked}
+										// onPickup={this.onPickup}
+										showDetail={this.onShowDetail}
+									/> : <Loading /> }
+								<React.Fragment>
+									{ isLoading ? 
+										<Button status='warning' disabled style={{ margin: 7 }}>Getting your location...</Button> : 
+										<React.Fragment>
+											{ !!location.coords ? 
+											<Button status='warning' style={{ margin: 7 }} onPress={this.onPickup}>Pickup</Button> :
+											<Button 
+												status='warning' 
+												style={{ margin: 7 }} 
+												onPress={this.getCurLocation}
+											>Aktifkan Lokasi</Button> }
+										</React.Fragment> }
+								</React.Fragment>
+							</React.Fragment> }
+					</ScrollView>
+				<Backdrop
+			        visible={openDetail.status}
+			        // handleOpen={handleOpen}
+			        handleClose={() => this.setState({ openDetail: { status: false, data: ''}})}
+			        onClose={() => this.setState({ openDetail: { status: false, data: ''}})}
+			        swipeConfig={{
+			          velocityThreshold: 0.3,
+			          directionalOffsetThreshold: 80,
+			        }}
+			        animationConfig={{
+			          speed: 14,
+			          bounciness: 4,
+			        }}
+			        overlayColor="rgba(0,0,0,0.32)"
+			        backdropStyle={{
+			          backgroundColor: '#fff',
+			          margin: 7
+			        }}>
+			          	{ Object.keys(openDetail.data).length > 0 ? <DataDetail item={openDetail.data} /> : <Text>Not found</Text> }
+			    </Backdrop>
 				</React.Fragment>
 			</View>
 		);
@@ -318,18 +352,6 @@ function mapStateToProps(state) {
 }
 
 const styles = StyleSheet.create({
-	modal: {
-	    height: deviceHeight - 340,
-	    position: 'absolute',
-	    bottom:0,
-	    left: 10,
-	    right: 10,
-	    borderTopLeftRadius: 10,
-	    borderTopRightRadius: 10,
-	    alignItems: 'center',
-	    backgroundColor: '#ededed',
-	    justifyContent: 'center',
-	},
 	container: {
 		backgroundColor: 'transparent', 
 		flex: 1
