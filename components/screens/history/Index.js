@@ -19,7 +19,7 @@ const Loading = () => (
 	</View>
 );
 
-const EmptyOrErrorMessage = ({ message }) => (
+const EmptyOrErrMessage = ({ message }) => (
 	<View style={{margin: 10, flex: 1}}>
 		<View style={{borderWidth: 0.3, height: 50, justifyContent: 'center', alignItems: 'center'}}>
 			<Text>{message}</Text>
