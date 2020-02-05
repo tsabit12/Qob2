@@ -49,7 +49,7 @@ export default{
 			shipper: payload.shipper,
 			item: payload.item
 		}, configFast).then(res => {
-			if (res.data.rc === 200) {
+			if (res.data.status === true) {
 				return res.data;
 			}else{
 				return Promise.reject(res.data);

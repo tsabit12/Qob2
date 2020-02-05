@@ -225,6 +225,8 @@ class RequestPickupScreen extends React.Component{
 			shipper: {
 				userId: this.props.dataLogin.userid,
 				name: filter[0].senderName,
+				latitude: this.state.location.coords.latitude,
+				longitude: this.state.location.coords.longitude,
 		        phone: filter[0].senderPhone,
 		        address: filter[0].senderAddr,
 		        city: filter[0].senderCity,
@@ -255,9 +257,12 @@ class RequestPickupScreen extends React.Component{
 					})
 			})		
 			.catch(err => {
-				console.log(err.response);
-				alert("WHoooooppps terdapat kesalahan");	
 				this.setState({ loading: false });
+				if (err.text) {
+					alert(err.text);
+				}else{
+					alert("WHoooooppps terdapat kesalahan");	
+				}
 			})
 	}
 
@@ -271,7 +276,7 @@ class RequestPickupScreen extends React.Component{
 	render(){
 		const { listPickup } = this.props;
 		const { errors, detail, showModal, loading, openDetail, location, isLoading } = this.state;
-		console.log(this.state.location);
+
 		return(
 			<View style={{flex: 1}}>
 				{ showModal && 
