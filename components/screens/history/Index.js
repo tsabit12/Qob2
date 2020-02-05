@@ -19,6 +19,14 @@ const Loading = () => (
 	</View>
 );
 
+const EmptyOrErrorMessage = ({ message }) => (
+	<View style={{margin: 10, flex: 1}}>
+		<View style={{borderWidth: 0.3, height: 50, justifyContent: 'center', alignItems: 'center'}}>
+			<Text>{message}</Text>
+		</View>
+	</View>
+); 
+
 const RenderList = ({ list, onPressItem }) => {
 	var no = 1;
 	return(
@@ -104,7 +112,7 @@ class Index extends React.Component{
 				    style={styles.navigationStyle}
 				/>
 				<ScrollView keyboardShouldPersistTaps='always'>
-					{ errors.global ? <EmptyOrErrMessage /> :
+					{ errors.global ? <EmptyOrErrMessage message={errors.global} /> :
 						<React.Fragment>
 							{ listPickup.length > 0 ? 
 								<RenderList 
