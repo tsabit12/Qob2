@@ -22,8 +22,6 @@ import MyTab from "./components/screens/search/MyTab";
 import LacakBarcode from "./components/screens/search/result/LacakBarcode";
 import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
-// import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran";
-// import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
 import Barcode from './components/screens/helper/barcode';
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
@@ -36,7 +34,7 @@ import RequestPickupScreen from "./components/screens/RequestPickupScreen";
 import OrderNonMember from "./components/screens/nonmember/Order";
 import OrderPenerimaNonMember from "./components/screens/nonmember/Penerima";
 import MapsScreen from "./components/screens/Maps";
-// import RiwayatPickup from "./components/screens/history/Index";
+import RiwayatPickup from "./components/screens/history/Index";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -153,6 +151,12 @@ const AppNavigator = createStackNavigator({
       },
       Maps: {
         screen: MapsScreen,
+        navigationOptions: {
+          header: null
+        }
+      },
+      RiwayatPickup: {
+        screen: RiwayatPickup,
         navigationOptions: {
           header: null
         }

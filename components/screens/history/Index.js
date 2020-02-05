@@ -15,9 +15,7 @@ const BackIcon = (style) => (
 
 
 class Index extends React.Component{
-	state = {
-	    notification: {},
-	}
+	state = {}
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -34,9 +32,10 @@ class Index extends React.Component{
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				/>
-				<View style={styles.container}>
-					<Text>Origin: {this.state.notification.origin}</Text>
-        			<Text>Data: {JSON.stringify(this.state.notification.data)}</Text>
+				<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+					<Text style={{fontFamily: 'open-sans-bold', fontSize: 16}}>
+						Next Features, still development!!!
+					</Text>
 				</View>
 			</View>
 		);
