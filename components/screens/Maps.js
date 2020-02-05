@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Animated, Dimensions, Text, View, StyleSheet, Image } from 'react-native'
+import { Animated, Dimensions, Text, View, StyleSheet, Image, StatusBar } from 'react-native'
 import { PanGestureHandler, State } from 'react-native-gesture-handler'
 import { Spinner, Icon, Button } from '@ui-kitten/components';
 import axios from "axios";
@@ -23,13 +23,13 @@ export class Maps extends Component {
            	longitude: 107.6074113,
         },
         finishLocation: {
-          	latitude: -6.9104085,
-            longitude: 107.616908,
+          	latitude: this.props.navigation.state.params.latitude,
+            longitude: this.props.navigation.state.params.longitude,
         },
         routeForMap: [],
         region: {
-		  latitude: -6.9104085,
-          longitude: 107.616908,
+		  latitude: this.props.navigation.state.params.latitude,
+          longitude: this.props.navigation.state.params.longitude,
 		  latitudeDelta: 0.0922,
 		  longitudeDelta: 0.0421,
 		},
@@ -39,13 +39,20 @@ export class Maps extends Component {
 
 	componentDidMount(){
 		this.getRoute();
+		StatusBar.setHidden(true);
+		// const { latitude, longitude } = this.props.navigation.state.params;
+		// console.log(latitude, longitude);
+	}
+
+	componentWillUnmount(){
+		StatusBar.setHidden(false);
 	}
 
 	startTopPos = Dimensions.get('window').height - topPosOffset;
 	topPos = new Animated.Value(Dimensions.get('window').height - topPosOffset)
 
 	onHandlerStateChange(event){
-  		console.log(event);
+  		// console.log(event);
   	}
 
   	getRoute = () => {
@@ -78,6 +85,11 @@ export class Maps extends Component {
 	    	});
 	}
 
+	handleBack = () => {
+		this.props.navigation.goBack();
+	}
+
+
 	render() { 
 	    // Limit the range of the gesture
 	    this.topPosFinal = this.topPos.interpolate({
@@ -97,7 +109,7 @@ export class Maps extends Component {
 						style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}
 						customMapStyle={mapStyle}	
 						showsUserLocation={true}
-						minZoomLevel={14}
+						minZoomLevel={12}
 					>
 					  <Polyline coordinates={this.state.routeForMap} strokeWidth={4} strokeColor="#4fdbd0" geodesic={true}/>
 					  <Marker 
@@ -134,7 +146,7 @@ export class Maps extends Component {
 			        	</View>
 			        	<View style={{margin: 8, marginTop: -5, flexDirection: 'row'}}>
 			        		<Button status='danger' style={{flex: 1, margin: 2}}>Cancel</Button>
-			        		<Button status='info' style={{flex: 1, margin: 2}}>Back</Button>
+			        		<Button status='info' style={{flex: 1, margin: 2}} onPress={this.handleBack}>Back</Button>
 			        	</View>
 			          </View>
 			        </Animated.View>

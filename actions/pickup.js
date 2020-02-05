@@ -1,5 +1,5 @@
 import apiWs from "../components/apiWs";
-import { GET_ADD_POSTING, PICKUP_SUKSES } from "../types";
+import { GET_ADD_POSTING, PICKUP_SUKSES, FETCH_HISTORY_PICKUP } from "../types";
 
 export const addPostingFetched = (result) => ({
 	type: GET_ADD_POSTING,
@@ -21,4 +21,15 @@ export const addPickup = (payload, newState) => dispatch =>
 		.then(res => {
 			console.log(res);
 			dispatch(suksesPickup(res, newState));
+		})
+
+export const historyFetched = (result) => ({
+	type: FETCH_HISTORY_PICKUP,
+	result
+})
+
+export const fetchHistoryPickup = (userid) => dispatch =>
+	apiWs.fetch.getHistoryPickup(userid)
+		.then(res => {
+			dispatch(historyFetched(res.result))
 		})

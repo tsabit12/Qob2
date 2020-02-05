@@ -1,10 +1,11 @@
-import { SUCCESS_ORDER, GET_ORDER, GET_ADD_POSTING, PICKUP_SUKSES } from "../types";
+import { SUCCESS_ORDER, GET_ORDER, GET_ADD_POSTING, PICKUP_SUKSES, FETCH_HISTORY_PICKUP } from "../types";
 
 const initialState = {
 	dataOrder: {},
 	searchParam: null,
 	listPickup: [],
-	pickupNumber: null
+	pickupNumber: null,
+	historyPickup: []
 }
 
 export default function order(state=initialState, action={}){
@@ -29,6 +30,11 @@ export default function order(state=initialState, action={}){
 				...state,
 				listPickup: action.listPickup,
 				pickupNumber: action.pickupNumber
+			}
+		case FETCH_HISTORY_PICKUP:
+			return{
+				...state,
+				historyPickup: action.result
 			}
 		default: return state;
 	}

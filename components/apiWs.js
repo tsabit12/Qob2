@@ -67,6 +67,9 @@ export default{
 	fetch: {
 		getAddPosting: (userid) => axios.post(`${url}/qob/getAddPosting`, {
 			userid: userid
+		}).then(res => res.data),
+		getHistoryPickup: (userid) => axios.post(`${url}/qob/getRequestPickup`, {
+			userid: userid
 		}).then(res => res.data)
 	}
 }
