@@ -68,7 +68,7 @@ const MenuNotMember = ({ navigation }) => (
 				<TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => navigation.navigate({
-                        routeName: 'RiwayatPickup'
+                        routeName: 'Maps'
                     })}
 				>
 					<Image 

@@ -64,14 +64,7 @@ class IndexSearch extends React.Component{
 
 	async componentDidMount(){
 		const { userid } = this.props.dataLogin;
-		registerForPushNotificationsAsync(userid)
-			.then(res => {
-				if (res.status === 400) {
-					alert("Whoooops");
-				}else{
-					alert("Oke");
-				}
-			})
+		registerForPushNotificationsAsync(userid);
 
 		const value = await AsyncStorage.getItem('sessionLogin');
 		const toObj = JSON.parse(value);
