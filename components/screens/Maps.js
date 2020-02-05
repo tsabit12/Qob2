@@ -19,8 +19,8 @@ const Loading = () => (
 export class Maps extends Component {
 	state = {
 		startingLocation: {
-			latitude: -6.9213255,
-           	longitude: 107.6074113,
+			latitude: this.props.navigation.state.params.latitudeFaster,
+           	longitude: this.props.navigation.state.params.longitudeFaster
         },
         finishLocation: {
           	latitude: this.props.navigation.state.params.latitude,
@@ -41,7 +41,7 @@ export class Maps extends Component {
 		this.getRoute();
 		StatusBar.setHidden(true);
 		// const { latitude, longitude } = this.props.navigation.state.params;
-		// console.log(latitude, longitude);
+		console.log(this.props.navigation.state.params);
 	}
 
 	componentWillUnmount(){
@@ -138,7 +138,7 @@ export class Maps extends Component {
 			          			source={require('../../assets/q9/driver.png')}
 			          		/>
 			          		<View style={{flexDirection: 'column', marginLeft: 10}}>
-			          			<Text style={[styles.detailDescription, {fontWeight: '700'}]}>Jhon Doe</Text>
+			          			<Text style={[styles.detailDescription, {fontWeight: '700'}]}>{this.props.navigation.state.params.driverName}</Text>
 			          			<Text style={styles.detailDescription}>D 1236 MM Honda Beat</Text>
 			          			<Text style={styles.detailDescription}>Jarak Tempuh (3.0 km)</Text>
 			          			<Text style={styles.detailDescription}>Estimasi (9 menit)</Text>

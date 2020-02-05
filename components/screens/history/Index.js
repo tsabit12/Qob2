@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import styles from "./styles";
 import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import { connect } from "react-redux";
@@ -32,7 +32,7 @@ const RenderList = ({ list, onPressItem }) => {
 						key={i} 
 						style={styles.card} 
 						activeOpacity={0.6}
-						onPress={() => onPressItem(x.pickup_number, x.shipper_latlong)}
+						onPress={() => onPressItem(x.pickup_number, x.shipper_latlong, x.faster_latlong, x.fastername)}
 					>
 						<View style={styles.listItem}>
 							<View style={styles.numberBorder}>
@@ -74,14 +74,18 @@ class Index extends React.Component{
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
 	)
 
-	handelClickList = (nopickup, latlong) => {
+	handelClickList = (nopickup, latlong, fasterLat, driverName) => {
 		const valuesLatLong = latlong.split('|');
+		const valuesLatLong2 = fasterLat.split('|');
 		const payload = {
 			nopickup: nopickup,
 			latitude: parseFloat(valuesLatLong[0]),
-			longitude: parseFloat(valuesLatLong[1])
+			longitude: parseFloat(valuesLatLong[1]),
+			latitudeFaster: parseFloat(valuesLatLong2[0]),
+			longitudeFaster: parseFloat(valuesLatLong2[1]),
+			driverName
+		};
 
-		}
 		this.props.navigation.navigate({
 			routeName: 'Maps',
 			params: payload
@@ -99,14 +103,16 @@ class Index extends React.Component{
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF', marginTop: 5}}
 				    style={styles.navigationStyle}
 				/>
-				{ errors.global ? <EmptyOrErrMessage /> :
-					<React.Fragment>
-						{ listPickup.length > 0 ? 
-							<RenderList 
-								list={listPickup} 
-								onPressItem={this.handelClickList}
-							/> : <Loading /> }
-					</React.Fragment> }
+				<ScrollView keyboardShouldPersistTaps='always'>
+					{ errors.global ? <EmptyOrErrMessage /> :
+						<React.Fragment>
+							{ listPickup.length > 0 ? 
+								<RenderList 
+									list={listPickup} 
+									onPressItem={this.handelClickList}
+								/> : <Loading /> }
+						</React.Fragment> }
+				</ScrollView>
 			</View>
 		);
 	}
