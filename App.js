@@ -7,9 +7,21 @@ import { ApplicationProvider, IconRegistry, Icon, Spinner } from '@ui-kitten/com
 import { mapping, light as lightTheme } from '@eva-design/eva'; 
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { encode } from 'base-64';
+import { Notifications } from 'expo';
 import * as Font from "expo-font";
 import * as Permissions from 'expo-permissions';
- 
+import Dialog from "react-native-dialog";
+
+const ModalDialog = ({ visible }) => (
+  <Dialog.Container visible={true}>
+    <Dialog.Title>Notifications</Dialog.Title>
+        <View style={{margin: 17}}>
+            <Text>Dirver pickup ditemukan</Text>
+        </View>
+        <Dialog.Button label="Oke" onPress={() => console.log("oke")}/>
+    </Dialog.Container>
+);  
+
 const LoadFont = () => (
     <Spinner size='medium' />
 );
@@ -17,9 +29,12 @@ const LoadFont = () => (
 class App extends React.Component{
   state = {
     fontLoaded: false,
+    notification:  {},
+    visible: false
   };
 
   async componentDidMount(){
+    this._notificationSubscription = Notifications.addListener(this.handleNotification);
     if (!global.btoa) { global.btoa = encode; }
     await Font.loadAsync({
       'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
@@ -34,13 +49,24 @@ class App extends React.Component{
     }
   }
 
+  handleNotification = (notification) => {
+    this.setState({ notification: notification, visible: true });
+  }
+
+  onPressOke = () => {
+    this.setState({ visible: false });
+  }
+
   render(){
-    const { fontLoaded } = this.state;
+    const { fontLoaded, visible } = this.state;
     return(
       <Provider store={store}>
         <IconRegistry icons={EvaIconsPack} />
         <ApplicationProvider mapping={mapping} theme={lightTheme}>
-        { fontLoaded ? <Router /> : <View style={styles.container}><LoadFont /></View> }
+        { visible && <ModalDialog onPress={this.onPressOke} /> }
+        <React.Fragment>
+          { fontLoaded ? <Router /> : <View style={styles.container}><LoadFont /></View> }
+        </React.Fragment>
         </ApplicationProvider>
       </Provider>
     );

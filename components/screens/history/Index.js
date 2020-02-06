@@ -32,13 +32,20 @@ const RenderList = ({ list, onPressItem }) => {
 	return(
 		<View style={styles.onProgress}>
 			<View style={styles.titleCard}>
-				<Text style={styles.textOnprogress}>On Progress</Text>
+				<View style={{flexDirection: 'row'}}>
+					<View style={styles.statusView} />
+					<Text style={styles.labelStatus}>Finding driver</Text>
+				</View>
+				<View style={{flexDirection: 'row', marginTop: 4}}>
+					<View style={styles.driverFound} />
+					<Text style={styles.labelStatus}>Driver found</Text>
+				</View>
 			</View>
 			<View style={{padding: 5}}>
 				{list.map((x, i) => 
 					<TouchableOpacity 
 						key={i} 
-						style={styles.card} 
+						style={[styles.card], {backgroundColor: x.faster_latlong === null ? '#fc9003' : '#228708' }} 
 						activeOpacity={0.6}
 						onPress={() => onPressItem(x.pickup_number, x.shipper_latlong, x.faster_latlong, x.fastername)}
 					>
@@ -102,6 +109,7 @@ class Index extends React.Component{
 
 	render(){
 		const { listPickup } = this.props;
+		console.log(listPickup);
 		const { errors } = this.state;
 		return(
 			<View style={{flex: 1}}>
@@ -111,16 +119,16 @@ class Index extends React.Component{
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF', marginTop: 5}}
 				    style={styles.navigationStyle}
 				/>
-				<ScrollView keyboardShouldPersistTaps='always'>
-					{ errors.global ? <EmptyOrErrMessage message={errors.global} /> :
-						<React.Fragment>
-							{ listPickup.length > 0 ? 
+				{ errors.global ? <EmptyOrErrMessage message={errors.global} /> :
+					<React.Fragment>
+						{ listPickup.length > 0 ? 
+							<ScrollView keyboardShouldPersistTaps='always'>
 								<RenderList 
 									list={listPickup} 
 									onPressItem={this.handelClickList}
-								/> : <Loading /> }
-						</React.Fragment> }
-				</ScrollView>
+								/> 
+							</ScrollView>: <Loading /> }
+					</React.Fragment> }
 			</View>
 		);
 	}

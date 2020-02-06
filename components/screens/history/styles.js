@@ -74,5 +74,25 @@ export default StyleSheet.create({
 		borderColor: '#c9c7c7', 
 		padding: 7,
 		backgroundColor: '#e3e3e3'
+	},
+	statusView: {
+		width: 15, 
+		backgroundColor: '#fc9003', 
+		height: 15, 
+		borderRadius: 7, 
+		justifyContent: 'center'
+	},
+	driverFound: {
+		width: 15, 
+		backgroundColor: '#228708', 
+		height: 15, 
+		borderRadius: 7, 
+		justifyContent: 'center'
+	},
+	labelStatus: {
+		fontSize: 12, 
+		marginLeft: 10, 
+		justifyContent: 'center',
+		fontFamily: 'open-sans-reg'
 	}
 })
