@@ -12,13 +12,13 @@ import * as Font from "expo-font";
 import * as Permissions from 'expo-permissions';
 import Dialog from "react-native-dialog";
 
-const ModalDialog = ({ visible }) => (
+const ModalDialog = ({ onPress }) => (
   <Dialog.Container visible={true}>
     <Dialog.Title>Notifications</Dialog.Title>
         <View style={{margin: 17}}>
             <Text>Dirver pickup ditemukan</Text>
         </View>
-        <Dialog.Button label="Oke" onPress={() => console.log("oke")}/>
+        <Dialog.Button label="Oke" onPress={() => onPress()}/>
     </Dialog.Container>
 );  
 

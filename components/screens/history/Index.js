@@ -109,7 +109,6 @@ class Index extends React.Component{
 
 	render(){
 		const { listPickup } = this.props;
-		console.log(listPickup);
 		const { errors } = this.state;
 		return(
 			<View style={{flex: 1}}>
