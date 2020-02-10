@@ -9,13 +9,68 @@ export default StyleSheet.create({
   	container: {
   		margin: 10
   	},
-	card: {
+	cardBidding: {
 	    borderWidth: 0.9,
 	    borderColor: '#FFF',
 	    borderRadius: 2,
 	    elevation: 5,
 	    margin: 2,
+	    marginBottom: 5,
 	    backgroundColor: '#f08400'
+	},
+	cardSuccess: {
+	    borderWidth: 0.9,
+	    borderColor: '#FFF',
+	    borderRadius: 2,
+	    elevation: 5,
+	    margin: 2,
+	    marginBottom: 5,
+	    backgroundColor: '#228708'
+	},
+	cardNotFound: {
+	    borderWidth: 0.9,
+	    borderColor: '#FFF',
+	    borderRadius: 2,
+	    elevation: 5,
+	    margin: 2,
+	    marginBottom: 5,
+	    backgroundColor: '#f74e00'
+	},
+	cardFinding: {
+	    borderWidth: 0.9,
+	    borderColor: '#FFF',
+	    borderRadius: 2,
+	    elevation: 5,
+	    margin: 2,
+	    marginBottom: 5,
+	    backgroundColor: '#1d8a78'
+	},
+	cardWasDriver: {
+	    borderWidth: 0.9,
+	    borderColor: '#FFF',
+	    borderRadius: 2,
+	    elevation: 5,
+	    margin: 2,
+	    marginBottom: 5,
+	    backgroundColor: '#c9bc06'
+	},
+	cardWasPay: {
+	    borderWidth: 0.9,
+	    borderColor: '#FFF',
+	    borderRadius: 2,
+	    elevation: 5,
+	    margin: 2,
+	    marginBottom: 5,
+	    backgroundColor: '#531dd1'
+	},
+	card15: {
+	    borderWidth: 0.9,
+	    borderColor: '#FFF',
+	    borderRadius: 2,
+	    elevation: 5,
+	    margin: 2,
+	    marginBottom: 5,
+	    backgroundColor: '#c90039'
 	},
 	navigationStyle: {
 		backgroundColor: 'rgb(240, 132, 0)',
@@ -82,17 +137,71 @@ export default StyleSheet.create({
 		borderRadius: 7, 
 		justifyContent: 'center'
 	},
-	driverFound: {
+	sudahTrans: {
 		width: 15, 
 		backgroundColor: '#228708', 
 		height: 15, 
 		borderRadius: 7, 
+		justifyContent: 'center',
+	},
+	driverNotFound: {
+		backgroundColor: '#f74e00',
+		height: 15, 
+		width: 15, 
+		borderRadius: 7, 
+		justifyContent: 'center',
+	},
+	wasPay:{
+		backgroundColor: '#531dd1',
+		height: 15, 
+		width: 15, 
+		borderRadius: 7, 
 		justifyContent: 'center'
+	},
+	inHub: {
+		backgroundColor: '#c90039',
+		height: 15, 
+		width: 15, 
+		borderRadius: 7, 
+		justifyContent: 'center'
+	},
+	finding: {
+		backgroundColor: '#1d8a78',
+		height: 15, 
+		width: 15, 
+		borderRadius: 7, 
+		justifyContent: 'center'
+	},
+	driverFound: {
+		backgroundColor: '#c9bc06',
+		height: 15, 
+		width: 15, 
+		borderRadius: 7, 
+		justifyContent: 'center',
 	},
 	labelStatus: {
 		fontSize: 12, 
 		marginLeft: 10, 
 		justifyContent: 'center',
 		fontFamily: 'open-sans-reg'
+	},
+	modalContent: {
+		width: 300,
+		height: 350, 
+		backgroundColor: '#FFF',
+		borderRadius: 6,
+		borderWidth: 0.7,
+		borderColor: '#bfbebb'
+	},
+	buttonCloseModal: {
+		position: 'absolute', 
+		bottom: 0, 
+		left: 0, 
+		right: 0,
+		alignItems: 'center',
+		width: '100%',
+		flex: 1,
+		backgroundColor: 'rgb(240, 132, 0)',
+		padding: 15
 	}
 })

@@ -70,6 +70,12 @@ export default{
 		}).then(res => res.data),
 		getHistoryPickup: (userid) => axios.post(`${url}/qob/getRequestPickup`, {
 			userid: userid
-		}).then(res => res.data)
+		}).then(res => res.data),
+		getMaps: (pickupNumber) => axios.post(`${url}/qob/getDirection`, {
+			noPickup: pickupNumber	
+		}).then(res => res.data.result),
+		getDetailPickup: (pickupNumber) => axios.post(`${url}/qob/getDetailPickup`, {
+			noPickup: pickupNumber
+		}).then(res => res.data.result)	
 	}
 }

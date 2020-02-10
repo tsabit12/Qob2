@@ -33,8 +33,9 @@ import BantuanScreen from "./components/screens/BantuanScreen";
 import RequestPickupScreen from "./components/screens/RequestPickupScreen";
 import OrderNonMember from "./components/screens/nonmember/Order";
 import OrderPenerimaNonMember from "./components/screens/nonmember/Penerima";
-import MapsScreen from "./components/screens/Maps";
+import MapsScreen from "./components/screens/history/Maps";
 import RiwayatPickup from "./components/screens/history/Index";
+import DetailPickup from "./components/screens/history/DetailPickup";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -157,6 +158,12 @@ const AppNavigator = createStackNavigator({
       },
       RiwayatPickup: {
         screen: RiwayatPickup,
+        navigationOptions: {
+          header: null
+        }
+      },
+      DetailPickup: {
+        screen: DetailPickup,
         navigationOptions: {
           header: null
         }

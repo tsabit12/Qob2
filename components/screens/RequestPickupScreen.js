@@ -243,7 +243,11 @@ class RequestPickupScreen extends React.Component{
 				apiWs.qob.updateStatus(keys, pickupNumber, this.state.location.coords)
 					.then(res => {
 						alert(`Pickup sukses dengan nomor pickup : ${pickupNumber} `);
-						this.setState({ loading: false });
+						if (unFilterState.length === 0) {
+							this.setState({ loading: false, errors: {global: 'Data tidak ditemukan'} });
+						}else{
+							this.setState({ loading: false });
+						}
 					})
 					.catch(err => {
 						console.log(err.response);
@@ -261,7 +265,7 @@ class RequestPickupScreen extends React.Component{
 				if (err.text) {
 					alert(err.text);
 				}else{
-					alert("WHoooooppps terdapat kesalahan");	
+					alert("Whoooooppps!! terdapat kesalahan");	
 				}
 			})
 	}

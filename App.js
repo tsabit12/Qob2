@@ -11,6 +11,7 @@ import { Notifications } from 'expo';
 import * as Font from "expo-font";
 import * as Permissions from 'expo-permissions';
 import Dialog from "react-native-dialog";
+import { MenuProvider } from 'react-native-popup-menu';
 
 const ModalDialog = ({ onPress }) => (
   <Dialog.Container visible={true}>
@@ -64,9 +65,9 @@ class App extends React.Component{
         <IconRegistry icons={EvaIconsPack} />
         <ApplicationProvider mapping={mapping} theme={lightTheme}>
         { visible && <ModalDialog onPress={this.onPressOke} /> }
-        <React.Fragment>
+        <MenuProvider>
           { fontLoaded ? <Router /> : <View style={styles.container}><LoadFont /></View> }
-        </React.Fragment>
+        </MenuProvider>
         </ApplicationProvider>
       </Provider>
     );
