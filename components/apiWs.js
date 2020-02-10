@@ -1,7 +1,7 @@
 import axios from "axios";
 import { curdateTime } from "./utils/helper";
 
-let url = 'https://order.posindonesia.co.id/api';
+let url = 'https://order.posindonesia.co.id/api/qoblive';
 let configFast = {
 	headers: { 
   		'content-type': 'application/json',
@@ -13,7 +13,7 @@ const url2 = 'https://magenpos.posindonesia.co.id:5870/a767e8eec95442bda80c4e35e
 
 export default{
 	qob: {
-		booking: (payload) => axios.post(`${url}/qob`, {
+		booking: (payload) => axios.post(`${url}`, {
 			userId: payload.userid,
 			fee: payload.fee,
 			length: payload.length,
@@ -55,26 +55,26 @@ export default{
 				return Promise.reject(res.data);
 			}
 		}),
-		updateStatus: (arrayExtId, pickupNumber, coords) => axios.post(`${url}/qob/updatePickup`, {
+		updateStatus: (arrayExtId, pickupNumber, coords) => axios.post(`${url}/updatePickup`, {
 			externalId: arrayExtId,
 			pickup_number: pickupNumber,
 			shipper_latlong: `${coords.latitude}|${coords.longitude}`
 		}).then(res => res.data),
-		getKodePos: (kodepos) => axios.post(`${url}/qob/getPostalCode`, {
+		getKodePos: (kodepos) => axios.post(`${url}/getPostalCode`, {
 			kodepos: kodepos
 		}).then(res => res.data)
 	},
 	fetch: {
-		getAddPosting: (userid) => axios.post(`${url}/qob/getAddPosting`, {
+		getAddPosting: (userid) => axios.post(`${url}/getAddPosting`, {
 			userid: userid
 		}).then(res => res.data),
-		getHistoryPickup: (userid) => axios.post(`${url}/qob/getRequestPickup`, {
+		getHistoryPickup: (userid) => axios.post(`${url}/getRequestPickup`, {
 			userid: userid
 		}).then(res => res.data),
-		getMaps: (pickupNumber) => axios.post(`${url}/qob/getDirection`, {
+		getMaps: (pickupNumber) => axios.post(`${url}/getDirection`, {
 			noPickup: pickupNumber	
 		}).then(res => res.data.result),
-		getDetailPickup: (pickupNumber) => axios.post(`${url}/qob/getDetailPickup`, {
+		getDetailPickup: (pickupNumber) => axios.post(`${url}/getDetailPickup`, {
 			noPickup: pickupNumber
 		}).then(res => res.data.result)	
 	}
