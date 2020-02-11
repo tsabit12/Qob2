@@ -291,7 +291,7 @@ class RegistrasiKtp extends React.Component{
 	render(){
 		const { ktp } = this.props.dataktp;
 		const { validateMother, bug, loading, saved, resError } = this.state;
-
+		console.log(ktp);
 		return(
 			<View style={{flex: 1}}>
 				<Loader loading={loading} />

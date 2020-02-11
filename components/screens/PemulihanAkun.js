@@ -142,7 +142,7 @@ class PemulihanAkun extends React.Component{
 				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
 			};
 
-			api.registrasi.lupaPin(payload)
+			api.registrasi.lupaPin(payload, data.userid)
 				.then(res => {
 					this.saveSessionRequest(valueSession)
 						.then(res => {

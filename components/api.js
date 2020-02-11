@@ -93,7 +93,7 @@ export default{
 					return Promise.reject(res.data)
 				}
 			}),
-		lupaPin: (payload) => axios.post(url, {
+		lupaPin: (payload, userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
 			messtype: '207',
 			param1: payload.param1,
 			hashing: getHasing('207', payload.param1)

@@ -41,7 +41,7 @@ class ResultOrder extends React.Component{
 		const { dataLogin } = this.props;
 		const { params } = this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-		const codOrNot = deskripsiOrder.cod ? '1' : '0';
+		const codOrNot = deskripsiOrder.cod ? '1' : '0';		
 		
 		let param1 = `${curdateTime()}|01|${dataLogin.userid}|-`;
 		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.isiKiriman}|${deskripsiOrder.nilai}|-|-`;
@@ -113,7 +113,7 @@ class ResultOrder extends React.Component{
 				})
 				.catch(err => {
 					// console.log(err);
-					// console.log(err.response);
+					console.log(err.response);
 					if (err.response.data.errors.global) {
 						this.setState({ loading: false, errors: err.response.data.errors });
 					}else{
