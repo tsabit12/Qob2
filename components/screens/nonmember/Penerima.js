@@ -27,26 +27,25 @@ class Penerima extends React.Component{
 	)
 
 	onSubmit = (deskripsiPenerima) => {
-		const { dataLogin } = this.props;
-		const pengirimnya = {
-			nama: dataLogin.detail.nama,
-			alamat: dataLogin.detail.alamatOl,
-			kota: dataLogin.detail.kota,
-			kodepos: dataLogin.detail.kodepos,
-			nohp: dataLogin.detail.nohp,
-			alamatDet: '-',
-			kel: dataLogin.detail.kelurahan,
-			kec: dataLogin.detail.kecamatan,
-			email: dataLogin.detail.email,
-			provinsi: dataLogin.detail.provinsi
-		};
+		// const { dataLogin } = this.props;
+		// const pengirimnya = {
+		// 	nama: dataLogin.detail.nama,
+		// 	alamat: dataLogin.detail.alamatOl,
+		// 	kota: dataLogin.detail.kota,
+		// 	kodepos: dataLogin.detail.kodepos,
+		// 	nohp: dataLogin.detail.nohp,
+		// 	alamatDet: '-',
+		// 	kel: dataLogin.detail.kelurahan,
+		// 	kec: dataLogin.detail.kecamatan,
+		// 	email: dataLogin.detail.email,
+		// 	provinsi: dataLogin.detail.provinsi
+		// };
 		
 		this.props.navigation.navigate({
 			routeName: 'PilihTarif',
 			params: {
 				...this.props.navigation.state.params,
-				deskripsiPenerima,
-				pengirimnya
+				deskripsiPenerima
 			}
 		})
 	}

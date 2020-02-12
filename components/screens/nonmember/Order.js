@@ -34,7 +34,7 @@ class Order extends React.Component{
 		};
 		
 		this.props.navigation.navigate({
-			routeName: 'OrderPenerimaNonMember',
+			routeName: 'KelolaPengirim',
 			params: {
 				deskripsiOrder
 			}

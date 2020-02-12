@@ -36,6 +36,7 @@ import OrderPenerimaNonMember from "./components/screens/nonmember/Penerima";
 import MapsScreen from "./components/screens/history/Maps";
 import RiwayatPickup from "./components/screens/history/Index";
 import DetailPickup from "./components/screens/history/DetailPickup";
+import KelolaPengirim from "./components/screens/nonmember/Pengirim";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -167,7 +168,13 @@ const AppNavigator = createStackNavigator({
         navigationOptions: {
           header: null
         }
-      }
+      },
+      KelolaPengirim: {
+        screen: KelolaPengirim,
+        navigationOptions: {
+          header: null
+        }
+      },
   	},{
   	initialRouteName: 'IndexSearch'
 });
