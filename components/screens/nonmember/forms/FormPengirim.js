@@ -41,7 +41,7 @@ const ListKabupaten = ({ list, handleChange, selectedIndex, onPress }) => {
 }
 
 
-class FormPengirim extends React.Component{
+class FormPengirim extends React.PureComponent{
 	namaRef = React.createRef();
 	alamatUtamaRef = React.createRef();
 	kodeposRef = React.createRef();

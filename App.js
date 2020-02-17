@@ -35,7 +35,7 @@ class App extends React.Component{
   };
 
   async componentDidMount(){
-    this._notificationSubscription = Notifications.addListener(this.handleNotification);
+    // this._notificationSubscription = Notifications.addListener(this.handleNotification);
     if (!global.btoa) { global.btoa = encode; }
     await Font.loadAsync({
       'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),

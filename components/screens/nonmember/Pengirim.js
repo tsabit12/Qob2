@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, KeyboardAvoidingView, ScrollView } from "react-native";
 import styles from "./styles";
-import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import Constants from 'expo-constants';
 import FormPengirim from "./forms/FormPengirim";
 import { connect } from "react-redux";
@@ -10,8 +10,21 @@ const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
 
+const LoadingView = () => (
+	<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+		<Spinner size='medium' />
+		<Text style={{fontFamily: 'open-sans-reg', marginTop: 5}}>Loading...</Text>
+	</View>
+);
+
 class Pengirim extends React.Component{
-	state = {}
+	state = {
+		show: false
+	}
+
+	componentDidMount(){
+		setTimeout(() => this.setState({ show: true }), 300);
+	}
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -42,6 +55,7 @@ class Pengirim extends React.Component{
 	}
 
 	render(){
+		const { show } = this.state;
 		return(
 			<View style={{flex: 1}}>
 				<TopNavigation
@@ -53,17 +67,17 @@ class Pengirim extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)', elevation: 10, paddingTop: Constants.statusBarHeight + 8}}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
-				<KeyboardAvoidingView
-					style={{flex:1}} 
-					behavior="padding" 
-					enabled
-				>
-					<ScrollView keyboardShouldPersistTaps='always'>	
-						<View style={{margin: 7}}>
-							<FormPengirim onSubmit={this.onSubmit} user={this.props.dataLogin} />
-						</View>
-					</ScrollView>
-				</KeyboardAvoidingView>
+				{ show ? <KeyboardAvoidingView
+							style={{flex:1}} 
+							behavior="padding" 
+							enabled
+						>
+						<ScrollView keyboardShouldPersistTaps='always'>	
+							<View style={{margin: 7, flex: 1}}>
+								<FormPengirim onSubmit={this.onSubmit} user={this.props.dataLogin} />
+							</View>
+						</ScrollView>
+					</KeyboardAvoidingView> : <LoadingView /> }
 			</View>
 		);
 	}

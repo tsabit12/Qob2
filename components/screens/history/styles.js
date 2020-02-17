@@ -203,5 +203,21 @@ export default StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'rgb(240, 132, 0)',
 		padding: 15
+	},
+	titleList: {
+		fontSize: 14,
+		fontFamily: 'open-sans-reg'
+	},
+	judulDetail: {
+		textAlign: 'center', fontFamily: 'open-sans-reg'
+	},
+	detailTitle: {
+		fontSize: 14,
+		fontFamily: 'open-sans-reg',
+	},
+	subTitleText: {
+		fontSize: 14,
+		fontFamily: 'open-sans-reg',
+		color: '#b8b6b6'
 	}
 })

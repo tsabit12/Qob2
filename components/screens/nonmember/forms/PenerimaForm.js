@@ -53,7 +53,7 @@ class PenerimaForm extends React.Component{
 			alert("Kode pos harap diisi");
 		}else{
 			Keyboard.dismiss();
-			this.setState({ loading: true, errors: {} });
+			this.setState({ loading: true, errors: {}, responseKodepos: [] });
 			apiWs.qob.getKodePos(kodepos)
 				.then(res => {
 					const { result } = res;
@@ -81,13 +81,27 @@ class PenerimaForm extends React.Component{
 	onChangeOptions = (index) => this.setState({ choosed: index, disabledKodePos: true })
 
 	renderIcon = (style) => (
-    	<Icon {...style} name={this.state.disabledKodePos ? 'close-outline' : 'edit-outline'}/>
+		<View 
+			style={{
+				backgroundColor: this.state.disabledKodePos ? '#0d4cde' : '#fa4a0a', 
+				alignItems: 'center', 
+				justifyContent: 'center', 
+				borderRadius: 16, width: 30, height: 29 
+			}}
+		>
+    		<Icon 
+    			{...style} 
+    			name={this.state.disabledKodePos ? 'close-outline' : 'search-outline'} 
+    			fill='#FFF' height={19} width={18}/>
+    	</View>
   	)
 
   	handlePressIcon = () => {
   		const { disabledKodePos } = this.state;
   		if (disabledKodePos) {
   			this.setState({ responseKodepos: [], data: { ...this.state.data, kodepos: ''}, choosed: null, disabledKodePos: false });
+  		}else{
+  			this.searchKodepos();
   		}
   	}
 
@@ -159,30 +173,24 @@ class PenerimaForm extends React.Component{
 				      onSubmitEditing={() => this.kodeposRef.current.focus() }
 				      caption={errors.alamatUtama && `${errors.alamatUtama}`}
 					/>
-					<View style={styles.groupInput}>
-						<Input 
-							ref={this.kodeposRef}
-							value={data.kodepos}
-							name='kodepos'
-							style={styles.inputFlex}
-							labelStyle={styles.label}
-							label='* Kodepos Penerima'
-							placeholder='Masukkan kodepos'
-							keyboardType='phone-pad'
-							onIconPress={this.handlePressIcon}
-							disabled={this.state.disabledKodePos}
-							icon={(style) => this.renderIcon(style)}
-							onChangeText={(e) => this.onChange(e, this.kodeposRef.current.props)}
-							caption={errors.kodepos && `${errors.kodepos}`}
-							status={errors.kodepos || errors.global && 'danger'}
-						/>
-						<Button 
-							status='info' 
-							style={{height: 44, marginLeft: 5, marginTop: 20}}
-							onPress={this.searchKodepos}
-							disabled={this.state.disabledKodePos}
-						>{ loading ? 'Searching...' : 'Cari'}</Button>
-					</View>
+					<Input 
+						ref={this.kodeposRef}
+						value={data.kodepos}
+						name='kodepos'
+						style={styles.inputFlex}
+						labelStyle={styles.label}
+						label='* Kodepos Penerima'
+						placeholder='Masukkan kodepos'
+						keyboardType='phone-pad'
+						onIconPress={this.handlePressIcon}
+						disabled={this.state.disabledKodePos}
+						icon={(style) => this.renderIcon(style)}
+						onChangeText={(e) => this.onChange(e, this.kodeposRef.current.props)}
+						caption={errors.kodepos && `${errors.kodepos}`}
+						status={errors.kodepos || errors.global && 'danger'}
+						onSubmitEditing={this.searchKodepos}
+					/>
+					{ loading && <Text>Searching...</Text>}
 					{ responseKodepos.length > 0 && 
 						<OptionsKodepos 
 							list={responseKodepos} 

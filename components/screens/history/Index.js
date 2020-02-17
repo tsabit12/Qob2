@@ -82,7 +82,28 @@ const IconMaps = ({ goToMaps }) => (
 	</TouchableOpacity>
 );
 
-const RenderList = ({ list, onPressItem, onGoToMaps, onOpenDetail, onSeeStatus }) => {
+const ListAllStatus = () => (
+	<React.Fragment>
+		<View style={{flexDirection: 'row', paddingBottom: 5, marginTop: 5}}>
+			<View style={styles.finding} />
+			<Text style={styles.labelStatus}>Pencarian Driver</Text>
+		</View>
+		<View style={{flexDirection: 'row', paddingBottom: 5}}>
+			<View style={styles.driverFound} />
+			<Text style={styles.labelStatus}>Driver ditemukan</Text>
+		</View>
+		<View style={{flexDirection: 'row', paddingBottom: 5}}>
+			<View style={styles.wasPay} />
+			<Text style={styles.labelStatus}>Paket sudah dibayar</Text>
+		</View>
+		<View style={{flexDirection: 'row', paddingBottom: 5}}>
+			<View style={styles.inHub} />
+			<Text style={styles.labelStatus}>Paket dibawa kurir dan Proses pergantian Hub</Text>
+		</View>
+	</React.Fragment>
+)
+
+const RenderList = ({ list, onPressItem, onGoToMaps, onOpenDetail, onSeeStatus, visible }) => {
 	var no = 1;
 	return(
 		<View style={styles.onProgress}>
@@ -95,12 +116,13 @@ const RenderList = ({ list, onPressItem, onGoToMaps, onOpenDetail, onSeeStatus }
 					<View style={styles.sudahTrans} />
 					<Text style={styles.labelStatus}>Sudah transaksi</Text>
 				</View>
+				{ visible && <ListAllStatus /> }
 				<View style={{flexDirection: 'row', flex: 1, marginTop: 3}}>
 					<View style={styles.driverNotFound} />
 					<Text style={styles.labelStatus}>Driver tidak ditemukan</Text>
 					<View style={{alignItems: 'flex-end', flex:1, marginTop: -3 }}>
 						<TouchableOpacity style={{borderRadius: 5}} onPress={() => onSeeStatus()}>
-							<Text style={{fontSize: 13, color: '#0000FF', opacity: 0.7}}>View all status</Text>
+							<Text style={{fontSize: 13, color: '#0000FF', opacity: 0.7}}>{ visible ? 'Hide' : 'View all status'} </Text>
 						</TouchableOpacity>
 					</View>
 				</View>
@@ -159,9 +181,6 @@ class Index extends React.Component{
 			});
 	}
 
-	// componentDidUpdate(){
-	// 	apiWs.
-	// }
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -185,11 +204,12 @@ class Index extends React.Component{
 		})
 	}
 
-	showAllStatus = () => this.setState({ visible: true })
+	showAllStatus = () => this.setState({ visible: !this.state.visible })
 
 	render(){
 		const { listPickup } = this.props;
 		const { errors, visible } = this.state;
+		console.log(listPickup);
 		return(
 			<View style={{flex: 1}}>
 				<TopNavigation
@@ -208,69 +228,10 @@ class Index extends React.Component{
 									onGoToMaps={this.searchLocation}
 									onOpenDetail={this.goToDetail}
 									onSeeStatus={this.showAllStatus}
+									visible={visible}
 								/> 
 							</ScrollView>: <Loading /> }
 					</React.Fragment> }
-					<Modal
-			          animationType="slide"
-			          transparent={true}
-			          style={{margin: 0}}
-			          visible={visible}
-			          onRequestClose={() => {
-			            alert('Modal has been closed.');
-			          }}>
-			          	<View 
-			          		style={{
-					          flex: 1,
-					          justifyContent: 'center',
-					          alignItems: 'center'
-					      	}}>
-					    <View style={styles.modalContent}>
-					    	<View style={{padding: 20, flex: 1}}>
-					    		<View style={{borderBottomWidth: 0.7, marginBottom: 6, padding: 5}}>
-					    			<Text style={{textAlign: 'center', fontSize: 17, fontFamily: 'open-sans-bold'}}>Daftar Status</Text>
-					    		</View>
-					    		<View style={{flexDirection: 'row', paddingBottom: 5}}>
-									<View style={styles.statusView} />
-									<Text style={styles.labelStatus}>Binding</Text>
-								</View>
-								<View style={{flexDirection: 'row', paddingBottom: 5}}>
-									<View style={styles.finding} />
-									<Text style={styles.labelStatus}>Pencarian Driver</Text>
-								</View>
-								<View style={{flexDirection: 'row', paddingBottom: 5}}>
-									<View style={styles.driverFound} />
-									<Text style={styles.labelStatus}>Driver ditemukan</Text>
-								</View>
-								<View style={{flexDirection: 'row', paddingBottom: 5}}>
-									<View style={styles.driverNotFound} />
-									<Text style={styles.labelStatus}>Driver tidak ditemukan</Text>
-								</View>
-								<View style={{flexDirection: 'row', paddingBottom: 5}}>
-									<View style={styles.wasPay} />
-									<Text style={styles.labelStatus}>Paket sudah dibayar</Text>
-								</View>
-								<View style={{flexDirection: 'row', paddingBottom: 5}}>
-									<View style={styles.inHub} />
-									<Text style={styles.labelStatus}>Paket dibawa kurir dan Proses pergantian Hub</Text>
-								</View>
-								<View style={{flexDirection: 'row', paddingBottom: 5}}>
-									<View style={styles.sudahTrans} />
-									<Text style={styles.labelStatus}>Paket sudah di transaksikan</Text>
-								</View>
-					    	</View>
-						    <TouchableHighlight
-						    	style={styles.buttonCloseModal}
-				                onPress={() => {
-				                  this.setState({ visible: false });
-				                }}>
-				                <Text style={{textAlign: 'center', fontSize: 16, fontFamily: 'open-sans-reg', color: '#FFF'}}>
-				                	Tutup
-				                </Text>
-			              	</TouchableHighlight>
-					    </View>
-					  </View>
-			        </Modal>
 			</View>	
 		);
 	}

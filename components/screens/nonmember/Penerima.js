@@ -1,46 +1,36 @@
 import React from "react";
-import { View, Text, StatusBar, KeyboardAvoidingView, ScrollView } from "react-native";
-import styles from "./styles";
-import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { View, Text, KeyboardAvoidingView, ScrollView } from "react-native";
+import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
+import Constants from 'expo-constants';
 import PenerimaForm from "./forms/PenerimaForm";
 import { connect } from "react-redux";
-
-const MyStatusBar = () => (
-	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="light-content" />
-	</View>
-);
 
 const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
 
-class Penerima extends React.Component{
-	state = {}
+const LoadingView = () => (
+	<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+		<Spinner size='medium' />
+		<Text style={{fontFamily: 'open-sans-reg', marginTop: 5}}>Loading...</Text>
+	</View>
+);
 
-	// componentDidMount(){
-	// 	console.log(this.props.dataLogin);
-	// }
+
+class Penerima extends React.Component{
+	state = {
+		show: false
+	}
+
+	componentDidMount(){
+		setTimeout(() => this.setState({ show: true }), 300);
+	}
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
 	)
 
 	onSubmit = (deskripsiPenerima) => {
-		// const { dataLogin } = this.props;
-		// const pengirimnya = {
-		// 	nama: dataLogin.detail.nama,
-		// 	alamat: dataLogin.detail.alamatOl,
-		// 	kota: dataLogin.detail.kota,
-		// 	kodepos: dataLogin.detail.kodepos,
-		// 	nohp: dataLogin.detail.nohp,
-		// 	alamatDet: '-',
-		// 	kel: dataLogin.detail.kelurahan,
-		// 	kec: dataLogin.detail.kecamatan,
-		// 	email: dataLogin.detail.email,
-		// 	provinsi: dataLogin.detail.provinsi
-		// };
-		
 		this.props.navigation.navigate({
 			routeName: 'PilihTarif',
 			params: {
@@ -51,27 +41,27 @@ class Penerima extends React.Component{
 	}
 
 	render(){
+		const { show } = this.state;
 		return(
 			<View style={{flex: 1}}>
-				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.BackAction()}
-				    subtitle='Kelola Tujuan Order'
+				    subtitle='Kelola Penerima'
 				    title='Order'
 				    alignment='start'
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
-				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)', elevation: 10, paddingTop: Constants.statusBarHeight + 8}}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
-				<KeyboardAvoidingView
-					style={{flex:1}} 
-					behavior="padding" 
-					enabled
-				>
+				{ show ? <KeyboardAvoidingView
+							style={{flex:1}} 
+							behavior="padding" 
+							enabled
+						>
 					<ScrollView keyboardShouldPersistTaps='always'>	
 						<PenerimaForm onSubmit={this.onSubmit} />
 					</ScrollView>
-				</KeyboardAvoidingView>
+				</KeyboardAvoidingView> : <LoadingView /> }
 			</View>
 		);
 	}
