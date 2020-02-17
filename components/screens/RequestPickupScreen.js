@@ -8,7 +8,6 @@ import { Icon, TopNavigation, TopNavigationAction, Spinner, ListItem, Button, Ch
 import { omit } from 'lodash';
 import Dialog from "react-native-dialog";
 import Loader from "../Loader";
-import { Backdrop } from "react-native-backdrop";
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 
@@ -44,18 +43,42 @@ const renderItemAccessory = (style, id, onCheckedChange, checked) => {
 	)
 } 
 
-const RenderListData = ({ list, onCheckedChange, checked, showDetail }) => (
+const RenderListData = ({ list, onCheckedChange, checked, showDetail, detail }) => (
 	<View>
 		{ list.map((x, i) => 
-			<ListItem 
-				key={i} 
-				title={x.externalId} 
-				description={x.orderDate.substring(0, 10)}
-				titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
-				style={{borderBottomWidth: 0.3, borderBottomColor: '#3366ff'}}
-				onPress={() => showDetail(x.externalId)}
-				accessory={(e) => renderItemAccessory(e, x.externalId, onCheckedChange, checked)}
-			/>
+			<View key={i} style={{borderBottomWidth: 0.3, borderBottomColor: '#3366ff'}}>
+				<ListItem 
+					title={x.externalId} 
+					description={x.orderDate.substring(0, 10)}
+					titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
+					onPress={() => showDetail(x.externalId)}
+					accessory={(e) => renderItemAccessory(e, x.externalId, onCheckedChange, checked)}
+				/>
+				{ detail[x.externalId] && <View style={{marginLeft: 15}}>
+						<View style={styles.listDetail}>
+							<Text style={styles.titleDetail}>Isi Kiriman</Text>
+							<Text style={styles.subtitleDetail}>{x.contentDesc}</Text>
+						</View>
+						<View style={styles.listDetail}>
+							<Text style={styles.titleDetail}>Nilai Barang</Text>
+							<Text style={styles.subtitleDetail}>Rp {numberWithCommas(x.itemValue)}</Text>
+						</View>
+						<View style={styles.listDetail}>
+							<Text style={styles.titleDetail}>Berat Kiriman</Text>
+							<Text style={styles.subtitleDetail}>{numberWithCommas(x.weight)} gram</Text>
+						</View>
+						<View style={styles.listDetail}>
+							<Text style={styles.titleDetail}>Data Pengirim</Text>
+							<Text style={styles.subtitleDetail}>{x.senderName}</Text>
+							<Text style={styles.subtitleDetail}>{x.senderAddr}, {x.senderVill}, {x.senderSubDist}, {x.senderCity}, {x.senderProv}</Text>
+						</View>
+						<View style={styles.listDetail}>
+							<Text style={styles.titleDetail}>Data Penerima</Text>
+							<Text style={styles.subtitleDetail}>{x.receiverName}</Text>
+							<Text style={styles.subtitleDetail}>{x.receiverAddr}, {x.receiverVill}, {x.receiverSubDist}, {x.receiverCity}, {x.receiverProv}</Text>
+						</View>
+					</View> }
+			</View>
 		)}
 	</View>
 );
@@ -92,38 +115,17 @@ const EmptyOrErrorMessage = ({ message }) => (
 	</View>
 ); 
 
-const DataDetail = ({ item }) => (
-	<View>
-		<View style={styles.listDetail}>
-			<Text style={styles.titleDetail}>Isi Kiriman</Text>
-			<Text style={styles.subtitleDetail}>{item.contentDesc}</Text>
-		</View>
-		<View style={styles.listDetail}>
-			<Text style={styles.titleDetail}>Nilai Barang</Text>
-			<Text style={styles.subtitleDetail}>Rp {numberWithCommas(item.itemValue)}</Text>
-		</View>
-		<View style={styles.listDetail}>
-			<Text style={styles.titleDetail}>Berat Kiriman</Text>
-			<Text style={styles.subtitleDetail}>{numberWithCommas(item.weight)} gram</Text>
-		</View>
-		<View style={styles.listDetailLast}>
-			<Text style={styles.titleDetail}>Data Penerima</Text>
-			<Text style={styles.subtitleDetail}>{item.receiverName}</Text>
-			<Text style={styles.subtitleDetail}>{item.receiverAddr}, {item.receiverVill}, {item.receiverSubDist}, {item.receiverCity}, {item.receiverProv}</Text>
-		</View>
-	</View>
-);
-
 class RequestPickupScreen extends React.Component{
 	state = {
 		errors: {},
 		checked: {},
 		showModal: false,
 		loading: false,
-		openDetail: {
-			status: false,
-			data: {}
-		},
+		// openDetail: {
+		// 	status: false,
+		// 	data: {}
+		// },
+		open: {},
 		location: {},
 		isLoading: true
 	}
@@ -271,15 +273,17 @@ class RequestPickupScreen extends React.Component{
 	}
 
 	onShowDetail = (extid) => {
-		const { listPickup } = this.props;
-		const findListByExtid = listPickup.find(x => x.externalId === extid);
-
-		this.setState({ openDetail: { status: true, data: findListByExtid }})
-	} 
+		this.setState({
+			open: {
+				...this.state.open,
+				[extid]: !this.state.open[extid]
+			}
+		})
+	}
 
 	render(){
 		const { listPickup } = this.props;
-		const { errors, detail, showModal, loading, openDetail, location, isLoading } = this.state;
+		const { errors, showModal, loading, openDetail, location, isLoading } = this.state;
 
 		return(
 			<View style={{flex: 1}}>
@@ -308,8 +312,8 @@ class RequestPickupScreen extends React.Component{
 										list={listPickup} 
 										onCheckedChange={(id) => this.onCheckedChange(id)}
 										checked={this.state.checked}
-										// onPickup={this.onPickup}
 										showDetail={this.onShowDetail}
+										detail={this.state.open}
 									/> : <Loading /> }
 								<React.Fragment>
 									{ isLoading ? 
@@ -326,26 +330,6 @@ class RequestPickupScreen extends React.Component{
 								</React.Fragment>
 							</React.Fragment> }
 					</ScrollView>
-				<Backdrop
-			        visible={openDetail.status}
-			        // handleOpen={handleOpen}
-			        handleClose={() => this.setState({ openDetail: { status: false, data: ''}})}
-			        onClose={() => this.setState({ openDetail: { status: false, data: ''}})}
-			        swipeConfig={{
-			          velocityThreshold: 0.3,
-			          directionalOffsetThreshold: 80,
-			        }}
-			        animationConfig={{
-			          speed: 14,
-			          bounciness: 4,
-			        }}
-			        overlayColor="rgba(0,0,0,0.32)"
-			        backdropStyle={{
-			          backgroundColor: '#fff',
-			          margin: 7
-			        }}>
-			          	{ Object.keys(openDetail.data).length > 0 ? <DataDetail item={openDetail.data} /> : <Text>Not found</Text> }
-			    </Backdrop>
 				</React.Fragment>
 			</View>
 		);
@@ -366,7 +350,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	titleDetail: {
-		fontSize: 16,
+		fontSize: 14,
 		fontFamily: 'open-sans-reg',
 		color: '#4a4949'
 	},
@@ -376,14 +360,7 @@ const styles = StyleSheet.create({
 		color: '#a19f9f'
 	},
 	listDetail: {
-		borderBottomWidth: 0.3, 
-		borderBottomColor: '#a1a1a1', 
-		paddingBottom: 7,
-		paddingTop: 5
-	},
-	listDetailLast: {
-		paddingBottom: 7,
-		paddingTop: 5
+		paddingBottom: 5
 	}
 })
 
