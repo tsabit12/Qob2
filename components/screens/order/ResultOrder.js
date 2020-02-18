@@ -275,8 +275,8 @@ class ResultOrder extends React.Component{
 						<Dialog.Container visible={this.state.visible}>
 							<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
 							{ this.state.visible && <View style={{margin: 13}}>
-					        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Nomor order : QOB00230</Text>
-					        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Isi Kiriman      : Baju hahahh</Text>
+					        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Nomor order : {this.state.idOrder}</Text>
+					        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Isi Kiriman      : {params.deskripsiOrder.jenis}/Text>
 					        </View> }
 				          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
 				        </Dialog.Container>
