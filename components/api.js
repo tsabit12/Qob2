@@ -5,6 +5,7 @@ import querystring from "querystring";
 
 // const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb'; //dev
 const url = 'https://qcomm.posindonesia.co.id:10444/a767e8eec95442bda80c4e35e0660dbb'; //live
+const url2 = 'https://magenpos.posindonesia.co.id:5870/a767e8eec95442bda80c4e35e0660dbb'
 let config = {	
 	headers: { 
   		'content-type': 'application/x-www-form-urlencoded',
@@ -92,13 +93,26 @@ export default{
 					return Promise.reject(res.data)
 				}
 			}),
-		lupaPin: (payload) => axios.post(url, {
+		lupaPin: (payload, userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
 			messtype: '207',
 			param1: payload.param1,
 			hashing: getHasing('207', payload.param1)
 		}, config).then(res => {
 			console.log(res);
 			if (res.data.rc_mess === '00' || res.data.rc_mess === '02' || res.data.rc_mess === '01') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
+		}),
+		registrasiNonMember: (payload) => axios.post(url2, {
+			messtype: '250',
+			param1: payload.param1,
+			param3: payload.param3,
+			param4: payload.param4,
+			hashing: getHasing('250', payload.param1)
+		}, config).then(res => {
+			if (res.data.rc_mess === '00') {
 				return res.data;
 			}else{
 				return Promise.reject(res.data);
@@ -210,12 +224,11 @@ export default{
 			})
 	},
 	auth: {
-		login: (payload) => axios.post(url, {
+		login: (payload, userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
 			messtype: '200',
 			param1: payload.param1,
 			hashing: getHasing('200', payload.param1)
 		}, config).then(res => {
-			console.log(res.data);
 			if (res.data.rc_mess === '00') {
 				return res.data;
 			}else{

@@ -15,7 +15,7 @@
     "splash": {
       "image": "./assets/splash_img.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#f68527"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -28,9 +28,21 @@
       "bundleIdentifier": "com.posindonesia.cob"
     },
     "android": {
-      "package": "com.posindonesia.cob"
+      "package": "com.posindonesia.cob",
+      "config": {
+      "googleMaps": {
+          "apiKey": "AIzaSyCWExqNgCmhqQyoBuj7lvsMQ7lHWIdon0g"
+        }
+      }
     },
     "description": "",
-    "githubUrl": "https://github.com/tsabit12/Qob2/"
+    "githubUrl": "https://github.com/tsabit12/Qob2/",
+    "primaryColor": "#f08400",
+    "notification": {
+      "icon": "./assets/q9/notification.png",
+      "color": "#f68527",
+      "androidMode": "default",
+      "iosDisplayInForeground": true
+    }
   }
 }

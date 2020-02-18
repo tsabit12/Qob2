@@ -1,8 +1,11 @@
-import { SUCCESS_ORDER, GET_ORDER } from "../types";
+import { SUCCESS_ORDER, GET_ORDER, GET_ADD_POSTING, PICKUP_SUKSES, FETCH_HISTORY_PICKUP } from "../types";
 
 const initialState = {
 	dataOrder: {},
-	searchParam: null
+	searchParam: null,
+	listPickup: [],
+	pickupNumber: null,
+	historyPickup: []
 }
 
 export default function order(state=initialState, action={}){
@@ -15,6 +18,23 @@ export default function order(state=initialState, action={}){
 					[action.tanggal] : action.response
 				},
 				searchParam: action.tanggal
+			}
+		case GET_ADD_POSTING:
+			return{
+				...state,
+				listPickup: action.result,
+				pickupNumber: null
+			}
+		case PICKUP_SUKSES:
+			return{
+				...state,
+				listPickup: action.listPickup,
+				pickupNumber: action.pickupNumber
+			}
+		case FETCH_HISTORY_PICKUP:
+			return{
+				...state,
+				historyPickup: action.result
 			}
 		default: return state;
 	}

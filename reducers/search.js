@@ -1,9 +1,10 @@
-import { GET_REKENING, REMOVE_REKENING, GET_TRACE, REMOVE_HISTORY_LACAK } from "../types";
+import { GET_REKENING, REMOVE_REKENING, GET_TRACE, REMOVE_HISTORY_LACAK, LACAK_HAS_ERROR, REMOVE_HAS_ERROR } from "../types";
 import { omit } from 'lodash';
 
 const intialState = {
 	rekening: {},
-	trace: {} 
+	trace: {},
+	errors: {}
 }
 
 export default function search(state=intialState, action={}){
@@ -32,7 +33,20 @@ export default function search(state=intialState, action={}){
 		case REMOVE_HISTORY_LACAK:
 			return{
 				...state,
-				trace: omit(state.trace, action.extId)
+				trace: omit(state.trace, action.extId),
+				errors: {}
+			}
+		case LACAK_HAS_ERROR:
+			return{
+				...state,
+				errors: {
+					global: 'Whopps, data dengan external id tersebut tidak ditemukan'
+				}
+			}
+		case REMOVE_HAS_ERROR:
+			return{
+				...state,
+				errors: {}
 			}
 		default: return state;
 	}

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
   },
   StatusBar: {
   	height: Constants.statusBarHeight,
-  	backgroundColor: 'rgb(4, 147, 214)'
+  	backgroundColor: '#FFF'
   },
   navigation: {
   	shadowColor: '#000000',
@@ -27,12 +27,12 @@ const styles = StyleSheet.create({
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="light-content" />
+		<StatusBar translucent barStyle="dark-content" />
 	</View>
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back' fill='#FFF'/>
+  <Icon {...style} name='arrow-back' fill='black'/>
 );
 
 
@@ -84,9 +84,8 @@ class BantuanScreen extends React.Component{
 				    leftControl={this.BackAction()}
 				    title='Bantuan'
 				    alignment='start'
-				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
-				    elevation={5}
-				    style={{backgroundColor: 'rgb(4, 147, 214)'}}
+				    titleStyle={{fontFamily: 'open-sans-bold', color: 'black'}}
+				    style={{backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#e6e6e6'}}
 				/>
 			    <View>
 					<Menu

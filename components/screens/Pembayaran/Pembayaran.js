@@ -17,6 +17,7 @@ import {
 import api from '../../api';
 import Loader from "../../Loader";
 import Constants from 'expo-constants';
+import Dialog from "react-native-dialog";
 
 const MyStatusBar = () => (
     <View style={styles.StatusBar}>
@@ -32,10 +33,19 @@ const numberWithCommas = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+const ErrorsMessage = ({ message, onPress }) => (
+    <Dialog.Container visible={true}>
+        <Dialog.Title>Notifikasi</Dialog.Title>
+        <View style={{margin: 17, alignItems: 'center'}}>
+            <Text style={{textAlign: 'center'}}>{message}</Text>
+        </View>
+        <Dialog.Button label="Tutup" onPress={() => onPress()} />
+    </Dialog.Container>
+);
+
 class Pembayaran extends Component {
     state = {
-        nominal : '',
-        nominalVal: 0,
+        nominal : '0',
         loading: false,
         errors: {},
         localUser: {
@@ -48,12 +58,6 @@ class Pembayaran extends Component {
 
     nominalRef = React.createRef();
 
-    validate = (nominal) => {
-		const errors = {};
-		if (!nominal) errors.nominal = "Masukan nomor rekening";
-		return errors;
-    }
-    
     async componentDidMount() {
         const value     = await AsyncStorage.getItem('sessionLogin');
         const value2     = await AsyncStorage.getItem('qobUserPrivasi');
@@ -68,32 +72,42 @@ class Pembayaran extends Component {
     }
 
     onSubmit = () => {
-            this.setState({ loading: true });
-            const { nominal , localUser } = this.state;
-            const payload = { 
-                param1: `${localUser.userid}|${localUser.norek}|${nominal}`
+            const errors = this.validate(this.state.nominal);
+            this.setState({ errors });
+            if (Object.keys(errors).length === 0) {
+                this.setState({ loading: true });
+                const { nominal , localUser } = this.state;
+                const payload = { 
+                    param1: `${localUser.userid}|${localUser.norek}|${nominal}`
+                }
+                api.Pembayaran.generate(payload)
+                    .then(res => {
+                        const response = {
+                            desc : res.desk_mess,
+                            pin : res.response_data1
+                        };
+                        this.setState ({ loading : false, response, success: true });
+                    })
+                    .catch(err => {
+                        // alert(err.desk_mess)
+                        if (err.desk_mess) {
+                            this.setState({loading : false, success: false, response: {}, errors: { global: err.desk_mess } });
+                        }else{
+                            this.setState({
+                                loading : false, 
+                                success: false, 
+                                response: {}, 
+                                errors: { global: 'Whoopps, kami mengalami masalah saat menghubungkan ke server. Silahkan cobalagi nanti' } 
+                            });
+                        }
+                    });
             }
-            console.log(payload);
+    }
 
-            api.Pembayaran.generate(payload)
-                .then(res => {
-                    const response = {
-                        desc : res.desk_mess,
-                        pin : res.response_data1
-                    };
-                    this.setState ({ loading : false, response, success: true });
-                    // this.props.navigation.navigate({
-                    //     routeName : 'KonfrimPembayaran',
-                    //     params: {
-                    //         resGenerate: response,
-                    //         nominal : nominal
-                    //     }
-                    // })
-                })
-                .catch(err => {
-                    this.setState({loading : false, success: false, response: {} });
-                    alert(err.desk_mess)
-                });
+    validate = (nominal) => {
+        const errors = {};
+        if (nominal <= 0) errors.nominal = "Masukan nominal bayar";
+        return errors;
     }
 
     BackAction = () => (
@@ -101,9 +115,10 @@ class Pembayaran extends Component {
     )
 
     onChangeText = (e) => {
-        const value     = e.replace(/\D+/g, "");
-        const addComma  = numberWithCommas(value);
-        this.setState({ nominalVal: addComma, nominal: value });
+        var val = e.replace(/\D/g, '');
+        var x   = Number(val);
+        const value = numberWithCommas(x);
+        this.setState({ nominal: value });
         // (e) => this.setState({ nominal: e })
     }
 
@@ -121,6 +136,7 @@ class Pembayaran extends Component {
                 />
 
                 <Loader loading={loading}/>
+                { errors.global && <ErrorsMessage message={errors.global} onPress={() => this.setState({ errors: {} })} />}
 
                 <View style={styles.container}>
                     { Object.keys(response).length > 0 ?   
@@ -146,13 +162,16 @@ class Pembayaran extends Component {
                                 label='Nominal'
                                 placeholder='Masukan Jumlah Nominal'
                                 ref={this.nominalRef}
-                                value={this.state.nominalVal}
+                                value={this.state.nominal}
                                 name='nominal'
                                 onChangeText={this.onChangeText}
                                 onSubmitEditing={this.onSubmit}
                                 keyboardType='numeric'
                                 autoFocus
+                                returnKeyType='done'
+                                status={errors.nominal && 'danger'}
                                 labelStyle={{fontSize: 16, color: 'black', fontFamily: 'open-sans-reg'}}
+                                caption={errors.nominal && `${errors.nominal}`}
                             />
                             <Button status='warning' onPress={this.onSubmit}>BAYAR</Button>
                         </View> }

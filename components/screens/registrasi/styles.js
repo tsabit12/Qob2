@@ -2,15 +2,19 @@ import { StyleSheet } from "react-native";
 import Constants from 'expo-constants';
 
 export default StyleSheet.create({
-	centerForm: {
-		padding: 10
+	bottomForm: {
+		padding: 10,
+		position: 'absolute',
+		width: '100%',
+		bottom: 0,
+		paddingBottom: 15
 	},
 	safeContainer: {
 	    flex: 1,
 	    marginTop: Expo.Constants.statusBarHeight
 	},
 	button: {
-	    top: 5
+	    marginTop: 5
 	},
 	textToogle: {
 		color: 'black', 
@@ -59,6 +63,12 @@ export default StyleSheet.create({
 	},
 	StatusBar: {
 	  	height: Constants.statusBarHeight,
-	  	backgroundColor: 'rgb(4, 147, 214)'
+	  	backgroundColor: '#FFF'
 	},
+	backgroundImage: {
+	    flex: 1,
+	    width: null,
+    	height: null,
+	    justifyContent : 'center',
+	}
 })

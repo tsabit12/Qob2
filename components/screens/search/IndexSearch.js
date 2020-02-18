@@ -2,15 +2,18 @@ import React from "react";
 import { Button, Text, StyleSheet, View, ScrollView, StatusBar, Image, AsyncStorage, Dimensions } from 'react-native';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
-// import SearchLayout from 'react-navigation-addon-search-layout';
 import Menu from "../Menu";
 import { SliderBox } from "react-native-image-slider-box";
 import Dialog from "react-native-dialog";
 import api from "../../api";
 import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { connect } from "react-redux";
+import MenuNotMember from "../MenuNotMember";
+import { Notifications } from 'expo';
+
+import registerForPushNotificationsAsync from "../../../registerForPushNotificationsAsync";
 
 var device = Dimensions.get('window').width;
-const iconBarcode = require("../../../assets/barcode.png");
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -55,10 +58,14 @@ class IndexSearch extends React.Component{
 		user: {
 			nama: '',
 			sisaSaldo: ''
-		}
+		},
+		notification: {}
 	}
 
 	async componentDidMount(){
+		const { userid } = this.props.dataLogin;
+		registerForPushNotificationsAsync(userid);
+
 		const value = await AsyncStorage.getItem('sessionLogin');
 		const toObj = JSON.parse(value);
 	    const nama  = toObj.nama.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -69,8 +76,13 @@ class IndexSearch extends React.Component{
 		    	nama: nama,
 		    	sisaSaldo: saldo
 	    	}
-	    })
+	    });
 	}
+
+	// _handleNotification = notification => {
+	//     // do whatever you want to do with the notification
+	//     this.setState({ notification: notification });
+	// }
 
 	onGeneratePwd = () => {
 		const { userid } = this.state;
@@ -107,23 +119,44 @@ class IndexSearch extends React.Component{
 		<CameraBarcodeAction onPress={this.onCameraPress}/>
 	)
 
-	renderRightControls = () => [
-		<SearchAction onPress={() => this.props.navigation.navigate({ routeName: 'DetailSearch'})} />,
-		<ProfileAction onPress={() => 
-			this.props.navigation.navigate({ 
-				routeName: 'Account', 
-				params: {
-					namaLengkap:  this.state.user.nama,
-					saldo: this.state.user.sisaSaldo
-				} 
-			})} 
-		/>
-	]
+	renderRightControls = () => {
+		const { userid } = this.props.dataLogin;
+		if (userid.substring(0, 3) === '540') {
+			return(
+					<ProfileAction onPress={() => 
+						this.props.navigation.navigate({ 
+							routeName: 'Account', 
+							params: {
+								namaLengkap:  this.state.user.nama,
+								saldo: this.state.user.sisaSaldo
+							} 
+						})} 
+					/>
+			);
+		}else{
+			return(
+				[
+					<SearchAction onPress={() => this.props.navigation.navigate({ routeName: 'DetailSearch'})} />,
+					<ProfileAction onPress={() => 
+						this.props.navigation.navigate({ 
+							routeName: 'Account', 
+							params: {
+								namaLengkap:  this.state.user.nama,
+								saldo: this.state.user.sisaSaldo
+							} 
+						})} 
+					/>
+				]
+			)
+		}
+	}
 
 	render(){
 		const { show, msgModal, titleModal, success } = this.state;
+		const { userid } = this.props.dataLogin;
+
 		return(
-			<View style={{flex: 1}}>
+			<View style={{flex: 1, backgroundColor: '#f7f5f0'}}>
 				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.renderLeftControl()}
@@ -153,6 +186,7 @@ class IndexSearch extends React.Component{
 						/> }
 					</Dialog.Container> }
 				</React.Fragment>
+				<ScrollView>
 				<SliderBox images={[
 					require('../../../assets/qob.jpg'),
 					require('../../../assets/qob2.jpg'),
@@ -168,22 +202,11 @@ class IndexSearch extends React.Component{
 					justifyContent: "center",
 				  }}
 				/>
-				<ScrollView>
-					<View 
-						style={{
-							flex: 1, 
-							margin: 5, 
-							borderWidth: 1, 
-							borderRadius: 5, 
-							backgroundColor: '#FFF',
-							borderColor: '#edebe8',
-							shadowColor: '#edebe8',
-						    shadowOffset: { width: 0, height: 1 },
-						    shadowOpacity: 0.8,
-						    shadowRadius: 1, 
-						    elevation: 5
-						}}
-					>
+					<View style={{flex: 1, justifyContent: 'flex-end'}}>
+					{ userid.substring(0, 3) === '540' ? 
+						<MenuNotMember 
+							navigation={this.props.navigation}
+						/> : 
 						<Menu 
 							navigation={this.props.navigation} 
 							loading={this.state.loading}
@@ -193,7 +216,7 @@ class IndexSearch extends React.Component{
 								msgModal: 'Apakah anda yakin untuk generate password web anda?',
 								titleModal: 'Notifikasi'
 							})}
-						/>
+						/> }
 					</View>
 				</ScrollView>
 			</View>
@@ -201,4 +224,10 @@ class IndexSearch extends React.Component{
 	}
 }
 
-export default IndexSearch;
+function mapStateToProps(state) {
+	return{
+		dataLogin: state.auth.dataLogin
+	}
+}
+
+export default connect(mapStateToProps, null)(IndexSearch);

@@ -1,11 +1,12 @@
 import React from "react";
-import { View, Text, StatusBar } from "react-native";
+import { View, Text, StatusBar, ScrollView, TouchableOpacity } from "react-native";
 import styles from "./styles";
-import { Button, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { Button, Icon, TopNavigation, TopNavigationAction, CheckBox } from '@ui-kitten/components';
 import Loader from "../../Loader";
 import Modal from "../../Modal";
 import { curdateTime } from "../../utils/helper";
 import api from "../../api";
+import apiWs from "../../apiWs";
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
 
@@ -24,6 +25,84 @@ const capitalize = (string) => {
 	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
 }
 
+const numberWithCommas = (number) => {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+const RenderInfo = ({ params, onSimpan, checked, onCheckedChange }) => (
+	<View style={{margin: 15, borderWidth: 1, borderColor: '#cbccc4', flex: 1}}>
+		<View style={styles.labelTarif}>
+			<Text style={{
+				fontFamily: 'open-sans-reg', 
+				fontWeight: '700',
+				textAlign: 'center',
+				fontSize: 16,
+				paddingBottom: 12,
+				paddingTop: 12
+			}}>{params.selectedTarif.description}</Text>
+		</View>
+		<View style={{padding: 10, flex: 1}}>
+			<View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Pengirim</Text>
+				<Text style={styles.subTitle}>{capitalize(params.pengirimnya.nama)}</Text>
+			</View>
+			<View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Alamat Pengirim</Text>
+				<Text style={styles.subTitle}>{params.pengirimnya.alamat}, {params.pengirimnya.kel}, {params.pengirimnya.kec}, {params.pengirimnya.kota}, {params.pengirimnya.provinsi}</Text>
+			</View>
+			<View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Penerima</Text>
+				<Text style={styles.subTitle}>{capitalize(params.deskripsiPenerima.nama)}</Text>
+			</View>
+			<View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Alamat Penerima</Text>
+				<Text style={styles.subTitle}>{params.deskripsiPenerima.alamatUtama}, {params.deskripsiPenerima.kelurahan}, {params.deskripsiPenerima.kecamatan}, {params.pengirimnya.kabupaten}, {params.deskripsiPenerima.provinsi}</Text>
+			</View>
+			<View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Isi Kiriman</Text>
+				<Text style={styles.subTitle}>{params.deskripsiOrder.isiKiriman}</Text>
+			</View>
+			<View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
+				<Text style={styles.subTitle}>{ params.deskripsiOrder.cod ? 'Cod' : 'Non Cod' }</Text>
+			</View>
+			<View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Nilai Barang</Text>
+				<Text style={styles.subTitle}>Rp {numberWithCommas(params.deskripsiOrder.nilai)}</Text>
+			</View>
+			<View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Estimasi Tarif</Text>
+				<Text style={styles.subTitle}>Rp {numberWithCommas(params.selectedTarif.tarif)}</Text>
+			</View>
+			<View 
+				style={{
+					flex: 1, 
+					flexDirection: 'row', 
+					marginBottom: 5, 
+					marginTop: 5, 
+					borderWidth: 0.8,
+					borderColor: '#9e9d9d',
+					flexWrap: 'wrap',
+					borderRadius: 5,
+					backgroundColor: '#dbdad7',
+					alignItems: 'flex-start',
+					padding: 6}}>
+				<CheckBox
+			      status='warning'
+			      style={{marginRight: 6}}
+			      checked={checked}
+			      onChange={onCheckedChange}
+			    />
+			    <Text style={{fontFamily: 'open-sans-reg'}}>Saya menyetujui</Text>
+				<Text style={{color: '#0000FF', fontFamily: 'open-sans-reg'}} onPress={() => alert("Oke")}> Syarat dan ketentuan </Text>
+				<Text style={{fontFamily: 'open-sans-reg'}}>yang berlaku di PT.POS INDONESIA</Text>
+		    </View>
+		    <View style={{width: '40%'}}>
+				<Button status='warning' onPress={() => onSimpan()}>Simpan</Button>
+			</View>
+		</View>
+	</View>	
+);
 
 class ResultOrder extends React.Component{
 	state = {
@@ -32,19 +111,20 @@ class ResultOrder extends React.Component{
 		payload: {},
 		errors: {},
 		idOrder: '',
-		visible: true
+		visible: true,
+		checked: false
 	}
 
 	async componentDidMount(){
 		const { dataLogin } = this.props;
 		const { params } = this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-		const codOrNot = deskripsiOrder.checked ? '0' : '1';
+		const codOrNot = deskripsiOrder.cod ? '1' : '0';		
 		
 		let param1 = `${curdateTime()}|01|${dataLogin.userid}|-`;
-		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.jenis}|${deskripsiOrder.nilai}|-|-`;
-		let param3 = `${pengirimnya.nama}|${pengirimnya.alamat}|${pengirimnya.kel}|${pengirimnya.kec}|${pengirimnya.kota}|PROV|Indonesia|${pengirimnya.kodepos}|${pengirimnya.nohp}|${pengirimnya.email}`;
-		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamat2}|-|-|${deskripsiPenerima.kel}|${deskripsiPenerima.kec}|${deskripsiPenerima.kota}|${deskripsiPenerima.kota}|-|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|-|${deskripsiPenerima.email}|-|-`;
+		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.isiKiriman}|${deskripsiOrder.nilai}|-|-`;
+		let param3 = `${pengirimnya.nama}|${pengirimnya.alamat}|${pengirimnya.kel}|${pengirimnya.kec}|${pengirimnya.kota}|${pengirimnya.provinsi}|Indonesia|${pengirimnya.kodepos}|${pengirimnya.nohp}|${pengirimnya.email}`;
+		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamatUtama}|-|-|${deskripsiPenerima.kelurahan}|${deskripsiPenerima.kecamatan}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.provinsi}|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|-|${deskripsiPenerima.email}|-|-`;
 		let param5 = `${codOrNot}|0|-|0`;
 		const payload = {
 			param1: param1,
@@ -53,7 +133,7 @@ class ResultOrder extends React.Component{
 			param4: param4,
 			param5: param5
 		};
-		// console.log(payload);
+		
 		this.setState({ payload });
 	}
 
@@ -63,8 +143,63 @@ class ResultOrder extends React.Component{
 	    return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
-	onSubmit = () => {
+	saveOrder = () => {
 		this.setState({ loading: true, success: false });
+		const { dataLogin } = this.props;
+		if (dataLogin.userid.substring(0, 3) === '540') { //non member
+			const { params } = this.props.navigation.state;
+			const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
+			const { dataLogin } = this.props;
+
+			const payloadWsdl = {
+				userid: dataLogin.userid,
+				fee: selectedTarif.beadasar,
+				feeTax: selectedTarif.ppn,
+				insurance: selectedTarif.htnb,
+				insuranceTax: selectedTarif.ppnhtnb,
+				itemValue: deskripsiOrder.nilai,
+				contentDesc: deskripsiOrder.isiKiriman,
+				berat: deskripsiOrder.berat,
+				serviceId: selectedTarif.id,
+				senderName: pengirimnya.nama,
+				senderAddress: pengirimnya.alamat,
+				senderKec: pengirimnya.kec,
+				senderCity: pengirimnya.kota,
+				senderProv: '-',
+				length: deskripsiOrder.panjang,
+				width: deskripsiOrder.lebar,
+				height: deskripsiOrder.tinggi,
+				cod: deskripsiOrder.cod ? '1' : '0',
+				senderPos: pengirimnya.kodepos,
+				senderMail: pengirimnya.email,
+				senderPhone: pengirimnya.nohp,
+				receiverName: deskripsiPenerima.nama,
+				receiverAddress: deskripsiPenerima.alamatUtama,
+				receiverKec: deskripsiPenerima.kecamatan,
+				receiverCity: deskripsiPenerima.kabupaten,
+				receiverProv: deskripsiPenerima.provinsi,
+				receiverPos: deskripsiPenerima.kodepos,
+				receiverMail: deskripsiPenerima.email,
+				receiverPhone: deskripsiPenerima.nohp,
+				receiverVill: deskripsiPenerima.kelurahan
+			};
+			apiWs.qob.booking(payloadWsdl)
+				.then(res => {
+					console.log(res);
+					const { idOrder } = res;
+					this.setState({ loading: false, success: true, idOrder: idOrder });
+				})
+				.catch(err => {
+					// console.log(err);
+					console.log(err.response);
+					if (err.response.data.errors.global) {
+						this.setState({ loading: false, errors: err.response.data.errors });
+					}else{
+						this.setState({ loading: false, errors: {global: 'Whooopps, untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti'}});
+					}
+				});
+
+		}else{//member
 			api.qob.booking(this.state.payload)
 				.then(res => {
 					console.log(res);
@@ -80,7 +215,17 @@ class ResultOrder extends React.Component{
 					}else{
 						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
 					}
-				})
+			})
+		}
+	}
+
+	onSubmit = () => {
+		const { checked } = this.state;
+		if (!checked) {
+			alert("Harap centang persyaratan dan ketentuan terlebih dahulu");
+		}else{
+			this.saveOrder();
+		}
 	}
 
 	backHome = () => {
@@ -88,10 +233,6 @@ class ResultOrder extends React.Component{
 			routeName: 'IndexSearch',
 			params: {}
 		})
-	}
-
-	numberWithCommas = (number) => {
-		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
 
 	BackAction = () => (
@@ -113,69 +254,33 @@ class ResultOrder extends React.Component{
 				    alignment='start'
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
-				    // subtitle={this.props.navigation.state.params.namaLengkap}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
-				<View>
-					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> } 
-					<Loader loading={this.state.loading} />
-					{ !this.state.success ? <View style={{margin: 15}}>
-							<View style={styles.labelTarif}>
-								<Text style={{
-									fontFamily: 'open-sans-reg', 
-									fontWeight: '700',
-									textAlign: 'center',
-									fontSize: 16,
-									paddingBottom: 12,
-									paddingTop: 12
-								}}>{params.selectedTarif.description}</Text>
-							</View>
-							<View style={{paddingTop: 10}}>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Pengirim</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 73 }}>: {capitalize(params.pengirimnya.nama)}</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Penerima</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 68 }}>: {capitalize(params.deskripsiPenerima.nama)}</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Isi Kiriman</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 62 }}>: {params.deskripsiOrder.jenis}</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 43 }}>: 
-										{ params.deskripsiOrder.checked ? ' Non Cod' : ' Cod' }
-									</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Nilai Barang</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 50 }}>: Rp {this.numberWithCommas(params.deskripsiOrder.nilai)}</Text>
-								</View>
-								<View style={styles.viewResult}>
-									<Text style={styles.labelInformasi}>Estimasi Tarif</Text>
-									<Text style={{ fontSize: 16, fontFamily: 'open-sans-reg', marginLeft: 40 }}>: Rp {this.numberWithCommas(params.selectedTarif.tarif)}</Text>
-								</View>
-							</View>
-							<Button status='warning' style={{marginTop: 10}} onPress={this.onSubmit}>Simpan</Button>
-						</View> : <React.Fragment>
-							<View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-								<Text style={{fontFamily: 'open-sans-reg', fontSize: 20, textAlign: 'center' }}>SUKSES!</Text>
-								<Button status='warning' onPress={() => this.backHome()}>Kembali ke home</Button>
-							</View>
-							<View>
-								<Dialog.Container visible={this.state.visible}>
-									<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
-							        <Dialog.Description>
-								          	Nomor order   : {this.state.idOrder} {'\n'}
-								          	Isi Kiriman     : {params.deskripsiOrder.jenis}
-							        </Dialog.Description>
-						          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
-						        </Dialog.Container>
-							</View>
-						</React.Fragment>}
-					</View>
+				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> } 
+				
+				<Loader loading={this.state.loading} />
+				
+				{ !this.state.success ? 
+					<ScrollView>
+						<RenderInfo 
+							params={params} 
+							onSimpan={this.onSubmit} 
+							checked={this.state.checked} 
+							onCheckedChange={() => this.setState({ checked: !this.state.checked})} 
+						/>
+					</ScrollView> : <React.Fragment>
+						<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center'}}>
+							<Button status='warning' onPress={() => this.backHome()}>Kembali ke menu utama</Button>
+						</View>
+						<Dialog.Container visible={this.state.visible}>
+							<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
+							{ this.state.visible && <View style={{margin: 13}}>
+					        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Nomor order : QOB00230</Text>
+					        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Isi Kiriman      : Baju hahahh</Text>
+					        </View> }
+				          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
+				        </Dialog.Container>
+					</React.Fragment> }
 			</View>
 		);
 	}

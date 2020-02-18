@@ -25,7 +25,13 @@ const SearchAction = (props) => (
   <TopNavigationAction {...props} icon={SearchIcon}/>
 );
 
-
+const numberWithCommas = (number) => {
+	if (isNaN(number)) {
+		return number;
+	}else{
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
+}
 
 // const Judul = ({ navigation }) => {
 // 	const { params } = navigation.state;
@@ -100,6 +106,18 @@ const DetailView = ({ listDetail }) => (
     			</Text>
 			</View>
 			<View style={{ paddingBottom: 5 }}>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Berat</Text>
+    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
+    				{numberWithCommas(listDetail.berat)} gram
+    			</Text>
+			</View>
+			<View style={{ paddingBottom: 5 }}>
+    			<Text style={{fontFamily: 'open-sans-reg'}}>Total Bea</Text>
+    			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
+    				Rp {numberWithCommas(listDetail.totalBea)}
+    			</Text>
+			</View>
+			<View style={{ paddingBottom: 5 }}>
     			<Text style={{fontFamily: 'open-sans-reg'}}>Status Kiriman</Text>
     			<Text style={{fontFamily: 'open-sans-reg', color: '#83857e'}}>
     				{ listDetail.status_kiriman === '1' && 'Kolekting' }
@@ -130,7 +148,9 @@ const List = ({ listdata, tanggal, showDetail, visible, detailProps, checked }) 
 		    				wkt_posting: x.wkt_posting,
 		    				kotapengirim: x.kotapengirim,
 		    				nmpengirim: x.nmpengirim,
-		    				alamatpengirim: x.alamatpengirim
+		    				alamatpengirim: x.alamatpengirim,
+		    				totalBea: x.total_bea,
+		    				berat: x.berat
 		    			};
 		    			return(
 		    				<React.Fragment key={i}>
@@ -167,11 +187,6 @@ const List = ({ listdata, tanggal, showDetail, visible, detailProps, checked }) 
 
 
 class ListOrder extends React.Component{
-	// static navigationOptions = ({ navigation }) => ({
-	// 	headerTitle: <Judul navigation={navigation}/>,
-	// 	headerRight: <Search navigation={navigation} />,
-	// })
-
 	scrollViewRef = React.createRef();
 
 	state = {
@@ -223,7 +238,9 @@ class ListOrder extends React.Component{
 				    leftControl={this.BackAction()}
 				    title='Riwayat Order/Transaksi'
 				    alignment='center'
+				    subtitle={this.props.navigation.state.params.tanggalSearch}
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    subtitleStyle={{color: '#FFF'}}
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    rightControls={this.renderRightControls()}
 				/>

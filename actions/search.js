@@ -1,5 +1,5 @@
 import api from "../components/api";
-import { GET_REKENING, REMOVE_REKENING, GET_TRACE, REMOVE_HISTORY_LACAK } from "../types";
+import { GET_REKENING, REMOVE_REKENING, GET_TRACE, REMOVE_HISTORY_LACAK, LACAK_HAS_ERROR, REMOVE_HAS_ERROR } from "../types";
 
 export const rekeningFetched = (res, rekening) => ({
 	type: GET_REKENING,
@@ -12,17 +12,7 @@ export const getRekening = (rek) => dispatch =>
 		.then(res => {
 			const { response_data1 } = res;
 			const values = response_data1.split('|');
-			// const initialBalance = values[0].split(':');
-			// const finalBalance = values[1].split(':');
-			// const valTransaction = values[2].replace('Transaksi : ', '');
-			// const transaction = valTransaction.split('~');
-			// const toObj = {
-			// 	initialBalance: initialBalance[1].replace(/ /g, ''),
-			// 	finalBalance: finalBalance[1].replace(/ /g, ''),
-			// 	transaction: transaction
-			// }
 			dispatch(rekeningFetched(values, rek))
-			// console.log(toObj);
 		})
 
 export const removed = (rek) => ({
@@ -41,9 +31,15 @@ export const getDataKiriman = (res, extId) => ({
 	extId
 })
 
+export const lacakHasError = (err) => ({
+	type: LACAK_HAS_ERROR,
+	err
+})
+
 export const lacakKiriman = (extId) => dispatch => 
 	api.qob.lacakKiriman(extId)
 		.then(res => dispatch(getDataKiriman(res, extId)))
+		.catch(err => dispatch(lacakHasError(err)))
 
 export const removeHistoryLacak = (extId) => dispatch => {
 	dispatch({
@@ -51,3 +47,7 @@ export const removeHistoryLacak = (extId) => dispatch => {
 		extId
 	})
 }
+
+export const removeErrors = () => dispatch => dispatch({
+	type: REMOVE_HAS_ERROR
+})
