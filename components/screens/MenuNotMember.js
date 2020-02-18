@@ -79,7 +79,12 @@ const MenuNotMember = ({ navigation }) => (
 						<Text style={styles.titleText}>Riwayat Pickup</Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity style={styles.iconPress}>
+				<TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => navigation.navigate({
+                        routeName: 'LacakKiriman'
+                    })}
+				>
 					<Image 
 						source={require("../../assets/location.png")}
 						style={styles.img}

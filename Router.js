@@ -10,7 +10,7 @@ import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/search/IndexSearch";
 import ValidasiRekening from "./components/screens/registrasi/ValidasiRekening";
 import ValidasiRegRek from "./components/screens/registrasi/ValidasiRegRek";
-import IndexHelper from "./components/screens/helper/IndexHelper";
+// import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
 import Penerima from "./components/screens/order/Penerima";
 import PilihTarif from "./components/screens/order/PilihTarif";
@@ -37,6 +37,7 @@ import MapsScreen from "./components/screens/history/Maps";
 import RiwayatPickup from "./components/screens/history/Index";
 import DetailPickup from "./components/screens/history/DetailPickup";
 import KelolaPengirim from "./components/screens/nonmember/Pengirim";
+import LacakKiriman from "./components/screens/LacakKiriman";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -49,134 +50,77 @@ const RouteTab = createMaterialTopTabNavigator(
 );
 
 const AppNavigator = createStackNavigator({
-      Helper: {
-        screen: IndexHelper
-      },
       Order: {
-        screen: IndexOrder,
-        navigationOptions: {
-          header: null
-        }
+        screen: IndexOrder
       },
       OrderPenerima: {
-        screen: Penerima,
-        navigationOptions: {
-          header: null
-        }
+        screen: Penerima
       },
       PilihTarif: {
-        screen: PilihTarif,
-        navigationOptions: {
-          header: null
-        }
+        screen: PilihTarif
       },
       ResultOrder: {
-        screen: ResultOrder,
-        navigationOptions: {
-          header: null
-        }
+        screen: ResultOrder
       },
       LacakBarcode: {
-        screen: LacakBarcode,
-        navigationOptions: {
-          header: null
-        }
+        screen: LacakBarcode
       },
       ResultRekeningSearch: {
         screen: ResultRekeningSearch 
       },
       Barcode: {
-        screen: Barcode,
-        navigationOptions: {
-          header: null
-        }
+        screen: Barcode
       },
       Pembayaran: {
-        screen: Pembayaran,
-        navigationOptions: {
-          header: null
-        }
+        screen: Pembayaran
       },
       DetailSearch: {
-        screen: RouteTab,
-        navigationOptions: { 
-          header: null
-        }
+        screen: RouteTab
       },
       IndexSearch: {
-        screen: IndexSearch,
-        navigationOptions: {
-          header: null
-        }
+        screen: IndexSearch
       },
       Account:{
-        screen: AccountScreen,
-        navigationOptions: {
-          header: null
-        }
+        screen: AccountScreen
       },
       CekTarif: {
-        screen: CekTarif,
-        navigationOptions: {
-          header: null
-        }
+        screen: CekTarif
       },
       ListOrder: {
-        screen: ListOrder,
-        navigationOptions: {
-          header: null
-        }
+        screen: ListOrder
       },
       SearchOrder: {
-        screen: SearchOrderScreen,
-        navigationOptions: { 
-          header: null
-        }
+        screen: SearchOrderScreen
       },
       RequestPickup: {
-        screen: RequestPickupScreen,
-        navigationOptions: {
-          header: null
-        }
+        screen: RequestPickupScreen
       },
       OrderNonMember: {
-        screen: OrderNonMember,
-        navigationOptions: {
-          header: null
-        }
+        screen: OrderNonMember
       },
       OrderPenerimaNonMember: {
-        screen: OrderPenerimaNonMember,
-        navigationOptions: {
-          header: null
-        }
+        screen: OrderPenerimaNonMember
       },
       Maps: {
-        screen: MapsScreen,
-        navigationOptions: {
-          header: null
-        }
+        screen: MapsScreen
       },
       RiwayatPickup: {
-        screen: RiwayatPickup,
-        navigationOptions: {
-          header: null
-        }
+        screen: RiwayatPickup
       },
       DetailPickup: {
-        screen: DetailPickup,
-        navigationOptions: {
-          header: null
-        }
+        screen: DetailPickup
       },
       KelolaPengirim: {
-        screen: KelolaPengirim,
-        navigationOptions: {
-          header: null
-        }
+        screen: KelolaPengirim
+      },
+      LacakKiriman: {
+        screen: LacakKiriman
       },
   	},{
-  	initialRouteName: 'IndexSearch'
+  	initialRouteName: 'IndexSearch',
+    defaultNavigationOptions: {
+      header: null
+    },
 });
 
 const LoginNavigator = createStackNavigator({
