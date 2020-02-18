@@ -105,10 +105,8 @@ const RenderMaps = ({ startLocation, finishLocation, region, isLoading, routeMap
 		{ isLoading ? 
 			<Text>Memuat route....</Text> : 
 			<MapView 
-				provider={PROVIDER_GOOGLE}
 				initialRegion={region} 
 				style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}
-				customMapStyle={mapStyle}	
 				showsUserLocation={true}
 				minZoomLevel={12}
 				zoomControlEnabled
