@@ -153,14 +153,14 @@ class OrderForm extends React.Component{
 				      status={errors.nilai && 'danger'}
 				      caption={errors.nilai && `${errors.nilai}`}
 				    />
-				    <CheckBox
+				    { /*<CheckBox
 				      text='Cod'
 				      style={{ marginTop: 5 }}
 				      textStyle={{ color: 'red'}}
 				      status='warning'
 				      checked={data.checked}
 				      onChange={this.onCheckedChange}
-				    />
+				    /> */ }
 				</View>
 				<View style={{ margin: 10, marginTop: -6}}>
 					<Button status='warning' onPress={this.onSubmit}>Selanjutnya</Button>

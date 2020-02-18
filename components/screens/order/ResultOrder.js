@@ -29,8 +29,8 @@ const numberWithCommas = (number) => {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const RenderInfo = ({ params, onSimpan, checked, onCheckedChange }) => (
-	<View style={{margin: 15, borderWidth: 1, borderColor: '#cbccc4', flex: 1}}>
+const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid }) => (
+	<View style={{margin: 10, borderWidth: 1, borderColor: '#cbccc4', flex: 1}}>
 		<View style={styles.labelTarif}>
 			<Text style={{
 				fontFamily: 'open-sans-reg', 
@@ -48,7 +48,13 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange }) => (
 			</View>
 			<View style={styles.viewResult}>
 				<Text style={styles.labelInformasi}>Alamat Pengirim</Text>
-				<Text style={styles.subTitle}>{params.pengirimnya.alamat}, {params.pengirimnya.kel}, {params.pengirimnya.kec}, {params.pengirimnya.kota}, {params.pengirimnya.provinsi}</Text>
+				<Text style={styles.subTitle}>
+					{params.pengirimnya.alamat}, 
+					{params.pengirimnya.kel}, 
+					{params.pengirimnya.kec}, 
+					{params.pengirimnya.kota}, 
+					{params.pengirimnya.provinsi} ({params.pengirimnya.kodepos})
+				</Text>
 			</View>
 			<View style={styles.viewResult}>
 				<Text style={styles.labelInformasi}>Penerima</Text>
@@ -56,16 +62,22 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange }) => (
 			</View>
 			<View style={styles.viewResult}>
 				<Text style={styles.labelInformasi}>Alamat Penerima</Text>
-				<Text style={styles.subTitle}>{params.deskripsiPenerima.alamatUtama}, {params.deskripsiPenerima.kelurahan}, {params.deskripsiPenerima.kecamatan}, {params.pengirimnya.kabupaten}, {params.deskripsiPenerima.provinsi}</Text>
+				<Text style={styles.subTitle}>
+					{params.deskripsiPenerima.alamatUtama}, 
+					{params.deskripsiPenerima.kelurahan},  
+					{params.deskripsiPenerima.kecamatan},  
+					{params.deskripsiPenerima.kabupaten},  
+					{params.deskripsiPenerima.provinsi} ({params.deskripsiPenerima.kodepos})
+				</Text>
 			</View>
 			<View style={styles.viewResult}>
 				<Text style={styles.labelInformasi}>Isi Kiriman</Text>
 				<Text style={styles.subTitle}>{params.deskripsiOrder.isiKiriman}</Text>
 			</View>
-			<View style={styles.viewResult}>
+			{ userid.substring(0, 3) !== '540' && <View style={styles.viewResult}>
 				<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
 				<Text style={styles.subTitle}>{ params.deskripsiOrder.cod ? 'Cod' : 'Non Cod' }</Text>
-			</View>
+			</View> }
 			<View style={styles.viewResult}>
 				<Text style={styles.labelInformasi}>Nilai Barang</Text>
 				<Text style={styles.subTitle}>Rp {numberWithCommas(params.deskripsiOrder.nilai)}</Text>
@@ -266,7 +278,8 @@ class ResultOrder extends React.Component{
 							params={params} 
 							onSimpan={this.onSubmit} 
 							checked={this.state.checked} 
-							onCheckedChange={() => this.setState({ checked: !this.state.checked})} 
+							onCheckedChange={() => this.setState({ checked: !this.state.checked})}
+							userid={this.props.dataLogin.userid} 
 						/>
 					</ScrollView> : <React.Fragment>
 						<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center'}}>
