@@ -9,7 +9,7 @@ import api from "../../api";
 import apiWs from "../../apiWs";
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
-
+import SyaratKetentuan from "./SyaratKetentuan";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -29,7 +29,7 @@ const numberWithCommas = (number) => {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid }) => (
+const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPressSyarat }) => (
 	<View style={{margin: 10, borderWidth: 1, borderColor: '#cbccc4', flex: 1}}>
 		<View style={styles.labelTarif}>
 			<Text style={{
@@ -106,7 +106,7 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid }) => (
 			      onChange={onCheckedChange}
 			    />
 			    <Text style={{fontFamily: 'open-sans-reg'}}>Saya menyetujui</Text>
-				<Text style={{color: '#0000FF', fontFamily: 'open-sans-reg'}} onPress={() => alert("Oke")}> Syarat dan ketentuan </Text>
+				<Text style={{color: '#0000FF', fontFamily: 'open-sans-reg'}} onPress={() => onPressSyarat()}> Syarat dan ketentuan </Text>
 				<Text style={{fontFamily: 'open-sans-reg'}}>yang berlaku di PT.POS INDONESIA</Text>
 		    </View>
 		    <View style={{width: '40%'}}>
@@ -124,7 +124,8 @@ class ResultOrder extends React.Component{
 		errors: {},
 		idOrder: '',
 		visible: true,
-		checked: false
+		checked: true,
+		showSyarat: false
 	}
 
 	async componentDidMount(){
@@ -271,29 +272,35 @@ class ResultOrder extends React.Component{
 				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> } 
 				
 				<Loader loading={this.state.loading} />
-				
-				{ !this.state.success ? 
-					<ScrollView>
-						<RenderInfo 
-							params={params} 
-							onSimpan={this.onSubmit} 
-							checked={this.state.checked} 
-							onCheckedChange={() => this.setState({ checked: !this.state.checked})}
-							userid={this.props.dataLogin.userid} 
-						/>
-					</ScrollView> : <React.Fragment>
-						<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center'}}>
-							<Button status='warning' onPress={() => this.backHome()}>Kembali ke menu utama</Button>
-						</View>
-						<Dialog.Container visible={this.state.visible}>
-							<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
-							{ this.state.visible && <View style={{margin: 13}}>
-					        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Nomor order : {this.state.idOrder}</Text>
-					        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Isi Kiriman      : {params.deskripsiOrder.jenis} </Text>
-					        </View> }
-				          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
-				        </Dialog.Container>
-					</React.Fragment> }
+				<React.Fragment>
+					{ !this.state.success ? 
+						<ScrollView>
+							<RenderInfo 
+								params={params} 
+								onSimpan={this.onSubmit} 
+								checked={this.state.checked} 
+								onCheckedChange={() => this.setState({ checked: !this.state.checked})}
+								userid={this.props.dataLogin.userid} 
+								onPressSyarat={() => this.setState({ showSyarat: true })}
+							/>
+						</ScrollView> : <React.Fragment>
+							<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center'}}>
+								<Button status='warning' onPress={() => this.backHome()}>Kembali ke menu utama</Button>
+							</View>
+							<Dialog.Container visible={this.state.visible}>
+								<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
+								{ this.state.visible && <View style={{margin: 13}}>
+						        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Nomor order : {this.state.idOrder}</Text>
+						        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Isi Kiriman      : {params.deskripsiOrder.jenis} </Text>
+						        </View> }
+					          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
+					        </Dialog.Container>
+						</React.Fragment> }
+				</React.Fragment>
+				<SyaratKetentuan 
+					visible={this.state.showSyarat} 
+					handleClose={() => this.setState({ showSyarat: false })}
+				/>
 			</View>
 		);
 	}
