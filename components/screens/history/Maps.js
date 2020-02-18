@@ -3,9 +3,8 @@ import { View, Text, Button, StatusBar, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 import { fetchHistoryPickup } from "../../../actions/pickup";
 import apiWs from "../../apiWs";
-import mapStyle from "../../mapstyles";
 import { Spinner, Icon } from '@ui-kitten/components';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import axios from "axios";
 import { Polyline, Marker } from "react-native-maps";
 import { Backdrop } from "react-native-backdrop";
@@ -114,13 +113,17 @@ const RenderMaps = ({ startLocation, finishLocation, region, isLoading, routeMap
 				minZoomLevel={12}
 				zoomControlEnabled
 			>
-				 <Polyline coordinates={routeMap} strokeWidth={4} strokeColor="#4fdbd0" geodesic={true}/>
+				 <Polyline coordinates={routeMap} strokeWidth={3} strokeColor="#f26522" geodesic={true}/>
 				 <Marker 
 				  	coordinate={{latitude: startLocation.latitude, longitude: startLocation.longitude}} 
 				  	title="Starting location"
-				  	image={require('../../../assets/motorcycle.png')}
+				  	image={require('../../../assets/driver.png')}
+				  	resizeMode="contain"
 				  />
-				  <Marker coordinate={{latitude: finishLocation.latitude, longitude: finishLocation.longitude}} title="Finishlocation"/>
+				  <Marker coordinate={{latitude: finishLocation.latitude, longitude: finishLocation.longitude}} title="My Coordinate"
+				  	image={require('../../../assets/box.png')}
+				  	resizeMode="contain"
+				  />
 			</MapView> }
 	</View>
 );
