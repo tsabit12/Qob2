@@ -45,7 +45,7 @@ const ValidateForm = ({ onValidate, onChangeValidate, textValue, errors, fullNam
 		/>
 		<CheckBox
 	        status='info'
-	        text='Registrasi sebagai member'
+	        text='Registrasi sebagai pebisol/member'
 	        checked={isMember}
 	        onChange={onChangeIsMember}
 	    />
