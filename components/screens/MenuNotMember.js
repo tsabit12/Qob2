@@ -12,7 +12,7 @@ const MenuNotMember = ({ navigation }) => (
 				<TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => navigation.navigate({
-                        routeName: 'Order'
+                        routeName: 'OrderNonMember'
                     })}
 				>
 					<Image 
