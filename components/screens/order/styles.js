@@ -3,11 +3,11 @@ import Constants from 'expo-constants';
 
 export default StyleSheet.create({
   container: {
-    margin: 10,
+    margin: 8,
     borderWidth: 1,
     // borderRightWidth: 1,
     borderColor: '#cfcfcf',
-    borderRadius: 10,
+    borderRadius: 5,
   },
   text: {
   	fontFamily: 'open-sans-reg'

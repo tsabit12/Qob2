@@ -121,11 +121,43 @@ class IndexOrder extends React.Component{
 	validate = (data) => {
 		const errors = {};
 		if (!data.jenis) errors.jenis = "Masukan jenis kiriman";
-		if (!data.berat) errors.berat = "Masukan berat kiriman";
-		if (!data.panjang) errors.panjang = "Masukan panjang kiriman";
-		if (!data.lebar) errors.lebar = "Masukan lebar kiriman";
-		if (!data.tinggi) errors.tinggi = "Masukan tinggi kiriman";
 		if (!data.nilai) errors.nilai = "Masukan nilai";
+
+		if (!data.berat){
+			errors.berat = "Masukan berat kiriman";			
+		}else if(data.berat <= 0){
+			errors.berat = "Harus lebih dari 0";
+		}
+		
+		if (!data.panjang){
+			errors.panjang = "Masukan panjang kiriman";	
+		}else{
+			if (data.panjang <= 0){
+				errors.panjang = "Harus lebih dari 0";		
+			}else if (data.panjang > 50) {
+				errors.panjang = "Maksimal 50";
+			}
+		}
+
+		if (!data.lebar){
+			errors.lebar = "Masukan lebar kiriman";	
+		}else{
+			if (data.lebar <= 0){
+				errors.lebar = "Harus lebih dari 0";		
+			}else if (data.lebar > 30) {
+				errors.lebar = "Maksimal 30";
+			}
+		}
+
+		if (!data.tinggi){
+			errors.tinggi = "Masukan tinggi kiriman";
+		}else{
+			if (data.tinggi <= 0){
+				errors.tinggi = "Harus lebih dari 0";		
+			}else if (data.tinggi > 25) {
+				errors.tinggi = "Maksimal 25";
+			}
+		}
 		return errors;
 	}
 
@@ -199,6 +231,7 @@ class IndexOrder extends React.Component{
 						      status={errors.panjang && 'danger'}
 						      onChangeText={(e) => this.onChange(e, this.panjangRef.current.props)}
 						      onSubmitEditing={() => this.lebarRef.current.focus() }
+						      caption={errors.panjang && `${errors.panjang}`}
 						    />
 						    <Input
 						      placeholder='XX (CM)'
@@ -212,6 +245,7 @@ class IndexOrder extends React.Component{
 						      status={errors.lebar && 'danger'}
 						      onChangeText={(e) => this.onChange(e, this.lebarRef.current.props)}
 						      onSubmitEditing={() => this.tinggiRef.current.focus() }
+						      caption={errors.lebar && `${errors.lebar}`}
 						    />
 						    <Input
 						      placeholder='XX (CM)'
@@ -225,6 +259,7 @@ class IndexOrder extends React.Component{
 						      status={errors.tinggi && 'danger'}
 						      onChangeText={(e) => this.onChange(e, this.tinggiRef.current.props)}
 						      onSubmitEditing={() => this.nilaiRef.current.focus() }
+						      caption={errors.tinggi && `${errors.tinggi}`}
 						    />
 					    </View>
 					    <View style={{padding: 4}}>
@@ -252,7 +287,7 @@ class IndexOrder extends React.Component{
 					    />
 					    <View style={{height: 10}} />
 					</Layout>
-					<View style={{margin: 8, marginTop: -5}}>
+					<View style={{margin: 6, marginTop: -5}}>
 						<Button style={{margin: 2}} status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
 					</View>
 				</ScrollView>
