@@ -307,6 +307,7 @@ class FormPengirim extends React.PureComponent{
 						onChangeText={(e) => this.onChange(e, this.alamatDetailRef.current.props)}
 						status={errors.alamatDetail && 'danger'}
 						caption={errors.alamatDetail && `${errors.alamatDetail}`}
+						onSubmitEditing={() => this.emailRef.current.focus() }
 					/>
 					<Input 
 						ref={this.emailRef}

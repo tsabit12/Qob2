@@ -102,7 +102,6 @@ class PenerimaForm extends React.Component{
 
 	//handle refresh data
 	UNSAFE_componentWillReceiveProps(nextProps){
-		console.log(nextProps);
 		if (nextProps.detailPengirim) {
 			const { detailPengirim } = nextProps;
 			this.setState({

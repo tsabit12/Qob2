@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, KeyboardAvoidingView, ScrollView } from "react-native";
+import { View, Text, KeyboardAvoidingView, ScrollView, Keyboard } from "react-native";
 import styles from "./styles";
 import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import Constants from 'expo-constants';
@@ -19,12 +19,27 @@ const LoadingView = () => (
 
 class Pengirim extends React.Component{
 	state = {
-		show: false
+		show: false,
+		keyboardOpen: false
+	}
+
+	UNSAFE_componentWillMount () {
+	    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+	    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
 	}
 
 	componentDidMount(){
 		setTimeout(() => this.setState({ show: true }), 300);
 	}
+
+	componentWillUnmount () {
+	    this.keyboardDidShowListener.remove();
+	    this.keyboardDidHideListener.remove();
+	}
+
+	keyboardDidShow = (event) => this.setState({ keyboardOpen: true })
+
+	keyboardDidHide = () => this.setState({ keyboardOpen: false })
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -70,7 +85,7 @@ class Pengirim extends React.Component{
 				{ show ? <KeyboardAvoidingView
 							style={{flex:1}} 
 							behavior="padding" 
-							enabled
+							enabled={this.state.keyboardOpen}
 						>
 						<ScrollView keyboardShouldPersistTaps='always'>	
 							<View style={{margin: 7, flex: 1}}>

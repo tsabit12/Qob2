@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, StatusBar, KeyboardAvoidingView, ScrollView } from "react-native";
+import { View, Text, StyleSheet, StatusBar, KeyboardAvoidingView, ScrollView, Keyboard } from "react-native";
 import Constants from 'expo-constants';
 import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import PenerimaForm from "./forms/PenerimaForm";
@@ -26,7 +26,18 @@ const LoadingView = () => (
 
 class Penerima extends React.Component{
 	state = {
-		isLoading: true
+		isLoading: true,
+		keyboardOpen: false
+	}
+
+	UNSAFE_componentWillMount () {
+	    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+	    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+	}
+
+	componentWillUnmount () {
+	    this.keyboardDidShowListener.remove();
+	    this.keyboardDidHideListener.remove();
 	}
 
 	componentDidMount(){
@@ -34,11 +45,9 @@ class Penerima extends React.Component{
 		setTimeout(() => this.setState({isLoading: false}), 300);	
 	}
 
-	// UNSAFE_componentWillReceiveProps(nextProps){
-	// 	if (nextProps.dataDetailUser) {
-	// 		this.setState({ detail: nextProps.dataDetailUser });
-	// 	}
-	// }
+	keyboardDidShow = (event) => this.setState({ keyboardOpen: true })
+
+	keyboardDidHide = () => this.setState({ keyboardOpen: false })
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -99,7 +108,7 @@ class Penerima extends React.Component{
 				{ isLoading ? <LoadingView /> : 
 					<KeyboardAvoidingView
 						style={{flex:1}} 
-						enabled
+						enabled={this.state.keyboardOpen}
 						behavior={'padding'}
 					>
 						<ScrollView keyboardShouldPersistTaps='always'>	
