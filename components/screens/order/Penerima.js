@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, StatusBar, KeyboardAvoidingView, ScrollView } from "react-native";
 import Constants from 'expo-constants';
-import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import PenerimaForm from "./forms/PenerimaForm";
 import { connect } from "react-redux";
 import { getDetailUser } from "../../../actions/auth";
@@ -16,12 +16,22 @@ const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
 
+const LoadingView = () => (
+	<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+		<Spinner size='medium' />
+		<Text style={{fontFamily: 'open-sans-reg', marginTop: 5}}>Loading...</Text>
+	</View>
+);
+
+
 class Penerima extends React.Component{
-	state = {}
+	state = {
+		isLoading: true
+	}
 
 	componentDidMount(){
-		const { params } = this.props.navigation.state;
-		console.log(params);
+		this.getProfile();
+		setTimeout(() => this.setState({isLoading: false}), 300);	
 	}
 
 	// UNSAFE_componentWillReceiveProps(nextProps){
@@ -73,6 +83,7 @@ class Penerima extends React.Component{
 	}
 
 	render(){
+		const { isLoading } = this.state;
 		return(
 			<View style={{flex: 1}}>
 				<MyStatusBar />
@@ -85,19 +96,20 @@ class Penerima extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
-				<KeyboardAvoidingView
-					style={{flex:1}} 
-					enabled
-					behavior={'padding'}
-				>
-					<ScrollView keyboardShouldPersistTaps='always'>	
-						<PenerimaForm 
-							onGetProfile={this.getProfile}
-							detailPengirim={this.props.dataDetailUser}
-							onSubmit={this.onSubmit}
-						/>
-					</ScrollView>
-				</KeyboardAvoidingView>
+				{ isLoading ? <LoadingView /> : 
+					<KeyboardAvoidingView
+						style={{flex:1}} 
+						enabled
+						behavior={'padding'}
+					>
+						<ScrollView keyboardShouldPersistTaps='always'>	
+							<PenerimaForm 
+								onGetProfile={this.getProfile}
+								detailPengirim={this.props.dataDetailUser}
+								onSubmit={this.onSubmit}
+							/>
+						</ScrollView>
+					</KeyboardAvoidingView> }
 			</View>
 		);
 	}

@@ -66,7 +66,7 @@ class PenerimaForm extends React.Component{
 			nohp: ''
 		},
 		errors: {},
-		checked: false,
+		checked: true,
 		defaultPengirim: this.props.detailPengirim,
 		loading: false,
 		loading2: false,
@@ -75,6 +75,29 @@ class PenerimaForm extends React.Component{
 		showModal: false,
 		choosed: null,
 		choosed2: null
+	}
+
+	componentDidMount(){
+		const { detailPengirim } = this.props;
+		if (Object.keys(detailPengirim).length > 0) {
+			this.setState({
+				pengirim: {
+					nama: capitalize(detailPengirim.namaLengkap),
+					alamatUtama: detailPengirim.alamat,
+					kodepos: detailPengirim.kodepos,
+					kelurahan: detailPengirim.kel,
+					kecamatan: detailPengirim.kec,
+					kabupaten: detailPengirim.kota,
+					provinsi: '-',
+					email: detailPengirim.email,
+					nohp: detailPengirim.noHp
+				}
+			})
+		}else{
+			this.setState({
+				checked: false
+			})	
+		}
 	}
 
 	//handle refresh data

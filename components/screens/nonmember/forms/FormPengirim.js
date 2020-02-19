@@ -68,10 +68,30 @@ class FormPengirim extends React.PureComponent{
 		responseKodepos: [],
 		errors: {},
 		selectedIndex: null,
-		checked: false
+		checked: true
 	}
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
+
+	componentDidMount(){
+		const { detail } = this.props.user;
+		const { kelurahan, kecamatan, kota, provinsi } = detail;
+		this.setState({
+			data: {
+				nama: capitalize(detail.nama),
+				alamatUtama: capitalize(detail.alamatOl),
+				kodepos: detail.kodepos,
+				kota: capitalize(kota),
+				kecamatan: capitalize(kecamatan),
+				kelurahan: capitalize(kelurahan),
+				provinsi: capitalize(provinsi),
+				alamatDetail: `${capitalize(kelurahan)}, ${capitalize(kecamatan)}, ${capitalize(kota)}, ${capitalize(provinsi)}`,
+				email: detail.email,
+				noHp: detail.nohp
+			},
+			search: false
+		})
+	}
 
 	onIconPress = () => {
 		const { checked } = this.state;
