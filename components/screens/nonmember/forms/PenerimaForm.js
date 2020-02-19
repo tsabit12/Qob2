@@ -187,7 +187,7 @@ class PenerimaForm extends React.Component{
 						icon={(style) => this.renderIcon(style)}
 						onChangeText={(e) => this.onChange(e, this.kodeposRef.current.props)}
 						caption={errors.kodepos && `${errors.kodepos}`}
-						status={errors.kodepos || errors.global && 'danger'}
+						status={errors.kodepos && 'danger'}
 						onSubmitEditing={this.searchKodepos}
 					/>
 					{ loading && <Text>Searching...</Text>}

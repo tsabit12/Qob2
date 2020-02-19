@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, KeyboardAvoidingView, ScrollView } from "react-native";
+import { View, Text, KeyboardAvoidingView, ScrollView, Keyboard } from "react-native";
 import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import Constants from 'expo-constants';
 import PenerimaForm from "./forms/PenerimaForm";
@@ -19,8 +19,23 @@ const LoadingView = () => (
 
 class Penerima extends React.Component{
 	state = {
-		show: false
+		show: false,
+		keyboardOpen: false
 	}
+
+	UNSAFE_componentWillMount () {
+	    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+	    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+	}
+
+	componentWillUnmount () {
+	    this.keyboardDidShowListener.remove();
+	    this.keyboardDidHideListener.remove();
+	}
+
+	keyboardDidShow = (event) => this.setState({ keyboardOpen: true })
+
+	keyboardDidHide = () => this.setState({ keyboardOpen: false })
 
 	componentDidMount(){
 		setTimeout(() => this.setState({ show: true }), 300);
@@ -56,7 +71,7 @@ class Penerima extends React.Component{
 				{ show ? <KeyboardAvoidingView
 							style={{flex:1}} 
 							behavior="padding" 
-							enabled
+							enabled={this.state.keyboardOpen}
 						>
 					<ScrollView keyboardShouldPersistTaps='always'>	
 						<PenerimaForm onSubmit={this.onSubmit} />
