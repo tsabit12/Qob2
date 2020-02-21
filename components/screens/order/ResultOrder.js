@@ -124,7 +124,7 @@ class ResultOrder extends React.Component{
 		errors: {},
 		idOrder: '',
 		visible: true,
-		checked: true,
+		checked: false,
 		showSyarat: false
 	}
 
@@ -178,7 +178,8 @@ class ResultOrder extends React.Component{
 				senderAddress: pengirimnya.alamat,
 				senderKec: pengirimnya.kec,
 				senderCity: pengirimnya.kota,
-				senderProv: '-',
+				senderVill: pengirimnya.kel,
+				senderProv: pengirimnya.provinsi,
 				length: deskripsiOrder.panjang,
 				width: deskripsiOrder.lebar,
 				height: deskripsiOrder.tinggi,

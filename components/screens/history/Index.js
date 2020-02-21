@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, Button, Modal, TouchableHighlight } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Button, Modal, TouchableHighlight, StatusBar } from "react-native";
 import styles from "./styles";
 import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import { connect } from "react-redux";
@@ -168,10 +168,10 @@ class Index extends React.Component{
 	}
 
 	componentDidMount(){
+		StatusBar.setHidden(false);
 		const { userid } = this.props;
 		this.props.fetchHistoryPickup(userid)
 			.catch(err => {
-				console.log(err.response);
 				this.setState({ 
 					errors: {
 						global: 'Data tidak ditemukan'
@@ -209,7 +209,6 @@ class Index extends React.Component{
 	render(){
 		const { listPickup } = this.props;
 		const { errors, visible } = this.state;
-		console.log(listPickup);
 		return(
 			<View style={{flex: 1}}>
 				<TopNavigation

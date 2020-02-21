@@ -33,7 +33,7 @@ import BantuanScreen from "./components/screens/BantuanScreen";
 import RequestPickupScreen from "./components/screens/RequestPickupScreen";
 import OrderNonMember from "./components/screens/nonmember/Order";
 import OrderPenerimaNonMember from "./components/screens/nonmember/Penerima";
-import MapsScreen from "./components/screens/history/Maps";
+import MapsScreen from "./components/screens/history/MapsNew";
 import RiwayatPickup from "./components/screens/history/Index";
 import DetailPickup from "./components/screens/history/DetailPickup";
 import KelolaPengirim from "./components/screens/nonmember/Pengirim";

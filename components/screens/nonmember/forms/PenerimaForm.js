@@ -162,7 +162,7 @@ class PenerimaForm extends React.Component{
 					/>
 					<Input 
 				      ref={this.alamatUtamaRef}
-				      placeholder='Masukkan alamat utama (Jln dll)'
+				      placeholder='Masukkan alamat utama (Jln/jl/ds/kp)'
 				      name='alamatUtama'
 				      label='* Alamat Utama Penerima'
 				      labelStyle={styles.label}

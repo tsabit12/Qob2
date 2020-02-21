@@ -34,6 +34,8 @@ export default{
 			senderProv: payload.senderProv,
 			senderPos: payload.senderPos,
 			senderMail: payload.senderMail,
+			senderVill: payload.senderVill,
+			senderProv: payload.senderProv,
 			senderPhone: payload.senderPhone,
 			receiverName: payload.receiverName,
 			receiverAddress: payload.receiverAddress,

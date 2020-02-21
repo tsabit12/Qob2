@@ -265,7 +265,8 @@ class RequestPickupScreen extends React.Component{
 			.catch(err => {
 				this.setState({ loading: false });
 				if (err.text) {
-					alert(err.text);
+					alert(`${err.text}. Silahkan datang ke kantor/agen pos terdekat`);
+					// alert(err.text);
 				}else{
 					alert("Whoooooppps!! terdapat kesalahan");	
 				}
@@ -284,7 +285,7 @@ class RequestPickupScreen extends React.Component{
 	render(){
 		const { listPickup } = this.props;
 		const { errors, showModal, loading, openDetail, location, isLoading } = this.state;
-
+		console.log(listPickup);
 		return(
 			<View style={{flex: 1}}>
 				{ showModal && 
