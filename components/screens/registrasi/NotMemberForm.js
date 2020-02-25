@@ -39,7 +39,13 @@ class NotMemberForm extends React.Component{
 		if (!data.noHp) errors.noHp = "Nomor handphone tidak boleh kosong";
 		if (!data.email) errors.email = "Email tidak boleh kosong";
 		if (!data.namaPanggilan) errors.namaPanggilan = "Nama panggilan tidak boleh kosong";
-		if (!data.kodePos) errors.kodePos = "Kode pos tidak boleh kosong";
+		if (!data.kodePos){
+			errors.kodePos = "Kodepos tidak boleh kosong";
+		}else{
+			const regexPos = /^\d{5}([\-]\d{4})?$/;
+			if (!data.kodePos.match(regexPos)) errors.kodePos = "Kodepos tidak valid";
+		}
+		
 		return errors;
 	}
 

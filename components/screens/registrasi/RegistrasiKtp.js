@@ -291,7 +291,7 @@ class RegistrasiKtp extends React.Component{
 	render(){
 		const { ktp } = this.props.dataktp;
 		const { validateMother, bug, loading, saved, resError } = this.state;
-		console.log(ktp);
+		// console.log(ktp);
 		return(
 			<View style={{flex: 1}}>
 				<Loader loading={loading} />
@@ -330,7 +330,7 @@ class RegistrasiKtp extends React.Component{
 				<KeyboardAvoidingView 
 					behavior="padding" 
 					enabled
-					style={{flexGrow:1}} 
+					style={{flex:1}}
 				>
 				<ScrollView>
 					{Object.keys(ktp).length > 0 && 
