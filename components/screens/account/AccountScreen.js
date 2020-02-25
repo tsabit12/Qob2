@@ -27,7 +27,11 @@ const LoaderView = () => (
 );
 
 const capitalize = (string) => {
-	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	if (string) {
+		return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	}else{
+		return '-';
+	}
 }
 
 const Judul = ({ navigation }) => {
@@ -103,7 +107,7 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 				<View style={{flexWrap: 'wrap', alignItems: 'flex-start'}}>
 					<Text style={{ paddingLeft: 10, fontSize: 16, fontFamily: 'open-sans-bold' }}>{capitalize(user.namaPanggilan)}</Text>
 					<Text style={{ paddingLeft: 10, fontFamily: 'Roboto-Regular', fontSize: 13 }}>Userid  ({user.userid})</Text>
-					<Text style={{ paddingLeft: 10, fontFamily: 'Roboto-Regular', fontSize: 13 }}>Nomor Rekening ({user.noRek})</Text>
+					{ user.userid.substring(0, 3) !== '540' && <Text style={{ paddingLeft: 10, fontFamily: 'Roboto-Regular', fontSize: 13 }}>Nomor Rekening ({user.noRek})</Text> }
 				</View>
 			</View>
 			<View style={{borderBottomWidth: 1, margin: 10, borderBottomColor: '#cfcfcf'}} />
@@ -125,14 +129,13 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 							<Text style={styles.labelSubTitle}>{user.noHp}</Text>
 						</View>
 					</View>
-
-					<View style={styles.contentLabel}>
+					{ user.detailUsaha.length > 0 && <View style={styles.contentLabel}>
 						<Icon name='shopping-cart-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>
 							<Text style={styles.labelTitle}>Detail Usaha</Text>
 							<Text style={styles.labelSubTitle}>{user.detailUsaha}</Text>
 						</View>
-					</View>
+					</View>}
 					<View style={styles.contentLabel}>
 						<Icon name='pin-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>
@@ -151,7 +154,7 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 							<Text style={styles.labelSubTitle}>{user.kodepos}</Text>
 						</View>
 					</View>
-					<View style={styles.contentLabelBot}>
+					{ user.userid.substring(0, 3) !== '540' && <View style={styles.contentLabelBot}>
 						<Icon name='credit-card-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>
 							<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Saldo Giro</Text>
@@ -164,7 +167,7 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 							<Icon name={ rekening ? 'arrow-ios-downward-outline' : 'arrow-ios-forward-outline' } width={25} height={25} fill='#232424'/>
 						</TouchableOpacity>
 
-					</View>
+					</View> }
 					{ rekening && <React.Fragment>
 						{ listRek[nomorRek] ? <ListRekening listdata={listRek[nomorRek]} /> : <React.Fragment>
 								{ loading ? <Text>Loading...</Text> : <Text>Terdapat kesalahan</Text> }
@@ -255,7 +258,7 @@ class AccountScreen extends React.Component{
 							/>
 						</View>
 						<View style={{ marginLeft: 14, marginRight: 15, paddingBottom: 10 }}>
-							<Button size='small' status='info' onPress={this.onLogout}>Logout</Button>
+							<Button status='info' onPress={this.onLogout}>Logout</Button>
 						</View>
 					</ScrollView> : <React.Fragment>
 						{ errors.global ? <HasError errors={errors.global} /> : <LoaderView /> }

@@ -259,7 +259,7 @@ export default{
 		})
 	},
 	user: {
-		getDetail: (userid) => axios.post(url, {
+		getDetail: (userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
 			messtype: '210',
 			param1: userid,
 			hashing: getHasing('210', userid)
