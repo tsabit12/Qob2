@@ -256,7 +256,7 @@ class PemulihanAkun extends React.Component{
  			const payload = {
 				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${kode}|${jenis}`
 			};
-			api.auth.verifikasi(payload)
+			api.auth.verifikasi(payload, data.userid)
 				.then(res => {
 					const { response_data2 } = res;
 					let parsing = response_data2.split('|');
@@ -286,7 +286,6 @@ class PemulihanAkun extends React.Component{
 						.catch(() => alert("Kami mengalami masalah saat menyimpan data. harap cobalagi dalam 24 jam"));
 				}).catch(err => {
 					this.setState({ loading: false });
-					
 					if (Object.keys(err).length === 10) {
 						alert(err.desk_mess);
 					}else{

@@ -235,7 +235,7 @@ export default{
 				return Promise.reject(res.data);
 			}
 		}),
-		verifikasi: (payload) => axios.post(url, {
+		verifikasi: (payload, userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
 			messtype: '211',
 			param1: payload.param1,
 			hashing: getHasing('211', payload.param1)
