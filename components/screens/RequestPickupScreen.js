@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StatusBar, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StatusBar, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
 import Constants from 'expo-constants';
 import apiWs from "../apiWs";
 import { connect } from "react-redux";
@@ -171,20 +171,61 @@ class RequestPickupScreen extends React.Component{
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
 	)
 
+	removeSpace = (text) => {
+		return text.replace(/\s+/g, '').toLowerCase();
+	}
+
 	onCheckedChange = (id) => {
 		const checkedId = this.state.checked[id] ? this.state.checked[id] : false;
+		const { checked } = this.state;
 		if (checkedId) {
-			const { checked } = this.state;
 			this.setState({
 				checked: omit(checked, id)
 			})
 		}else{
-			this.setState({
-				checked: {
-					...this.state.checked,
-					[id]: true
+			//get first checked
+			const firstArr = Object.keys(checked)[0];
+			if (firstArr) {
+				const getFirstDetail = this.props.listPickup.find(x => x.externalId === firstArr);
+				const getNextDetail = this.props.listPickup.find(x => x.externalId === id);
+				const firstData = {
+					posCode: getFirstDetail.senderPosCode,
+					addr: this.removeSpace(getFirstDetail.senderAddr),
+					vill: this.removeSpace(getFirstDetail.senderVill),
+					city: this.removeSpace(getFirstDetail.senderCity)
+				};
+				const nextData = {
+					posCode: getNextDetail.senderPosCode,
+					addr: this.removeSpace(getNextDetail.senderAddr),
+					vill: this.removeSpace(getNextDetail.senderVill),
+					city: this.removeSpace(getNextDetail.senderCity)
+				};
+
+				if (firstData.posCode !== nextData.posCode || firstData.addr !== nextData.addr || firstData.vill !== nextData.vill || firstData.city !== nextData.city) {
+					Alert.alert(
+					  'Alamat pengirim tidak sama!',
+					  'Dalam satu kali pickup hanya bisa dilakukan jika alamat pengirim sama. Harap pastikan kembali bahwa kodepos dan alamat pengirim sudah sama',
+					  [
+					    {text: 'OK', onPress: () => console.log('OK Pressed')},
+					  ],
+					  {cancelable: false},
+					);
+				}else{
+					this.setState({
+						checked: {
+							...this.state.checked,
+							[id]: true
+						}
+					})
 				}
-			})
+			}else{//handle undefined
+				this.setState({
+					checked: {
+						...this.state.checked,
+						[id]: true
+					}
+				})
+			}
 		}
 	}
 
@@ -285,7 +326,7 @@ class RequestPickupScreen extends React.Component{
 	render(){
 		const { listPickup } = this.props;
 		const { errors, showModal, loading, openDetail, location, isLoading } = this.state;
-		console.log(listPickup);
+		
 		return(
 			<View style={{flex: 1}}>
 				{ showModal && 
