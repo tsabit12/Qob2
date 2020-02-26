@@ -69,6 +69,10 @@ class BantuanScreen extends React.Component{
 				jenis: 3
 			}
 		});
+
+		if (e === 3) this.props.navigation.navigate({
+			routeName: 'About'
+		});
 	}
 
 	BackAction = () => (

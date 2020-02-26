@@ -160,6 +160,12 @@ const LoginNavigator = createStackNavigator({
       header: null
     }
   },
+  About: {
+    screen: AboutScreen,
+    navigationOptions: { 
+      header: null
+    }
+  },
   initialRouteName: 'Home'
 });
  
