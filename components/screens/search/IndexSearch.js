@@ -160,7 +160,7 @@ class IndexSearch extends React.Component{
 				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.renderLeftControl()}
-				    title='QOB'
+				    title='QPOSin AJA'
 				    alignment='start'
 				    titleStyle={{fontFamily: 'open-sans-bold', fontSize: 19, fontWeight: '700', color: '#FFF'}}
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}

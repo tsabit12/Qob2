@@ -37,7 +37,7 @@ const Menu = ({ navigation, dataLogin, getOrder, loading, onShowModal }) => (
                 >
                     <Image source={iconBooking} style={styles.img}/>
                     <View style={styles.subtitle}>
-                        <Text style={styles.titleText}>QOB</Text>
+                        <Text style={styles.titleText}>Quick Online Booking</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity 

@@ -20,7 +20,7 @@ const MenuNotMember = ({ navigation }) => (
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={styles.titleText}>QOB</Text>
+						<Text style={styles.titleText}>Quick Online Booking</Text>
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity 
