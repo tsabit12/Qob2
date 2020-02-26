@@ -60,11 +60,12 @@ const RenderOptionsMenu = ({ status, openDetail }) => (
 		          		<Text>Lihat Detail</Text>
 		          	</View>
 		        </MenuOption>
+		        { /* }
 		        <MenuOption onSelect={() => alert(`Next features`)} >
 		        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
 		          		<Text>Cari driver</Text>
 		          	</View>
-		        </MenuOption>
+		        </MenuOption> */ }
 		 	</React.Fragment> :  <MenuOption onSelect={() => openDetail()}>
 		        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
 		          		<Text>Lihat Detail</Text>

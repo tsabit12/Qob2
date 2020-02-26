@@ -48,6 +48,15 @@ export default function auth(state=initialState, action={}){
 				...state,
 				request: []
 			}
+		case 'GET_KEL_KEC_BYKODEPOS':
+			return{
+				...state,
+				user: {
+					...state.user,
+					kel: action.newPayload.kel,
+					kec: action.newPayload.kec
+				}
+			}
 		default: return state;
 	}
 }

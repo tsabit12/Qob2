@@ -34,14 +34,14 @@ const capitalize = (string) => {
 	}
 }
 
-const Judul = ({ navigation }) => {
-	return(
-		<View>
-			<Text style={styles.header}>Profile</Text>
-			<Text style={styles.text}>{navigation.namaLengkap}</Text> 
-		</View>
-	);
-}
+// const Judul = ({ navigation }) => {
+// 	return(
+// 		<View>
+// 			<Text style={styles.header}>Profile</Text>
+// 			<Text style={styles.text}>{navigation.namaLengkap}</Text> 
+// 		</View>
+// 	);
+// }
 
 const numberWithCommas = (number) => {
 	if (isNaN(number)) {
@@ -180,10 +180,6 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 } 
 
 class AccountScreen extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-		headerTitle: <Judul navigation={navigation.state.params}/>
-	}) 
-
 	state = {
 		sisaSaldo: null,
 		showRekKoran: false,
