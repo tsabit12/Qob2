@@ -62,7 +62,7 @@ export default{
 			pickup_number: pickupNumber,
 			shipper_latlong: `${coords.latitude}|${coords.longitude}`
 		}).then(res => res.data),
-		getKodePos: (kodepos) => axios.post(`${url}/getPostalCode`, {
+		getKodePos: (kodepos) => axios.post(`${url}/getPostalCodeNew`, {
 			kodepos: kodepos
 		}).then(res => res.data)
 	},

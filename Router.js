@@ -12,7 +12,7 @@ import ValidasiRekening from "./components/screens/registrasi/ValidasiRekening";
 import ValidasiRegRek from "./components/screens/registrasi/ValidasiRegRek";
 // import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
-import Penerima from "./components/screens/order/Penerima";
+// import Penerima from "./components/screens/order/Penerima";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
@@ -31,12 +31,12 @@ import ListOrder from "./components/screens/ListOrder";
 import SearchOrderScreen from "./components/screens/SearchOrderScreen";
 import BantuanScreen from "./components/screens/BantuanScreen";
 import RequestPickupScreen from "./components/screens/RequestPickupScreen";
-import OrderNonMember from "./components/screens/nonmember/Order";
-import OrderPenerimaNonMember from "./components/screens/nonmember/Penerima";
+import OrderNonMember from "./components/screens/orderDetail/Order";
+import OrderPenerimaNonMember from "./components/screens/orderDetail/Penerima";
 import MapsScreen from "./components/screens/history/MapsNew";
 import RiwayatPickup from "./components/screens/history/Index";
 import DetailPickup from "./components/screens/history/DetailPickup";
-import KelolaPengirim from "./components/screens/nonmember/Pengirim";
+import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
 
 const RouteTab = createMaterialTopTabNavigator(
@@ -53,9 +53,9 @@ const AppNavigator = createStackNavigator({
       Order: {
         screen: IndexOrder
       },
-      OrderPenerima: {
-        screen: Penerima
-      },
+      // OrderPenerima: {
+      //   screen: Penerima
+      // },
       PilihTarif: {
         screen: PilihTarif
       },

@@ -4,7 +4,7 @@ import { Input, Button, Icon, TouchableOpacity, Radio, RadioGroup, Toggle } from
 import styles from "../styles";
 import Loader from "../../../Loader";
 import apiWs from "../../../apiWs";
-import Dialog from "react-native-dialog";
+// import Dialog from "react-native-dialog";
 
 const renderIcon = (style, search, checked) => (
 	<View style={{backgroundColor: checked ? '#0d4cde' : search ? '#fa4a0a' : '#909190', alignItems: 'center', borderRadius: 13, justifyContent: 'center'}}>
@@ -19,9 +19,11 @@ const capitalize = (string) => {
 
 const ListKabupaten = ({ list, handleChange, selectedIndex, onPress }) => {
 	return(
-		<Dialog.Container visible={true}>
-			<Dialog.Title>Pilih Kelurahan</Dialog.Title>
-	        <View style={{margin: 16}}>
+		<View>
+	        <View style={{flex: 1, backgroundColor: '#c3c4be', padding: 10 }}>
+	        	<View style={{borderBottomWidth: 0.6}}>
+	        		<Text style={{textAlign: 'center', fontFamily: 'open-sans-reg'}}>Pilih Alamat Lengkap</Text>
+	        	</View>
 	        	<RadioGroup
 					selectedIndex={selectedIndex}
 		        	onChange={(e) => handleChange(e)}
@@ -29,14 +31,13 @@ const ListKabupaten = ({ list, handleChange, selectedIndex, onPress }) => {
 				{ list.map((x, i) => 
 					<Radio
 						key={i}
-				        style={styles.radio}
+				        style={{flex: 1}}
 				        status='warning'
-				        text={x.kelurahan}
+				        text={`${x.kelurahan}, ${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`}
 				      /> )}
 				</RadioGroup>
 	        </View>
-	        { selectedIndex !== null &&  <Dialog.Button label="Pilih" onPress={() => onPress()}/> }
-	    </Dialog.Container>
+        </View>
 	)
 }
 
@@ -49,6 +50,7 @@ class FormPengirim extends React.PureComponent{
 	phoneRef = React.createRef();
 	alamatDetailRef = React.createRef();
 	noHpRef = React.createRef();
+	searchParamsRef = React.createRef();
 
 	state = {
 		data: {
@@ -68,13 +70,17 @@ class FormPengirim extends React.PureComponent{
 		responseKodepos: [],
 		errors: {},
 		selectedIndex: null,
-		checked: true
+		checked: true,
+		searchParams: ''
 	}
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
 
+	onChangeParams = (e, { name }) => this.setState({ searchParams: e })
+
 	componentDidMount(){
 		const { detail } = this.props.user;
+		console.log(detail);
 		const { kelurahan, kecamatan, kota, provinsi } = detail;
 		this.setState({
 			data: {
@@ -97,14 +103,14 @@ class FormPengirim extends React.PureComponent{
 		const { checked } = this.state;
 		//only work when not using user profile
 		if (!checked) {
-			if (!this.state.data.kodepos) {
-				alert("Kodepos harap diisi");
+			if (!this.state.searchParams) {
+				alert("Alamat lengkap harap diisi");
 			}else{
 				const { search } = this.state;
 				if (!search) {
 					this.setState({ search: true, loading: true });
 					Keyboard.dismiss();
-					apiWs.qob.getKodePos(this.state.data.kodepos)
+					apiWs.qob.getKodePos(this.state.searchParams)
 						.then(res => {
 							const { result } = res;
 							const responseKodepos = [];
@@ -113,7 +119,8 @@ class FormPengirim extends React.PureComponent{
 									kecamatan: x.kecamatan,
 									kabupaten: x.kabupaten,
 									provinsi: x.provinsi,
-									kelurahan: x.kelurahan
+									kelurahan: x.kelurahan,
+									kodepos: x.kodepos
 								})
 							});
 							this.setState({ loading: false, responseKodepos });
@@ -137,34 +144,53 @@ class FormPengirim extends React.PureComponent{
 							kelurahan: '',
 							provinsi: '',
 							alamatDetail: ''
-						}
+						},
+						searchParams: '',
+						responseKodepos: [],
+						selectedIndex: null
 					});
 				}
 			}
 		}
 	}
 
-	handleClose = () => {
-		const { responseKodepos, selectedIndex } = this.state;
-		if (selectedIndex !== null) {
-			const choosed = responseKodepos[selectedIndex];
-			this.setState({
-				data: {
-					...this.state.data,
-					kota: choosed.kabupaten,
-					alamatDetail: `${choosed.kelurahan}, ${choosed.kecamatan}, ${choosed.kabupaten}, ${choosed.provinsi}`,
-					kecamatan: choosed.kecamatan,
-					kelurahan: choosed.kelurahan,
-					provinsi: choosed.provinsi
-				},
-				responseKodepos: []
-			});
-		}else{
-			alert("Choose one");
-		}
-	}
+	// handleClose = () => {
+	// 	const { responseKodepos, selectedIndex } = this.state;
+	// 	if (selectedIndex !== null) {
+	// 		const choosed = responseKodepos[selectedIndex];
+	// 		this.setState({
+	// 			data: {
+	// 				...this.state.data,
+	// 				kota: choosed.kabupaten,
+	// 				alamatDetail: `${choosed.kelurahan}, ${choosed.kecamatan}, ${choosed.kabupaten}, ${choosed.provinsi}`,
+	// 				kecamatan: choosed.kecamatan,
+	// 				kelurahan: choosed.kelurahan,
+	// 				provinsi: choosed.provinsi,
+	// 				kodepos: choosed.kodepos
+	// 			},
+	// 			responseKodepos: []
+	// 		});
+	// 	}else{
+	// 		alert("Choose one");
+	// 	}
+	// }
 
-	onChoose = (index) => this.setState({ selectedIndex: index })
+	onChoose = (index) => {
+		const choosed = this.state.responseKodepos[index];
+		this.setState({
+			data: {
+				...this.state.data,
+				kota: choosed.kabupaten,
+				alamatDetail: `${choosed.kelurahan}, ${choosed.kecamatan}, ${choosed.kabupaten}, ${choosed.provinsi}`,
+				kecamatan: choosed.kecamatan,
+				kelurahan: choosed.kelurahan,
+				provinsi: choosed.provinsi,
+				kodepos: choosed.kodepos
+			},
+			responseKodepos: [],
+			selectedIndex: index
+		});	
+	}
 
 	onSubmit = () => {
 		const errors = this.validate(this.state.data);
@@ -231,7 +257,7 @@ class FormPengirim extends React.PureComponent{
 
 	render(){
 		const { data, loading, responseKodepos, checked, errors } = this.state;
-
+		// console.log(data);
 		return(
 			<React.Fragment>
 				<View style={{marginTop: 6, flex: 1, alignItems: 'flex-start', marginBottom: 6}}>
@@ -243,13 +269,6 @@ class FormPengirim extends React.PureComponent{
 				</View>
 				<View style={styles.cardForm}>
 					<Loader loading={loading} />
-					{ responseKodepos.length > 0 && 
-						<ListKabupaten 
-							list={responseKodepos} 
-							handleChange={this.onChoose}
-							selectedIndex={this.state.selectedIndex}
-							onPress={this.handleClose}
-						/>}
 					<Input 
 						ref={this.namaRef}
 					    placeholder='Masukkan nama pengirim'
@@ -261,7 +280,7 @@ class FormPengirim extends React.PureComponent{
 						onChangeText={(e) => this.onChange(e, this.namaRef.current.props)}
 						onSubmitEditing={() => this.alamatUtamaRef.current.focus() }
 						disabled={checked}
-						status={errors.nama && 'danger'}
+						status={errors.nama ? 'danger' : 'primary'}
 						caption={errors.nama && `${errors.nama}`}
 					/>
 					<Input 
@@ -273,37 +292,57 @@ class FormPengirim extends React.PureComponent{
 						style={styles.input}
 						labelStyle={styles.label}
 						onChangeText={(e) => this.onChange(e, this.alamatUtamaRef.current.props)}
-						onSubmitEditing={() => this.kodeposRef.current.focus() }
+						onSubmitEditing={() => this.searchParamsRef.current.focus() }
 						disabled={checked}
-						status={errors.alamatUtama && 'danger'}
+						status={errors.alamatUtama ? 'danger' : 'primary'}
 						caption={errors.alamatUtama && `${errors.alamatUtama}`}
 					/>
-					<Input 
-						ref={this.kodeposRef}
-					    placeholder='Masukan kodepos'
-						name='kodepos'
-						label='* Kodepos'
-						value={data.kodepos}
+					{ !checked && <Input 
+						ref={this.searchParamsRef}
+					    placeholder='Kodepos/kelurahan/kec/kab'
+						name='searchParams'
+						label='Cari Alamat Lengkap'
+						value={this.state.searchParams}
 						style={styles.input}
 						labelStyle={styles.label}
-						onChangeText={(e) => this.onChange(e, this.kodeposRef.current.props)}
+						onChangeText={(e) => this.onChangeParams(e, this.searchParamsRef.current.props)}
 						icon={(style) => renderIcon(style, this.state.search, checked)}
 						onIconPress={this.onIconPress}
 						disabled={this.state.search === true || checked === true && true}
-						keyboardType='phone-pad'
+						//keyboardType='phone-pad'
 						onSubmitEditing={this.onIconPress}
-						status={errors.kodepos && 'danger'}
+						status={errors.kodepos ? 'danger' : 'primary'}
 						caption={errors.kodepos && `${errors.kodepos}`}
+					/> }
+					{ responseKodepos.length > 0 && 
+						<ListKabupaten 
+							list={responseKodepos} 
+							handleChange={this.onChoose}
+							selectedIndex={this.state.selectedIndex}
+							onPress={this.handleClose}
+						/>}
+					<Input 
+						ref={this.kodeposRef}
+					    placeholder='Cari alamat lengkap dahulu'
+						name='kodepos'
+						label='Kodepos'
+						value={data.kodepos}
+						style={styles.input}
+						labelStyle={styles.label}
+						onIconPress={this.onIconPress}
+						disabled={true}
+						caption={errors.Kodepos && `${errors.Kodepos}`}
 					/>
 					<Input 
 						ref={this.alamatDetailRef}
-					    placeholder='Kota/kab/kec/kel'
+					    placeholder='Cari alamat lengkap dahulu'
 						name='alamatDetail'
-						label='* Kota'
+						label='Alamat Lengkap'
 						value={data.alamatDetail}
 						style={styles.input}
 						labelStyle={styles.label}
-						disabled={this.state.search === true || checked === true && true}
+						// disabled={this.state.search === true || checked === true && true}
+						disabled={true}
 						onChangeText={(e) => this.onChange(e, this.alamatDetailRef.current.props)}
 						status={errors.alamatDetail && 'danger'}
 						caption={errors.alamatDetail && `${errors.alamatDetail}`}
@@ -320,6 +359,7 @@ class FormPengirim extends React.PureComponent{
 						onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
 						onSubmitEditing={() => this.noHpRef.current.focus() }
 						disabled={checked}
+						status='primary'
 					/>
 					<Input 
 						ref={this.noHpRef}
@@ -332,7 +372,7 @@ class FormPengirim extends React.PureComponent{
 						labelStyle={styles.label}
 						onChangeText={(e) => this.onChange(e, this.noHpRef.current.props)}
 						disabled={checked}
-						status={errors.noHp && 'danger'}
+						status={errors.noHp ? 'danger' : 'primary'}
 						caption={errors.noHp && `${errors.noHp}`}
 					/>
 					<Button status='warning' style={{marginTop: 7}} onPress={this.onSubmit}>Selanjutnya</Button>

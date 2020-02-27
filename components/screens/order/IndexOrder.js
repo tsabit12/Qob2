@@ -90,7 +90,7 @@ class IndexOrder extends React.Component{
 			};
 
 			this.props.navigation.navigate({
-				routeName: 'OrderPenerima',
+				routeName: 'KelolaPengirim',
 				params: {
 					deskripsiOrder: payload
 				}

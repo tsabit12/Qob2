@@ -3,10 +3,14 @@ import { View, Text, StyleSheet, Keyboard } from "react-native";
 import { Input, Button, Radio, RadioGroup, Icon } from '@ui-kitten/components';
 import apiWs from "../../../apiWs";
 
+const capitalize = (string) => {
+	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+}
+
 const OptionsKodepos = ({ list, handleChange, selectedIndex }) => (
-	<View style={{borderWidth: 0.7, borderColor: '#e0e0e0', padding: 10 }}>
+	<View style={{backgroundColor: '#c3c4be', padding: 10 }}>
 		<View style={{height: 30, borderBottomWidth: 0.7}}>
-			<Text style={{textAlign: 'center'}}>Pilih kelurahan</Text>
+			<Text style={{textAlign: 'center'}}>Pilih Alamat Lengkap</Text>
 		</View>
 		<RadioGroup
 			selectedIndex={selectedIndex}
@@ -17,7 +21,7 @@ const OptionsKodepos = ({ list, handleChange, selectedIndex }) => (
 				key={i}
 		        style={styles.radio}
 		        status='warning'
-		        text={x.kelurahan}
+		        text={`${x.kelurahan}, ${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`}
 		      /> )}
 		</RadioGroup>
 	</View>
@@ -29,6 +33,7 @@ class PenerimaForm extends React.Component{
 	kodeposRef = React.createRef();
 	emailRef = React.createRef();
 	phoneRef = React.createRef();
+	searchParamsRef = React.createRef();
 
 	state = {
 		data: {
@@ -36,25 +41,32 @@ class PenerimaForm extends React.Component{
 			alamatUtama: '',
 			kodepos: '',
 			email: '',
-			nohp: ''
+			nohp: '',
+			kabupaten: '',
+			kecamatan: '',
+			kelurahan: '',
+			provinsi: '',
+			alamatDetail: ''
 		},
 		errors: {},
 		loading: false,
 		responseKodepos: [],
 		choosed: null,
-		disabledKodePos: false
+		disabledKodePos: false,
+		searchParams: ''
 	}
 
 	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
 
+	onChangeParams = (e, { name }) => this.setState({ searchParams: e })
+
 	searchKodepos = () => {
-		const { kodepos } = this.state.data;
-		if (!kodepos) {
+		if (!this.state.searchParams) {
 			alert("Kode pos harap diisi");
 		}else{
 			Keyboard.dismiss();
 			this.setState({ loading: true, errors: {}, responseKodepos: [] });
-			apiWs.qob.getKodePos(kodepos)
+			apiWs.qob.getKodePos(this.state.searchParams)
 				.then(res => {
 					const { result } = res;
 					const responseKodepos = [];
@@ -63,22 +75,40 @@ class PenerimaForm extends React.Component{
 							kecamatan: x.kecamatan,
 							kabupaten: x.kabupaten,
 							provinsi: x.provinsi,
-							kelurahan: x.kelurahan
+							kelurahan: x.kelurahan,
+							kodepos: x.kodepos
 						})
 					});
 					this.setState({ loading: false, responseKodepos });
 				})
 				.catch(err => {
 					if (err.response.status === '500') {
-						this.setState({ loading: false, errors: { global: 'Internal Server error' } });
+						this.setState({ loading: false, errors: { searchParams: 'Internal Server error' } });
 					}else{
-						this.setState({ loading: false, errors: { global: 'Data kodepos tidak ditemukan'} });
+						this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan'} });
 					}
 				})
 		}
 	}
 
-	onChangeOptions = (index) => this.setState({ choosed: index, disabledKodePos: true })
+	onChangeOptions = (index) => {
+		const { responseKodepos } = this.state;
+		const choos = responseKodepos[index];
+		this.setState({ 
+			choosed: index, 
+			disabledKodePos: true,
+			data: {
+				...this.state.data,
+				kodepos: choos.kodepos,
+				kabupaten: choos.kabupaten,
+				kecamatan: choos.kecamatan,
+				kelurahan: choos.kelurahan,
+				provinsi: choos.provinsi,
+				alamatDetail: `${choos.kelurahan}, ${choos.kecamatan}, ${choos.kabupaten}, ${choos.provinsi}`,
+			},
+			responseKodepos: []
+		})
+	} 
 
 	renderIcon = (style) => (
 		<View 
@@ -99,7 +129,21 @@ class PenerimaForm extends React.Component{
   	handlePressIcon = () => {
   		const { disabledKodePos } = this.state;
   		if (disabledKodePos) {
-  			this.setState({ responseKodepos: [], data: { ...this.state.data, kodepos: ''}, choosed: null, disabledKodePos: false });
+  			this.setState({ 
+  				responseKodepos: [], 
+  				data: { 
+  					...this.state.data, 
+  					kodepos: '',
+  					kabupaten: '',
+					kecamatan: '',
+					kelurahan: '',
+					provinsi: '',
+					alamatDetail: ''
+  				}, 
+  				choosed: null, 
+  				disabledKodePos: false,
+  				searchParams: ''
+  			});
   		}else{
   			this.searchKodepos();
   		}
@@ -109,21 +153,20 @@ class PenerimaForm extends React.Component{
   		const errors = this.validate(this.state.data);
   		this.setState({ errors });
   		if (Object.keys(errors).length === 0) {
-  			const { choosed, responseKodepos, data } = this.state;
+  			const { choosed, data } = this.state;
   			// console.log(choosed);
   			if (choosed === null) {
   				alert("Whopppps, kelurahan/kecamatan/kabupaten belum dipilih. Harap klik cari pada kolom kodepos, lalu pilih kelurahan penerima");
   			}else{
-  				const selected = responseKodepos[choosed];
   				const payload = {
   					nama: data.nama,
   					kodepos: data.kodepos,
 					email: data.email,
 					nohp: data.nohp,
-					kabupaten: selected.kabupaten,
-					kecamatan: selected.kecamatan,
-					kelurahan: selected.kelurahan,
-					provinsi: selected.provinsi,
+					kabupaten: data.kabupaten,
+					kecamatan: data.kecamatan,
+					kelurahan: data.kelurahan,
+					provinsi: data.provinsi,
 					alamatUtama: data.alamatUtama
   				};
   				this.props.onSubmit(payload);
@@ -156,7 +199,7 @@ class PenerimaForm extends React.Component{
 				      value={data.nama}
 				      autoCapitalize='words'
 				      onChangeText={(e) => this.onChange(e, this.namRef.current.props)}
-				      status={errors.nama && 'danger'}
+				      status={errors.nama ? 'danger' : 'primary'}
 				      onSubmitEditing={() => this.alamatUtamaRef.current.focus() }
 				      caption={errors.nama && `${errors.nama}`}
 					/>
@@ -169,35 +212,53 @@ class PenerimaForm extends React.Component{
 				      style={styles.input}
 				      value={data.alamatUtama}
 				      onChangeText={(e) => this.onChange(e, this.alamatUtamaRef.current.props)}
-				      status={errors.alamatUtama && 'danger'}
-				      onSubmitEditing={() => this.kodeposRef.current.focus() }
+				      status={errors.alamatUtama ? 'danger' : 'primary'}
+				      onSubmitEditing={() => this.searchParamsRef.current.focus() }
 				      caption={errors.alamatUtama && `${errors.alamatUtama}`}
 					/>
 					<Input 
-						ref={this.kodeposRef}
-						value={data.kodepos}
-						name='kodepos'
+						ref={this.searchParamsRef}
+						value={this.state.searchParams}
+						name='searchParams'
 						style={styles.inputFlex}
 						labelStyle={styles.label}
-						label='* Kodepos Penerima'
-						placeholder='Masukkan kodepos'
-						keyboardType='phone-pad'
+						label='Cari Alamat Lengkap'
+						placeholder='Kodepos/kelurahan/kec/kab'
+						// keyboardType='phone-pad'
 						onIconPress={this.handlePressIcon}
 						disabled={this.state.disabledKodePos}
 						icon={(style) => this.renderIcon(style)}
-						onChangeText={(e) => this.onChange(e, this.kodeposRef.current.props)}
-						caption={errors.kodepos && `${errors.kodepos}`}
-						status={errors.kodepos && 'danger'}
+						onChangeText={(e) => this.onChangeParams(e, this.searchParamsRef.current.props)}
+						caption={errors.searchParams && `${errors.searchParams}`}
+						status={errors.searchParams ? 'danger' : 'primary'}
 						onSubmitEditing={this.searchKodepos}
 					/>
-					{ loading && <Text>Searching...</Text>}
+					{ loading && <Text style={{marginTop: 5, marginBottom: 5}}>Searching...</Text>}
 					{ responseKodepos.length > 0 && 
 						<OptionsKodepos 
 							list={responseKodepos} 
 							handleChange={this.onChangeOptions}
 							selectedIndex={this.state.choosed}
 						/> }
-					{ errors.global && <Text style={{color:'red', fontSize: 12, marginTop: -7}}>{errors.global}</Text>}
+					<Input 
+						value={data.kodepos}
+						name='kodepos'
+						style={styles.inputFlex}
+						labelStyle={styles.label}
+						label='Kodepos'
+						placeholder='Cari alamat lengkap dahulu'
+						disabled={true}
+						caption={errors.kodepos && `${errors.kodepos}`}
+					/>
+					<Input 
+					    placeholder='Cari alamat lengkap dahulu'
+						name='alamatDetail'
+						label='Alamat Lengkap'
+						value={data.alamatDetail}
+						style={styles.input}
+						labelStyle={styles.label}
+						disabled={true}
+					/>
 					<Input 
 				    	placeholder='Masukan email'
 				    	ref={this.emailRef}
@@ -207,6 +268,7 @@ class PenerimaForm extends React.Component{
 				    	style={{ paddingTop: 7 }}
 				    	labelStyle={styles.label}
 				    	value={data.email}
+				    	status='primary'
 				    	onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
 				    	onSubmitEditing={() => this.phoneRef.current.focus() }
 				    />
@@ -221,7 +283,7 @@ class PenerimaForm extends React.Component{
 				    	value={data.nohp}
 				    	onChangeText={(e) => this.onChange(e, this.phoneRef.current.props)}
 				    	onSubmitEditing={this.onSubmit}
-				    	status={errors.nohp && 'danger'}
+				    	status={errors.nohp ? 'danger' : 'primary'}
 				    	caption={errors.nohp && `${errors.nohp}`}
 				    />
 				</View>
@@ -256,7 +318,8 @@ const styles = StyleSheet.create({
 		marginTop: 5
 	},
 	inputFlex: {
-		flex: 1
+		flex: 1,
+		marginTop: 5
 	}
 })
 

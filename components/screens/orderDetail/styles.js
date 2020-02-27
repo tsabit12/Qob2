@@ -23,6 +23,7 @@ export default StyleSheet.create({
 		borderColor: '#909190', 
 		borderRadius: 5, 
 		marginTop: 5,
-		elevation: 1
+		elevation: 1,
+		flex: 1
 	}
 })
