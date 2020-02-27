@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
         width: '100%', 
         alignItems: 'center',
         padding: 4,
-        height: 45
+        height: 52
     },
     textMenuTitle: {
         fontFamily: 'open-sans-bold',

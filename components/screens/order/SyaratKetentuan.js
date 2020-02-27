@@ -9,7 +9,9 @@ const html = `
       <body>
       	<h1>Syarat Dan Ketentuan</h1>
         <p style='text-align: justify; font-size: 28'>
-        	1. Q-Comm Online Booking hanyalah aplikasi untuk melakukan pemesanan sebelum pelanggan melakukan pengeposan di loket Kantorpos atau dilakukan penjemputan kirimannya. Q-Comm Online Booking bukan merupakan transaksi pengiriman
+        	1. QPOSin AJA merupakan aplikasi resmi PT Pos Indonesia (Persero) yang dapat digunakan oleh seluruh masyarakat Indonesia untuk melakukan pemesanan 
+            pengiriman surat atau paket yang akan dijemput oleh petugas pickup atau menyerahkan kirimannya ke loket kantor pos terdekat.
+            Pada aplikasi ini pelanggan dapat melakukan sendiri entri data pengirimannya dan melakukan permintaan penjemputan kiriman dilokasi pengiriman/pelanggan. 
         </p>
         <p style='text-align: justify; font-size: 28'>
         	2. Lembar kode booking yang dihasilkan dari aplikasi ini bukan merupakan Resi Pengiriman Pos. Resi Pengiriman Pos akan dikeluarkan oleh Petugas Loket outlet Pos Indonesia.
@@ -18,7 +20,7 @@ const html = `
         	3. Data yang dientri oleh Pelanggan akan diverifikasi ulang oleh Petugas Loket outlet Pos Indonesia. Petugas Loket berhak mengubah data sesuai dengan kondisi aktual kiriman. Misalnya apabila ada ketidaksesuaian berat kiriman, akan dilakukan koreksi sehingga tidak menutup kemungkinan Tarif Pengiriman ikut terkoreksi.
         </p>
         <p style='text-align: justify; font-size: 28'>
-        	4. Apabila ada ketidaksesuaian asal dan tujuan pengiriman, maka harus dilakukan order ulang menggunakan aplikasi Q-Comm Online Booking.
+        	4. Apabila ada ketidaksesuaian asal dan tujuan pengiriman, maka harus dilakukan order ulang menggunakan aplikasi QPOSin AJA.
         </p>
         <p style='text-align: justify; font-size: 28'>
         	5. Pelanggan menyetujui syarat dan ketentuan yang berlaku.
@@ -82,10 +84,10 @@ const html = `
         	</li>
         </p>
         <p style='text-align: justify; font-size: 28'>
-        	11. Biaya kirim yang ditampilkan pada Q-Comm Online Booking masih berupa estimasi.
+        	11. Biaya kirim yang ditampilkan pada QPOSin AJA masih berupa estimasi.
         </p>
         <p style='text-align: justify; font-size: 28'>
-        	12. Apabila terdapat perbedaan antara estimasi biaya kirim pada Q-Comm Online Booking dengan biaya kirim di Outlet Pos Indonesia, maka biaya yang dikenakan untuk pengiriman adalah biaya kirim di Outlet Pos Indonesia.
+        	12. Apabila terdapat perbedaan antara estimasi biaya kirim pada QPOSin AJA dengan biaya kirim di Outlet Pos Indonesia, maka biaya yang dikenakan untuk pengiriman adalah biaya kirim di Outlet Pos Indonesia.
         </p>
         <h1>Barang yang Dilarang Untuk Dikirim</h1>
         <p style='text-align: justify; font-size: 28'>
