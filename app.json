@@ -25,10 +25,12 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.posindonesia.cob"
+      "bundleIdentifier": "com.posindonesia.cob",
+      "buildNumber": "1.2.2"
     },
     "android": {
       "package": "com.posindonesia.cob",
+      "versionCode": 3,
       "config": {
       "googleMaps": {
           "apiKey": "AIzaSyCWExqNgCmhqQyoBuj7lvsMQ7lHWIdon0g"
