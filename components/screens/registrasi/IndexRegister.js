@@ -59,7 +59,7 @@ class IndexRegister extends React.Component{
 	keyboardDidShow = (event) => this.setState({ 
 		keyboardOpen: true, 
 		errors:{...this.state.errors, nik: undefined },
-		keyboardOffset: event.endCoordinates.height - 80
+		keyboardOffset: event.endCoordinates.height - 65
 	})
 
 	keyboardDidHide = () => this.setState({ keyboardOpen: false, keyboardOffset: 0 })
@@ -163,7 +163,7 @@ class IndexRegister extends React.Component{
 										/>
 									</View>
 									<Button style={styles.button} status='warning' onPress={this.onSearchKtp}>Selanjutnya</Button>
-									<TouchableOpacity
+									{ /* <TouchableOpacity
 										onPress={() => {
 											this.props.navigation.navigate({
 								        		routeName: 'RegistrasiRek'
@@ -173,7 +173,7 @@ class IndexRegister extends React.Component{
 										activeOpacity={0.7}
 									>
 										<Text style={{fontSize: 12, color: '#1361d4', fontFamily: 'Roboto-Regular'}}>Gunakan akun giro</Text>
-									</TouchableOpacity>
+									</TouchableOpacity> */ }
 								</LinearGradient>
 							</View>
 			        </ImageBackground>

@@ -43,12 +43,12 @@ const ValidateForm = ({ onValidate, onChangeValidate, textValue, errors, fullNam
 			value={fullName}
 			disabled={true}
 		/>
-		<CheckBox
+		{ /* <CheckBox
 	        status='info'
 	        text='Registrasi sebagai pebisol/member'
 	        checked={isMember}
 	        onChange={onChangeIsMember}
-	    />
+	    /> */}
 		<Button style={styles.button} onPress={() => onValidate(textValue)}>Validasi</Button>
 	</React.Fragment>
 );	
