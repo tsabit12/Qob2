@@ -1,8 +1,9 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, StatusBar } from "react-native";
 import styles from "../styles";
 import { connect } from "react-redux";
-import { Card, CardHeader } from '@ui-kitten/components';
+import { Card, CardHeader, Icon, TopNavigation, TopNavigationAction  } from '@ui-kitten/components';
+import Constants from 'expo-constants';
 
 const numberWithCommas = (number) => {
 	if (isNaN(number)) {
@@ -79,18 +80,42 @@ const ListItem = ({ listitem }) => {
 	);
 } 
 
+const MyStatusBar = () => (
+	<View style={{
+		height: Constants.statusBarHeight,
+  		backgroundColor: 'rgb(240, 132, 0)'
+	}}>
+		<StatusBar translucent barStyle="light-content" />
+	</View>
+);
+
+const BackIcon = (style) => (
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
+
 class ResultRekeningSearch extends React.Component{
-	static navigationOptions = ({ navigation }) => ({
-	    headerTitle: <Judul navigation={navigation.state.params.noRek} />
-	    /* No more header config here! */
-	});
+	state = {}
+
+	BackAction = () => (
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+	)
 
 	render(){
 		const { list } = this.props;
 		return(
-			<React.Fragment>
+			<View style={{flex: 1}}>
+				<MyStatusBar/>
+				<TopNavigation
+				    leftControl={this.BackAction()}
+				    title='Result'
+				    alignment='start'
+				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
+				    // subtitleStyle={{color: '#FFF'}}
+				/>
 				{list.length > 0 && <ListItem listitem={list} />}
-			</React.Fragment>
+			</View>
 		);
 	}
 }

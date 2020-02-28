@@ -44,13 +44,12 @@ class IndexOrder extends React.Component{
 	state = {
 		data: {
 			jenis: '',
-			berat: '',
+			berat: '0',
 			panjang: '0',
 			lebar: '0',
 			tinggi: '0',
-			nilaiVal: '',
-			nilai: '',
-			checked: true
+			nilai: '0',
+			checked: false
 		},
 		errors: {}
 	}
@@ -63,23 +62,37 @@ class IndexOrder extends React.Component{
 		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 	}
 
-	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
-
-	onChangeNilai = (e) => {
-		var val = e.replace(/\D/g, '');
-		var x 	= Number(val);
-		const value = this.numberWithCommas(x);
-		this.setState({ data: { ...this.state.data, nilaiVal: value, nilai: val }})
+	onChange = (e, { name }) => {
+		if (name === 'jenis') {
+			this.setState({ data: { ...this.state.data, [name]: e }});
+		}else{
+			var val = e.replace(/\D/g, '');
+			var x 	= Number(val);
+			const value = this.numberWithCommas(x);
+			this.setState({ data: { ...this.state.data, [name]: value }});
+		}
 	}
+
 
 	onSubmit  = () => {
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
+			const { data } = this.state;
+			const payload = {
+				isiKiriman: data.jenis,
+				berat: data.berat.replace(/\D/g, ''),
+				panjang: data.panjang.replace(/\D/g, ''),
+				lebar: data.lebar.replace(/\D/g, ''),
+				tinggi: data.tinggi.replace(/\D/g, ''),
+				nilai: data.nilai.replace(/\D/g, ''),
+				cod: data.checked
+			};
+
 			this.props.navigation.navigate({
-				routeName: 'OrderPenerima',
+				routeName: 'KelolaPengirim',
 				params: {
-					deskripsiOrder: this.state.data
+					deskripsiOrder: payload
 				}
 			})
 		}else{
@@ -108,11 +121,43 @@ class IndexOrder extends React.Component{
 	validate = (data) => {
 		const errors = {};
 		if (!data.jenis) errors.jenis = "Masukan jenis kiriman";
-		if (!data.berat) errors.berat = "Masukan berat kiriman";
-		if (!data.panjang) errors.panjang = "Masukan panjang kiriman";
-		if (!data.lebar) errors.lebar = "Masukan lebar kiriman";
-		if (!data.tinggi) errors.tinggi = "Masukan tinggi kiriman";
 		if (!data.nilai) errors.nilai = "Masukan nilai";
+
+		if (!data.berat){
+			errors.berat = "Masukan berat kiriman";			
+		}else if(data.berat <= 0){
+			errors.berat = "Harus lebih dari 0";
+		}
+		
+		if (!data.panjang){
+			errors.panjang = "Masukan panjang kiriman";	
+		}else{
+			if (data.panjang <= 0){
+				errors.panjang = "Harus lebih dari 0";		
+			}else if (data.panjang > 50) {
+				errors.panjang = "Maksimal 50";
+			}
+		}
+
+		if (!data.lebar){
+			errors.lebar = "Masukan lebar kiriman";	
+		}else{
+			if (data.lebar <= 0){
+				errors.lebar = "Harus lebih dari 0";		
+			}else if (data.lebar > 30) {
+				errors.lebar = "Maksimal 30";
+			}
+		}
+
+		if (!data.tinggi){
+			errors.tinggi = "Masukan tinggi kiriman";
+		}else{
+			if (data.tinggi <= 0){
+				errors.tinggi = "Harus lebih dari 0";		
+			}else if (data.tinggi > 25) {
+				errors.tinggi = "Maksimal 25";
+			}
+		}
 		return errors;
 	}
 
@@ -186,6 +231,7 @@ class IndexOrder extends React.Component{
 						      status={errors.panjang && 'danger'}
 						      onChangeText={(e) => this.onChange(e, this.panjangRef.current.props)}
 						      onSubmitEditing={() => this.lebarRef.current.focus() }
+						      caption={errors.panjang && `${errors.panjang}`}
 						    />
 						    <Input
 						      placeholder='XX (CM)'
@@ -199,6 +245,7 @@ class IndexOrder extends React.Component{
 						      status={errors.lebar && 'danger'}
 						      onChangeText={(e) => this.onChange(e, this.lebarRef.current.props)}
 						      onSubmitEditing={() => this.tinggiRef.current.focus() }
+						      caption={errors.lebar && `${errors.lebar}`}
 						    />
 						    <Input
 						      placeholder='XX (CM)'
@@ -212,6 +259,7 @@ class IndexOrder extends React.Component{
 						      status={errors.tinggi && 'danger'}
 						      onChangeText={(e) => this.onChange(e, this.tinggiRef.current.props)}
 						      onSubmitEditing={() => this.nilaiRef.current.focus() }
+						      caption={errors.tinggi && `${errors.tinggi}`}
 						    />
 					    </View>
 					    <View style={{padding: 4}}>
@@ -222,24 +270,26 @@ class IndexOrder extends React.Component{
 						      label='Nilai barang'
 						      labelStyle={styles.label}
 						      style={styles.input}
-						      value={data.nilaiVal}
+						      value={data.nilai}
 						      keyboardType='numeric'
-						      onChangeText={(e) => this.onChangeNilai(e)}
+						      onChangeText={(e) => this.onChange(e, this.nilaiRef.current.props)}
 						      status={errors.nilai && 'danger'}
 						      caption={errors.nilai && `${errors.nilai}`}
 						    />
 						</View>
 						<CheckBox
-					      text='Non cod'
+					      text='Cod'
 					      style={{ marginLeft: 5, marginTop: -5, paddingBottom: 5 }}
 					      textStyle={{ color: 'red'}}
 					      status='warning'
 					      checked={data.checked}
 					      onChange={this.onCheckedChange}
 					    />
-					    <Button style={{margin: 2}} status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
 					    <View style={{height: 10}} />
 					</Layout>
+					<View style={{margin: 6, marginTop: -5}}>
+						<Button style={{margin: 2}} status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
+					</View>
 				</ScrollView>
 			</KeyboardAvoidingView>
 			</View>

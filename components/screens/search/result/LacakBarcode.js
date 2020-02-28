@@ -1,8 +1,12 @@
 import React from "react";
-import { View, Text, ScrollView, StatusBar } from "react-native";
+import { View, Text, ScrollView, StatusBar, Image, Dimensions } from "react-native";
 import styles from "../styles";
 import { connect } from "react-redux";
-import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
+import { removeErrors } from "../../../../actions/search";
+
+const iconQ9 = require("../../../../assets/q9/01.png");
+const device = Dimensions.get('window').width;
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -11,18 +15,8 @@ const MyStatusBar = () => (
 );
 
 
-// const Judul = ({ navigation }) => {
-// 	const { externalId } = navigation.state.params;
-// 	return(
-// 		<View>
-// 			<Text style={styles.judul}>Lacak Kiriman</Text>
-// 			<Text>{externalId}</Text>
-// 		</View>
-// 	)
-// }
-
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back'/>
+  <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
 
 
@@ -72,70 +66,107 @@ const getKantorAsal = (description) => {
 	return capitalize(officeResult);
 }
 
+const PointInHours = () => (
+	<View style={{alignItems: 'flex-end'}}>
+		<View style={{ 
+			width: 10, 
+			height: 10,
+			borderRadius: 10/2, 
+			backgroundColor: 'green', 
+			marginLeft: 8,
+			marginTop: 4,
+			marginLeft: -6
+		}} />
+	</View>
+);
+
+const DescriptionView = ({ item }) => (
+	<View style={{flex: 1}}>
+		<Text style={styles.description}>
+			{ item.eventName === 'MANIFEST SERAH' && 'Diteruskan ke kantor' + getOfficeTujuan(item.description)}
+			{ item.eventName === 'SELESAI ANTAR' && 'Selesai antar di ' + capitalize(item.officeName) + 
+			' Status (' + getStatusAntar(item.description) + ') diterima oleh ' + getPenerima(item.description)}
+			{ item.eventName === 'PROSES ANTAR' && 'Proses antar di ' + capitalize(item.officeName) }
+			{ item.eventName === 'POSTING LOKET' && 'Posting Loket ('+ capitalize(item.officeName) + ')\nLayanan : ' + getLayanan(item.description).layanan + 
+			 	'\nPengirim :' + getLayanan(item.description).pengirim }
+			{ item.eventName === 'MANIFEST TERIMA' && 'Diterima di kantor ' + capitalize(item.officeName) 
+				+ ' dari kantor' + getKantorAsal(item.description) }
+		</Text>
+	</View>
+); 
 
 const ListTrace = ({ listdata }) => {
-	let lastDate = '';
-	return(
-		<React.Fragment>
-			{ listdata.length > 0 && <View style={styles.box}>
-				<View style={{margin: 5}}>
-					{ listdata.map((x, i) => {
-						let date = x.eventDate.substr(0, 10);
-						let time = x.eventDate.substr(11, 5);
-						if (lastDate !== date) {
-							lastDate = date;
-						}else{
-							lastDate = '-';
-						}
+	let groupByDate = '';
+	const listContent 	= []; 
+	const length 		= listdata.length;
+	if (length > 0) {
+		for(var key = 0; key < length; key++){
+			let item = listdata[key];
+			let date = item.eventDate.substr(0, 10);
+			let time = item.eventDate.substr(11, 5);
+			if (groupByDate !== date) {
+				groupByDate = date;
+				listContent.push(
+					<React.Fragment key={key}>
+						<View style={{flexDirection: 'row'}}>
+							<Text style={styles.labelDate}>{date}</Text>
+							<View style={styles.circle}>
+								<View style={styles.circleAktif} />
+							</View>
+						</View>
+						<View style={styles.borderVertical}>
+							<View style={{flexDirection: 'row', marginBottom: 8, marginTop: 8, flex: 1}}>
+								<View style={{alignItems: 'flex-start'}}>
+									<Text style={styles.labelTime}>{time}</Text>
+								</View>
+								<PointInHours />
+								<DescriptionView item={item} />
+							</View>
+						</View>
+					</React.Fragment>
+				);
+			}else{
+				listContent.push(
+					<View style={styles.borderVertical} key={key}>
+						<View style={{flexDirection: 'row', marginBottom: 8, marginTop: 8, flex: 1}}>
+							<View style={{alignItems: 'flex-start'}}>
+								<Text style={styles.labelTime}>{time}</Text>
+							</View>
+							<PointInHours />
+							<DescriptionView item={item} />
+						</View>
+					</View>);
+			}
+		}
+	}else{
+		listContent.push(<Text>Kosong</Text>);
+	}
 
-						return(
-							<React.Fragment key={i}>
-								<View style={{flexDirection: 'row'}}>
-									{ lastDate === date && <React.Fragment>
-											<Text style={styles.labelDate}>{date}</Text>
-											<View style={styles.circle}>
-												<View style={styles.circleAktif} />
-											</View>
-										</React.Fragment> }
-								</View>
-								<View style={styles.borderVertical}>
-									<View style={{flexDirection: 'row', marginBottom: 8, marginTop: 8, flex: 1}}>
-										<View style={{alignItems: 'flex-start'}}>
-											<Text style={styles.labelTime}>{time}</Text>
-										</View>
-										<View style={{alignItems: 'flex-end'}}>
-											<View style={{ 
-												width: 10, 
-												height: 10,
-												borderRadius: 10/2, 
-												backgroundColor: 'green', 
-												marginLeft: 8,
-												marginTop: 4,
-												marginLeft: -6
-											}} />
-										</View>
-										<View style={{flex: 1}}>
-											<Text style={styles.description}>
-												{ x.eventName === 'MANIFEST SERAH' && 'Diteruskan ke kantor' + getOfficeTujuan(x.description)}
-												{ x.eventName === 'SELESAI ANTAR' && 'Selesai antar di ' + capitalize(x.officeName) + 
-												' Status (' + getStatusAntar(x.description) + ') diterima oleh ' + getPenerima(x.description)}
-												{ x.eventName === 'PROSES ANTAR' && 'Proses antar di ' + capitalize(x.officeName) }
-												{ x.eventName === 'POSTING LOKET' && 'Posting Loket ('+ capitalize(x.officeName) + ')\nLayanan : ' + getLayanan(x.description).layanan + 
-												 	'\nPengirim :' + getLayanan(x.description).pengirim }
-												{ x.eventName === 'MANIFEST TERIMA' && 'Diterima di kantor ' + capitalize(x.officeName) 
-													+ ' dari kantor' + getKantorAsal(x.description) }
-											</Text>
-										</View>
-									</View>
-								</View>
-							</React.Fragment>
-						)
-					} )}
-				</View> 
-			</View>}
-		</React.Fragment>
+	return(
+		<View style={{flex: 1}}>
+			<View style={styles.card}>
+				<View style={{ alignItems: 'center', marginTop: 4, marginBottom: 10}}>
+					<Image source={iconQ9} style={{width: device*0.4, height: device*0.4, borderWidth: 2, borderColor: '#f08400', borderRadius: 75}}/>
+				</View>
+				{listContent}
+			</View>
+		</View>
 	);
 }
+
+const HasErrorView = ({ message }) => (
+	<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+		<View style={{backgroundColor: '#e0ddda', margin: 10, borderRadius: 4, padding: 10}}>
+			<Text style={{textAlign: 'center', fontFamily: 'open-sans-reg'}}>{message}</Text>
+		</View>
+	</View>
+);
+
+const LoadingView = () => (
+	<View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+		<Spinner size='medium' />
+	</View>
+);
 
 class LacakBarcode extends React.Component{
 	
@@ -155,11 +186,14 @@ class LacakBarcode extends React.Component{
 	}
 
 	BackAction = () => (
-  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+  		<TopNavigationAction icon={BackIcon} onPress={() => { 
+  			this.props.navigation.goBack();
+  			this.props.removeErrors();
+  		}}/>
 	);
 
 	render(){
-		const { listKiriman } = this.props;
+		const { listKiriman, hasError } = this.props;
 		const sorted = listKiriman ? listKiriman.sort(this.dynamicSort("-eventDate")) : [];
 		return(
 			<View style={{flex: 1}}>
@@ -173,12 +207,15 @@ class LacakBarcode extends React.Component{
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				/>
-				<ScrollView>
-					<View style={styles.containerTime}>
-				       { listKiriman ? <ListTrace listdata={sorted} /> : <Text>No result found</Text> }
-				    </View>
-			    </ScrollView>
-		    </View>
+		       	{ listKiriman ? 
+		       		<ScrollView>
+						<View style={styles.containerTime}>
+		       				<ListTrace listdata={sorted} /> 
+		       			</View>
+		       		</ScrollView> : <React.Fragment> 
+		       		{ hasError.global ? <HasErrorView message={hasError.global} /> : <LoadingView />}
+		       	</React.Fragment> }
+			</View>
 		);
 	}
 }
@@ -186,8 +223,9 @@ class LacakBarcode extends React.Component{
 function mapStateToProps(state, nextProps) {
 	const { externalId } = nextProps.navigation.state.params;
 	return{
-		listKiriman: state.search.trace[externalId]
+		listKiriman: state.search.trace[externalId],
+		hasError: state.search.errors
 	}
 }
 
-export default connect(mapStateToProps, null)(LacakBarcode);
+export default connect(mapStateToProps, { removeErrors })(LacakBarcode);

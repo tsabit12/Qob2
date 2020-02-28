@@ -18,67 +18,64 @@ import Loader from "../Loader";
 var device = Dimensions.get('window').width;
 const iconBooking = require("../../assets/calendar.png");
 const iconCekTarif = require("../../assets/truck.png");
-const iconRekening = require("../../assets/rekening.png");
 const iconPembayaran = require("../../assets/banking.png");
-const iconBarcode = require("../../assets/barcode.png");
 const iconRiwayat = require("../../assets/history.png");
-const iconProfile = require("../../assets/profile.png");
 const iconPhone = require("../../assets/phone2.png");
-const cartIcon = require("../../assets/cart.png");
 const genPwd = require("../../assets/generatePwd.png");
 
 
 const Menu = ({ navigation, dataLogin, getOrder, loading, onShowModal }) => (
-    <View style={styles.container}>
-        <Loader loading={loading} />
-        <View style={{margin: 5}}>
+    <React.Fragment>
+        <View style={styles.container}>
+            <Loader loading={loading} />
             <View style={styles.content}>
                 <TouchableOpacity 
-                    underlayColor="#D8D8D8"
+                    style={styles.iconPress}
                     onPress={() => navigation.navigate({
                         routeName: 'Order'
                     })}
                 >
-                    <View style={styles.icon}>
-                        <Image source={iconBooking} style={styles.img}/>
-                        <Text style={styles.textIcon}>QOB</Text>
+                    <Image source={iconBooking} style={styles.img}/>
+                    <View style={styles.subtitle}>
+                        <Text style={styles.titleText}>Quick Online Booking</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                    underlayColor="#D8D8D8"
+                    style={styles.iconPress}
                     onPress={() => navigation.navigate({
                         routeName: 'CekTarif'
                     })}
                 >
-                    <View style={styles.icon}>
-                        <Image source={iconCekTarif} style={styles.img}/>
-                        <Text style={styles.textIcon}>Cek Tarif</Text>
+                    <Image source={iconCekTarif} style={styles.img}/>
+                    <View style={styles.subtitle}>
+                        <Text style={styles.titleText}>Cek Tarif</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                    underlayColor="#D8D8D8"
+                    style={styles.iconPress}
                     onPress={() => Linking.openURL('tel:' + '161')}
                 >
-                    <View style={styles.icon}>
-                        <Image source={iconPhone} style={styles.img}/>
-                        <Text style={styles.textIcon}>Halo Pos</Text>
+                    <Image source={iconPhone} style={styles.img}/>
+                    <View style={styles.subtitle}>
+                        <Text style={styles.titleText}>Halo Pos</Text>
                     </View>
                 </TouchableOpacity>
             </View>
             <View style={styles.content}>
                 <TouchableOpacity 
-                underlayColor="#D8D8D8"
-                onPress={() => navigation.navigate({
-                    routeName: 'Pembayaran'
-                })}>
-                    <View style={styles.icon}>
-                        <Image source={iconPembayaran} style={styles.img}/>
-                        <Text style={styles.textIcon}>Generate{'\n'}Pembayaran</Text>
+                    style={styles.iconPress}
+                    onPress={() => navigation.navigate({
+                        routeName: 'Pembayaran'
+                    })}
+                >
+                    <Image source={iconPembayaran} style={styles.img}/>
+                    <View style={styles.subtitle}>
+                        <Text style={styles.titleText}>Generate{'\n'}Pembayaran</Text>
                     </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
-                    underlayColor="#D8D8D8"
+                    style={styles.iconPress}
                     onPress={() => {
                         const curdate = getCurdateWithStrip();
                         const { userid, norek } = dataLogin;
@@ -99,47 +96,64 @@ const Menu = ({ navigation, dataLogin, getOrder, loading, onShowModal }) => (
                         })
                     }}
                 >
-                    <View style={styles.icon}>
-                        <Image source={iconRiwayat} style={styles.img}/>
-                        <Text style={styles.textIcon}>Riwayat{'\n'}Order</Text>
+                    <Image source={iconRiwayat} style={styles.img}/>
+                    <View style={styles.subtitle}>
+                        <Text style={styles.titleText}>Riwayat{'\n'}Order</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                    underlayColor="#D8D8D8"
+                    style={styles.iconPress}
                     onPress={() => onShowModal(dataLogin.userid) } 
                 >
-                    <View style={styles.icon}>
-                        <Image source={genPwd} style={styles.img}/>
-                        <Text style={styles.textIcon}>Generate{'\n'}Password Web</Text>
+                    <Image source={genPwd} style={styles.img}/>
+                    <View style={styles.subtitle}>
+                        <Text style={styles.titleText}>Password Web</Text>
                     </View>
                 </TouchableOpacity>
             </View>
         </View>
-    </View>
+    </React.Fragment>
 );
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    },
-    content: {
-        flexDirection: 'row',
-        margin: 5,
+        flex: 1,
         alignItems: 'center',
+        margin: 3,
+        marginTop: 20,
+        height: '100%'
     },
-    icon: {
-        width: device*0.3, 
-        height: device*0.3,
-        justifyContent: 'center', 
-        alignItems: 'center'
+    content:{
+        flex: 1,
+        flexDirection: 'row',
+        marginTop: device*0.2 -60
     },
-    textIcon: {
-        fontSize: 14, 
-        textAlign: 'center',
-        fontFamily: 'Roboto-Regular'
+    iconPress: {
+        width: device*0.3 - 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 7,
+        marginTop: -15,
+        borderColor: 'black'
     },
     img: {
-        width: device*0.2, height: device*0.2
+        width: device*0.3 - 25, height: device*0.3 - 30
+    },
+    subtitle: {
+        width: '100%', 
+        alignItems: 'center',
+        padding: 4,
+        height: 52
+    },
+    textMenuTitle: {
+        fontFamily: 'open-sans-bold',
+        fontSize: 16
+    },
+    titleText: {
+        color: 'black', 
+        textAlign: 'center',
+        fontFamily: 'Roboto-Regular'
     }
 })
 

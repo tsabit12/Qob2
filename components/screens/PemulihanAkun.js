@@ -20,12 +20,12 @@ import { curdate } from "../utils/helper";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="light-content" />
+		<StatusBar translucent barStyle="dark-content" />
 	</View>
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back' fill='#FFF' />
+  <Icon {...style} name='arrow-back' fill='black' />
 );
 
 const MessageSucces = ({ message, visible, onPress, backHome }) => (
@@ -142,7 +142,7 @@ class PemulihanAkun extends React.Component{
 				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
 			};
 
-			api.registrasi.lupaPin(payload)
+			api.registrasi.lupaPin(payload, data.userid)
 				.then(res => {
 					this.saveSessionRequest(valueSession)
 						.then(res => {
@@ -256,7 +256,7 @@ class PemulihanAkun extends React.Component{
  			const payload = {
 				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${kode}|${jenis}`
 			};
-			api.auth.verifikasi(payload)
+			api.auth.verifikasi(payload, data.userid)
 				.then(res => {
 					const { response_data2 } = res;
 					let parsing = response_data2.split('|');
@@ -286,7 +286,6 @@ class PemulihanAkun extends React.Component{
 						.catch(() => alert("Kami mengalami masalah saat menyimpan data. harap cobalagi dalam 24 jam"));
 				}).catch(err => {
 					this.setState({ loading: false });
-					
 					if (Object.keys(err).length === 10) {
 						alert(err.desk_mess);
 					}else{
@@ -324,9 +323,8 @@ class PemulihanAkun extends React.Component{
 					    leftControl={this.BackAction()}
 					    title={this.props.navigation.state.params.titlePemulihan}
 					    alignment='start'
-					    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
-					    elevation={5}
-					    style={{backgroundColor: 'rgb(4, 147, 214)'}}
+					    titleStyle={{fontFamily: 'open-sans-bold', color: 'black'}}
+					    style={{backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#e6e6e6'}}
 					/>
 					<Loader loading={loading} />
 					{ success.statusVer && <MessageSucces 
@@ -452,7 +450,7 @@ const styles = StyleSheet.create({
 	},
 	StatusBar: {
 	  	height: Constants.statusBarHeight,
-	  	backgroundColor: 'rgb(4, 147, 214)'
+	  	backgroundColor: '#FFF'
 	},
 	form: {
 		margin: 7,

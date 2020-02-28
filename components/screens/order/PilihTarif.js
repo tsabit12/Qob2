@@ -15,6 +15,13 @@ const MyStatusBar = () => (
 	</View>
 );
 
+const EmptyTarif = () => (
+	<View style={{justifyContent: 'center', flex: 1, padding: 20}}>
+		<Text style={{fontSize: 17, textAlign: 'center', fontFamily: 'open-sans-bold', borderWidth: 0.4, padding: 20}}>
+			Tarif tidak ditemukan
+		</Text>
+	</View>
+);
 
 const renderItemAccessory = (style, payload, accept) => (
 	<Button style={style} size='small' status='info' onPress={() => accept(payload)}>Pilih</Button>
@@ -77,6 +84,7 @@ class PilihTarif extends React.Component{
 	
 	async componentDidMount(){
 		const { params } = this.props.navigation.state;
+		// console.log(params);
 
 		if (Object.keys(params).length > 0) {
 			const payload = {
@@ -93,7 +101,10 @@ class PilihTarif extends React.Component{
 					const response = res.split('#');
 					this.setState({ tarif: response });
 					// console.log(response);
-				}).catch(err => this.setState({ loading: false }))
+				}).catch(err => {
+					this.setState({ loading: false });
+					console.log(err.response.data);
+				})
 		}
 		//console.log(this.props.navigation.state.params);
 	}
@@ -126,15 +137,11 @@ class PilihTarif extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
-				<View>
-					<Loader loading={loading} />
-					{ tarif.length > 0 ? <ListTarif onAccept={this.onSelectTarif} list={tarif} /> : 
-						<React.Fragment>
-							{ !loading && <Text style={{fontSize: 20, textAlign: 'center', fontFamily: 'open-sans-bold', marginTop: 10}}>
-								Tarif tidak ditemukan
-							</Text> }
-						</React.Fragment> }
-				</View>
+				<Loader loading={loading} />
+				{ tarif.length > 0 ? <ListTarif onAccept={this.onSelectTarif} list={tarif} /> : 
+					<React.Fragment>
+						{ !loading && <EmptyTarif /> }
+					</React.Fragment> }
 			</View>
 		);
 	}

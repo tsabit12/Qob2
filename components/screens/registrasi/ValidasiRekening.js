@@ -7,12 +7,12 @@ import Loader from "../../Loader";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="light-content" />
+		<StatusBar translucent barStyle="dark-content" />
 	</View>
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back' fill='#FFF' />
+  <Icon {...style} name='arrow-back' fill='black' />
 );
 
 
@@ -112,12 +112,11 @@ class ValidasiRekening extends React.Component{
 				    leftControl={this.BackAction()}
 				    title='Registrasi'
 				    alignment='start'
-				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
-				    elevation={5}
+				    titleStyle={{fontFamily: 'open-sans-bold', color: 'black'}}
 				    style={styles.navigation}
-				    subtitleStyle={{color: '#FFF'}}
+				    subtitleStyle={{color: 'black'}}
 				    subtitle='Menggunakan akun giro'
-				    style={{backgroundColor: 'rgb(4, 147, 214)'}}
+				    style={{backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#e6e6e6'}}
 				/>
 				<View style={{margin: 10}}>
 					<Loader loading={loading} />
@@ -130,7 +129,7 @@ class ValidasiRekening extends React.Component{
 						labelStyle={errors.noRek ? styles.labelRed : styles.label }
 						onChangeText={(e) => this.setState({ noRek: e })}
 						onSubmitEditing={this.onSubmit}
-						keyboardType='numeric'
+						keyboardType='phone-pad'
 						status={errors.noRek && 'danger'}
 					/>
 					{ errors.noRek && <Text style={styles.labelErr}>{errors.noRek}</Text>}

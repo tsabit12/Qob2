@@ -3,7 +3,6 @@ import { StatusBar, View, TouchableOpacity } from "react-native";
 import { Tab, TabBar, TabView, Text, Icon, TopNavigation, TopNavigationAction, Input } from '@ui-kitten/components';
 import { SafeAreaView } from 'react-navigation';
 import styles from "./styles";
-import SearchLayout from 'react-navigation-addon-search-layout';
 import { RectButton } from 'react-native-gesture-handler';
 import { connect } from "react-redux";
 import { getRekening, lacakKiriman } from "../../../actions/search";
@@ -71,7 +70,7 @@ class MyTab extends React.Component{
 		    		})
 		    }else{
 		    	this.props.lacakKiriman(this.state.searchText)
-		    		.catch(err => console.log(err));
+		    		// .catch(err => console.log(err));
 		    	this.props.navigation.navigate({
 		    		routeName: 'LacakBarcode',
 	                params: {

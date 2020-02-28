@@ -3,11 +3,11 @@ import Constants from 'expo-constants';
 
 export default StyleSheet.create({
   container: {
-    margin: 10,
+    margin: 8,
     borderWidth: 1,
     // borderRightWidth: 1,
     borderColor: '#cfcfcf',
-    borderRadius: 10,
+    borderRadius: 5,
   },
   text: {
   	fontFamily: 'open-sans-reg'
@@ -46,7 +46,12 @@ export default StyleSheet.create({
   listItemDescription: { color: '#2E3A59' },
   labelInformasi: {
     fontSize: 16,
+    fontFamily: 'open-sans-reg'
+  },
+  subTitle: {
+    fontSize: 15,
     fontFamily: 'open-sans-reg',
+    color: '#bcbdbb'
   },
   labelRight: {
     fontSize: 16, 
@@ -54,15 +59,11 @@ export default StyleSheet.create({
     marginLeft: 73 
   },
   viewResult: {
-    flexDirection: 'row', 
-    alignItems: 'flex-start', 
-    paddingBottom: 10
+    paddingBottom: 4
   },
   labelTarif: {
     borderBottomWidth: 1, 
     borderBottomColor: '#cbccc4', 
-    borderTopWidth: 1,
-    borderTopColor: '#cbccc4', 
   },
   StatusBar: {
       height: Constants.statusBarHeight,

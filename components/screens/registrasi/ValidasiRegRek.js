@@ -19,12 +19,12 @@ import { saveRegister } from "../../../actions/register";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="light-content" />
+		<StatusBar translucent barStyle="dark-content" />
 	</View>
 );
 
 const BackIcon = (style) => (
-  <Icon {...style} name='arrow-back' fill='#FFF'/>
+  <Icon {...style} name='arrow-back' fill='black'/>
 );
 
 
@@ -209,10 +209,10 @@ class ValidasiRegRek extends React.Component{
 					    title='Validasi Rekening'
 					    subtitle={this.props.navigation.state.params.responseRek.noGiro}
 					    alignment='start'
-					    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+					    titleStyle={{fontFamily: 'open-sans-bold', color: 'black'}}
 					    elevation={5}
-					    subtitleStyle={{color: '#FFF'}}
-					    style={{backgroundColor: 'rgb(4, 147, 214)'}}
+					    subtitleStyle={{color: 'black'}}
+					    style={{backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#e6e6e6'}}
 					/>
 					{ saved === 200 && 
 						<Modal 

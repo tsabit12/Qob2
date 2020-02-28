@@ -82,5 +82,22 @@ export default StyleSheet.create({
   StatusBar: {
     height: Constants.statusBarHeight,
     backgroundColor: 'rgb(240, 132, 0)'
+  },
+  card: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.20,
+    shadowRadius: 1.41,
+    padding: 5, 
+    borderBottomWidth: 2, 
+    borderRightWidth: 2, 
+    borderLeftWidth: 1, 
+    borderTopWidth: 1, 
+    borderColor: '#f08400',
+    borderRadius: 4,
+    elevation: 1
   }
 });

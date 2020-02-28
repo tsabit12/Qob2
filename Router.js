@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Button, TouchableOpacity, Image, Platform, AsyncStorage } from 'react-native'
+import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-native'
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
@@ -10,12 +10,11 @@ import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/search/IndexSearch";
 import ValidasiRekening from "./components/screens/registrasi/ValidasiRekening";
 import ValidasiRegRek from "./components/screens/registrasi/ValidasiRegRek";
-import IndexHelper from "./components/screens/helper/IndexHelper";
+// import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
-import Penerima from "./components/screens/order/Penerima";
+// import Penerima from "./components/screens/order/Penerima";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
-import LacakKiriman from "./components/screens/LacakKiriman";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import LacakScreen from "./components/screens/search/tab/LacakScreen";
 import RekeningScreen from "./components/screens/search/tab/RekeningScreen";
@@ -23,8 +22,6 @@ import MyTab from "./components/screens/search/MyTab";
 import LacakBarcode from "./components/screens/search/result/LacakBarcode";
 import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
-// import KonfrimPembayaran from "./components/screens/Pembayaran/KonfrimPembayaran";
-// import OutputPembayaran from "./components/screens/Pembayaran/OutputPembayaran";
 import Barcode from './components/screens/helper/barcode';
 import AccountScreen from "./components/screens/account/AccountScreen";
 import AboutScreen from "./components/screens/about/AboutScreen";
@@ -33,6 +30,14 @@ import PemulihanAkun from "./components/screens/PemulihanAkun";
 import ListOrder from "./components/screens/ListOrder";
 import SearchOrderScreen from "./components/screens/SearchOrderScreen";
 import BantuanScreen from "./components/screens/BantuanScreen";
+import RequestPickupScreen from "./components/screens/RequestPickupScreen";
+import OrderNonMember from "./components/screens/orderDetail/Order";
+import OrderPenerimaNonMember from "./components/screens/orderDetail/Penerima";
+import MapsScreen from "./components/screens/history/MapsNew";
+import RiwayatPickup from "./components/screens/history/Index";
+import DetailPickup from "./components/screens/history/DetailPickup";
+import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
+import LacakKiriman from "./components/screens/LacakKiriman";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -45,92 +50,77 @@ const RouteTab = createMaterialTopTabNavigator(
 );
 
 const AppNavigator = createStackNavigator({
-      Helper: {
-        screen: IndexHelper
-      },
       Order: {
-        screen: IndexOrder,
-        navigationOptions: {
-          header: null
-        }
+        screen: IndexOrder
       },
-      OrderPenerima: {
-        screen: Penerima,
-        navigationOptions: {
-          header: null
-        }
-      },
+      // OrderPenerima: {
+      //   screen: Penerima
+      // },
       PilihTarif: {
-        screen: PilihTarif,
-        navigationOptions: {
-          header: null
-        }
+        screen: PilihTarif
       },
       ResultOrder: {
-        screen: ResultOrder,
-        navigationOptions: {
-          header: null
-        }
+        screen: ResultOrder
       },
       LacakBarcode: {
-        screen: LacakBarcode,
-        navigationOptions: {
-          header: null
-        }
+        screen: LacakBarcode
       },
       ResultRekeningSearch: {
         screen: ResultRekeningSearch 
       },
       Barcode: {
-        screen: Barcode,
-        navigationOptions: {
-          header: null
-        }
+        screen: Barcode
       },
       Pembayaran: {
-        screen: Pembayaran,
-        navigationOptions: {
-          header: null
-        }
+        screen: Pembayaran
       },
       DetailSearch: {
-        screen: RouteTab,
-        navigationOptions: { 
-          header: null
-        }
+        screen: RouteTab
       },
       IndexSearch: {
-        screen: IndexSearch,
-        navigationOptions: {
-          header: null
-        }
+        screen: IndexSearch
       },
       Account:{
-        screen: AccountScreen,
-        navigationOptions: {
-          header: null
-        }
+        screen: AccountScreen
       },
       CekTarif: {
-        screen: CekTarif,
-        navigationOptions: {
-          header: null
-        }
+        screen: CekTarif
       },
       ListOrder: {
-        screen: ListOrder,
-        navigationOptions: {
-          header: null
-        }
+        screen: ListOrder
       },
       SearchOrder: {
-        screen: SearchOrderScreen,
-        navigationOptions: { 
-          header: null
-        }
+        screen: SearchOrderScreen
+      },
+      RequestPickup: {
+        screen: RequestPickupScreen
+      },
+      OrderNonMember: {
+        screen: OrderNonMember
+      },
+      OrderPenerimaNonMember: {
+        screen: OrderPenerimaNonMember
+      },
+      Maps: {
+        screen: MapsScreen
+      },
+      RiwayatPickup: {
+        screen: RiwayatPickup
+      },
+      DetailPickup: {
+        screen: DetailPickup
+      },
+      KelolaPengirim: {
+        screen: KelolaPengirim
+      },
+      LacakKiriman: {
+        screen: LacakKiriman
       },
   	},{
-  	initialRouteName: 'IndexSearch'
+  	initialRouteName: 'IndexSearch',
+    defaultNavigationOptions: {
+      header: null
+    },
 });
 
 const LoginNavigator = createStackNavigator({
@@ -170,6 +160,12 @@ const LoginNavigator = createStackNavigator({
       header: null
     }
   },
+  About: {
+    screen: AboutScreen,
+    navigationOptions: { 
+      header: null
+    }
+  },
   initialRouteName: 'Home'
 });
  
@@ -177,10 +173,10 @@ const AppContainer = createAppContainer(AppNavigator);
 
 const LoginContainer = createAppContainer(LoginNavigator);
 
-const Router = ({ isLoggedIn }) => {
+const Router = ({ isLoggedIn }) => {  
   return(
     <React.Fragment>
-        { isLoggedIn ? <AppContainer /> : <LoginContainer />} 
+        { isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
     </React.Fragment>
   )
 }
