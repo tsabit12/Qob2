@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, StatusBar, SafeAreaView } from "react-native";
-import { Menu, Icon, TopNavigation, TopNavigationAction, Layout } from '@ui-kitten/components';
+import { Menu, Icon, TopNavigation, TopNavigationAction, Layout, Button } from '@ui-kitten/components';
 import Constants from 'expo-constants';
 
 
@@ -98,6 +98,7 @@ class BantuanScreen extends React.Component{
 				      onSelect={this.onSelect}
 				    />
 			    </View>
+			    <Button onPress={() => this.props.navigation.push('Home')}>Back</Button>
 		    </View>
 		);
 	}

@@ -6,13 +6,8 @@ import { connect } from "react-redux";
 import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/registrasi/IndexRegister";
 import { Layout, Icon, Avatar } from '@ui-kitten/components';
-import RegistrasiKtp from "./components/screens/registrasi/RegistrasiKtp";
 import IndexSearch from "./components/screens/search/IndexSearch";
-import ValidasiRekening from "./components/screens/registrasi/ValidasiRekening";
-import ValidasiRegRek from "./components/screens/registrasi/ValidasiRegRek";
-// import IndexHelper from "./components/screens/helper/IndexHelper";
 import IndexOrder from "./components/screens/order/IndexOrder";
-// import Penerima from "./components/screens/order/Penerima";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
@@ -38,6 +33,9 @@ import RiwayatPickup from "./components/screens/history/Index";
 import DetailPickup from "./components/screens/history/DetailPickup";
 import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
+import HomePage2 from "./components/screens/HomePage2";
+import RegisterPebisol from "./components/screens/pendaftaran/Pebisol";
+import RegistrasiNonPebisol from "./components/screens/pendaftaran/NonPebisol";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -128,28 +126,25 @@ const LoginNavigator = createStackNavigator({
     screen: Home
   },
   IndexRegister:{
-    screen: IndexRegister
+    screen: IndexRegister,
+    navigationOptions: { 
+      header: null
+    }
   },
-  RegistrasiRek: {
-    screen: ValidasiRekening,
+  RegisterPebisol: {
+    screen: RegisterPebisol,
+    navigationOptions: { 
+      header: null
+    }
+  },
+  RegistrasiNonPebisol: {
+    screen: RegistrasiNonPebisol,
     navigationOptions: { 
       header: null
     }
   },
   PemulihanAkun: {
     screen: PemulihanAkun,
-    navigationOptions: { 
-      header: null
-    }
-  },
-  RegistrasiKtp: {
-    screen: RegistrasiKtp,
-    navigationOptions: { 
-      header: null
-    }
-  },
-  ValidasiRegRek: {
-    screen: ValidasiRegRek,
     navigationOptions: { 
       header: null
     }
@@ -166,6 +161,12 @@ const LoginNavigator = createStackNavigator({
       header: null
     }
   },
+  HomePage2: {
+    screen: HomePage2,
+    navigationOptions: {
+      header: null
+    }
+  },
   initialRouteName: 'Home'
 });
  
@@ -173,13 +174,15 @@ const AppContainer = createAppContainer(AppNavigator);
 
 const LoginContainer = createAppContainer(LoginNavigator);
 
-const Router = ({ isLoggedIn }) => {  
-  return(
-    <React.Fragment>
-        { isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
-    </React.Fragment>
-  )
-}
+class Router extends React.Component{
+  render(){
+    return(
+      <React.Fragment>
+          { this.props.isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
+      </React.Fragment>
+    );
+  }
+} 
 
 function mapStateToProps(state) {
   return{

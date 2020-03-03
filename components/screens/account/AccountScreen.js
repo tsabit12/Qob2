@@ -34,14 +34,6 @@ const capitalize = (string) => {
 	}
 }
 
-// const Judul = ({ navigation }) => {
-// 	return(
-// 		<View>
-// 			<Text style={styles.header}>Profile</Text>
-// 			<Text style={styles.text}>{navigation.namaLengkap}</Text> 
-// 		</View>
-// 	);
-// }
 
 const numberWithCommas = (number) => {
 	if (isNaN(number)) {
@@ -129,13 +121,13 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 							<Text style={styles.labelSubTitle}>{user.noHp}</Text>
 						</View>
 					</View>
-					{ user.detailUsaha.length > 0 && <View style={styles.contentLabel}>
+					{ /* user.detailUsaha.length > 0 && <View style={styles.contentLabel}>
 						<Icon name='shopping-cart-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>
 							<Text style={styles.labelTitle}>Detail Usaha</Text>
 							<Text style={styles.labelSubTitle}>{user.detailUsaha}</Text>
 						</View>
-					</View>}
+					</View> */}
 					<View style={styles.contentLabel}>
 						<Icon name='pin-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>

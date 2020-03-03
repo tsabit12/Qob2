@@ -144,30 +144,31 @@ class PemulihanAkun extends React.Component{
 
 			api.registrasi.lupaPin(payload, data.userid)
 				.then(res => {
-					this.saveSessionRequest(valueSession)
-						.then(res => {
-							this.setState({ 
-								loading: false, 
-								visible: true, 
-								success: {
-									...this.state.success,
-									status: true,
-									message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, anda hanya tinggal menunggu kode verifikasi`
-								}
-							});
-						})
-						.catch(err => { //errors when save to storage
-							this.setState({ 
-								loading: false, 
-								visible: true, 
-								success: {
-									...this.state.success,
-									status: true,
-									message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, harap tunggu sampai kode verifikasi berhasil dikirim`
-								}
-							});
-						});
+					this.saveSessionRequest(valueSession);
+						// .then(res => {
+					this.setState({ 
+						loading: false, 
+						visible: true, 
+						success: {
+							...this.state.success,
+							status: true,
+							message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, anda hanya tinggal menunggu kode verifikasi`
+						}
+					});
+						// })
+						// .catch(err => { //errors when save to storage
+							// this.setState({ 
+							// 	loading: false, 
+							// 	visible: true, 
+							// 	success: {
+							// 		...this.state.success,
+							// 		status: true,
+							// 		message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, harap tunggu sampai kode verifikasi berhasil dikirim`
+							// 	}
+							// });
+						// });
 				}).catch(err => {
+					console.log(err);
 					if (Object.keys(err).length === 10) {
 						this.setState({ 
 							loading: false, 
@@ -268,6 +269,7 @@ class PemulihanAkun extends React.Component{
 						nohp: parsing[4],
 						email: parsing[5]
 					};
+					console.log(payloadRes);
 					//update storage
 					this.saveToStorage(payloadRes)
 						.then(() => {

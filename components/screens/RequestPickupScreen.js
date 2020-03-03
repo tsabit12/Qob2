@@ -306,10 +306,25 @@ class RequestPickupScreen extends React.Component{
 			.catch(err => {
 				this.setState({ loading: false });
 				if (err.text) {
-					alert(`${err.text}. Silahkan datang ke kantor/agen pos terdekat`);
-					// alert(err.text);
+					//alert(`${err.text}. Silahkan datang ke kantor/agen pos terdekat`);
+					Alert.alert(
+					  `${err.text}`,
+					  `Kodepos pengirim saat ini belum tercover`,
+					  [
+					    {text: 'OK', onPress: () => console.log('OK Pressed')},
+					  ],
+					  {cancelable: false},
+					);
+					
 				}else{
-					alert("Whoooooppps!! terdapat kesalahan");	
+					Alert.alert(
+					  'Opps',
+					  'Terdapat kesalahan, silahkan cobalagi nanti',
+					  [
+					    {text: 'OK', onPress: () => console.log('OK Pressed')},
+					  ],
+					  {cancelable: false},
+					);
 				}
 			})
 	}

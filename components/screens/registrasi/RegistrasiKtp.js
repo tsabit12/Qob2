@@ -23,35 +23,35 @@ const BackIcon = (style) => (
 );
 
 
-const ValidateForm = ({ onValidate, onChangeValidate, textValue, errors, fullName, isMember, onChangeIsMember }) => (
-	<React.Fragment>
-		<Input
-			label='Validasi'
-			placeholder='Masukan nama ibu kandung anda disinii'
-			labelStyle={styles.labelRed}
-			value={textValue}
-			onChangeText={onChangeValidate}
-			autoFocus
-			status={errors.validate && 'danger' }
-			onSubmitEditing={() => onValidate(textValue)}
-		/>
-		{ errors.validate && <Text style={styles.labelErr}>{errors.validate}</Text> }
-		<Input
-			placeholder='Nama Lengkap'
-			label='Nama'
-			labelStyle={styles.label}
-			value={fullName}
-			disabled={true}
-		/>
-		{ /* <CheckBox
-	        status='info'
-	        text='Registrasi sebagai pebisol/member'
-	        checked={isMember}
-	        onChange={onChangeIsMember}
-	    /> */}
-		<Button style={styles.button} onPress={() => onValidate(textValue)}>Validasi</Button>
-	</React.Fragment>
-);	
+// const ValidateForm = ({ onValidate, onChangeValidate, textValue, errors, fullName, isMember, onChangeIsMember }) => (
+// 	<React.Fragment>
+// 		<Input
+// 			label='Validasi'
+// 			placeholder='Masukan nama ibu kandung anda disinii'
+// 			labelStyle={styles.labelRed}
+// 			value={textValue}
+// 			onChangeText={onChangeValidate}
+// 			autoFocus
+// 			status={errors.validate && 'danger' }
+// 			onSubmitEditing={() => onValidate(textValue)}
+// 		/>
+// 		{ errors.validate && <Text style={styles.labelErr}>{errors.validate}</Text> }
+// 		<Input
+// 			placeholder='Nama Lengkap'
+// 			label='Nama'
+// 			labelStyle={styles.label}
+// 			value={fullName}
+// 			disabled={true}
+// 		/>
+// 		{ /* <CheckBox
+// 	        status='info'
+// 	        text='Registrasi sebagai pebisol/member'
+// 	        checked={isMember}
+// 	        onChange={onChangeIsMember}
+// 	    /> */}
+// 		<Button style={styles.button} onPress={() => onValidate(textValue)}>Validasi</Button>
+// 	</React.Fragment>
+// );	
 
 class RegistrasiKtp extends React.Component{
 	nmOlshopRef = React.createRef();
@@ -335,23 +335,12 @@ class RegistrasiKtp extends React.Component{
 				<ScrollView>
 					{Object.keys(ktp).length > 0 && 
 						<View style={{padding: 10}}>
-							{ !validateMother.success ? 
-								<ValidateForm 
-									onValidate={this.onValidate}
-									onChangeValidate={this.onChange}
-									textValue={validateMother.text}
-									errors={bug}
-									fullName={ktp.fullname}
-									isMember={this.state.isMember}
-									onChangeIsMember={() => this.setState({ isMember: !this.state.isMember })}
-								/> :  
-								<React.Fragment>
-									{ this.state.isMember ? 
-										<IsMemberForm 
-											onSubmit={this.onSubmitIsMember}
-										/>  : <NotMemberForm onSubmit={this.onSubmitNonMember} /> }
-								</React.Fragment>
-							}
+							<React.Fragment>
+								{ this.state.isMember ? 
+									<IsMemberForm 
+										onSubmit={this.onSubmitIsMember}
+									/>  : <NotMemberForm onSubmit={this.onSubmitNonMember} /> }
+							</React.Fragment>
 						</View> }
 				</ScrollView>
 				</KeyboardAvoidingView>

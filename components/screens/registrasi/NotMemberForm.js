@@ -80,6 +80,7 @@ class NotMemberForm extends React.Component{
 					caption={errors.noHp && `${errors.noHp}`}
 					onSubmitEditing={() => this.emailRef.current.focus() }
 				/>
+				{ data.noHp.length > 0 && !!errors.noHp === false && <Text style={{fontSize: 12, color: 'blue', marginTop: -5}}>Harap pastikan bahwa nomor handphone anda sudah terhubung dengan whats'app </Text>}
 				<Input
 				  ref={this.emailRef}
 				  value={data.email}

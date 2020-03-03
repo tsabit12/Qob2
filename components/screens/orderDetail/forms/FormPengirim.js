@@ -14,7 +14,11 @@ const renderIcon = (style, search, checked) => (
 );
 
 const capitalize = (string) => {
-	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	if (string) {
+		return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	}else{
+		return string;
+	}
 }
 
 const ListKabupaten = ({ list, handleChange, selectedIndex, onPress }) => {

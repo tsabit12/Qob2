@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import { Text } from '@ui-kitten/components';
 import api from "../api";
-import { StyleSheet, View, AsyncStorage, ImageBackground, StatusBar } from 'react-native';
+import { StyleSheet, View, AsyncStorage, ImageBackground, StatusBar, Image } from 'react-native';
 import { Button, Input } from '@ui-kitten/components';
 import Loader from "../Loader";
 import Modal from "../Modal";
@@ -11,11 +11,70 @@ import PinView from 'react-native-pin-view';
 import md5 from "react-native-md5";
 import Constants from 'expo-constants';
 import { setLoggedIn } from "../../actions/auth";
+import AppIntroSlider from 'react-native-app-intro-slider';
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from '@expo/vector-icons';
+
+const slides = [
+  {
+    key: 'somethun',
+    title: 'Apa itu QPOSin AJA?',
+    text:
+      'Aplikasi resmi PT Pos Indonesia (Persero) untuk melakukan pemesanan pengiriman surat atau paket yang akan dijemput oleh petugas pickup atau menyerahkan kirimannya ke loket kantor pos terdekat',
+    icon: 'ios-help-circle-outline',
+    colors: ['#e8c61e', '#ff781f'],
+  },
+  {
+    key: 'somethun1',
+    title: 'Apa Saja Kelebihannya?',
+    text:
+      'Pelanggan dapat melakukan sendiri entri data pengirimannya dan melakukan permintaan penjemputan kiriman dilokasi pelanggan.',
+    icon: 'ios-information-circle-outline',
+    colors: ['#e8c61e', '#ff781f'],
+  },
+  {
+    key: 'somethun2',
+    title: 'Selamat Datang',
+    text: 'Jadilah pengguna QPOSin AJA sekarang juga',
+    icon: 'ios-checkmark-circle-outline',
+    colors: ['#e8c61e', '#ff781f'],
+  },
+];
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
 		<StatusBar translucent barStyle="light-content" />
 	</View>
+);
+
+const RenderLoading = () => (
+	<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+		<Text style={{fontFamily: 'open-sans-reg', textAlign: 'center'}}>Memuat...</Text>
+	</View>
+);
+
+const TutorialView = () => (
+	<View>
+		<Text>Hello world</Text>
+	</View>
+);
+
+const RenderPinView = ({ loading, errors, onCompletePin, onDaftar, onHelp }) => (
+	<React.Fragment>
+		<MyStatusBar />
+		<ImageBackground source={require('../../assets/HomeScreen.png')} style={styles.backgroundImage}>
+		<Loader loading={loading} />
+				<PinView
+		            onComplete={(val, clear) => onCompletePin(val, clear) }
+		            pinLength={6}
+		            buttonActiveOpacity={0.4}
+		        />
+				<Text 
+					style={{color: 'blue', textAlign: 'center', fontFamily: 'open-sans-bold'}}
+					onPress={() => onHelp()}
+				>LUPA PIN</Text>
+	   	</ImageBackground>
+   	</React.Fragment>
 );
 
 class Home extends React.Component {
@@ -38,59 +97,30 @@ class Home extends React.Component {
 			userid: '-',
 			username: '-',
 			kecamatan: '-'
-		}
+		},
+		mount: false,
+		loadingMount: true
 	}
 
-	async componentDidMount(){
-		const { session } = this.props;
-		//handle after register
-		//user can login without close app first
-		if (Object.keys(session).length === 0) { //if session is null then call from storage
-			const value 	= await AsyncStorage.getItem('qobUserPrivasi');
+	async UNSAFE_componentWillMount(){
+		const value = await AsyncStorage.getItem("qobUserPrivasi");
+		if (value !== null) {
 			const toObje 	= JSON.parse(value);
-			console.log(toObje);
-			if (value) { //only storage not empty
-				this.setState({
-					localUser: {
-						email: toObje.email,
-						nama: toObje.nama,
-						nohp: toObje.nohp,
-						pin: toObje.pinMd5,
-						userid: toObje.userid,
-						username: toObje.username,
-						kecamatan: toObje.kecamatan ? toObje.kecamatan : '-'
-					}
-				});
-			}
-		}else{
-			this.setState({
+			this.setState({ 
+				mount: true, 
+				loadingMount: false,
 				localUser: {
-					email: session.email,
-					nama: session.nama,
-					nohp: session.nohp,
-					pin: session.pinMd5,
-					userid: session.userid,
-					username: session.username,
-					kecamatan: session.kecamatan ? session.kecamatan : '-'
+					email: toObje.email,
+					nama: toObje.nama,
+					nohp: toObje.nohp,
+					pin: toObje.pinMd5,
+					userid: toObje.userid,
+					username: toObje.username,
+					kecamatan: toObje.kecamatan ? toObje.kecamatan : '-'
 				}
-			})
-		}
-	}
-
-	UNSAFE_componentWillReceiveProps(nextProps){
-		if (nextProps.session) {
-			const { session } = nextProps;
-			this.setState({
-				localUser: {
-					email: session.email,
-					nama: session.nama,
-					nohp: session.nohp,
-					pin: session.pinMd5,
-					userid: session.userid,
-					username: session.username,
-					kecamatan: session.kecamatan ? session.kecamatan : '-'
-				}
-			})
+			});
+		}else{//user not installed
+			this.setState({ loadingMount: false });
 		}
 	}
 
@@ -174,52 +204,89 @@ class Home extends React.Component {
 			});
 	}
 
+	_renderItem = ({ item, dimensions }) => (
+	    <LinearGradient
+	      style={[
+	        styles.mainContent,
+	        {
+	          flex: 1,
+	          paddingTop: item.topSpacer,
+	          paddingBottom: item.bottomSpacer,
+	          width: dimensions.width,
+	        },
+	      ]}
+	      colors={item.colors}
+	      start={{ x: 0, y: 0.1 }}
+	      end={{ x: 0.1, y: 1 }}
+	    >
+	      <Ionicons
+	        style={{ backgroundColor: 'transparent' }}
+	        name={item.icon}
+	        size={200}
+	        color="white"
+	      />
+	      <View>
+	        <Text style={styles.title}>{item.title}</Text>
+	        <Text style={styles.text}>{item.text}</Text>
+	      </View>
+	    </LinearGradient>
+	);
+
+	_onDone = () => {
+		// this.setState({ mount: true });
+		this.props.navigation.navigate({
+			routeName: 'HomePage2'
+		})	
+	} 
+
+	onLupaPin = () => {
+		this.props.navigation.navigate({
+			routeName: 'PemulihanAkun',
+			params: {
+				titlePemulihan: 'Lupa PIN',
+				jenis: 1
+			}
+		})
+	}
+
 	render() {
-		const { navigation, test } = this.props;
-    	const { push } = navigation; 
-    	const { errors, loading, localUser } = this.state;
+    	const { errors, loading, localUser, loadingMount } = this.state;
     	// console.log(localUser);
     	
 		return (
-			<View style={styles.container}>
-				<MyStatusBar />
-				<ImageBackground source={require('../../assets/HomeScreen.png')} style={styles.backgroundImage}>
-						<Loader loading={loading} />
-						{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
-						<PinView
-				            onComplete={(val, clear) => this.onComplete(val, clear) }
-				            pinLength={6}
-				            buttonActiveOpacity={0.4}
-				        />
-						<View style={styles.link}>
-							<Text>Belum memiliki akun ? daftar </Text>
-							<Text 
-								style={{color: 'blue'}}
-								onPress={() => this.props.navigation.navigate({
-					        		routeName: 'IndexRegister'
-					        	})}	
-							>disini</Text>
-						</View>
-						<Text 
-							style={{color: 'blue', textAlign: 'center'}}
-							onPress={() => this.props.navigation.navigate({
-								// routeName: 'LupaPin'
-								routeName: 'Bantuan'
-							})}
-						>Bantuan</Text>
-			   	</ImageBackground>
-		   	</View>
+			<React.Fragment>
+				{ loadingMount ? 
+					<RenderLoading /> : <React.Fragment>
+						{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> }
+						{ this.state.mount ? 
+							<View style={styles.container}>
+								<RenderPinView 
+									loading={loading} 
+									errors={errors}
+									onCompletePin={this.onComplete} 
+									onDaftar={() => this.props.navigation.navigate({
+						        		routeName: 'IndexRegister'
+						        	})}
+						        	onHelp={this.onLupaPin}
+								/> 
+							</View> : <AppIntroSlider
+								        slides={slides}
+								        renderItem={this._renderItem}
+								        // bottomButton
+								        showPrevButton
+								        showSkipButton
+								        onDone={this._onDone}
+								        // hideNextButton
+								        // hideDoneButton
+								        // onSkip={() => console.log("skipped")}
+								      /> }
+					</React.Fragment>}
+		   	</React.Fragment>
 		);
 	}
 }
 
-function mapStateToProps(state) {
-	return{
-		session: state.register.session
-	}
-}
-
-export default connect(mapStateToProps, { setLoggedIn })(Home);
+export default connect(null, { setLoggedIn })(Home);
 
 const styles = StyleSheet.create({
 	input: {
@@ -229,12 +296,6 @@ const styles = StyleSheet.create({
 	link: {
 		flexDirection: 'row',
 		justifyContent: 'center'
-	},
-	title: {
-		paddingBottom: 20,
-		textAlign: 'center',
-		fontFamily: 'open-sans-bold',
-		fontSize: 20
 	},
 	backgroundImage: {
 	    flex: 1,
@@ -248,6 +309,29 @@ const styles = StyleSheet.create({
     },
     container: {
     	flex: 1
-    }
+    },
+    mainContent: {
+	    flex: 1,
+	    alignItems: 'center',
+	    justifyContent: 'space-around',
+	  },
+	image: {
+	    width: 320,
+	    height: 320,
+	},
+	text: {
+	    color: 'rgba(255, 255, 255, 0.8)',
+	    backgroundColor: 'transparent',
+	    textAlign: 'center',
+	    paddingHorizontal: 16,
+	},
+	title: {
+	    fontSize: 20,
+	    color: 'white',
+	    backgroundColor: 'transparent',
+	    textAlign: 'center',
+	    marginBottom: 16,
+	},
+
   });
   
