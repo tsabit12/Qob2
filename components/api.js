@@ -93,7 +93,7 @@ export default{
 					return Promise.reject(res.data)
 				}
 			}),
-		lupaPin: (payload, userid) => axios.post(url2, {
+		lupaPin: (payload, userid) => axios.post(url, {
 			messtype: '220',
 			param1: payload.param1,
 			hashing: getHasing('220', payload.param1)
@@ -105,7 +105,7 @@ export default{
 				return Promise.reject(res.data);
 			}
 		}),
-		registrasiUserNonMember: (payload) => axios.post(url2, {
+		registrasiUserNonMember: (payload) => axios.post(url, {
 			messtype: '215',
 			param1: payload.param1,
 			param2: payload.param2,
@@ -117,7 +117,7 @@ export default{
 				return Promise.reject(res.data);
 			}
 		}),
-		registrasiUserPebisol: (payload) => axios.post(url2, {
+		registrasiUserPebisol: (payload) => axios.post(url, {
 			messtype: '215',
 			param1: payload.param1,
 			param2: payload.param2,
@@ -154,7 +154,7 @@ export default{
 				}
 			}),
 		rekeningBaru: (rek, userid) =>
-			axios.post(url2, {
+			axios.post(url, {
 				messtype: '217',
 				param1: rek,
 				param2: userid,
@@ -167,7 +167,7 @@ export default{
 				}
 			}),
 		validateGiro: (payload) => 
-			axios.post(url2, {
+			axios.post(url, {
 				messtype: '218',
 				param1: `${payload.userid}|${payload.nomorRekening}|${payload.pin}`,
 				hashing: getHasing('218', `${payload.userid}|${payload.nomorRekening}|${payload.pin}`)
@@ -261,7 +261,7 @@ export default{
 			})
 	},
 	auth: {
-		login: (payload, userid) => axios.post(url2, {
+		login: (payload, userid) => axios.post(url, {
 			messtype: '216',
 			param1: payload.param1,
 			hashing: getHasing('216', payload.param1)
@@ -272,7 +272,7 @@ export default{
 				return Promise.reject(res.data);
 			}
 		}),
-		verifikasi: (payload, userid) => axios.post(url2, {
+		verifikasi: (payload, userid) => axios.post(url, {
 			messtype: '221',
 			param1: payload.param1,
 			hashing: getHasing('221', payload.param1)
@@ -296,7 +296,7 @@ export default{
 		})
 	},
 	user: {
-		getDetail: (userid) => axios.post(url2, {
+		getDetail: (userid) => axios.post(url, {
 			messtype: '222',
 			param1: userid,
 			hashing: getHasing('222', userid)
