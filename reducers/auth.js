@@ -57,6 +57,18 @@ export default function auth(state=initialState, action={}){
 					kec: action.newPayload.kec
 				}
 			}
+		case 'UPDATE_REK_GIRO':
+			return{
+				...state,
+				dataLogin: {
+					...state.dataLogin,
+					norek: action.noRek,
+					detail: {
+						...state.dataLogin.detail,
+						saldo: action.saldo
+					}
+				}
+			}
 		default: return state;
 	}
 }

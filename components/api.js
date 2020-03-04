@@ -93,10 +93,10 @@ export default{
 					return Promise.reject(res.data)
 				}
 			}),
-		lupaPin: (payload, userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
-			messtype: '207',
+		lupaPin: (payload, userid) => axios.post(url2, {
+			messtype: '220',
 			param1: payload.param1,
-			hashing: getHasing('207', payload.param1)
+			hashing: getHasing('220', payload.param1)
 		}, config).then(res => {
 			console.log(res);
 			if (res.data.rc_mess === '00' || res.data.rc_mess === '02' || res.data.rc_mess === '01') {
@@ -105,12 +105,24 @@ export default{
 				return Promise.reject(res.data);
 			}
 		}),
-		registrasiNonMember: (payload) => axios.post(url2, {
-			messtype: '250',
+		registrasiUserNonMember: (payload) => axios.post(url2, {
+			messtype: '215',
 			param1: payload.param1,
+			param2: payload.param2,
+			hashing: getHasing('215', payload.param1)
+		}, config).then(res => {
+			if (res.data.rc_mess === '00') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
+		}),
+		registrasiUserPebisol: (payload) => axios.post(url2, {
+			messtype: '215',
+			param1: payload.param1,
+			param2: payload.param2,
 			param3: payload.param3,
-			param4: payload.param4,
-			hashing: getHasing('250', payload.param1)
+			hashing: getHasing('215', payload.param1)
 		}, config).then(res => {
 			if (res.data.rc_mess === '00') {
 				return res.data;
@@ -139,6 +151,31 @@ export default{
 					return res.data;
 				}else{
 					return Promise.reject(res);
+				}
+			}),
+		rekeningBaru: (rek, userid) =>
+			axios.post(url2, {
+				messtype: '217',
+				param1: rek,
+				param2: userid,
+				hashing: getHasing('217', rek)
+			}, config).then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data);
+				}
+			}),
+		validateGiro: (payload) => 
+			axios.post(url2, {
+				messtype: '218',
+				param1: `${payload.userid}|${payload.nomorRekening}|${payload.pin}`,
+				hashing: getHasing('218', `${payload.userid}|${payload.nomorRekening}|${payload.pin}`)
+			}, config).then(res => {
+				if (res.data.rc_mess === '00') {
+					return res.data;
+				}else{
+					return Promise.reject(res.data);
 				}
 			})
 	},
@@ -224,10 +261,10 @@ export default{
 			})
 	},
 	auth: {
-		login: (payload, userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
-			messtype: '200',
+		login: (payload, userid) => axios.post(url2, {
+			messtype: '216',
 			param1: payload.param1,
-			hashing: getHasing('200', payload.param1)
+			hashing: getHasing('216', payload.param1)
 		}, config).then(res => {
 			if (res.data.rc_mess === '00') {
 				return res.data;
@@ -235,10 +272,10 @@ export default{
 				return Promise.reject(res.data);
 			}
 		}),
-		verifikasi: (payload, userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
-			messtype: '211',
+		verifikasi: (payload, userid) => axios.post(url2, {
+			messtype: '221',
 			param1: payload.param1,
-			hashing: getHasing('211', payload.param1)
+			hashing: getHasing('221', payload.param1)
 		}, config).then(res => {
 			if (res.data.rc_mess === '00') {
 				return res.data;
@@ -259,10 +296,10 @@ export default{
 		})
 	},
 	user: {
-		getDetail: (userid) => axios.post(userid.substring(0, 3) === '540' ? url2 : url, {
-			messtype: '210',
+		getDetail: (userid) => axios.post(url2, {
+			messtype: '222',
 			param1: userid,
-			hashing: getHasing('210', userid)
+			hashing: getHasing('222', userid)
 		}, config)
 		.then(res => {
 			const { rc_mess } = res.data;

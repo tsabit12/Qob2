@@ -91,7 +91,7 @@ const ListRekening = ({ listdata }) => {
 	);
 }
 
-const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loading }) => {
+const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loading, datanya }) => {
 	return(
 		<React.Fragment>
 			<View style={{flexDirection: 'row', padding: 10 }}>
@@ -134,7 +134,7 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 							<Text style={styles.labelTitle}>Alamat</Text>
 							<View style={{marginRight: 10 }}>
 							<Text style={styles.labelSubTitle}>
-								{capitalize(user.alamat)}, {capitalize(user.kel)}, {capitalize(user.kec)}, {capitalize(user.kota)}
+								{capitalize(datanya.detail.alamatOl)}, {capitalize(datanya.detail.kelurahan)}, {capitalize(datanya.detail.kecamatan)}, {capitalize(datanya.detail.kota)}
 							</Text>
 							</View>
 						</View>
@@ -143,14 +143,14 @@ const Profile = ({ user, saldo, getRekening, rekening, nomorRek, listRek, loadin
 						<Icon name='info-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>
 							<Text style={styles.labelTitle}>Kodepos</Text>
-							<Text style={styles.labelSubTitle}>{user.kodepos}</Text>
+							<Text style={styles.labelSubTitle}>{datanya.detail.kodepos}</Text>
 						</View>
 					</View>
 					{ user.userid.substring(0, 3) !== '540' && <View style={styles.contentLabelBot}>
 						<Icon name='credit-card-outline' width={25} height={25} fill='#7eaec4' style={styles.icon} />
 						<View style={styles.leftContent}>
 							<Text style={{fontFamily: 'open-sans-reg', fontSize: 15}}>Saldo Giro</Text>
-							<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>{saldo}</Text>
+							<Text style={{fontFamily: 'Roboto-Regular', color: '#a6a3a2'}}>Rp {saldo}</Text>
 						</View>
 						<TouchableOpacity 
 							style={styles.linkIcon}
@@ -185,7 +185,7 @@ class AccountScreen extends React.Component{
 		const toObj 	= JSON.parse(value);
 		let userid 		= toObj.userid;
 		this.setState({
-			sisaSaldo: this.props.navigation.state.params.saldo
+			sisaSaldo: numberWithCommas(this.props.dataLogin.detail.saldo)
 		});
 		this.props.getDetailUser(userid)
 			.then(() => this.setState({ errors: {} }))
@@ -243,6 +243,7 @@ class AccountScreen extends React.Component{
 								nomorRek={this.state.nomorRek}
 								listRek={rekKoran}
 								loading={this.state.loading}
+								datanya={this.props.dataLogin}
 							/>
 						</View>
 						<View style={{ marginLeft: 14, marginRight: 15, paddingBottom: 10 }}>
@@ -259,7 +260,8 @@ class AccountScreen extends React.Component{
 function mapStateToProps(state) {
 	return{
 		detail: state.auth.user,
-		rekKoran: state.search.rekening
+		rekKoran: state.search.rekening,
+		dataLogin: state.auth.dataLogin
 	}
 }
 

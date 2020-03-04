@@ -54,7 +54,7 @@ class NonPebisol extends React.Component{
 
 	onSubmit = (data) => {
 		Alert.alert(
-		  'Notikiasi',
+		  'Notifikasi',
 		  'Apakah anda yakin data registrasi sudah valid?',
 		  [
 		  	{
@@ -72,12 +72,10 @@ class NonPebisol extends React.Component{
 		this.setState({ loading: true });
 		const namaPanggilan = data.nama.split(' ');
 		const payload = {
-			param1: `-|-|${data.nama}|${namaPanggilan[0]}|${data.noHp}|${data.email}|-|${this.state.imei}`,
-			param2: '',
-			param3: `||${data.alamatUtama}|Kel. ${data.kelurahan}|Kec. ${data.kecamatan}|${data.kabupaten}|${data.provinsi}|${data.kodepos}`,
-			param4: `-`
+			param1: `01|${data.nama}|${data.noHp}|${data.email}|${this.state.imei}`,
+			param2: `${data.alamatUtama.toUpperCase()}|${data.provinsi.toUpperCase()}|${data.kabupaten.toUpperCase()}|${data.kecamatan.toUpperCase()}|${data.kelurahan.toUpperCase()}|${data.kodepos}`
 		};
-		api.registrasi.registrasiNonMember(payload)
+		api.registrasi.registrasiUserNonMember(payload)
 			.then(res => {
 				// console.log(res);
 				const { response_data1 } = res;
@@ -94,7 +92,7 @@ class NonPebisol extends React.Component{
 					.then(() => {
 						this.setState({ loading: false });
 						Alert.alert(
-						  'Notikiasi',
+						  'Notifikasi',
 						  `${res.desk_mess}`,
 						  [
 						    {text: 'OK', onPress: () => this.backToLogin()},

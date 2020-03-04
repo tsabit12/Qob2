@@ -94,3 +94,11 @@ export const loggedOut = () => dispatch => {
 		type: USER_LOGGED_OUT
 	})
 }
+
+export const updateLoginSes = (noRek, saldo) => dispatch => {
+	dispatch({
+		type: 'UPDATE_REK_GIRO',
+		noRek,
+		saldo
+	})
+}

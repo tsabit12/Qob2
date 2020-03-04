@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/logoBaru.png",
     "splash": {
@@ -26,11 +26,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.posindonesia.cob",
-      "buildNumber": "1.2.3"
+      "buildNumber": "1.2.4"
     },
     "android": {
       "package": "com.posindonesia.cob",
-      "versionCode": 4,
+      "versionCode": 5,
       "config": {
       "googleMaps": {
           "apiKey": "AIzaSyCWExqNgCmhqQyoBuj7lvsMQ7lHWIdon0g"

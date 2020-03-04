@@ -103,8 +103,13 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		margin: 3,
-		marginTop: 20,
-		height: '100%'
+		margin: 10,
+		height: '100%',
+		borderWidth: 0.6,
+		padding: 10,
+		paddingBottom: 5,
+		borderRadius: 5,
+		borderColor: '#b5b0b0'
 	},
 	content:{
 		flex: 1,

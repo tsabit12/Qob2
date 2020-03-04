@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Text, StyleSheet, View, ScrollView, StatusBar, Image, AsyncStorage, Dimensions } from 'react-native';
+import { Button, Text, StyleSheet, View, ScrollView, StatusBar, Image, AsyncStorage, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
 import Menu from "../Menu";
@@ -45,7 +45,34 @@ const SearchAction = (props) => (
   <TopNavigationAction {...props} icon={SearchIcon}/>
 );
 
+const numberWithCommas = (number) => {
+	if (isNaN(number)) {
+		return '-';
+	}else{
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
+}
 
+
+const RenderSaldo = ({ saldo }) => (
+	<View 
+		style={{
+			marginLeft: 10, 
+			marginRight: 10, 
+			padding: 5, 
+			marginTop: 10, 
+			flexDirection: 'row', 
+			borderWidth: 0.8, 
+			alignItems: 'center', 
+			justifyContent: 'center',
+			borderRadius: 5,
+			borderColor: '#b5b0b0'
+		}}
+	>
+		<Image source={require('../../../assets/giro.png')} style={{width: 25, height: 25}} />
+		<Text style={{marginLeft: 5, fontFamily: 'open-sans-bold', color: '#8c8c8c'}}>Rp {numberWithCommas(saldo)}</Text>
+	</View>
+);
 
 class IndexSearch extends React.Component{
 	state = {
@@ -64,6 +91,7 @@ class IndexSearch extends React.Component{
 
 	async componentDidMount(){
 		const { userid } = this.props.dataLogin;
+		// console.log(this.props.dataLogin);
 		registerForPushNotificationsAsync(userid);
 
 		const value = await AsyncStorage.getItem('sessionLogin');
@@ -121,7 +149,7 @@ class IndexSearch extends React.Component{
 
 	renderRightControls = () => {
 		const { userid } = this.props.dataLogin;
-		if (userid.substring(0, 3) === '540') {
+		// if (userid.substring(0, 3) === '540') {
 			return(
 					<ProfileAction onPress={() => 
 						this.props.navigation.navigate({ 
@@ -133,27 +161,67 @@ class IndexSearch extends React.Component{
 						})} 
 					/>
 			);
-		}else{
-			return(
-				[
-					<SearchAction onPress={() => this.props.navigation.navigate({ routeName: 'DetailSearch'})} />,
-					<ProfileAction onPress={() => 
-						this.props.navigation.navigate({ 
-							routeName: 'Account', 
-							params: {
-								namaLengkap:  this.state.user.nama,
-								saldo: this.state.user.sisaSaldo
-							} 
-						})} 
-					/>
-				]
-			)
-		}
+		// }else{
+		// 	return(
+		// 		[
+		// 			<SearchAction onPress={() => this.props.navigation.navigate({ routeName: 'DetailSearch'})} />,
+		// 			<ProfileAction onPress={() => 
+		// 				this.props.navigation.navigate({ 
+		// 					routeName: 'Account', 
+		// 					params: {
+		// 						namaLengkap:  this.state.user.nama,
+		// 						saldo: this.state.user.sisaSaldo
+		// 					} 
+		// 				})} 
+		// 			/>
+		// 		]
+		// 	)
+		// }
 	}
 
+	//next
+	// onGiroPress = () => {
+	// 	Alert.alert(
+	// 	  'Notifikasi',
+	// 	  'Apakah anda sudah mempunyai rekening giro?',
+	// 	  [
+	// 	  	{
+	// 	      text: 'Tutup',
+	// 	      onPress: () => console.log('Cancel Pressed'),
+	// 	      style: 'cancel',
+	// 	    },
+	// 	    {text: 'Daftar Baru', onPress: () => this.belumPunyaRek()},
+	// 	    {text: 'Sudah', onPress: () => this.sudahPunyaRek()},
+	// 	  ],
+	// 	  {cancelable: false},
+	// 	);
+	// }
+
+	onGiroPress = () => {
+		Alert.alert(
+		  'Notifikasi',
+		  'Apakah anda yakin untuk menghubungkan ke rekening giro?',
+		  [
+		  	{
+		      text: 'Batal',
+		      onPress: () => console.log('Cancel Pressed'),
+		      style: 'cancel',
+		    },
+		    {text: 'Ya', onPress: () => this.sudahPunyaRek()},
+		  ],
+		  {cancelable: false},
+		);
+	}
+
+	sudahPunyaRek = () => {
+		this.props.navigation.navigate({
+			routeName: 'ValidasiRekening'
+		})
+	}
+ 
 	render(){
 		const { show, msgModal, titleModal, success } = this.state;
-		const { userid } = this.props.dataLogin;
+		const { userid, norek } = this.props.dataLogin;
 
 		return(
 			<View style={{flex: 1, backgroundColor: '#f7f5f0'}}>
@@ -192,7 +260,7 @@ class IndexSearch extends React.Component{
 					require('../../../assets/qob2.jpg'),
 					require('../../../assets/qob3.jpg')
 				]} 
-				sliderBoxHeight={device*0.7}
+				sliderBoxHeight={device*0.6}
 				resizeMode={'stretch'}
 				circleLoop
 				autoplay={true}
@@ -203,11 +271,30 @@ class IndexSearch extends React.Component{
 				  }}
 				/>
 					<View style={{flex: 1, justifyContent: 'flex-end'}}>
-					{ userid.substring(0, 3) === '540' ? 
+
+					{ norek === '-' ?  <TouchableOpacity 
+						style={{
+							marginLeft: 10, 
+							marginRight: 10, 
+							padding: 5, 
+							marginTop: 10, 
+							flexDirection: 'row', 
+							borderWidth: 0.8, 
+							alignItems: 'center', 
+							justifyContent: 'center',
+							borderRadius: 5,
+							borderColor: '#b5b0b0'
+						}}
+						onPress={this.onGiroPress}
+					>
+						<Image source={require('../../../assets/giro.png')} style={{width: 25, height: 25}} />
+						<Text style={{marginLeft: 5, fontFamily: 'open-sans-bold', color: '#8c8c8c'}}>Hubungkan ke akun giro</Text>
+					</TouchableOpacity> : <RenderSaldo saldo={this.props.dataLogin.detail.saldo} /> }
+					
 						<MenuNotMember 
 							navigation={this.props.navigation}
-						/> : 
-						<Menu 
+						/>  
+						{ /* <Menu 
 							navigation={this.props.navigation} 
 							loading={this.state.loading}
 							onShowModal={(userid) => this.setState({ 
@@ -216,7 +303,7 @@ class IndexSearch extends React.Component{
 								msgModal: 'Apakah anda yakin untuk generate password web anda?',
 								titleModal: 'Notifikasi'
 							})}
-						/> }
+						/> */ }
 					</View>
 				</ScrollView>
 			</View>

@@ -95,8 +95,7 @@ class Home extends React.Component {
 			nohp: '-',
 			pin: '-',
 			userid: '-',
-			username: '-',
-			kecamatan: '-'
+			username: '-'
 		},
 		mount: false,
 		loadingMount: true
@@ -115,8 +114,7 @@ class Home extends React.Component {
 					nohp: toObje.nohp,
 					pin: toObje.pinMd5,
 					userid: toObje.userid,
-					username: toObje.username,
-					kecamatan: toObje.kecamatan ? toObje.kecamatan : '-'
+					username: toObje.username
 				}
 			});
 		}else{//user not installed
@@ -147,56 +145,32 @@ class Home extends React.Component {
 		
 		api.auth.login(payload, userid)
 			.then(res => {
-				// console.log(res);
 				const { response_data1, response_data4, response_data5 } = res;
 				const x 	= response_data4.split('|');
 				const x2 	= response_data1.split('|'); 
-				let payload2 = {};
-				// console.log(x);
-				if (userid.substring(0, 3) === '540') {
-					payload2 = {
-						norek: '-',
-						nama: x[0],
-						alamatOl: x[1],
-						kelurahan: x[2],
-						kota: x[3],
-						provinsi: x[4],
-						kodepos: x[5],
-						namaOl: '-',
-						saldo: 0,
-						nohp: nohp,
-						kecamatan: this.state.localUser.kecamatan,
-						email: email
-					};
-				}else{ //member
-					payload2 = {
-						norek: x2[0],
-						nama: x2[1],
-						namaOl: x[0],
-						alamatOl: x[1],
-						kota: x[2],
-						kodepos: x[3],
-						saldo: response_data5,
-						kelurahan: '-',
-						provinsi: '-',
-						nohp: nohp,
-						kecamatan: this.state.localUser.kecamatan,
-						email: email
-					};
-				}
 
-				this.saveToStorage(payload2)
-					.then(() => {
-						this.setState({ loading: false });
-						this.props.setLoggedIn(userid, payload2);
-					}).catch(err => {
-						this.setState({ loading: false });	
-						alert("Failed save data to storage");
-					});
+				const payload2 = {
+					nama: x2[0],
+					email: x2[1],
+					nohp: x2[2],
+					norek: x2[3],
+					saldo: response_data5,
+					namaOl: x[0],
+					jenisOl: x[1],
+					alamatOl: x[2],
+					provinsi: x[3],
+					kota: x[4],
+					kecamatan: x[5],
+					kelurahan: x[6],
+					kodepos: x[7]
+				};
+
+				this.setState({ loading: false });
+				this.props.setLoggedIn(userid, payload2);
 			})
 			.catch(err => {
 				clear();
-				if (Object.keys(err).length === 10) { //handle undefined
+				if (err.desk_mess) { //handle undefined
 					this.setState({ loading: false, errors: {global: err.desk_mess } });
 				}else{
 					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan saat menghubungkan ke server, harap cobalagi nanti'} });
@@ -232,6 +206,16 @@ class Home extends React.Component {
 	    </LinearGradient>
 	);
 
+	async removeItemValue() {
+	    try {
+	        await AsyncStorage.removeItem('qobUserPrivasi');
+	        return true;
+	    }
+	    catch(exception) {
+	        return false;
+	    }
+	}
+
 	_onDone = () => {
 		// this.setState({ mount: true });
 		this.props.navigation.navigate({
@@ -248,6 +232,18 @@ class Home extends React.Component {
 			}
 		})
 	}
+
+	onResetSession = () => {
+		const test = this.removeItemValue();
+		if (test) {
+			alert("Oke");
+			this.props.navigation.push('Home');
+		}else{
+			alert("Failed");
+		}
+	}
+
+
 
 	render() {
     	const { errors, loading, localUser, loadingMount } = this.state;
@@ -269,6 +265,7 @@ class Home extends React.Component {
 						        	})}
 						        	onHelp={this.onLupaPin}
 								/> 
+								{ /* <Button onPress={this.onResetSession}>Reset</Button> */ }
 							</View> : <AppIntroSlider
 								        slides={slides}
 								        renderItem={this._renderItem}

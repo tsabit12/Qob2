@@ -31,7 +31,8 @@ export default StyleSheet.create({
 	},
 	labelSubTitle: {
 		fontFamily: 'Roboto-Regular', 
-		color: '#a6a3a2'
+		color: '#a6a3a2',
+		marginRight: 10
 	},
 	icon: {
 		marginTop: 8

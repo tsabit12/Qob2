@@ -200,9 +200,9 @@ class PemulihanAkun extends React.Component{
 
 	onBackHome = () => {
 		this.setState({ visible: false });
-		this.props.navigation.navigate({
-			routeName: 'Home'
-		})
+		setTimeout(() => {
+			this.props.navigation.push('Home');
+		}, 100);	
 	}
 
 	onChangeKode = (e) => this.setState({ kode: e })
@@ -269,8 +269,7 @@ class PemulihanAkun extends React.Component{
 						nohp: parsing[4],
 						email: parsing[5]
 					};
-					console.log(payloadRes);
-					//update storage
+					
 					this.saveToStorage(payloadRes)
 						.then(() => {
 							this.setState({ 
