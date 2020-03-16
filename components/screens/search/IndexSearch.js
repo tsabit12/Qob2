@@ -14,6 +14,7 @@ import { Notifications } from 'expo';
 import registerForPushNotificationsAsync from "../../../registerForPushNotificationsAsync";
 
 var device = Dimensions.get('window').width;
+const heightDevice = Dimensions.get('window').height;
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -93,18 +94,6 @@ class IndexSearch extends React.Component{
 		const { userid } = this.props.dataLogin;
 		// console.log(this.props.dataLogin);
 		registerForPushNotificationsAsync(userid);
-
-		const value = await AsyncStorage.getItem('sessionLogin');
-		const toObj = JSON.parse(value);
-	    const nama  = toObj.nama.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-	    const saldo = toObj.saldo;
-	    
-	    this.setState({
-	    	user: {
-		    	nama: nama,
-		    	sisaSaldo: saldo
-	    	}
-	    });
 	}
 
 	// _handleNotification = notification => {
@@ -234,7 +223,7 @@ class IndexSearch extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    rightControls={this.renderRightControls()}
 				/>
-				<React.Fragment>
+				{ /* <React.Fragment>
 					{ show && <Dialog.Container visible={true}>
 						<Dialog.Title>{titleModal}</Dialog.Title>
 						<Dialog.Description>
@@ -252,15 +241,14 @@ class IndexSearch extends React.Component{
 							label="Ya" 
 							onPress={this.onGeneratePwd} 
 						/> }
-					</Dialog.Container> }
-				</React.Fragment>
+					</Dialog.Container> </React.Fragment>*/ }
 				<ScrollView>
 				<SliderBox images={[
 					require('../../../assets/qob.jpg'),
 					require('../../../assets/qob2.jpg'),
-					require('../../../assets/qob3.jpg')
+					require('../../../assets/qob3.png')
 				]} 
-				sliderBoxHeight={device*0.6}
+				sliderBoxHeight={heightDevice / 2.5}
 				resizeMode={'stretch'}
 				circleLoop
 				autoplay={true}
@@ -290,20 +278,9 @@ class IndexSearch extends React.Component{
 						<Image source={require('../../../assets/giro.png')} style={{width: 25, height: 25}} />
 						<Text style={{marginLeft: 5, fontFamily: 'open-sans-bold', color: '#8c8c8c'}}>Hubungkan ke akun giro</Text>
 					</TouchableOpacity> : <RenderSaldo saldo={this.props.dataLogin.detail.saldo} /> }
-					
 						<MenuNotMember 
 							navigation={this.props.navigation}
 						/>  
-						{ /* <Menu 
-							navigation={this.props.navigation} 
-							loading={this.state.loading}
-							onShowModal={(userid) => this.setState({ 
-								show: true, 
-								userid: userid,
-								msgModal: 'Apakah anda yakin untuk generate password web anda?',
-								titleModal: 'Notifikasi'
-							})}
-						/> */ }
 					</View>
 				</ScrollView>
 			</View>

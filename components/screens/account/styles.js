@@ -64,6 +64,6 @@ export default StyleSheet.create({
 	},
 	StatusBar: {
 	    height: Constants.statusBarHeight,
-	    backgroundColor: 'rgb(240, 132, 0)'
+	    backgroundColor: 'rgb(255, 102, 0)'
 	}
 })

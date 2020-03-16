@@ -18,7 +18,7 @@ import LacakBarcode from "./components/screens/search/result/LacakBarcode";
 import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 import Barcode from './components/screens/helper/barcode';
-import AccountScreen from "./components/screens/account/AccountScreen";
+import AccountScreen from "./components/screens/account/AccountScreenNew";
 import AboutScreen from "./components/screens/about/AboutScreen";
 import CekTarif from "./components/screens/CekTarif";
 import PemulihanAkun from "./components/screens/PemulihanAkun";
