@@ -4,7 +4,7 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
 import Home from "./components/screens/Home";
-import IndexRegister from "./components/screens/registrasi/IndexRegister";
+import IndexRegister from "./components/screens/pendaftaran/IndexRegister";
 import { Layout, Icon, Avatar } from '@ui-kitten/components';
 import IndexSearch from "./components/screens/search/IndexSearch";
 import IndexOrder from "./components/screens/order/IndexOrder";
@@ -33,7 +33,6 @@ import RiwayatPickup from "./components/screens/history/Index";
 import DetailPickup from "./components/screens/history/DetailPickup";
 import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
-import HomePage2 from "./components/screens/HomePage2";
 import RegisterPebisol from "./components/screens/pendaftaran/Pebisol";
 import RegistrasiNonPebisol from "./components/screens/pendaftaran/NonPebisol";
 import ValidasiRekening from "./components/screens/ValidasiRekening";
@@ -162,12 +161,6 @@ const LoginNavigator = createStackNavigator({
   About: {
     screen: AboutScreen,
     navigationOptions: { 
-      header: null
-    }
-  },
-  HomePage2: {
-    screen: HomePage2,
-    navigationOptions: {
       header: null
     }
   },

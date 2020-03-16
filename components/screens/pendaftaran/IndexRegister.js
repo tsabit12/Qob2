@@ -2,8 +2,6 @@ import React from "react";
 import { View, StatusBar, Image, ImageBackground } from "react-native";
 import {Text, Button, ButtonGroup } from '@ui-kitten/components';
 import styles from "./styles";
-// import { connect } from "react-redux";
-// import { searchKtp } from "../../../actions/register";
 import Modal from "../../Modal";
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';

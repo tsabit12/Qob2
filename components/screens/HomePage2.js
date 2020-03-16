@@ -8,44 +8,34 @@ const MyStatusBar = () => (
 	</View>
 );
 
-
-class HomePage2 extends React.Component{
-
-	onDaftar = () => {
-		this.props.navigation.navigate({
-			routeName: 'IndexRegister'
-		})
-	}
-
-	onHelp = () => {
-		this.props.navigation.navigate({
-			routeName: 'PemulihanAkun',
-			params: {
-				titlePemulihan: 'Pemulihan Akun',
-				jenis: 2
-			}
-		})
-	}
-
-	render(){
-		return(
-			<View style={{flex: 1}}>
-				<MyStatusBar />
-				<ImageBackground source={require('../../assets/homepage.png')} style={styles.backgroundImage}>
-				<View style={{flex: 1, position: 'absolute', bottom: 20, left: 0, right: 0}}>
-					<View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-						<Text style={{fontFamily: 'open-sans-bold', fontSize: 15}}>Belum memilik akun?</Text>
-						<Text style={{fontFamily: 'open-sans-bold', fontSize: 15, color: 'blue'}} onPress={this.onDaftar}> Daftar disini</Text>
-					</View>
-					<View style={{flex: 1}}>
-						<Text style={{textAlign: 'center', fontFamily: 'open-sans-bold', color: 'blue'}} onPress={this.onHelp}>Pulihkan Akun</Text>
-					</View>
-				</View>
-				</ImageBackground>
+const HomePage2 = ({ navigation }) => (
+	<View style={{flex: 1}}>
+		<MyStatusBar />
+		<ImageBackground source={require('../../assets/homepage.png')} style={styles.backgroundImage}>
+		<View style={{flex: 1, position: 'absolute', bottom: 20, left: 0, right: 0}}>
+			<View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+				<Text style={{fontFamily: 'open-sans-bold', fontSize: 15}}>Belum memilik akun?</Text>
+				<Text 
+					style={{fontFamily: 'open-sans-bold', fontSize: 15, color: 'blue'}} 
+					onPress={() => navigation.navigate({ routeName: 'IndexRegister'})}
+				> Daftar disini</Text>
 			</View>
-		);
-	}
-}
+			<View style={{flex: 1}}>
+				<Text 
+					style={{textAlign: 'center', fontFamily: 'open-sans-bold', color: 'blue'}}
+					onPress={() => navigation.navigate({ 
+						routeName: 'PemulihanAkun',
+						params: {
+							titlePemulihan: 'Pemulihan Akun',
+							jenis: 2
+						}
+					})}
+				>Pulihkan Akun</Text>
+			</View>
+		</View>
+		</ImageBackground>
+	</View>
+);
 
 const styles = StyleSheet.create({
 	backgroundImage: {

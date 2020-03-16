@@ -14,6 +14,7 @@ import { setLoggedIn } from "../../actions/auth";
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from '@expo/vector-icons';
+import HomePage2 from "./HomePage2";
 
 const slides = [
   {
@@ -98,7 +99,8 @@ class Home extends React.Component {
 			username: '-'
 		},
 		mount: false,
-		loadingMount: true
+		loadingMount: true,
+		done: false
 	}
 
 	async UNSAFE_componentWillMount(){
@@ -217,10 +219,10 @@ class Home extends React.Component {
 	}
 
 	_onDone = () => {
-		// this.setState({ mount: true });
-		this.props.navigation.navigate({
-			routeName: 'HomePage2'
-		})	
+		this.setState({ done: true });
+		// this.props.navigation.navigate({
+		// 	routeName: 'HomePage2'
+		// })	
 	} 
 
 	onLupaPin = () => {
@@ -246,7 +248,7 @@ class Home extends React.Component {
 
 
 	render() {
-    	const { errors, loading, localUser, loadingMount } = this.state;
+    	const { errors, loading, localUser, loadingMount, done } = this.state;
     	// console.log(localUser);
     	
 		return (
@@ -266,17 +268,18 @@ class Home extends React.Component {
 						        	onHelp={this.onLupaPin}
 								/> 
 								{ /* <Button onPress={this.onResetSession}>Reset</Button> */ }
-							</View> : <AppIntroSlider
-								        slides={slides}
-								        renderItem={this._renderItem}
-								        // bottomButton
-								        showPrevButton
-								        showSkipButton
-								        onDone={this._onDone}
-								        // hideNextButton
-								        // hideDoneButton
-								        // onSkip={() => console.log("skipped")}
-								      /> }
+							</View> : 
+								<React.Fragment>
+									{ done ? <HomePage2 navigation={this.props.navigation} /> :
+										<AppIntroSlider
+									        slides={slides}
+									        renderItem={this._renderItem}
+									        showPrevButton
+									        showSkipButton
+									        onDone={this._onDone}
+									        // onSkip={() => console.log("skipped")}
+									      /> }
+								</React.Fragment> }
 					</React.Fragment>}
 		   	</React.Fragment>
 		);
