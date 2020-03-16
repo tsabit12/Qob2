@@ -143,7 +143,8 @@ class RequestPickupScreen extends React.Component{
 
 		this.props.getAddPosting(userid)
 			.catch(err => {
-				if (err.response.data.errors) {
+				console.log(err);
+				if (err.response) {
 					this.setState({ errors: err.response.data.errors })
 				}else{
 					this.setState({ 

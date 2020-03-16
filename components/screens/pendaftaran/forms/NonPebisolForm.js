@@ -120,11 +120,12 @@ class NonPebisolForm extends React.Component{
 					this.setState({ loading: false, responseKodepos });
 				})
 				.catch(err => {
-					if (err.response.status === '500') {
-						this.setState({ loading: false, errors: { searchParams: 'Internal Server error' } });
-					}else{
-						this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan'} });
-					}
+					// if (err.response.data === '500') {
+					// 	this.setState({ loading: false, errors: { searchParams: 'Internal Server error' } });
+					// }else{
+					// 	this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan'} });
+					// }
+					console.log(err);
 				})
 		}
   	}

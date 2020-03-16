@@ -173,12 +173,21 @@ class Index extends React.Component{
 		const { userid } = this.props;
 		this.props.fetchHistoryPickup(userid)
 			.catch(err => {
-				this.setState({ 
-					errors: {
-						global: 'Data tidak ditemukan'
-					}, 
-					isLoading: false
-				})
+				if (err.response) {
+					this.setState({ 
+						errors: {
+							global: 'Data tidak ditemukan'
+						}, 
+						isLoading: false
+					})
+				}else{
+					this.setState({ 
+						errors: {
+							global: 'Terdapat kesalahan'
+						}, 
+						isLoading: false
+					})
+				}
 			});
 	}
 
