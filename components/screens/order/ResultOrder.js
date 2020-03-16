@@ -159,78 +159,77 @@ class ResultOrder extends React.Component{
 	saveOrder = () => {
 		this.setState({ loading: true, success: false });
 		const { dataLogin } = this.props;
-		if (dataLogin.userid.substring(0, 3) === '540') { //non member
-			const { params } = this.props.navigation.state;
-			const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-			const { dataLogin } = this.props;
+		// if (dataLogin.userid.substring(0, 3) === '540') { //non member
+		const { params } = this.props.navigation.state;
+		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
 
-			const payloadWsdl = {
-				userid: dataLogin.userid,
-				fee: selectedTarif.beadasar,
-				feeTax: selectedTarif.ppn,
-				insurance: selectedTarif.htnb,
-				insuranceTax: selectedTarif.ppnhtnb,
-				itemValue: deskripsiOrder.nilai,
-				contentDesc: deskripsiOrder.isiKiriman,
-				berat: deskripsiOrder.berat,
-				serviceId: selectedTarif.id,
-				senderName: pengirimnya.nama,
-				senderAddress: pengirimnya.alamat,
-				senderKec: pengirimnya.kec,
-				senderCity: pengirimnya.kota,
-				senderVill: pengirimnya.kel,
-				senderProv: pengirimnya.provinsi,
-				length: deskripsiOrder.panjang,
-				width: deskripsiOrder.lebar,
-				height: deskripsiOrder.tinggi,
-				cod: deskripsiOrder.cod ? '1' : '0',
-				senderPos: pengirimnya.kodepos,
-				senderMail: pengirimnya.email,
-				senderPhone: pengirimnya.nohp,
-				receiverName: deskripsiPenerima.nama,
-				receiverAddress: deskripsiPenerima.alamatUtama,
-				receiverKec: deskripsiPenerima.kecamatan,
-				receiverCity: deskripsiPenerima.kabupaten,
-				receiverProv: deskripsiPenerima.provinsi,
-				receiverPos: deskripsiPenerima.kodepos,
-				receiverMail: deskripsiPenerima.email,
-				receiverPhone: deskripsiPenerima.nohp,
-				receiverVill: deskripsiPenerima.kelurahan
-			};
-			apiWs.qob.booking(payloadWsdl)
-				.then(res => {
-					console.log(res);
-					const { idOrder } = res;
-					this.setState({ loading: false, success: true, idOrder: idOrder });
-				})
-				.catch(err => {
-					// console.log(err);
-					console.log(err.response);
-					if (err.response.data.errors.global) {
-						this.setState({ loading: false, errors: err.response.data.errors });
-					}else{
-						this.setState({ loading: false, errors: {global: 'Whooopps, untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti'}});
-					}
-				});
-
-		}else{//member
-			api.qob.booking(this.state.payload)
-				.then(res => {
-					console.log(res);
-					const { response_data1 } = res;
-					let x = response_data1.split('|');
-					// let idOrder = x
-					this.setState({ loading: false, success: true, idOrder: x[3] });
-				})
-				.catch(err => {
-					// console.log(err);
-					if (Object.keys(err).length === 10) {
-						this.setState({ loading: false, errors: {global: err.desk_mess }});	
-					}else{
-						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
-					}
+		const payloadWsdl = {
+			userid: dataLogin.userid,
+			fee: selectedTarif.beadasar,
+			feeTax: selectedTarif.ppn,
+			insurance: selectedTarif.htnb,
+			insuranceTax: selectedTarif.ppnhtnb,
+			itemValue: deskripsiOrder.nilai,
+			contentDesc: deskripsiOrder.isiKiriman,
+			berat: deskripsiOrder.berat,
+			serviceId: selectedTarif.id,
+			senderName: pengirimnya.nama,
+			senderAddress: pengirimnya.alamat,
+			senderKec: pengirimnya.kec,
+			senderCity: pengirimnya.kota,
+			senderVill: pengirimnya.kel,
+			senderProv: pengirimnya.provinsi,
+			length: deskripsiOrder.panjang,
+			width: deskripsiOrder.lebar,
+			height: deskripsiOrder.tinggi,
+			cod: deskripsiOrder.cod ? '1' : '0',
+			senderPos: pengirimnya.kodepos,
+			senderMail: pengirimnya.email,
+			senderPhone: pengirimnya.nohp,
+			receiverName: deskripsiPenerima.nama,
+			receiverAddress: deskripsiPenerima.alamatUtama,
+			receiverKec: deskripsiPenerima.kecamatan,
+			receiverCity: deskripsiPenerima.kabupaten,
+			receiverProv: deskripsiPenerima.provinsi,
+			receiverPos: deskripsiPenerima.kodepos,
+			receiverMail: deskripsiPenerima.email,
+			receiverPhone: deskripsiPenerima.nohp,
+			receiverVill: deskripsiPenerima.kelurahan
+		};
+		apiWs.qob.booking(payloadWsdl)
+			.then(res => {
+				console.log(res);
+				const { idOrder } = res;
+				this.setState({ loading: false, success: true, idOrder: idOrder });
 			})
-		}
+			.catch(err => {
+				// console.log(err);
+				console.log(err.response);
+				if (err.response.data.errors.global) {
+					this.setState({ loading: false, errors: err.response.data.errors });
+				}else{
+					this.setState({ loading: false, errors: {global: 'Whooopps, untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti'}});
+				}
+			});
+
+		// }else{//member
+		// 	api.qob.booking(this.state.payload)
+		// 		.then(res => {
+		// 			console.log(res);
+		// 			const { response_data1 } = res;
+		// 			let x = response_data1.split('|');
+		// 			// let idOrder = x
+		// 			this.setState({ loading: false, success: true, idOrder: x[3] });
+		// 		})
+		// 		.catch(err => {
+		// 			// console.log(err);
+		// 			if (Object.keys(err).length === 10) {
+		// 				this.setState({ loading: false, errors: {global: err.desk_mess }});	
+		// 			}else{
+		// 				this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
+		// 			}
+		// 	})
+		// }
 	}
 
 	onSubmit = () => {
