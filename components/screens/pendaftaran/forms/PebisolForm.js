@@ -124,10 +124,10 @@ class PebisolForm extends React.Component{
 					this.setState({ loading: false, responseKodepos });
 				})
 				.catch(err => {
-					if (err.response.status === '500') {
-						this.setState({ loading: false, errors: { searchParams: 'Internal Server error' } });
+					if (err.status) {
+						this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan' } });
 					}else{
-						this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan'} });
+						this.setState({ loading: false, errors: { searchParams: 'Internal Server error'} });
 					}
 				})
 		}

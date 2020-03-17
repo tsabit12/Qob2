@@ -3,7 +3,7 @@ import { View, Text, StatusBar, TextInput } from "react-native";
 import { Icon, Input } from '@ui-kitten/components';
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
-import { lacakKiriman } from "../../actions/search";
+import { lacakKiriman, removeErrors } from "../../actions/search";
 
 const InputIcon = (style) => (
 	<View style={{width: '100%', marginBottom: 20, marginRight: 15, flexDirection: 'row'}}>
@@ -59,13 +59,16 @@ class LacakKiriman extends React.Component{
 	onChange = (value) => this.setState({ searchText: value })
 
 	onSearch = () => {
-		this.props.lacakKiriman(this.state.searchText);
-		this.props.navigation.navigate({
-	      routeName: 'LacakBarcode',
-	      params: {
-	        externalId: this.state.searchText
-	      }
-	    })
+		this.props.removeErrors();
+		setTimeout(() => {
+			this.props.lacakKiriman(this.state.searchText);
+			this.props.navigation.navigate({
+		      routeName: 'LacakBarcode',
+		      params: {
+		        externalId: this.state.searchText
+		      }
+		    })
+		}, 100);
 	}
 
 	render(){
@@ -94,4 +97,4 @@ class LacakKiriman extends React.Component{
 	}
 }
 
-export default connect(null, { lacakKiriman })(LacakKiriman);
+export default connect(null, { lacakKiriman, removeErrors })(LacakKiriman);

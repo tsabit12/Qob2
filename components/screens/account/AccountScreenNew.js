@@ -10,6 +10,9 @@ import {
   MenuOption,
   MenuTrigger,
 } from 'react-native-popup-menu';
+import Dialog from "react-native-dialog";
+import Loader from "../../Loader";
+import apiWs from "../../apiWs";
 
 
 var width = Dimensions.get('window').width;
@@ -118,6 +121,13 @@ const UserInfo = ({ detail }) => (
 );
 
 class AccountScreenNew extends React.Component{
+	state = {
+		open: false,
+		color: '#9ca19d',
+		searchParams: '',
+		loading: false,
+		errors: {}
+	}
 	// componentDidMount(){
 	// 	console.log(this.props.dataLogin);
 	// }
@@ -135,6 +145,42 @@ class AccountScreenNew extends React.Component{
 		this.props.navigation.navigate({
             routeName: 'Home'
         })
+	}
+
+	onChangeParams = (e) => {
+		clearTimeout(this.timer);
+		this.setState({ searchParams: e.nativeEvent.text });
+		this.timer = setTimeout(this.searchAlamat, 800);
+	}
+
+	searchAlamat = () => {
+		if (!this.state.searchParams) return;
+		this.setState({ loading: true });
+		apiWs.qob.getKodePos(this.state.searchParams)
+			.then(res => {
+				console.log(res);
+				this.setState({ loading: false });
+			})
+			.catch(err => {
+				console.log(err.request);
+				if (err.status) {
+					this.setState({ 
+						loading: false, 
+						color: 'red',
+						errors: {
+							global: err.response.data.errors
+						}
+					});
+				}else{
+					this.setState({ 
+						loading: false, 
+						color: 'red',
+						errors: {
+							global: 'Network error'
+						}
+					});
+				}
+			})
 	}
 
 	renderRightControls = () => (
@@ -159,9 +205,11 @@ class AccountScreenNew extends React.Component{
 
 	render(){
 		const { dataLogin } = this.props;
+		const { errors } = this.state;
 		//console.log(height / 28);
 		return(
 			<View style={{flex: 1, backgroundColor: '#ffd000'}}>
+				<Loader loading={this.state.loading} />
 				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.BackAction()}
@@ -170,7 +218,7 @@ class AccountScreenNew extends React.Component{
 				    subtitleStyle={{color: '#FFF'}}
 				    rightControls={this.renderRightControls()}
 				/>
-				<TouchableOpacity style={styles.buttonEdit}>
+				<TouchableOpacity style={styles.buttonEdit} onPress={() => this.setState({ open: true })}>
 					<Icon name='edit-2-outline' width={25} height={25} fill='#FFF' />
 				</TouchableOpacity>
 				<ScrollView>
@@ -195,6 +243,33 @@ class AccountScreenNew extends React.Component{
 					<View style={styles.detailProfil}>
 						{ dataLogin.userid.substring(0, 3) === '440' ? <PebisolInfo detail={dataLogin.detail} /> : <UserInfo detail={dataLogin.detail} />}
 					</View>
+					<Dialog.Container visible={this.state.open} contentStyle={{width: width - 25}}>
+						<Dialog.Title>Edit Profile</Dialog.Title>
+
+						<Dialog.Input
+				          	label='Cari Alamat'
+				          	name='searchParams'
+				          	value={this.state.searchParams}
+				          	onChange={this.onChangeParams}
+				          	placeholder="Masukan kodepos/kec/kab"
+				          	style={{
+				          		borderBottomWidth: 0.5, 
+				          		borderColor: this.state.color,
+				          		color: this.state.color
+				          	}}
+				        />
+				        { errors.global && 
+				        	<Text 
+				        		style={{
+				        			fontSize: 13, 
+				        			color: 'red',
+				        			marginTop: -15,
+				        			marginLeft: 10
+				        		}}
+				        	>{errors.global}</Text> }
+			          <Dialog.Button label="Batal" onPress={() => this.setState({ open: false, errors: {}, searchParams: '', color: '#9ca19d' })} />
+			          { /* <Dialog.Button label="Simpan" /> */ }
+			        </Dialog.Container>
 				</ScrollView>
 			</View>
 		);

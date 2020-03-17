@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Button, Dimensions, StatusBar, TouchableOpacity
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Icon } from '@ui-kitten/components';
 import { connect } from "react-redux";
-import { lacakKiriman } from "../../../actions/search";
+import { lacakKiriman, removeErrors } from "../../../actions/search";
 
 const { width } = Dimensions.get('window');
 
@@ -25,15 +25,18 @@ const barcode = (props) => {
 
   const handleBarCodeScanned = ({ data, type }) => {
     setScanned(true);
-    props.lacakKiriman(data)
+    props.removeErrors();
+    setTimeout(() => {
+      props.lacakKiriman(data)
       .then(() => StatusBar.setHidden(false))
       .catch(err => StatusBar.setHidden(false));
-    props.navigation.navigate({
-      routeName: 'LacakBarcode',
-      params: {
-        externalId: data
-      }
-    })
+      props.navigation.navigate({
+        routeName: 'LacakBarcode',
+        params: {
+          externalId: data
+        }
+      })
+    }, 100);
     // alert(`No Resi ${data} terdeteksi ${type}`);
   };
 
@@ -67,7 +70,7 @@ const barcode = (props) => {
   );
 }
 
-export default connect(null, { lacakKiriman })(barcode);
+export default connect(null, { lacakKiriman, removeErrors })(barcode);
 
 const opacity = 'rgba(0, 0, 0, .6)';
 const styles = StyleSheet.create({
