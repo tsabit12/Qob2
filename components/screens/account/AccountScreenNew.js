@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ImageBackground, StatusBar, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { View, Text, ImageBackground, StatusBar, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from "react-native";
 import { Icon, TopNavigation, TopNavigationAction, Button } from '@ui-kitten/components';
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
@@ -33,12 +33,34 @@ const capitalize = (string) => {
 	}
 }
 
+const numberWithCommas = (number) => {
+	if (isNaN(number)) {
+		return number;
+	}else{
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
+}
+
+const RenderSaldoView = ({ detail }) => (
+	<React.Fragment>
+		<View style={{marginBottom: 10}}>
+			<Text style={{fontFamily: 'open-sans-bold', textAlign: 'center', fontSize: 18, color: 'white'}}>{detail.nama}</Text>
+		</View>
+		<View style={{marginLeft: 15, marginRight: 15}}>
+			<View>
+				<Text style={{fontFamily: 'open-sans-reg', color: 'white', fontSize: 16}}>SALDO</Text>
+				<Text style={{fontFamily: 'open-sans-bold', color: 'white', fontSize: 16}}>Rp {numberWithCommas(detail.saldo)}</Text>
+			</View>
+			<View>
+				<Text style={{fontFamily: 'open-sans-reg', color: 'white', fontSize: 16}}>NOMOR REKENING</Text>
+				<Text style={{fontFamily: 'open-sans-bold', color: 'white', fontSize: 16}}>{detail.norek}</Text>
+			</View>
+		</View>
+	</React.Fragment>
+);
+
 const PebisolInfo = ({ detail }) => (
 	<React.Fragment>
-		<View style={styles.info}>
-			<Text style={styles.title}>Nama Lengkap</Text>
-			<Text style={styles.subtitle}>{detail.nama}</Text>
-		</View>
 		<View style={styles.info}>
 			<Text style={styles.title}>Nama Online Shop</Text>
 			<Text style={styles.subtitle}>{detail.namaOl}</Text>
@@ -63,7 +85,7 @@ const PebisolInfo = ({ detail }) => (
 			<Text style={styles.title}>Detail Alamat</Text>
 			<Text style={styles.subtitle}>{`${capitalize(detail.kelurahan)}, ${capitalize(detail.kecamatan)}, ${capitalize(detail.kota)}, ${capitalize(detail.provinsi)}`}</Text>
 		</View>
-		<View style={styles.info}>
+		<View style={styles.lastInfo}>
 			<Text style={styles.title}>Kodepos</Text>
 			<Text style={styles.subtitle}>{detail.kodepos}</Text>
 		</View>
@@ -72,7 +94,26 @@ const PebisolInfo = ({ detail }) => (
 
 const UserInfo = ({ detail }) => (
 	<React.Fragment>
-		<Text>{detail.nama}</Text>
+		<View style={styles.info}>
+			<Text style={styles.title}>Nomor Handphone</Text>
+			<Text style={styles.subtitle}>{detail.nohp}</Text>
+		</View>
+		<View style={styles.info}>
+			<Text style={styles.title}>Email</Text>
+			<Text style={styles.subtitle}>{detail.email}</Text>
+		</View>
+		<View style={styles.info}>
+			<Text style={styles.title}>Alamat Utama</Text>
+			<Text style={styles.subtitle}>{detail.alamatOl}</Text>
+		</View>
+		<View style={styles.info}>
+			<Text style={styles.title}>Detail Alamat</Text>
+			<Text style={styles.subtitle}>{`${capitalize(detail.kelurahan)}, ${capitalize(detail.kecamatan)}, ${capitalize(detail.kota)}, ${capitalize(detail.provinsi)}`}</Text>
+		</View>
+		<View style={styles.lastInfo}>
+			<Text style={styles.title}>Kodepos</Text>
+			<Text style={styles.subtitle}>{detail.kodepos}</Text>
+		</View>
 	</React.Fragment>
 );
 
@@ -118,8 +159,9 @@ class AccountScreenNew extends React.Component{
 
 	render(){
 		const { dataLogin } = this.props;
+		//console.log(height / 28);
 		return(
-			<View style={{flex: 1}}>
+			<View style={{flex: 1, backgroundColor: '#ffd000'}}>
 				<MyStatusBar />
 				<TopNavigation
 				    leftControl={this.BackAction()}
@@ -128,8 +170,11 @@ class AccountScreenNew extends React.Component{
 				    subtitleStyle={{color: '#FFF'}}
 				    rightControls={this.renderRightControls()}
 				/>
+				<TouchableOpacity style={styles.buttonEdit}>
+					<Icon name='edit-2-outline' width={25} height={25} fill='#FFF' />
+				</TouchableOpacity>
 				<ScrollView>
-					<ImageBackground source={require('../../../assets/profil_back.png')} style={{height: height / 4.5, marginTop: -2, width: width}}>
+					<ImageBackground source={require('../../../assets/profil_back.png')} style={{height: height / 4.5, marginTop: -2, width: width + 2}}>
 						<View style={styles.card}>
 							{ dataLogin.detail.norek === '-' ? 
 								<React.Fragment>
@@ -142,10 +187,12 @@ class AccountScreenNew extends React.Component{
 										appearance='outline'
 										onPress={this.onConnect}
 									>Hubungkan</Button>
-								</React.Fragment>: <Text>Oke</Text> }
+								</React.Fragment>: <RenderSaldoView 
+									detail={dataLogin.detail}
+								/> }
 						</View>
 					</ImageBackground>
-					<View style={{flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20, marginTop: -16, backgroundColor: 'white'}}>
+					<View style={styles.detailProfil}>
 						{ dataLogin.userid.substring(0, 3) === '440' ? <PebisolInfo detail={dataLogin.detail} /> : <UserInfo detail={dataLogin.detail} />}
 					</View>
 				</ScrollView>
@@ -177,10 +224,35 @@ const styles = StyleSheet.create({
 		padding: 13,
 		borderColor: '#9ca19d'
 	},
+	lastInfo: {
+		padding: 13
+	},
 	subtitle: {
 		fontFamily: 'open-sans-reg',
 		fontSize: 15,
 		color: '#9ca19d'
+	},
+	detailProfil: {
+		flex: 1, 
+		borderTopLeftRadius: 20, 
+		borderTopRightRadius: 20, 
+		marginTop: -16, 
+		backgroundColor: 'white', 
+		marginRight: 3, 
+		marginLeft: 3,
+		minHeight: height / 1.5 + 27
+	},
+	buttonEdit: {
+		width: '10%',
+		position: 'absolute', 
+		backgroundColor: 'red',
+		right: 0,
+		marginRight: 15,
+		top: height / 3.5 - 8,
+		zIndex: 1,
+		alignItems: 'center',
+		padding: 8,
+		borderRadius: 50
 	}
 })
 
