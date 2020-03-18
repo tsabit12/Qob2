@@ -308,6 +308,17 @@ export default{
 			}else{
 				return Promise.reject(res.data);
 			}
+		}),
+		updateProfil: (payload) => axios.post(url, {
+			messtype: '224',
+			param1: payload,
+			hashing: getHasing('224', payload)
+		}, config).then(res => {
+			if (res.data.rc_mess === '00') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
 		})
 	}
 }

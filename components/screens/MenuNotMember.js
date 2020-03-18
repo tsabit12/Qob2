@@ -76,7 +76,7 @@ const MenuNotMember = ({ navigation }) => (
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={styles.titleText}>Riwayat Pickup</Text>
+						<Text style={styles.titleText}>{`Riwayat\nOrder`}</Text>
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity 

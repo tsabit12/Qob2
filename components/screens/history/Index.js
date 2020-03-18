@@ -223,7 +223,7 @@ class Index extends React.Component{
 			<View style={{flex: 1}}>
 				<TopNavigation
 				    leftControl={this.BackAction()}
-				    title='Riwayat Pickup'
+				    title='Riwayat Order'
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF', marginTop: 5}}
 				    style={styles.navigationStyle}
 				/>

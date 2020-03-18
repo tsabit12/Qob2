@@ -4,6 +4,7 @@ import { Icon, TopNavigation, TopNavigationAction, Button, ListItem } from '@ui-
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
 import { loggedOut } from "../../../actions/auth";
+import { updateProfil } from "../../../actions/user";
 import {
   Menu,
   MenuOptions,
@@ -13,6 +14,7 @@ import {
 import Dialog from "react-native-dialog";
 import Loader from "../../Loader";
 import apiWs from "../../apiWs";
+import api from "../../api";
 
 
 var width = Dimensions.get('window').width;
@@ -30,7 +32,7 @@ const RenderListAlamat = ({ list, onChoose, choosed }) => (
 			    	style={{
 			    		borderBottomWidth: 0.4, 
 			    		borderColor: '#d6d7da', 
-			    		minHeight: 90, 
+			    		minHeight: 60, 
 			    		backgroundColor: choosed === i ? '#b8b6b6' : 'white'
 			    	}}
 			    	activeOpacity={2}
@@ -147,11 +149,13 @@ class AccountScreenNew extends React.Component{
 		loading: false,
 		errors: {},
 		responseKodepos: [],
-		choosed: null
+		choosed: null,
+		alamatUtama: ''
 	}
-	// componentDidMount(){
-	// 	console.log(this.props.dataLogin);
-	// }
+
+	componentDidMount(){
+		console.log(this.props.dataLogin);
+	}
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -174,9 +178,11 @@ class AccountScreenNew extends React.Component{
 		this.timer = setTimeout(this.searchAlamat, 800);
 	}
 
+	onChangeAlamat = (e) => this.setState({ alamatUtama: e.nativeEvent.text })
+
 	searchAlamat = () => {
 		if (!this.state.searchParams) return;
-		this.setState({ loading: true, errors: {}, color: '#9ca19d', choosed: null });
+		this.setState({ loading: true, errors: {}, color: '#9ca19d', choosed: null, responseKodepos: [] });
 		apiWs.qob.getKodePos(this.state.searchParams)
 			.then(res => {
 				const responseKodepos = [];
@@ -199,7 +205,7 @@ class AccountScreenNew extends React.Component{
 							color: 'red',
 							errors: {
 								global: err.response.data.errors.global
-							}
+							},
 						});
 					}else{
 						this.setState({ 
@@ -252,12 +258,33 @@ class AccountScreenNew extends React.Component{
 	}
 
 	onEditProfil = () => {
-		const { responseKodepos, choosed } = this.state;
-		const payload = {
-			alamat: `${responseKodepos[choosed].kec}|${responseKodepos[choosed].kab}`
+		const { responseKodepos, choosed, alamatUtama } = this.state;
+		const { dataLogin } = this.props;
+		const values = responseKodepos[choosed];
+		if (choosed === null) {
+			alert("Harap pilih alamat dahulu");
+		}else if (!alamatUtama) {
+			alert("Alamat utama harap diisi");
+		}else{
+			const payload = `${dataLogin.userid}|${alamatUtama}|${values.prov}|${values.kab}|${values.kec}|${values.kel}|${values.kodepos}`;
+			const toRedux = {
+				alamatUtama: alamatUtama,
+				kel: values.kel,
+				kec: values.kec,
+				kab: values.kab,
+				kodepos: values.kodepos,
+				prov: values.prov
+			};
+
+			this.setState({ loading: true, open: false });
+			this.props.updateProfil(payload, toRedux)
+				.then(() => this.setState({ loading: false}))
+				.catch(err => {
+					console.log(err);
+					alert("Gagal update profile, silahkan cobalagi");
+					this.setState({ loading: false });
+				})
 		}
-		console.log(payload);
-		this.setState({ loading: true, open: false });
 	}
 
 	render(){
@@ -301,8 +328,14 @@ class AccountScreenNew extends React.Component{
 						{ dataLogin.userid.substring(0, 3) === '440' ? <PebisolInfo detail={dataLogin.detail} /> : <UserInfo detail={dataLogin.detail} />}
 					</View>
 					<Dialog.Container visible={this.state.open} contentStyle={{width: width - 25}}>
-						<Dialog.Title>Edit Profile</Dialog.Title>
-
+						<Dialog.Input
+				          	label='Alamat Utama'
+				          	name='alamatUtama'
+				          	value={this.state.alamatUtama}
+				          	onChange={this.onChangeAlamat}
+				          	placeholder="Masukkan alamat utama (jln/jl/ds/kp)"
+				          	style={{borderBottomWidth: 0.5, borderColor: '#9ca19d'}}
+				        />
 						<Dialog.Input
 				          	label='Cari Alamat'
 				          	name='searchParams'
@@ -412,4 +445,4 @@ function mapStateToProps(state) {
 	}
 }
 
-export default connect(mapStateToProps, { loggedOut })(AccountScreenNew);
+export default connect(mapStateToProps, { loggedOut, updateProfil })(AccountScreenNew);

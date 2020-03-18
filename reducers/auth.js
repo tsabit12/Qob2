@@ -1,4 +1,4 @@
-import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST } from "../types";
+import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST, UPDATE_PROFILE } from "../types";
 const initialState = {
 	logged: false,
 	user: {},
@@ -67,6 +67,22 @@ export default function auth(state=initialState, action={}){
 						...state.dataLogin.detail,
 						saldo: action.saldo
 					}
+				}
+			}
+		case UPDATE_PROFILE:
+			return{
+				...state,
+				dataLogin: {
+					...state.dataLogin,
+					detail: {
+						...state.dataLogin.detail,
+						kecamatan: action.alamat.kec,
+						kelurahan: action.alamat.kel,
+						kodepos: action.alamat.kodepos,
+						kota: action.alamat.kab,
+						provinsi: action.alamat.prov,
+						alamatOl: action.alamat.alamatUtama
+					}	
 				}
 			}
 		default: return state;
