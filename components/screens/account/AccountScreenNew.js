@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, ImageBackground, StatusBar, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from "react-native";
-import { Icon, TopNavigation, TopNavigationAction, Button } from '@ui-kitten/components';
+import { Icon, TopNavigation, TopNavigationAction, Button, ListItem } from '@ui-kitten/components';
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
 import { loggedOut } from "../../../actions/auth";
@@ -20,6 +20,25 @@ var height = Dimensions.get('window').height;
 
 const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
+const RenderListAlamat = ({ list, onChoose, choosed }) => (
+	<ScrollView style={styles.scroll} nestedScrollEnabled={true}>
+			{ list.map((x, i) => 
+				<ListItem
+		   			key={i}
+			    	style={{
+			    		borderBottomWidth: 0.4, 
+			    		borderColor: '#d6d7da', 
+			    		minHeight: 90, 
+			    		backgroundColor: choosed === i ? '#b8b6b6' : 'white'
+			    	}}
+			    	activeOpacity={2}
+			    	// descriptionStyle={styles.listItemDescription}
+			    	title={`${x.kel}, ${x.kec}, ${x.kab}, ${x.prov}`}
+			    	onPress={() => onChoose(i)}
+				/>	)}
+	</ScrollView>
 );
 
 const MyStatusBar = () => (
@@ -126,7 +145,9 @@ class AccountScreenNew extends React.Component{
 		color: '#9ca19d',
 		searchParams: '',
 		loading: false,
-		errors: {}
+		errors: {},
+		responseKodepos: [],
+		choosed: null
 	}
 	// componentDidMount(){
 	// 	console.log(this.props.dataLogin);
@@ -155,22 +176,40 @@ class AccountScreenNew extends React.Component{
 
 	searchAlamat = () => {
 		if (!this.state.searchParams) return;
-		this.setState({ loading: true });
+		this.setState({ loading: true, errors: {}, color: '#9ca19d', choosed: null });
 		apiWs.qob.getKodePos(this.state.searchParams)
 			.then(res => {
-				console.log(res);
-				this.setState({ loading: false });
+				const responseKodepos = [];
+				res.result.forEach(x => {
+					responseKodepos.push({
+						kab: x.kabupaten,
+						kec: x.kecamatan,
+						kel: x.kelurahan,
+						prov: x.provinsi,
+						kodepos: x.kodepos
+					})
+				});
+				this.setState({ loading: false, responseKodepos })
 			})
 			.catch(err => {
-				console.log(err.request);
-				if (err.status) {
-					this.setState({ 
-						loading: false, 
-						color: 'red',
-						errors: {
-							global: err.response.data.errors
-						}
-					});
+				if (err.response) {
+					if (err.response.data) {
+						this.setState({ 
+							loading: false, 
+							color: 'red',
+							errors: {
+								global: err.response.data.errors.global
+							}
+						});
+					}else{
+						this.setState({ 
+							loading: false, 
+							color: 'red',
+							errors: {
+								global: 'Internal server error'
+							}
+						});
+					}
 				}else{
 					this.setState({ 
 						loading: false, 
@@ -203,9 +242,27 @@ class AccountScreenNew extends React.Component{
 		</Menu>
 	)
 
+	onChooseAlamat = (index) => this.setState({ choosed: index })
+
+	onOpenEdit = () => {
+		this.setState({
+			open: true,
+			responseKodepos: []
+		})
+	}
+
+	onEditProfil = () => {
+		const { responseKodepos, choosed } = this.state;
+		const payload = {
+			alamat: `${responseKodepos[choosed].kec}|${responseKodepos[choosed].kab}`
+		}
+		console.log(payload);
+		this.setState({ loading: true, open: false });
+	}
+
 	render(){
 		const { dataLogin } = this.props;
-		const { errors } = this.state;
+		const { errors, responseKodepos } = this.state;
 		//console.log(height / 28);
 		return(
 			<View style={{flex: 1, backgroundColor: '#ffd000'}}>
@@ -218,7 +275,7 @@ class AccountScreenNew extends React.Component{
 				    subtitleStyle={{color: '#FFF'}}
 				    rightControls={this.renderRightControls()}
 				/>
-				<TouchableOpacity style={styles.buttonEdit} onPress={() => this.setState({ open: true })}>
+				<TouchableOpacity style={styles.buttonEdit} onPress={this.onOpenEdit}>
 					<Icon name='edit-2-outline' width={25} height={25} fill='#FFF' />
 				</TouchableOpacity>
 				<ScrollView>
@@ -267,8 +324,20 @@ class AccountScreenNew extends React.Component{
 				        			marginLeft: 10
 				        		}}
 				        	>{errors.global}</Text> }
+
+				        { responseKodepos.length > 0 && 
+				        	<React.Fragment>
+				        		<View style={{borderBottomWidth: 0.6, padding: 7}}>
+				        			<Text style={{fontFamily: 'open-sans-reg', textAlign: 'center', fontSize: 15, marginTop: -5}}>Pilih alamat</Text>
+				        		</View>
+				        		<RenderListAlamat 
+				        			list={responseKodepos} 
+				        			onChoose={this.onChooseAlamat} 
+				        			choosed={this.state.choosed}
+				        		/>
+				        	</React.Fragment>}
 			          <Dialog.Button label="Batal" onPress={() => this.setState({ open: false, errors: {}, searchParams: '', color: '#9ca19d' })} />
-			          { /* <Dialog.Button label="Simpan" /> */ }
+			          { this.state.choosed !== null &&  <Dialog.Button label="Simpan" onPress={this.onEditProfil} /> }
 			        </Dialog.Container>
 				</ScrollView>
 			</View>
@@ -328,6 +397,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 8,
 		borderRadius: 50
+	},
+	scroll: {
+		height: height / 3,
+		paddingBottom: 50,
+		width: '109%',
+		marginLeft: -15
 	}
 })
 
