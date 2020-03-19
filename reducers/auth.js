@@ -8,16 +8,12 @@ import {
 	UPDATE_PIN 
 } from "../types";
 const initialState = {
-	logged: true,
+	logged: false,
 	user: {},
 	dataLogin: {
-		userid: '440000859',
-		norek: '-',
-		detail: {
-			email: 'usilfer19@gmail.com',
-			nohp: '0895343775002',
-			norek: '-'
-		}
+		userid: '',
+		norek: '',
+		detail: {}
 	},
 	request: [],
 	pin: null
