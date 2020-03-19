@@ -5,7 +5,7 @@ import { Linking } from "expo";
 
 var device = Dimensions.get('window').width;
 
-const MenuNotMember = ({ navigation }) => (
+const MenuNotMember = ({ navigation, showAlert }) => (
 	<React.Fragment>
 		<View style={styles.container}>
 			<View style={styles.content}>
@@ -51,7 +51,7 @@ const MenuNotMember = ({ navigation }) => (
 				</TouchableOpacity>
 			</View>
 			<View style={styles.content}>
-				<TouchableOpacity 
+				{ /* <TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => navigation.navigate({
                         routeName: 'RequestPickup'
@@ -64,7 +64,7 @@ const MenuNotMember = ({ navigation }) => (
 					<View style={styles.subtitle}>
 						<Text style={styles.titleText}>Request Pickup</Text>
 					</View>
-				</TouchableOpacity>
+				</TouchableOpacity> */ }
 				<TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => navigation.navigate({
@@ -77,6 +77,18 @@ const MenuNotMember = ({ navigation }) => (
 					/>
 					<View style={styles.subtitle}>
 						<Text style={styles.titleText}>{`Riwayat\nOrder`}</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => showAlert('Anda akan melakukan generate password web')}
+				>
+					<Image 
+						source={require("../../assets/generatePwd.png")}
+						style={styles.img}
+					/>
+					<View style={styles.subtitle}>
+						<Text style={styles.titleText}>Generate Web Token</Text>
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity 

@@ -10,6 +10,7 @@ import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components'
 import { connect } from "react-redux";
 import MenuNotMember from "../MenuNotMember";
 import { Notifications } from 'expo';
+import Loader from "../../Loader";
 
 import registerForPushNotificationsAsync from "../../../registerForPushNotificationsAsync";
 
@@ -101,31 +102,6 @@ class IndexSearch extends React.Component{
 	//     this.setState({ notification: notification });
 	// }
 
-	onGeneratePwd = () => {
-		const { userid } = this.state;
-		if (userid) {
-			this.setState({ loading: true, show: false });
-			api.auth.genpwdweb(userid)
-				.then(res => this.setState({
-					loading: false, 
-					show: true, 
-					titleModal: 'Berhasil', 
-					success: '200',
-					msgModal: `Harap diingat, password web anda adalah ${res.response_data1}`
-				}))
-				.catch(err => {
-					console.log(err);
-					this.setState({
-						loading: false,
-						show: true,
-						titleModal: 'Gagal',
-						success: '500',
-						msgModal: 'Terdapat kesalahan'
-					})
-				})
-		}
-	}
-
 	onCameraPress = () => {
 		this.props.navigation.navigate({
 			routeName: 'Barcode'
@@ -138,7 +114,6 @@ class IndexSearch extends React.Component{
 
 	renderRightControls = () => {
 		const { userid } = this.props.dataLogin;
-		// if (userid.substring(0, 3) === '540') {
 			return(
 					<ProfileAction onPress={() => 
 						this.props.navigation.navigate({ 
@@ -150,22 +125,22 @@ class IndexSearch extends React.Component{
 						})} 
 					/>
 			);
-		// }else{
-		// 	return(
-		// 		[
-		// 			<SearchAction onPress={() => this.props.navigation.navigate({ routeName: 'DetailSearch'})} />,
-		// 			<ProfileAction onPress={() => 
-		// 				this.props.navigation.navigate({ 
-		// 					routeName: 'Account', 
-		// 					params: {
-		// 						namaLengkap:  this.state.user.nama,
-		// 						saldo: this.state.user.sisaSaldo
-		// 					} 
-		// 				})} 
-		// 			/>
-		// 		]
-		// 	)
-		// }
+	}
+
+	onAlert = (message) => {
+		Alert.alert(
+		  'Apakah anda yakin?',
+		  `${message}`,
+		  [
+		  	{
+		      text: 'Batal',
+		      onPress: () => console.log('Cancel Pressed'),
+		      style: 'cancel',
+		    },
+		    {text: 'Ya', onPress: () => this.generateToken()},
+		  ],
+		  {cancelable: false},
+		);
 	}
 
 	//next
@@ -185,6 +160,38 @@ class IndexSearch extends React.Component{
 	// 	  {cancelable: false},
 	// 	);
 	// }
+
+	generateToken = () => {
+		const { userid } = this.props.dataLogin;
+		this.setState({ loading: true });
+		api.auth.genpwdweb(userid)
+			.then(res => {
+				this.setState({ loading: false });
+				setTimeout(() => {
+					Alert.alert(
+					  'Sukses',
+					  `${res.desk_mess}`,
+					  [
+					  	{ text: 'Tutup', style: 'cancel' },
+					  ],
+					  {cancelable: false},
+					);
+				}, 200);
+			})
+			.catch(err => {
+				this.setState({ loading: false });
+				setTimeout(() => {
+					Alert.alert(
+					  'Oppps',
+					  `${res.desk_mess}`,
+					  [
+					  	{ text: 'Tutup', style: 'cancel' },
+					  ],
+					  {cancelable: false},
+					);
+				}, 200);
+			})
+	}
 
 	onGiroPress = () => {
 		Alert.alert(
@@ -223,65 +230,48 @@ class IndexSearch extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    rightControls={this.renderRightControls()}
 				/>
-				{ /* <React.Fragment>
-					{ show && <Dialog.Container visible={true}>
-						<Dialog.Title>{titleModal}</Dialog.Title>
-						<Dialog.Description>
-							{msgModal}
-						</Dialog.Description>
-						<Dialog.Button 
-							label="Tutup" 
-							onPress={() => this.setState({ 
-								show: false, 
-								userid: '',
-								success: '00'
-							})}
-						/>
-						{ success === '00' && <Dialog.Button 
-							label="Ya" 
-							onPress={this.onGeneratePwd} 
-						/> }
-					</Dialog.Container> </React.Fragment>*/ }
+				<Loader loading={this.state.loading} />
 				<ScrollView>
-				<SliderBox images={[
-					require('../../../assets/qob.jpg'),
-					require('../../../assets/qob2.jpg'),
-					require('../../../assets/qob3.png')
-				]} 
-				sliderBoxHeight={heightDevice / 2.5}
-				resizeMode={'stretch'}
-				circleLoop
-				autoplay={true}
-				paginationBoxStyle={{
-					alignItems: "center",
-					alignSelf: "center",
-					justifyContent: "center",
-				  }}
-				/>
-					<View style={{flex: 1, justifyContent: 'flex-end'}}>
+					<SliderBox images={[
+						require('../../../assets/qob.jpg'),
+						require('../../../assets/qob2.jpg'),
+						require('../../../assets/qob3.png')
+					]} 
+					sliderBoxHeight={heightDevice / 2.5}
+					resizeMode={'stretch'}
+					circleLoop
+					autoplay={true}
+					paginationBoxStyle={{
+						alignItems: "center",
+						alignSelf: "center",
+						justifyContent: "center",
+					  }}
+					/>
+						<View style={{flex: 1, justifyContent: 'flex-end'}}>
 
-					{ norek === '-' ?  <TouchableOpacity 
-						style={{
-							marginLeft: 10, 
-							marginRight: 10, 
-							padding: 5, 
-							marginTop: 10, 
-							flexDirection: 'row', 
-							borderWidth: 0.8, 
-							alignItems: 'center', 
-							justifyContent: 'center',
-							borderRadius: 5,
-							borderColor: '#b5b0b0'
-						}}
-						onPress={this.onGiroPress}
-					>
-						<Image source={require('../../../assets/giro.png')} style={{width: 25, height: 25}} />
-						<Text style={{marginLeft: 5, fontFamily: 'open-sans-bold', color: '#8c8c8c'}}>Hubungkan ke akun giro</Text>
-					</TouchableOpacity> : <RenderSaldo saldo={this.props.dataLogin.detail.saldo} /> }
-						<MenuNotMember 
-							navigation={this.props.navigation}
-						/>  
-					</View>
+						{ norek === '-' ?  <TouchableOpacity 
+							style={{
+								marginLeft: 10, 
+								marginRight: 10, 
+								padding: 5, 
+								marginTop: 10, 
+								flexDirection: 'row', 
+								borderWidth: 0.8, 
+								alignItems: 'center', 
+								justifyContent: 'center',
+								borderRadius: 5,
+								borderColor: '#b5b0b0'
+							}}
+							onPress={this.onGiroPress}
+						>
+							<Image source={require('../../../assets/giro.png')} style={{width: 25, height: 25}} />
+							<Text style={{marginLeft: 5, fontFamily: 'open-sans-bold', color: '#8c8c8c'}}>Hubungkan ke akun giro</Text>
+						</TouchableOpacity> : <RenderSaldo saldo={this.props.dataLogin.detail.saldo} /> }
+							<MenuNotMember 
+								navigation={this.props.navigation}
+								showAlert={this.onAlert}
+							/>  
+						</View>
 				</ScrollView>
 			</View>
 		);
