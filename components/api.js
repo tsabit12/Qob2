@@ -319,6 +319,17 @@ export default{
 			}else{
 				return Promise.reject(res.data);
 			}
+		}),
+		updatePin: (payload) => axios.post(url, {
+			messtype: '208',
+			param1: payload,
+			hashing: getHasing('208', payload)
+		}, config).then(res => {
+			if (res.data.rc_mess === '00') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
 		})
 	}
 }

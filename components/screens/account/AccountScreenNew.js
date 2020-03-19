@@ -14,8 +14,6 @@ import {
 import Dialog from "react-native-dialog";
 import Loader from "../../Loader";
 import apiWs from "../../apiWs";
-import api from "../../api";
-
 
 var width = Dimensions.get('window').width;
 var height = Dimensions.get('window').height;
@@ -153,9 +151,9 @@ class AccountScreenNew extends React.Component{
 		alamatUtama: ''
 	}
 
-	componentDidMount(){
-		console.log(this.props.dataLogin);
-	}
+	// componentDidMount(){
+	// 	console.log(this.props.dataLogin);
+	// }
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -234,7 +232,7 @@ class AccountScreenNew extends React.Component{
 				<Icon style={{marginRight: 5}} name='more-vertical-outline' fill='#FFF' height={25} width={25}/>
 			</MenuTrigger>
 			 <MenuOptions>
-		        <MenuOption onSelect={() => alert(`Next features`)} >
+		        <MenuOption onSelect={() => this.props.navigation.navigate({ routeName: 'ChangePin'})} >
 		        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
 		          		<Text>Ubah PIN</Text>
 		          	</View>

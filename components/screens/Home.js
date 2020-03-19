@@ -165,6 +165,7 @@ class Home extends React.Component {
 			param1: `${userid}|${pinMd5}|${nohp}|${email}|${imei}`
 		};
 		
+		console.log(payload);
 		api.auth.login(payload, userid)
 			.then(res => {
 				const { response_data1, response_data4, response_data5 } = res;
@@ -188,7 +189,7 @@ class Home extends React.Component {
 				};
 
 				this.setState({ loading: false });
-				this.props.setLoggedIn(userid, payload2);
+				this.props.setLoggedIn(userid, payload2, val);
 			})
 			.catch(err => {
 				clear();

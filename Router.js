@@ -36,6 +36,7 @@ import LacakKiriman from "./components/screens/LacakKiriman";
 import RegisterPebisol from "./components/screens/pendaftaran/Pebisol";
 import RegistrasiNonPebisol from "./components/screens/pendaftaran/NonPebisol";
 import ValidasiRekening from "./components/screens/ValidasiRekening";
+import ChangePinScreen from "./components/screens/ChangePinScreen";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -116,6 +117,9 @@ const AppNavigator = createStackNavigator({
       },
       ValidasiRekening: {
         screen: ValidasiRekening
+      },
+      ChangePin: {
+        screen: ChangePinScreen
       },
   	},{
   	initialRouteName: 'IndexSearch',

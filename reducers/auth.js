@@ -1,13 +1,26 @@
-import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST, UPDATE_PROFILE } from "../types";
+import { 
+	USER_LOGGED_IN, 
+	GET_DETAIL_USER, 
+	USER_LOGGED_OUT, 
+	SAVE_STORAGE_REQUEST, 
+	CLEARE_STORAGE_REQUEST, 
+	UPDATE_PROFILE,
+	UPDATE_PIN 
+} from "../types";
 const initialState = {
-	logged: false,
+	logged: true,
 	user: {},
 	dataLogin: {
-		userid: '',
-		norek: '',
-		detail: {}
+		userid: '440000859',
+		norek: '-',
+		detail: {
+			email: 'usilfer19@gmail.com',
+			nohp: '0895343775002',
+			norek: '-'
+		}
 	},
-	request: []
+	request: [],
+	pin: null
 }
 
 export default function auth(state=initialState, action={}){
@@ -20,7 +33,8 @@ export default function auth(state=initialState, action={}){
 					userid: action.userid,
 					norek: action.response.norek,
 					detail: action.response
-				}
+				},
+				pin: action.pin
 			}
 		case GET_DETAIL_USER:
 			return{
@@ -36,7 +50,8 @@ export default function auth(state=initialState, action={}){
 					norek: null,
 					detail: {}
 				},
-				user: {}
+				user: {},
+				pin: null
 			}
 		case SAVE_STORAGE_REQUEST:
 			return{
@@ -85,6 +100,12 @@ export default function auth(state=initialState, action={}){
 					}	
 				}
 			}
+		case UPDATE_PIN: {
+			return{
+				...state,
+				pin: action.pin
+			}
+		}
 		default: return state;
 	}
 }
