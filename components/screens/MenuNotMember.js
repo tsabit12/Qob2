@@ -81,7 +81,7 @@ const MenuNotMember = ({ navigation, showAlert }) => (
 				</TouchableOpacity>
 				<TouchableOpacity 
 					style={styles.iconPress}
-					onPress={() => showAlert('Anda akan melakukan generate password web')}
+					onPress={() => showAlert('Anda akan melakukan generate token web')}
 				>
 					<Image 
 						source={require("../../assets/generatePwd.png")}

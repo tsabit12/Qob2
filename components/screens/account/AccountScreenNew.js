@@ -251,7 +251,9 @@ class AccountScreenNew extends React.Component{
 	onOpenEdit = () => {
 		this.setState({
 			open: true,
-			responseKodepos: []
+			responseKodepos: [],
+			searchParams: '',
+			alamatUtama: ''
 		})
 	}
 
@@ -367,7 +369,7 @@ class AccountScreenNew extends React.Component{
 				        			choosed={this.state.choosed}
 				        		/>
 				        	</React.Fragment>}
-			          <Dialog.Button label="Batal" onPress={() => this.setState({ open: false, errors: {}, searchParams: '', color: '#9ca19d' })} />
+			          <Dialog.Button label="Batal" onPress={() => this.setState({ open: false, errors: {}, color: '#9ca19d' })} />
 			          { this.state.choosed !== null &&  <Dialog.Button label="Simpan" onPress={this.onEditProfil} /> }
 			        </Dialog.Container>
 				</ScrollView>
