@@ -310,7 +310,7 @@ class AccountScreenNew extends React.Component{
 						<View style={styles.card}>
 							{ dataLogin.detail.norek === '-' ? 
 								<React.Fragment>
-									<Text style={{fontFamily: 'open-sans-bold', color: 'white', fontSize: 17, textAlign: 'center', marginBottom: 10}}>
+									<Text style={{color: 'white', fontSize: 17, textAlign: 'center', marginBottom: 10}}>
 										Anda belum terhubung ke akun giro
 									</Text>
 									<Button 
