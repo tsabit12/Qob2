@@ -1,11 +1,9 @@
 import axios from "axios";
 
-const url = 'https://api.posindonesia.co.id:8245/qposinaja/1.0.0';
+const url = 'https://order.posindonesia.co.id/api/Qposinaja';
 const config = {
 	headers: {
-		'content-type': 'application/json',
-		'X-POS-USER': 'pusat',
-		'X-POS-PASSWORD': 'Po3S4T'
+		'content-type': 'application/json'
 	}
 }
 
@@ -13,6 +11,12 @@ export default{
 	qob: {
 		booking: (payload) => axios.post(`${url}/addorder`, {
 			...payload
-		}, config)
+		}, config).then(res => {
+			if (res.data.respcode === '000') {
+				return res.data;
+			}else{
+				return Promise.reject(res.data);
+			}
+		})
 	}
 }

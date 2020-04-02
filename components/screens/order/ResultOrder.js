@@ -1,14 +1,16 @@
 import React from "react";
-import { View, Text, StatusBar, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StatusBar, ScrollView, TouchableOpacity, Alert } from "react-native";
 import styles from "./styles";
 import { Button, Icon, TopNavigation, TopNavigationAction, CheckBox } from '@ui-kitten/components';
 import Loader from "../../Loader";
-import Modal from "../../Modal";
 import { curdateTime } from "../../utils/helper";
+import api from "../../apiBaru";
 import apiWs from "../../apiWs";
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
 import SyaratKetentuan from "./SyaratKetentuan";
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -123,30 +125,9 @@ class ResultOrder extends React.Component{
 		idOrder: '',
 		visible: true,
 		checked: false,
-		showSyarat: false
+		showSyarat: false,
+		location: {}
 	}
-
-	// async componentDidMount(){
-	// 	const { dataLogin } = this.props;
-	// 	const { params } = this.props.navigation.state;
-	// 	const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-	// 	const codOrNot = deskripsiOrder.cod ? '1' : '0';		
-		
-	// 	let param1 = `${curdateTime()}|01|${dataLogin.userid}|-`;
-	// 	let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.isiKiriman}|${deskripsiOrder.nilai}|-|-`;
-	// 	let param3 = `${pengirimnya.nama}|${pengirimnya.alamat}|${pengirimnya.kel}|${pengirimnya.kec}|${pengirimnya.kota}|${pengirimnya.provinsi}|Indonesia|${pengirimnya.kodepos}|${pengirimnya.nohp}|${pengirimnya.email}`;
-	// 	let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamatUtama}|-|-|${deskripsiPenerima.kelurahan}|${deskripsiPenerima.kecamatan}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.provinsi}|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|-|${deskripsiPenerima.email}|-|-`;
-	// 	let param5 = `${codOrNot}|0|-|0`;
-	// 	const payload = {
-	// 		param1: param1,
-	// 		param2: param2,
-	// 		param3: param3,
-	// 		param4: param4,
-	// 		param5: param5
-	// 	};
-		
-	// 	this.setState({ payload });
-	// }
 
 	getRandomInt = (min, max) => {
 	    min = Math.ceil(min);
@@ -160,107 +141,165 @@ class ResultOrder extends React.Component{
 		const { params }	= this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
 		
-		// const payloadWsdl = {
-		// 	"email": dataLogin.detail.email,
-		//     "receivercustomertype":"1",
-		//     "itemtype": "1",
-		//     "type": deskripsiOrder.cod ? 'COD' : '',
-		//     "senderposcode": pengirimnya.kodepos,
-		//     "receiverposcode": deskripsiPenerima.kodepos,
-		//     "customerid": dataLogin.userid,
-		//     "serviceid": selectedTarif.id,
-		//     "sendername": pengirimnya.nama,
-		//     "senderaddr": pengirimnya.alamat,
-		//     "sendervill": pengirimnya.kel,
-		//     "sendersubdist": pengirimnya.kec,
-		//     "sendercity": pengirimnya.kota,
-		//     "senderprov": pengirimnya.provinsi,
-		//     "sendercountry":"Indonesia",
-		//     "senderemail": pengirimnya.email,
-		//     "senderphone": pengirimnya.nohp,
-		//     "receivername": deskripsiPenerima.nama,
-		//     "receiveraddr": deskripsiPenerima.alamatUtama,
-		//     "receivervill": deskripsiPenerima.kelurahan,
-		//     "receiversubdist": deskripsiPenerima.kecamatan,
-		//     "receivercity": deskripsiPenerima.kabupaten,
-		//     "receiverprov": deskripsiPenerima.provinsi,
-		//     "receivercountry":"Indonesia",
-		//     "receiveremail": deskripsiPenerima.email ? deskripsiPenerima.email : '-',
-		//     "receiverphone": deskripsiPenerima.nohp,
-		//     "weight": deskripsiOrder.berat,
-		//     "fee": selectedTarif.beadasar,
-		//     "feetax": selectedTarif.ppn,
-		//     "insurance": selectedTarif.htnb,
-		//     "insurancetax": selectedTarif.ppnhtnb,
-		//     "itemvalue": deskripsiOrder.nilai,
-		//     "contentdesc": deskripsiOrder.isiKiriman,
-		//     "installamount": deskripsiOrder.nilai
-		// }
+		const payloadWsdl = {
+			// "email": 'rio.ananda@posindonesia.co.id',
+			"email": dataLogin.detail.email,
+		    "receivercustomertype":"1",
+		    "itemtype": "1",
+		    "type": deskripsiOrder.cod ? 'COD' : '',
+		    "senderposcode": pengirimnya.kodepos,
+		    "receiverposcode": deskripsiPenerima.kodepos,
+		    "customerid": dataLogin.userid,
+		    "serviceid": selectedTarif.id,
+		    "sendername": pengirimnya.nama,
+		    "senderaddr": pengirimnya.alamat,
+		    "sendervill": pengirimnya.kel,
+		    "sendersubdist": pengirimnya.kec,
+		    "sendercity": pengirimnya.kota,
+		    "senderprov": pengirimnya.provinsi,
+		    "sendercountry":"Indonesia",
+		    "senderemail": pengirimnya.email,
+		    "senderphone": pengirimnya.nohp,
+		    "receivername": deskripsiPenerima.nama,
+		    "receiveraddr": deskripsiPenerima.alamatUtama,
+		    "receivervill": deskripsiPenerima.kelurahan,
+		    "receiversubdist": deskripsiPenerima.kecamatan,
+		    "receivercity": deskripsiPenerima.kabupaten,
+		    "receiverprov": deskripsiPenerima.provinsi,
+		    "receivercountry":"Indonesia",
+		    "receiveremail": deskripsiPenerima.email ? deskripsiPenerima.email : '-',
+		    "receiverphone": deskripsiPenerima.nohp,
+		    "weight": deskripsiOrder.berat,
+		    "fee": selectedTarif.beadasar,
+		    "feetax": selectedTarif.ppn,
+		    "insurance": selectedTarif.htnb,
+		    "insurancetax": selectedTarif.ppnhtnb,
+		    "itemvalue": deskripsiOrder.nilai,
+		    "contentdesc": deskripsiOrder.isiKiriman,
+		    "installamount": deskripsiOrder.nilai
+		}
 		
 
-		// api.qob.booking(payloadWsdl)
-		// 	.then(res => {
-		// 		console.log(res);
-		// 		// const { idOrder } = res;
-		// 		// this.setState({ loading: false, success: true, idOrder: idOrder });
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err.request);
-		// 		// console.log(err.response);
-		// 		// if (err.response.data.errors.global) {
-		// 		// 	this.setState({ loading: false, errors: err.response.data.errors });
-		// 		// }else{
-		// 		// 	this.setState({ loading: false, errors: {global: 'Whooopps, untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti'}});
-		// 		// }
-		// 	});
-		const payloadWsdl = {
-			userid: dataLogin.userid,
-			fee: selectedTarif.beadasar,
-			feeTax: selectedTarif.ppn,
-			insurance: selectedTarif.htnb,
-			insuranceTax: selectedTarif.ppnhtnb,
-			itemValue: deskripsiOrder.nilai,
-			contentDesc: deskripsiOrder.isiKiriman,
-			berat: deskripsiOrder.berat,
-			serviceId: selectedTarif.id,
-			senderName: pengirimnya.nama,
-			senderAddress: pengirimnya.alamat,
-			senderKec: pengirimnya.kec,
-			senderCity: pengirimnya.kota,
-			senderVill: pengirimnya.kel,
-			senderProv: pengirimnya.provinsi,
-			length: deskripsiOrder.panjang,
-			width: deskripsiOrder.lebar,
-			height: deskripsiOrder.tinggi,
-			cod: deskripsiOrder.cod ? '1' : '0',
-			senderPos: pengirimnya.kodepos,
-			senderMail: pengirimnya.email,
-			senderPhone: pengirimnya.nohp,
-			receiverName: deskripsiPenerima.nama,
-			receiverAddress: deskripsiPenerima.alamatUtama,
-			receiverKec: deskripsiPenerima.kecamatan,
-			receiverCity: deskripsiPenerima.kabupaten,
-			receiverProv: deskripsiPenerima.provinsi,
-			receiverPos: deskripsiPenerima.kodepos,
-			receiverMail: deskripsiPenerima.email,
-			receiverPhone: deskripsiPenerima.nohp,
-			receiverVill: deskripsiPenerima.kelurahan
-		};
-		apiWs.qob.booking(payloadWsdl)
+		api.qob.booking(payloadWsdl)
 			.then(res => {
-				console.log(res);
-				const { idOrder } = res;
-				this.setState({ loading: false, success: true, idOrder: idOrder });
+				if (Object.keys(res.transref).length > 0) {
+					const { extid } = res.transref;
+					this.setState({ loading: false, success: true, idOrder: extid });
+					Alert.alert(
+					  `Notifikasi`,
+					  `Order berhasil/sukses dengan ID ordernya adalah ${extid}. Klik tombol pickup dibawah jika anda ingin melakukan pickup kiriman tersebut sekarang atau lakukan pickup nanti pada menu riwayat order`,
+					  [
+					  	{
+					      text: 'Tutup',
+					      style: 'cancel',
+					    },
+					    {text: 'Pickup', onPress: () => this.pickupKiriman(selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima)},
+					  ],
+					  {cancelable: false},
+					);
+				}else{
+					this.setState({ loading: false });
+					this.showAlert('Id order tidak ditemukan', 'Notifikasi');
+				}
 			})
 			.catch(err => {
-				// console.log(err);
-				console.log(err.response);
-				if (err.response.data.errors.global) {
-					this.setState({ loading: false, errors: err.response.data.errors });
+				this.setState({ loading: false });
+				if (!err.respmsg) {
+					const msg = 'untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti';
+					this.showAlert(msg, 'Terdapat kesalahan');
 				}else{
-					this.setState({ loading: false, errors: {global: 'Whooopps, untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti'}});
+					const { respmsg } = err;
+					this.showAlert(respmsg, 'Whooppps');
 				}
 			});
+	}
+
+	pickupKiriman = (tarif, order, pengirim, penerima) => {
+		if (Object.keys(this.state.location).length > 0 ) {
+			this.setState({ loading: true });
+			const payload = {
+				shipper: {
+					userId: this.props.dataLogin.userid,
+					name: pengirim.nama,
+					latitude: this.state.location.coords.latitude,
+					longitude: this.state.location.coords.longitude,
+			        phone: pengirim.nohp,
+			        address: pengirim.alamat,
+			        city: pengirim.kota,
+			        subdistrict: pengirim.kec,
+			        zipcode: pengirim.kodepos,
+			        country: "Indonesia"
+				},
+				item: [{
+					extid: this.state.idOrder,
+					itemtypeid: 1,
+		            productid: tarif.id,
+		            valuegoods: order.nilai,
+		            uomload: 5,
+		            weight: order.berat,
+		            uomvolumetric: 2,
+		            length: order.panjang,
+		            width: order.lebar,
+		            height: order.tinggi,
+		            codvalue: order.cod ? '1' : '0',
+		            fee: tarif.beadasar,
+		            feetax: tarif.ppn,
+		            insurance: tarif.htnb,
+		            insurancetax: tarif.ppnhtnb,
+		            discount: 0,
+		            desctrans: order.isiKiriman,
+		            receiverzipcode: penerima.kodepos
+				}]
+			}
+			apiWs.qob.addPickup(payload)
+				.then(res => {
+					this.setState({ loading: false });
+					const { pickup_number } = res;
+					this.showAlert(`Pickup berhasil/sukses. Nomor pickup = ${pickup_number}`, 'Notifikasi');
+				})
+				.catch(err => {
+					this.setState({ loading: false });
+					if (err.text) {
+						this.showAlert(`Kodepos pengirim saat ini belum tercover`,'Notifikasi')
+					}else{
+						this.showAlert(`Terdapat kesalahan`,'Whooppps')
+					}
+				})
+		}else{
+			Alert.alert(
+			  `Notifikasi`,
+			  `Anda harus mengaktifkan lokasi terlebih dahulu`,
+			  [
+			  	{
+			      text: 'Batal',
+			      style: 'cancel',
+			    },
+			    {text: 'Aktifkan Lokasi', onPress: () => this._getLocationAsync(tarif, order, pengirim, penerima)},
+			  ],
+			  {cancelable: false},
+			);
+		}
+
+	}
+
+	_getLocationAsync = async (tarif, order, pengirim, penerima) => {
+	    let location = await Location.getCurrentPositionAsync({});
+	    this.setState({ location });
+	    this.pickupKiriman(tarif, order,pengirim, penerima);
+	}
+
+	showAlert = (msg, title) => {
+		Alert.alert(
+		  `${title}`,
+		  `${msg}`,
+		  [
+		  	{
+		      text: 'Tutup',
+		      style: 'cancel',
+		    },
+		  ],
+		  {cancelable: false},
+		);
 	}
 
 	onSubmit = () => {
@@ -300,8 +339,6 @@ class ResultOrder extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
-				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> } 
-				
 				<Loader loading={this.state.loading} />
 				<React.Fragment>
 					{ !this.state.success ? 
@@ -318,14 +355,6 @@ class ResultOrder extends React.Component{
 							<View style={{ alignItems: 'center', flex: 1, justifyContent: 'center'}}>
 								<Button status='warning' onPress={() => this.backHome()}>Kembali ke menu utama</Button>
 							</View>
-							<Dialog.Container visible={this.state.visible}>
-								<Dialog.Title>BERHASIL/SUKSES</Dialog.Title>
-								{ this.state.visible && <View style={{margin: 13}}>
-						        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Nomor order : {this.state.idOrder}</Text>
-						        	<Text style={{fontFamily: 'open-sans-reg', fontSize: 16}}>Isi Kiriman      : {params.deskripsiOrder.isiKiriman} </Text>
-						        </View> }
-					          <Dialog.Button label="Tutup" onPress={() => this.setState({ visible: false })} />
-					        </Dialog.Container>
 						</React.Fragment> }
 				</React.Fragment>
 				<SyaratKetentuan 
