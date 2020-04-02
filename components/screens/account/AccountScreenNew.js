@@ -81,8 +81,12 @@ const RenderSaldoView = ({ detail }) => (
 	</React.Fragment>
 );
 
-const PebisolInfo = ({ detail }) => (
+const PebisolInfo = ({ detail, userid }) => (
 	<React.Fragment>
+		<View style={styles.info}>
+			<Text style={styles.title}>Userid</Text>
+			<Text style={styles.subtitle}>{userid}</Text>
+		</View>
 		<View style={styles.info}>
 			<Text style={styles.title}>Nama Online Shop</Text>
 			<Text style={styles.subtitle}>{detail.namaOl}</Text>
@@ -114,8 +118,12 @@ const PebisolInfo = ({ detail }) => (
 	</React.Fragment>
 );
 
-const UserInfo = ({ detail }) => (
+const UserInfo = ({ detail, userid }) => (
 	<React.Fragment>
+		<View style={styles.info}>
+			<Text style={styles.title}>Userid</Text>
+			<Text style={styles.subtitle}>{userid}</Text>
+		</View>
 		<View style={styles.info}>
 			<Text style={styles.title}>Nomor Handphone</Text>
 			<Text style={styles.subtitle}>{detail.nohp}</Text>
@@ -325,7 +333,9 @@ class AccountScreenNew extends React.Component{
 						</View>
 					</ImageBackground>
 					<View style={styles.detailProfil}>
-						{ dataLogin.userid.substring(0, 3) === '440' ? <PebisolInfo detail={dataLogin.detail} /> : <UserInfo detail={dataLogin.detail} />}
+						{ dataLogin.userid.substring(0, 3) === '440' ? 
+							<PebisolInfo detail={dataLogin.detail} userid={dataLogin.userid} /> : 
+							<UserInfo detail={dataLogin.detail} userid={dataLogin.userid} />}
 					</View>
 					<Dialog.Container visible={this.state.open} contentStyle={{width: width - 25}}>
 						<Dialog.Input

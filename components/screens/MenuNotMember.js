@@ -39,20 +39,6 @@ const MenuNotMember = ({ navigation, showAlert }) => (
 				</TouchableOpacity>
 				<TouchableOpacity 
 					style={styles.iconPress}
-					onPress={() => Linking.openURL('tel:' + '161')}
-				>
-					<Image 
-						source={require("../../assets/phone2.png")}
-						style={styles.img}
-					/>
-					<View style={styles.subtitle}>
-						<Text style={styles.titleText}>Halo Pos</Text>
-					</View>
-				</TouchableOpacity>
-			</View>
-			<View style={styles.content}>
-				{ /* <TouchableOpacity 
-					style={styles.iconPress}
 					onPress={() => navigation.navigate({
                         routeName: 'RequestPickup'
                     })}
@@ -64,7 +50,21 @@ const MenuNotMember = ({ navigation, showAlert }) => (
 					<View style={styles.subtitle}>
 						<Text style={styles.titleText}>Request Pickup</Text>
 					</View>
+				</TouchableOpacity>
+				{ /* <TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => Linking.openURL('tel:' + '161')}
+				>
+					<Image 
+						source={require("../../assets/phone2.png")}
+						style={styles.img}
+					/>
+					<View style={styles.subtitle}>
+						<Text style={styles.titleText}>Halo Pos</Text>
+					</View>
 				</TouchableOpacity> */ }
+			</View>
+			<View style={styles.content}>
 				<TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => navigation.navigate({
@@ -152,8 +152,7 @@ const styles = StyleSheet.create({
 	},
 	titleText: {
 		color: 'black', 
-		textAlign: 'center',
-		fontFamily: 'Roboto-Regular'
+		textAlign: 'center'
 	}
 })
 

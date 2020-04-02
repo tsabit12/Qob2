@@ -5,7 +5,6 @@ import { Button, Icon, TopNavigation, TopNavigationAction, CheckBox } from '@ui-
 import Loader from "../../Loader";
 import Modal from "../../Modal";
 import { curdateTime } from "../../utils/helper";
-import api from "../../api";
 import apiWs from "../../apiWs";
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
@@ -30,10 +29,9 @@ const numberWithCommas = (number) => {
 }
 
 const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPressSyarat }) => (
-	<View style={{margin: 10, borderWidth: 1, borderColor: '#cbccc4', flex: 1}}>
+	<View style={{margin: 10, borderWidth: 0.4, borderColor: '#cbccc4', flex: 1}}>
 		<View style={styles.labelTarif}>
 			<Text style={{
-				fontFamily: 'open-sans-reg', 
 				fontWeight: '700',
 				textAlign: 'center',
 				fontSize: 16,
@@ -105,9 +103,9 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPres
 			      checked={checked}
 			      onChange={onCheckedChange}
 			    />
-			    <Text style={{fontFamily: 'open-sans-reg'}}>Saya menyetujui</Text>
-				<Text style={{color: '#0000FF', fontFamily: 'open-sans-reg'}} onPress={() => onPressSyarat()}> Syarat dan ketentuan </Text>
-				<Text style={{fontFamily: 'open-sans-reg'}}>yang berlaku di PT.POS INDONESIA</Text>
+			    <Text>Saya menyetujui</Text>
+				<Text style={{color: '#0000FF'}} onPress={() => onPressSyarat()}> Syarat dan ketentuan </Text>
+				<Text>yang berlaku di PT.POS INDONESIA</Text>
 		    </View>
 		    <View style={{width: '40%'}}>
 				<Button status='warning' onPress={() => onSimpan()}>Simpan</Button>
@@ -120,7 +118,7 @@ class ResultOrder extends React.Component{
 	state = {
 		loading: false,
 		success: false,
-		payload: {},
+		// payload: {},
 		errors: {},
 		idOrder: '',
 		visible: true,
@@ -128,27 +126,27 @@ class ResultOrder extends React.Component{
 		showSyarat: false
 	}
 
-	async componentDidMount(){
-		const { dataLogin } = this.props;
-		const { params } = this.props.navigation.state;
-		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-		const codOrNot = deskripsiOrder.cod ? '1' : '0';		
+	// async componentDidMount(){
+	// 	const { dataLogin } = this.props;
+	// 	const { params } = this.props.navigation.state;
+	// 	const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
+	// 	const codOrNot = deskripsiOrder.cod ? '1' : '0';		
 		
-		let param1 = `${curdateTime()}|01|${dataLogin.userid}|-`;
-		let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.isiKiriman}|${deskripsiOrder.nilai}|-|-`;
-		let param3 = `${pengirimnya.nama}|${pengirimnya.alamat}|${pengirimnya.kel}|${pengirimnya.kec}|${pengirimnya.kota}|${pengirimnya.provinsi}|Indonesia|${pengirimnya.kodepos}|${pengirimnya.nohp}|${pengirimnya.email}`;
-		let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamatUtama}|-|-|${deskripsiPenerima.kelurahan}|${deskripsiPenerima.kecamatan}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.provinsi}|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|-|${deskripsiPenerima.email}|-|-`;
-		let param5 = `${codOrNot}|0|-|0`;
-		const payload = {
-			param1: param1,
-			param2: param2,
-			param3: param3,
-			param4: param4,
-			param5: param5
-		};
+	// 	let param1 = `${curdateTime()}|01|${dataLogin.userid}|-`;
+	// 	let param2 = `${selectedTarif.id}|0000000099|-|${deskripsiOrder.berat}|${selectedTarif.beadasar}|${selectedTarif.htnb}|${selectedTarif.ppn}|${selectedTarif.ppnhtnb}|${deskripsiOrder.isiKiriman}|${deskripsiOrder.nilai}|-|-`;
+	// 	let param3 = `${pengirimnya.nama}|${pengirimnya.alamat}|${pengirimnya.kel}|${pengirimnya.kec}|${pengirimnya.kota}|${pengirimnya.provinsi}|Indonesia|${pengirimnya.kodepos}|${pengirimnya.nohp}|${pengirimnya.email}`;
+	// 	let param4 = `-|${deskripsiPenerima.nama}|${deskripsiPenerima.alamatUtama}|-|-|${deskripsiPenerima.kelurahan}|${deskripsiPenerima.kecamatan}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.kabupaten}|${deskripsiPenerima.provinsi}|-|Indonesia|${deskripsiPenerima.kodepos}|${deskripsiPenerima.nohp}|-|${deskripsiPenerima.email}|-|-`;
+	// 	let param5 = `${codOrNot}|0|-|0`;
+	// 	const payload = {
+	// 		param1: param1,
+	// 		param2: param2,
+	// 		param3: param3,
+	// 		param4: param4,
+	// 		param5: param5
+	// 	};
 		
-		this.setState({ payload });
-	}
+	// 	this.setState({ payload });
+	// }
 
 	getRandomInt = (min, max) => {
 	    min = Math.ceil(min);
@@ -159,10 +157,62 @@ class ResultOrder extends React.Component{
 	saveOrder = () => {
 		this.setState({ loading: true, success: false });
 		const { dataLogin } = this.props;
-		// if (dataLogin.userid.substring(0, 3) === '540') { //non member
-		const { params } = this.props.navigation.state;
+		const { params }	= this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
+		
+		// const payloadWsdl = {
+		// 	"email": dataLogin.detail.email,
+		//     "receivercustomertype":"1",
+		//     "itemtype": "1",
+		//     "type": deskripsiOrder.cod ? 'COD' : '',
+		//     "senderposcode": pengirimnya.kodepos,
+		//     "receiverposcode": deskripsiPenerima.kodepos,
+		//     "customerid": dataLogin.userid,
+		//     "serviceid": selectedTarif.id,
+		//     "sendername": pengirimnya.nama,
+		//     "senderaddr": pengirimnya.alamat,
+		//     "sendervill": pengirimnya.kel,
+		//     "sendersubdist": pengirimnya.kec,
+		//     "sendercity": pengirimnya.kota,
+		//     "senderprov": pengirimnya.provinsi,
+		//     "sendercountry":"Indonesia",
+		//     "senderemail": pengirimnya.email,
+		//     "senderphone": pengirimnya.nohp,
+		//     "receivername": deskripsiPenerima.nama,
+		//     "receiveraddr": deskripsiPenerima.alamatUtama,
+		//     "receivervill": deskripsiPenerima.kelurahan,
+		//     "receiversubdist": deskripsiPenerima.kecamatan,
+		//     "receivercity": deskripsiPenerima.kabupaten,
+		//     "receiverprov": deskripsiPenerima.provinsi,
+		//     "receivercountry":"Indonesia",
+		//     "receiveremail": deskripsiPenerima.email ? deskripsiPenerima.email : '-',
+		//     "receiverphone": deskripsiPenerima.nohp,
+		//     "weight": deskripsiOrder.berat,
+		//     "fee": selectedTarif.beadasar,
+		//     "feetax": selectedTarif.ppn,
+		//     "insurance": selectedTarif.htnb,
+		//     "insurancetax": selectedTarif.ppnhtnb,
+		//     "itemvalue": deskripsiOrder.nilai,
+		//     "contentdesc": deskripsiOrder.isiKiriman,
+		//     "installamount": deskripsiOrder.nilai
+		// }
+		
 
+		// api.qob.booking(payloadWsdl)
+		// 	.then(res => {
+		// 		console.log(res);
+		// 		// const { idOrder } = res;
+		// 		// this.setState({ loading: false, success: true, idOrder: idOrder });
+		// 	})
+		// 	.catch(err => {
+		// 		console.log(err.request);
+		// 		// console.log(err.response);
+		// 		// if (err.response.data.errors.global) {
+		// 		// 	this.setState({ loading: false, errors: err.response.data.errors });
+		// 		// }else{
+		// 		// 	this.setState({ loading: false, errors: {global: 'Whooopps, untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti'}});
+		// 		// }
+		// 	});
 		const payloadWsdl = {
 			userid: dataLogin.userid,
 			fee: selectedTarif.beadasar,
@@ -211,25 +261,6 @@ class ResultOrder extends React.Component{
 					this.setState({ loading: false, errors: {global: 'Whooopps, untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti'}});
 				}
 			});
-
-		// }else{//member
-		// 	api.qob.booking(this.state.payload)
-		// 		.then(res => {
-		// 			console.log(res);
-		// 			const { response_data1 } = res;
-		// 			let x = response_data1.split('|');
-		// 			// let idOrder = x
-		// 			this.setState({ loading: false, success: true, idOrder: x[3] });
-		// 		})
-		// 		.catch(err => {
-		// 			// console.log(err);
-		// 			if (Object.keys(err).length === 10) {
-		// 				this.setState({ loading: false, errors: {global: err.desk_mess }});	
-		// 			}else{
-		// 				this.setState({ loading: false, errors: {global: 'Terdapat kesalahan, mohon cobalagi nanti'}});
-		// 			}
-		// 	})
-		// }
 	}
 
 	onSubmit = () => {

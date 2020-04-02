@@ -56,9 +56,15 @@ class PenerimaForm extends React.Component{
 		searchParams: ''
 	}
 
-	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
+	onChange = (e, { name }) => this.setState({ 
+		data: { ...this.state.data, [name]: e },
+		errors: { ...this.state.errors, [name]: undefined }
+	})
 
-	onChangeParams = (e, { name }) => this.setState({ searchParams: e })
+	onChangeParams = (e, { name }) => this.setState({ 
+		searchParams: e,
+		errors: { ...this.state.errors, kodepos: undefined } 
+	})
 
 	searchKodepos = () => {
 		if (!this.state.searchParams) {
@@ -82,10 +88,10 @@ class PenerimaForm extends React.Component{
 					this.setState({ loading: false, responseKodepos });
 				})
 				.catch(err => {
-					if (err.response.status === '500') {
-						this.setState({ loading: false, errors: { searchParams: 'Internal Server error' } });
+					if (err.response) {
+						this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan' } });
 					}else{
-						this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan'} });
+						this.setState({ loading: false, errors: { searchParams: 'Network Error'} });
 					}
 				})
 		}
@@ -202,6 +208,7 @@ class PenerimaForm extends React.Component{
 				      status={errors.nama ? 'danger' : 'primary'}
 				      onSubmitEditing={() => this.alamatUtamaRef.current.focus() }
 				      caption={errors.nama && `${errors.nama}`}
+				      returnKeyType='next'
 					/>
 					<Input 
 				      ref={this.alamatUtamaRef}
@@ -215,6 +222,7 @@ class PenerimaForm extends React.Component{
 				      status={errors.alamatUtama ? 'danger' : 'primary'}
 				      onSubmitEditing={() => this.searchParamsRef.current.focus() }
 				      caption={errors.alamatUtama && `${errors.alamatUtama}`}
+				      returnKeyType='next'
 					/>
 					<Input 
 						ref={this.searchParamsRef}
@@ -224,14 +232,14 @@ class PenerimaForm extends React.Component{
 						labelStyle={styles.label}
 						label='Cari Alamat Lengkap'
 						placeholder='Kodepos/kelurahan/kec/kab'
-						// keyboardType='phone-pad'
 						onIconPress={this.handlePressIcon}
 						disabled={this.state.disabledKodePos}
 						icon={(style) => this.renderIcon(style)}
 						onChangeText={(e) => this.onChangeParams(e, this.searchParamsRef.current.props)}
-						caption={errors.searchParams && `${errors.searchParams}`}
-						status={errors.searchParams ? 'danger' : 'primary'}
+						caption={errors.searchParams || errors.kodepos && `Field harap diisi`}
+						status={errors.searchParams || errors.kodepos ? 'danger' : 'primary'}
 						onSubmitEditing={this.searchKodepos}
+						returnKeyType='search'
 					/>
 					{ loading && <Text style={{marginTop: 5, marginBottom: 5}}>Searching...</Text>}
 					{ responseKodepos.length > 0 && 
@@ -248,7 +256,6 @@ class PenerimaForm extends React.Component{
 						label='Kodepos'
 						placeholder='Cari alamat lengkap dahulu'
 						disabled={true}
-						caption={errors.kodepos && `${errors.kodepos}`}
 					/>
 					<Input 
 					    placeholder='Cari alamat lengkap dahulu'
@@ -264,13 +271,15 @@ class PenerimaForm extends React.Component{
 				    	ref={this.emailRef}
 				    	name='email'
 						label='Email Penerima'
-						keyboardType='email-address'
 				    	style={{ paddingTop: 7 }}
 				    	labelStyle={styles.label}
 				    	value={data.email}
 				    	status='primary'
 				    	onChangeText={(e) => this.onChange(e, this.emailRef.current.props)}
 				    	onSubmitEditing={() => this.phoneRef.current.focus() }
+				    	keyboardType='email-address'
+						autoCapitalize='none'
+						returnKeyType='next'
 				    />
 				    <Input 
 				    	placeholder='Masukan nomor handphone'
@@ -285,6 +294,7 @@ class PenerimaForm extends React.Component{
 				    	onSubmitEditing={this.onSubmit}
 				    	status={errors.nohp ? 'danger' : 'primary'}
 				    	caption={errors.nohp && `${errors.nohp}`}
+				    	returnKeyType='done'
 				    />
 				</View>
 				<View style={{ margin: 10, marginTop: -6}}>

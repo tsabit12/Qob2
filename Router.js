@@ -7,7 +7,7 @@ import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/pendaftaran/IndexRegister";
 import { Layout, Icon, Avatar } from '@ui-kitten/components';
 import IndexSearch from "./components/screens/search/IndexSearch";
-import IndexOrder from "./components/screens/order/IndexOrder";
+// import IndexOrder from "./components/screens/order/IndexOrder";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
@@ -49,12 +49,6 @@ const RouteTab = createMaterialTopTabNavigator(
 );
 
 const AppNavigator = createStackNavigator({
-      Order: {
-        screen: IndexOrder
-      },
-      // OrderPenerima: {
-      //   screen: Penerima
-      // },
       PilihTarif: {
         screen: PilihTarif
       },
