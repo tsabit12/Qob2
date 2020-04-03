@@ -17,6 +17,15 @@ export default{
 			}else{
 				return Promise.reject(res.data);
 			}
+		}),
+		getDetailOrder: (payload) => axios.post(`${url}/detailOrder`, {
+			...payload
+		}).then(res => {
+			if (res.data.result === 400) {
+				return Promise.reject(res.data);
+			}else{
+				return res.data.result;
+			}
 		})
 	}
 }

@@ -273,8 +273,6 @@ class FormPengirim extends React.PureComponent{
 			//regex email
 			var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 			if (!re.test(data.email)) errors.email = "Email tidak valid";
-		}else{
-			errors.email = "Email harap diisi";
 		}
 		return errors;
 	}
@@ -297,7 +295,7 @@ class FormPengirim extends React.PureComponent{
 						ref={this.namaRef}
 					    placeholder='Masukkan nama pengirim'
 						name='nama'
-						label='Nama'
+						label='* Nama'
 						value={data.nama}
 						style={styles.input}
 						labelStyle={styles.label}
@@ -313,7 +311,7 @@ class FormPengirim extends React.PureComponent{
 						ref={this.alamatUtamaRef}
 					    placeholder='Masukan jln, kp dll'
 						name='alamatUtama'
-						label='Alamat utama'
+						label='* Alamat utama'
 						value={data.alamatUtama}
 						style={styles.input}
 						labelStyle={styles.label}
@@ -328,7 +326,7 @@ class FormPengirim extends React.PureComponent{
 						ref={this.searchParamsRef}
 					    placeholder='Kodepos/kelurahan/kec/kab'
 						name='searchParams'
-						label='Cari Alamat Lengkap'
+						label='* Cari Alamat Lengkap'
 						value={this.state.searchParams}
 						style={styles.input}
 						labelStyle={styles.label}
@@ -352,7 +350,7 @@ class FormPengirim extends React.PureComponent{
 						ref={this.kodeposRef}
 					    placeholder='Cari alamat lengkap dahulu'
 						name='kodepos'
-						label='Kodepos'
+						label='* Kodepos'
 						value={data.kodepos}
 						style={styles.input}
 						labelStyle={styles.label}
@@ -364,7 +362,7 @@ class FormPengirim extends React.PureComponent{
 						ref={this.alamatDetailRef}
 					    placeholder='Cari alamat lengkap dahulu'
 						name='alamatDetail'
-						label='Alamat Lengkap'
+						label='* Alamat Lengkap'
 						value={data.alamatDetail}
 						style={styles.input}
 						labelStyle={styles.label}
@@ -396,7 +394,7 @@ class FormPengirim extends React.PureComponent{
 					    placeholder='Masukan nomor handphone'
 						name='noHp'
 						keyboardType='phone-pad'
-						label='Nomor Handphone'
+						label='* Nomor Handphone'
 						value={data.noHp}
 						style={styles.input}
 						labelStyle={styles.label}

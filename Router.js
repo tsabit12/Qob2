@@ -7,7 +7,6 @@ import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/pendaftaran/IndexRegister";
 import { Layout, Icon, Avatar } from '@ui-kitten/components';
 import IndexSearch from "./components/screens/search/IndexSearch";
-// import IndexOrder from "./components/screens/order/IndexOrder";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
@@ -29,7 +28,7 @@ import RequestPickupScreen from "./components/screens/RequestPickupScreen";
 import OrderNonMember from "./components/screens/orderDetail/Order";
 import OrderPenerimaNonMember from "./components/screens/orderDetail/Penerima";
 import MapsScreen from "./components/screens/history/MapsNew";
-import RiwayatPickup from "./components/screens/history/Index";
+import RiwayatPickup from "./components/screens/historyOrder/Index";
 import DetailPickup from "./components/screens/history/DetailPickup";
 import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
@@ -37,6 +36,7 @@ import RegisterPebisol from "./components/screens/pendaftaran/Pebisol";
 import RegistrasiNonPebisol from "./components/screens/pendaftaran/NonPebisol";
 import ValidasiRekening from "./components/screens/ValidasiRekening";
 import ChangePinScreen from "./components/screens/ChangePinScreen";
+import DetailOrder from "./components/screens/historyOrder/DetailOrder";
 
 const RouteTab = createMaterialTopTabNavigator(
   {
@@ -115,6 +115,9 @@ const AppNavigator = createStackNavigator({
       ChangePin: {
         screen: ChangePinScreen
       },
+      DetailOrder: {
+        screen: DetailOrder
+      }
   	},{
   	initialRouteName: 'IndexSearch',
     defaultNavigationOptions: {

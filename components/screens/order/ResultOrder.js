@@ -158,7 +158,7 @@ class ResultOrder extends React.Component{
 		    "sendercity": pengirimnya.kota,
 		    "senderprov": pengirimnya.provinsi,
 		    "sendercountry":"Indonesia",
-		    "senderemail": pengirimnya.email,
+		    "senderemail": pengirimnya.email ? pengirimnya.email : '-',
 		    "senderphone": pengirimnya.nohp,
 		    "receivername": deskripsiPenerima.nama,
 		    "receiveraddr": deskripsiPenerima.alamatUtama,
@@ -283,9 +283,11 @@ class ResultOrder extends React.Component{
 	}
 
 	_getLocationAsync = async (tarif, order, pengirim, penerima) => {
-	    let location = await Location.getCurrentPositionAsync({});
-	    this.setState({ location });
-	    this.pickupKiriman(tarif, order,pengirim, penerima);
+	    await Location.getCurrentPositionAsync({})
+	    .then(res => {
+	    	this.setState({ location: res });
+	    	this.pickupKiriman(tarif, order,pengirim, penerima);
+	    })
 	}
 
 	showAlert = (msg, title) => {
