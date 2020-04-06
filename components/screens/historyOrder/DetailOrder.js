@@ -131,6 +131,7 @@ class DetailOrder extends React.Component{
 		location: {},
 		rejectLocation: false,
 		loading: false,
+		history: [],
 		bounce: new Animated.Value(-50),
 		fadeAnim: new Animated.Value(0)
 	}
@@ -146,8 +147,6 @@ class DetailOrder extends React.Component{
 	)
 
 	runAnimated = (jenis) => {
-		this.state.fadeAnim.setValue(0);
-		this.state.bounce.setValue(-50);
 		Animated.spring(
 			this.state.bounce, 
 			{
@@ -168,6 +167,8 @@ class DetailOrder extends React.Component{
 	}
 
 	onPressTab2 = () => {
+		this.state.fadeAnim.setValue(0);
+		this.state.bounce.setValue(-50);
 		this.runAnimated();
 		this.setState({
 			tab1: { color: 'black' },
@@ -299,35 +300,7 @@ class DetailOrder extends React.Component{
 
 					this.props.addPickupBaru(allPayload, dateReal, unFilterState)
 						.then(() => {
-							//update status
 							this.updateStatusPickup(payloadItem);
-							
-							// this.setState({ loading: false, checked: {} });
-							// if (!this.props.pickupNumber) {
-							// 	Alert.alert(
-							// 	  'Notifikasi',
-							// 	  'Pickup sukses',
-							// 	  [
-							// 	  	{
-							// 	      text: 'Tutup',
-							// 	      style: 'cancel',
-							// 	    }
-							// 	  ],
-							// 	  {cancelable: false},
-							// 	);
-							// }else{
-							// 	Alert.alert(
-							// 	  'Notifikasi',
-							// 	  `Pickup sukses dengan nomor pickup : ${this.props.pickupNumber}`,
-							// 	  [
-							// 	  	{
-							// 	      text: 'Tutup',
-							// 	      style: 'cancel',
-							// 	    }
-							// 	  ],
-							// 	  {cancelable: false},
-							// 	);
-							// }
 						})
 						.catch(err => {
 							console.log(err);
@@ -451,6 +424,49 @@ class DetailOrder extends React.Component{
 		// }
 	}
 
+	getHistoryStatus = (payload) => {
+		this.setState({ loading: true, history: [] });
+		apiBaru.qob.getHistoryStatus(payload)
+			.then(res => {
+				//sorting
+				const datanya = res.data.sort(this.dynamicSort("-insertdate"));
+				
+				this.setState({ loading: false, history: datanya });
+			})
+			.catch(err => {
+				this.setState({ loading: false });
+				setTimeout(() => {
+					Alert.alert(
+					  'Terdapat kesalahan',
+					  `Harap cobalagi nanti`,
+					  [
+					  	{
+					      text: 'Tutup',
+					      style: 'cancel',
+					    }
+					  ],
+					  {cancelable: false},
+					);
+				}, 30)
+			})
+	}
+
+	dynamicSort = (property) => {
+	    var sortOrder = 1;
+	    if(property[0] === "-") {
+	        sortOrder = -1;
+	        property = property.substr(1);
+	    }
+
+	    return function (a,b) {
+	        /* next line works with strings and numbers, 
+	         * and you may want to customize it to your needs
+	         */
+	        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+	        return result * sortOrder;
+	    }
+	}
+
 	render(){
 		const { tab1, tab2, activePage, bounce } = this.state;
 		
@@ -496,7 +512,13 @@ class DetailOrder extends React.Component{
 									onCheckedChange={this.onChecked}
 									onPickup={this.onPickup}
 									location={this.state.rejectLocation}/> 
-							 : <DataOrder data={this.props.other} />  }
+							 : <DataOrder 
+							 	data={this.props.other} 
+							 	email={this.props.dataLogin.detail.email} 
+							 	getStatus={this.getHistoryStatus}
+							 	history={this.state.history}
+							 	removeHistory={() => this.setState({ history: [] })}
+							 />  }
 					
 					</Animated.View>
 				</View>

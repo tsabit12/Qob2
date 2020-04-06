@@ -43,6 +43,16 @@ export default{
 			extid: extid
 		}).then(res => {
 			return res.data.result;
+		}),
+		getHistoryStatus: (payload) => axios.post(`${url}/history`, {
+			...payload
+		}).then(res => {
+			const { result } = res.data;
+			if (!result.data) {
+				return Promise.reject(result);
+			}else{
+				return result;
+			}
 		})
 	}
 }
