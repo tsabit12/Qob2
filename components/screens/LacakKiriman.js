@@ -77,7 +77,7 @@ class LacakKiriman extends React.Component{
 				<MyStatusBar />
 				<View style={{height: 55, backgroundColor: 'rgb(240, 132, 0)', flexDirection: 'row'}}>
 					<Input 
-						placeholder='Search'
+						placeholder='Masukkan kode barcode'
 						ref={this.searchRef}
 						style={{flex: 1, margin: 5}}
 						value={this.state.searchText}
