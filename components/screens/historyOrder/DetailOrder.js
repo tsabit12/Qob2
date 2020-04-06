@@ -139,6 +139,7 @@ class DetailOrder extends React.Component{
 	async componentDidMount(){
 		this.runAnimated();
 		this._getLocationAsync();
+		console.log(this.props.pickup);
 	}
 
 	BackAction = () => (
@@ -457,6 +458,24 @@ class DetailOrder extends React.Component{
 	    }
 	}
 
+	onMoveMap = (payload) => {
+		this.props.navigation.navigate({
+			routeName: 'Maps',
+			params: {
+				pickupNumber: payload.pickupNumber,
+				detail: {
+					productname: payload.productname,
+					desctrans: payload.desctrans,
+					extid: payload.extid,
+					receiverfulladdress: payload.receiverfulladdress,
+					shipperfulladdress: payload.shipperfulladdress,
+					receivername: payload.receivername,
+					shippername: payload.shippername
+				}
+			}
+		})
+	}
+
 	render(){
 		const { tab1, tab2, activePage, bounce } = this.state;
 		
@@ -508,6 +527,7 @@ class DetailOrder extends React.Component{
 							 	getStatus={this.getHistoryStatus}
 							 	history={this.state.history}
 							 	removeHistory={() => this.setState({ history: [] })}
+							 	movToMapView={this.onMoveMap}
 							 />  }
 					
 					</Animated.View>

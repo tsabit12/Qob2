@@ -27,9 +27,8 @@ import BantuanScreen from "./components/screens/BantuanScreen";
 import RequestPickupScreen from "./components/screens/RequestPickupScreen";
 import OrderNonMember from "./components/screens/orderDetail/Order";
 import OrderPenerimaNonMember from "./components/screens/orderDetail/Penerima";
-import MapsScreen from "./components/screens/history/MapsNew";
+import MapsScreen from "./components/screens/historyOrder/MapScreen";
 import RiwayatPickup from "./components/screens/historyOrder/Index";
-import DetailPickup from "./components/screens/history/DetailPickup";
 import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
 import RegisterPebisol from "./components/screens/pendaftaran/Pebisol";
@@ -99,9 +98,6 @@ const AppNavigator = createStackNavigator({
       },
       RiwayatPickup: {
         screen: RiwayatPickup
-      },
-      DetailPickup: {
-        screen: DetailPickup
       },
       KelolaPengirim: {
         screen: KelolaPengirim

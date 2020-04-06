@@ -29,12 +29,9 @@ const numberWithCommas = (number) => {
 	}
 }
 
-const renderItemAccessory = (style, status, extid, openDetail, cekStatus) => {
+const renderItemAccessory = (style, status, extid, openDetail, cekStatus, cekDriver) => {
 	return(
 		<React.Fragment>
-			<TouchableOpacity>
-				<Icon name='navigation-2' { ...style}  width={23} height={23} fill="#3366ff" />
-			</TouchableOpacity>
 			<Menu>
 				<MenuTrigger>
 					<Icon {...style} name='more-vertical-outline' width={23} height={23} fill='#3366ff' />
@@ -48,6 +45,11 @@ const renderItemAccessory = (style, status, extid, openDetail, cekStatus) => {
 					<MenuOption onSelect={() => cekStatus(extid)}>
 			        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
 			          		<Text>Cek Riwayat Status</Text>
+			          	</View>
+			        </MenuOption>
+			        <MenuOption onSelect={() => cekDriver(extid)}>
+			        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
+			          		<Text>Tracking Pickup</Text>
 			          	</View>
 			        </MenuOption>
 				</MenuOptions>
@@ -122,7 +124,7 @@ const ContentHistory = ({ data, allOrder }) => {
 	);
 }
 
-const DataOrder = ({ data, email, getStatus, history, removeHistory }) => {
+const DataOrder = ({ data, email, getStatus, history, removeHistory, movToMapView }) => {
 	const [isVisible, setVisible] = React.useState({});
 
 	const onOpenDetail = (id) => {
@@ -138,6 +140,22 @@ const DataOrder = ({ data, email, getStatus, history, removeHistory }) => {
 		getStatus(payload);
 	} 
 
+	const onCekDriver = (id) => {
+		const pickupNumber = '1586197041_440000859';
+		const detail 	= data.find(x => x.extid === id);
+		const payload  = {
+			pickupNumber,
+			extid: id,
+			productname: detail.productname,
+			desctrans: detail.desctrans,
+			shipperfulladdress: detail.shipperfulladdress,
+			receiverfulladdress: detail.receiverfulladdress,
+			shippername: detail.shippername,
+			receivername: detail.receivername
+		};
+		movToMapView(payload);
+	}
+
 	return(
 		<View style={{flex: 1}}>
 			{ data.map((x, i) => <React.Fragment key={i}>
@@ -145,7 +163,7 @@ const DataOrder = ({ data, email, getStatus, history, removeHistory }) => {
 						title={x.desctrans} 
 						titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
 						description={`Status : (${x.laststatus})`}
-						accessory={(e) => renderItemAccessory(e, x.laststatusid, x.extid, onOpenDetail, onCekStatus)}
+						accessory={(e) => renderItemAccessory(e, x.laststatusid, x.extid, onOpenDetail, onCekStatus, onCekDriver)}
 						style={{backgroundColor: 'trans'}}
 						descriptionStyle={{fontFamily: 'open-sans-reg', fontSize: 10}}
 						disabled={true}
