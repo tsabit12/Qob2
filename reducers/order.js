@@ -3,7 +3,6 @@ import { SUCCESS_ORDER, GET_ORDER, GET_ADD_POSTING, PICKUP_SUKSES, FETCH_HISTORY
 const initialState = {
 	dataOrder: {},
 	searchParam: null,
-	listPickup: [],
 	pickupNumber: null,
 	historyPickup: [],
 	detailOrder: {
@@ -32,8 +31,14 @@ export default function order(state=initialState, action={}){
 		case PICKUP_SUKSES:
 			return{
 				...state,
-				listPickup: action.listPickup,
-				pickupNumber: action.pickupNumber
+				pickupNumber: action.pickupNumber,
+				detailOrder: {
+					...state.detailOrder,
+					pickup: {
+						...state.detailOrder.pickup,
+						[action.date]: action.listPickup
+					}
+				}
 			}
 		case FETCH_HISTORY_PICKUP:
 			return{
@@ -47,11 +52,11 @@ export default function order(state=initialState, action={}){
 					...state.detailOrder,
 					pickup: {
 						...state.detailOrder.pickup,
-						[action.daterange]: action.pickup
+						[action.date]: action.pickup
 					},
 					other: {
 						...state.detailOrder.other,
-						[action.daterange]: action.other
+						[action.date]: action.other
 					}
 				}
 			}

@@ -21,11 +21,28 @@ export default{
 		getDetailOrder: (payload) => axios.post(`${url}/detailOrder`, {
 			...payload
 		}).then(res => {
-			if (res.data.result === 400) {
+			if (!res.data.result.data) {
 				return Promise.reject(res.data);
 			}else{
 				return res.data.result;
 			}
+		}),
+		syncronizeUser: (payload) => axios.post(`${url}/sync`, {
+			...payload
+		}).then(res => {
+			const { result } = res.data;
+			console.log(result);
+			if (result.respcode === '00') {
+				return result;
+			}else{
+				return Promise.reject(result);
+			}
+		}),
+		updateStatus: (extid, pickupNumber) => axios.post(`${url}/confirmPickup`, {
+			pickupid: pickupNumber,
+			extid: extid
+		}).then(res => {
+			return res.data.result;
 		})
 	}
 }

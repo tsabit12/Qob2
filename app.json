@@ -32,7 +32,7 @@
       "package": "com.posindonesia.cob",
       "versionCode": 6,
       "config": {
-      "googleMaps": {
+        "googleMaps": {
           "apiKey": "AIzaSyCWExqNgCmhqQyoBuj7lvsMQ7lHWIdon0g"
         }
       }

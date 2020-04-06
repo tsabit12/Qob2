@@ -6,6 +6,7 @@ import Loader from "../../Loader";
 import { curdateTime } from "../../utils/helper";
 import api from "../../apiBaru";
 import apiWs from "../../apiWs";
+import apiYuyus from "../../api";
 import Dialog from "react-native-dialog";
 import { connect } from "react-redux";
 import SyaratKetentuan from "./SyaratKetentuan";
@@ -126,7 +127,8 @@ class ResultOrder extends React.Component{
 		visible: true,
 		checked: false,
 		showSyarat: false,
-		location: {}
+		location: {},
+		loadingMessage: 'Loading...'
 	}
 
 	getRandomInt = (min, max) => {
@@ -136,37 +138,36 @@ class ResultOrder extends React.Component{
 	}
 
 	saveOrder = () => {
-		this.setState({ loading: true, success: false });
+		this.setState({ loading: true, success: false, loadingMessage: 'Loading...' });
 		const { dataLogin } = this.props;
 		const { params }	= this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-		
+
 		const payloadWsdl = {
-			// "email": 'rio.ananda@posindonesia.co.id',
 			"email": dataLogin.detail.email,
 		    "receivercustomertype":"1",
-		    "itemtype": "1",
+		    "itemtype":"1",
 		    "type": deskripsiOrder.cod ? 'COD' : '',
-		    "senderposcode": pengirimnya.kodepos,
-		    "receiverposcode": deskripsiPenerima.kodepos,
+		    "shipperzipcode": pengirimnya.kodepos,
+		    "receiverzipcode": deskripsiPenerima.kodepos,
 		    "customerid": dataLogin.userid,
 		    "serviceid": selectedTarif.id,
-		    "sendername": pengirimnya.nama,
-		    "senderaddr": pengirimnya.alamat,
-		    "sendervill": pengirimnya.kel,
-		    "sendersubdist": pengirimnya.kec,
-		    "sendercity": pengirimnya.kota,
-		    "senderprov": pengirimnya.provinsi,
-		    "sendercountry":"Indonesia",
-		    "senderemail": pengirimnya.email ? pengirimnya.email : '-',
-		    "senderphone": pengirimnya.nohp,
+		    "shippername": pengirimnya.nama,
+		    "shipperaddress": pengirimnya.alamat,
+		    "shippersubsubdistrict": pengirimnya.kel,
+		    "shippersubdistrict": pengirimnya.kec,
+		    "shippercity": pengirimnya.kota,
+		    "shipperprovince": pengirimnya.provinsi,
+		    "shippercountry":"INDONESIA",
+		    "shipperemail": pengirimnya.email ? pengirimnya.email : '-',
+		    "shipperphone": pengirimnya.nohp,
 		    "receivername": deskripsiPenerima.nama,
-		    "receiveraddr": deskripsiPenerima.alamatUtama,
-		    "receivervill": deskripsiPenerima.kelurahan,
-		    "receiversubdist": deskripsiPenerima.kecamatan,
+		    "receiveraddress": deskripsiPenerima.alamatUtama,
+		    "receiversubsubdistrict": deskripsiPenerima.kelurahan,
+		    "receiversubdistrict": deskripsiPenerima.kecamatan,
 		    "receivercity": deskripsiPenerima.kabupaten,
-		    "receiverprov": deskripsiPenerima.provinsi,
-		    "receivercountry":"Indonesia",
+		    "receiverprovince": deskripsiPenerima.provinsi,
+		    "receivercountry":"INDONESIA",
 		    "receiveremail": deskripsiPenerima.email ? deskripsiPenerima.email : '-',
 		    "receiverphone": deskripsiPenerima.nohp,
 		    "weight": deskripsiOrder.berat,
@@ -174,12 +175,15 @@ class ResultOrder extends React.Component{
 		    "feetax": selectedTarif.ppn,
 		    "insurance": selectedTarif.htnb,
 		    "insurancetax": selectedTarif.ppnhtnb,
-		    "itemvalue": deskripsiOrder.nilai,
-		    "contentdesc": deskripsiOrder.isiKiriman,
-		    "installamount": deskripsiOrder.nilai
-		}
+		    "valuegoods": deskripsiOrder.nilai,
+		    "desctrans": deskripsiOrder.isiKiriman,
+		    "codvalue": Number(selectedTarif.beadasar) + Number(selectedTarif.ppn) + Number(selectedTarif.htnb) + Number(selectedTarif.ppnhtnb),
+		    "width": deskripsiOrder.lebar,
+		    "length": deskripsiOrder.panjang,
+		    "height": deskripsiOrder.tinggi,
+		    "diagonal": 0
+		};
 		
-
 		api.qob.booking(payloadWsdl)
 			.then(res => {
 				if (Object.keys(res.transref).length > 0) {
@@ -203,15 +207,66 @@ class ResultOrder extends React.Component{
 				}
 			})
 			.catch(err => {
-				this.setState({ loading: false });
 				if (!err.respmsg) {
+					this.setState({ loading: false });
 					const msg = 'untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti';
-					this.showAlert(msg, 'Terdapat kesalahan');
+					setTimeout(() => {
+						this.showAlert(msg, 'Terdapat kesalahan');
+					}, 30);
 				}else{
 					const { respmsg } = err;
-					this.showAlert(respmsg, 'Whooppps');
+					//auto syncronizeuser
+					if (this.removeSpace(respmsg) === 'CLIENTISNOTFOUND') {
+						this.autoSync();
+						this.setState({ loadingMessage: 'Generate token...'});
+					}else{
+						this.setState({ loading: false });
+						setTimeout(() => {
+							this.showAlert(respmsg, 'Whooppps');
+						}, 30);
+					}
 				}
 			});
+	}
+
+	removeSpace = (text) => {
+		return text.replace(/\s+/g, '');
+	}
+
+	autoSync = () => {
+		//service yuyus dulu
+		//buat generate token nya
+		const { dataLogin } = this.props;
+		apiYuyus.auth.genpwdweb(dataLogin.userid)
+			.then(res => {
+				const payload = {
+					email: dataLogin.detail.email,
+					pin: res.response_data1
+				}
+				this.setState({ loadingMessage: 'Sinkronisasi...'});
+				api.qob.syncronizeUser(payload)
+					.then(res => {
+						//try to order again
+						this.saveOrder();
+					})
+					.catch(err => {
+						console.log(err);
+						this.setState({ loading: false });
+						if (!err.respmsg) {
+							this.showAlert('Untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti','Terdapat kesalahan');
+						}else{
+							this.showAlert(err.respmsg, 'Whooppps');
+						}
+					})
+			})
+			.catch(err => { //yuyus error
+				this.setState({ loading: false });
+				if (!err.desk_mess) {
+					this.showAlert('Untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti','Terdapat kesalahan');
+				}else{
+					this.showAlert(err.desk_mess, 'Whooppps');
+				}
+			})
 	}
 
 	pickupKiriman = (tarif, order, pengirim, penerima) => {
@@ -341,7 +396,7 @@ class ResultOrder extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
-				<Loader loading={this.state.loading} />
+				<Loader loading={this.state.loading} messagenya={this.state.loadingMessage} />
 				<React.Fragment>
 					{ !this.state.success ? 
 						<ScrollView>

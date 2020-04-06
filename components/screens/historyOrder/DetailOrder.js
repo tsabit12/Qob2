@@ -6,10 +6,21 @@ import { Icon, TopNavigation, TopNavigationAction, ListItem, CheckBox, Button } 
 import { omit } from 'lodash';
 import * as Location from 'expo-location';
 import Loader from "../../Loader";
+import { addPickupBaru } from "../../../actions/order";
+import DataOrder from "./DataOrder";
+import apiBaru from "../../apiBaru";
 
 const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='#FFF'/>
 );
+
+const capitalize = (string) => {
+	if (string) {
+		return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	}else{
+		return '-';
+	}
+}
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -26,72 +37,9 @@ const renderItemAccessory = (style, id, checked, onCheckedChange) => {
 	)
 } 
 
-const capitalize = (string) => {
-	if (string) {
-		return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
-	}else{
-		return '-';
-	}
-}
-
-//loop component
-const DetailComponent = ({ x }) => {
-	const [bounceValue] = React.useState(new Animated.Value(100));
-	var toValue 	= 100;
-	var isHidden 	= true;
-	if (isHidden) {
-		toValue = 0
-	}
-	
-	React.useEffect(() => {
-	    Animated.spring(
-	      bounceValue,
-	      {
-	        toValue: toValue,
-	        velocity: 3,
-	        tension: 2,
-	        friction: 8,
-	      }
-	    ).start();
-	}, []);
-
-	return(
-		<Animated.View style={{ transform: [{translateY: bounceValue}] }}>
-			<View style={{marginLeft: 15, paddingBottom: 5}}>
-				<View>
-	    			<Text style={styles.detailTitle}>Isi Kiriman</Text>
-	    			<Text style={styles.subTitleText}>{capitalize(x.isi_kiriman)}</Text>
-	    		</View>
-	    		<View>
-	    			<Text style={styles.detailTitle}>Nama Pengirim</Text>
-	    			<Text style={styles.subTitleText}>{capitalize(x.nm_pengirim)}</Text>
-	    		</View>
-	    		<View>
-	    			<Text style={styles.detailTitle}>Nama Penerima</Text>
-	    			<Text style={styles.subTitleText}>{capitalize(x.nm_penerima)}</Text>
-	    		</View>
-	    		<View>
-	    			<Text style={styles.detailTitle}>Alamat Pengirim</Text>
-	    			<Text style={styles.subTitleText}>{capitalize(x.alamat_asal)}</Text>
-	    		</View>
-	    		<View>
-	    			<Text style={styles.detailTitle}>Alamat Penerima</Text>
-	    			<Text style={styles.subTitleText}>{capitalize(x.alamat_tujuan)}</Text>
-	    		</View>
-	    		<View>
-	    			<Text style={styles.detailTitle}>Berat</Text>
-	    			<Text style={styles.subTitleText}>{x.berat} gram</Text>
-	    		</View>
-	    		<View>
-	    			<Text style={styles.detailTitle}>Diametrik</Text>
-	    			<Text style={styles.subTitleText}>P = {x.dimensi_p}, L = {x.dimensi_l}, T = {x.dimensi_t} </Text>
-	    		</View>
-			</View>
-		</Animated.View>
-	);
-}
 
 const PickupView = ({ data, visible, showDetail, checked, onCheckedChange, onPickup, location }) => {
+	// console.log(data);
 	const scrollRef = React.useRef();
 	const [loc, setLoc] = React.useState({});
 
@@ -105,36 +53,71 @@ const PickupView = ({ data, visible, showDetail, checked, onCheckedChange, onPic
 		}, 100)
 	} 
 
-	// console.log(loc);
+	const onLayout = (layout, id_order) => {
+		updateWidth(layout, id_order);
+	}
 
+	const updateWidth = (layout, id) => {		
+			setLoc({...loc, [id]: layout });
+	}
 
-	const addLoc = (layout, id_order) => setLoc({...loc, [id_order]: layout })
 	return(
-		<ScrollView ref={scrollRef}>
-			{ data.map((x, i) => 
-				<React.Fragment key={i}>
-					<ListItem 
-						title={x.id_order} 
-						// description={x.orderDate.substring(0, 10)}
-						titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
-						onPress={() => onPressItem(x.id_order)}
-						description={x.insert_date}
-						accessory={(e) => renderItemAccessory(e, x.id_order, checked, onCheckedChange )}
-					/> 
-					<View
-						onLayout={event => {
-					        const layout = event.nativeEvent.layout;
-					        addLoc(layout.y, x.id_order);
-					}}>
-						{ visible[x.id_order] &&  <DetailComponent x={x} /> }
-					</View>
-					<View style={{borderBottomWidth: 0.5, borderBottomColor: '#cbccc4'}}/>
-				</React.Fragment>
-			)}
-			<Button style={{margin: 10}} onPress={onPickup}>
-				{ location ? 'AKTIFKAN LOKASI' : 'PICKUP' }
-			</Button>
-		</ScrollView>
+		<React.Fragment>
+			{ data.length > 0 ? 
+				<ScrollView ref={scrollRef}>
+				{ data.map((x, i) => 
+					<React.Fragment key={i}>
+						<ListItem 
+							title={x.extid} 
+							// description={x.orderDate.substring(0, 10)}
+							titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
+							onPress={() => onPressItem(x.extid)}
+							description={x.desctrans}
+							accessory={(e) => renderItemAccessory(e, x.extid, checked, onCheckedChange )}
+							descriptionStyle={{fontFamily: 'open-sans-reg', fontSize: 10}}
+						/> 
+						<View
+							onLayout={event => {
+						        const layout = event.nativeEvent.layout;
+						        onLayout(layout.y, x.extid);
+						}}>
+							{ visible[x.extid] &&  <View style={{marginLeft: 15, paddingBottom: 5}}>
+					    		<View>
+					    			<Text style={styles.detailTitle}>Nama Pengirim</Text>
+					    			<Text style={styles.subTitleText}>{capitalize(x.shippername)}</Text>
+					    		</View>
+					    		<View>
+					    			<Text style={styles.detailTitle}>Nama Penerima</Text>
+					    			<Text style={styles.subTitleText}>{capitalize(x.receivername)}</Text>
+					    		</View>
+					    		<View>
+					    			<Text style={styles.detailTitle}>Alamat Pengirim</Text>
+					    			<Text style={styles.subTitleText}>{capitalize(x.shipperfulladdress)}</Text>
+					    		</View>
+					    		<View>
+					    			<Text style={styles.detailTitle}>Alamat Penerima</Text>
+					    			<Text style={styles.subTitleText}>{capitalize(x.receiverfulladdress)}</Text>
+					    		</View>
+					    		<View>
+					    			<Text style={styles.detailTitle}>Berat</Text>
+					    			<Text style={styles.subTitleText}>{x.weight} gram</Text>
+					    		</View>
+					    		<View>
+					    			<Text style={styles.detailTitle}>Diametrik</Text>
+					    			<Text style={styles.subTitleText}>P = {x.length}, L = {x.width}, T = {x.height} </Text>
+					    		</View>
+							</View> }
+						</View>
+						<View style={{borderBottomWidth: 0.5, borderBottomColor: '#cbccc4'}}/>
+					</React.Fragment>
+				)}
+				<Button style={{margin: 10}} onPress={onPickup}>
+					{ location ? 'AKTIFKAN LOKASI' : 'PICKUP' }
+				</Button>
+			</ScrollView> : <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+				<Text style={{fontSize: 16, color: '#cbccc4'}}>Data tidak ditemukan</Text>
+			</View>}
+		</React.Fragment>
 	);
 } 
 
@@ -147,25 +130,60 @@ class DetailOrder extends React.Component{
 		checked: {},
 		location: {},
 		rejectLocation: false,
-		loading: false
+		loading: false,
+		bounce: new Animated.Value(-50),
+		fadeAnim: new Animated.Value(0)
+	}
+
+	componentDidMount(){
+		this.runAnimated();
+		// console.log(this.props.pickup);
 	}
 
 	BackAction = () => (
-  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.push('RiwayatPickup') }/>
 	)
 
-	onPressTab2 = () => this.setState({
-		tab1: { color: 'black' },
-		tab2: { color: 'blue'},
-		activePage: 2,
-		visible: {}
-	})
+	runAnimated = (jenis) => {
+		this.state.fadeAnim.setValue(0);
+		this.state.bounce.setValue(-50);
+		Animated.spring(
+			this.state.bounce, 
+			{
+				toValue: 0,
+				velocity: 3,
+		        tension: 2,
+		        friction: 8,
+			}
+		).start();
 
-	onPressTab1 = () => this.setState({
-		tab1: { color: 'blue' },
-		tab2: { color: 'black'},
-		activePage: 1
-	})
+		Animated.timing(
+	      this.state.fadeAnim,
+	      {
+	        toValue: 1,
+	        duration: 800
+	      }
+	    ).start();
+	}
+
+	onPressTab2 = () => {
+		this.runAnimated();
+		this.setState({
+			tab1: { color: 'black' },
+			tab2: { color: 'blue'},
+			activePage: 2,
+			visible: {}
+		});
+	}
+
+	onPressTab1 = () => {
+		this.runAnimated();
+		this.setState({
+			tab1: { color: 'blue' },
+			tab2: { color: 'black'},
+			activePage: 1
+		})
+	}
 
 	onShowDetail = (externalId) => {
 		this.setState({
@@ -189,10 +207,10 @@ class DetailOrder extends React.Component{
 		}else{
 			const firstArr = Object.keys(this.state.checked)[0];
 			if (firstArr) {
-				const firstData = this.props.pickup.find(x => x.id_order === firstArr);
-				const nextData 	= this.props.pickup.find(x => x.id_order === id);
-				const alamat1 	= this.removeSpace(firstData.alamat_asal);
-				const alamat2 	= this.removeSpace(nextData.alamat_asal);
+				const firstData = this.props.pickup.find(x => x.extid === firstArr);
+				const nextData 	= this.props.pickup.find(x => x.extid === id);
+				const alamat1 	= this.removeSpace(firstData.shipperfulladdress);
+				const alamat2 	= this.removeSpace(nextData.shipperfulladdress);
 				if (alamat1 !== alamat2) {
 					Alert.alert(
 					  'Alamat pengirim tidak sama!',
@@ -234,34 +252,112 @@ class DetailOrder extends React.Component{
 					const { checked } 		= this.state;
 					for (var k in checked) keys.push(k);
 					/*END*/
-					const filterState 	= this.props.pickup.filter(x => keys.includes(x.id_order));
-					const unFilterState = this.props.pickup.filter(x => !keys.includes(x.id_order));
+					const filterState 	= this.props.pickup.filter(x => keys.includes(x.extid));
+					const unFilterState = this.props.pickup.filter(x => !keys.includes(x.extid));
+					const { dateReal } 	= this.props.navigation.state.params;
 
 					var payloadItem = [];
 					filterState.forEach(x => {
 						payloadItem.push({
-							extid: x.id_order,
+							extid: x.extid,
 							itemtypeid: 1,
-				            productid: 'ID BUKAN NAMA',
-				            valuegoods: 'KOSONG',
+				            productid: x.productid,
+				            valuegoods: x.valuegoods,
 				            uomload: 5,
-				            weight: x.berat,
+				            weight: x.weight,
 				            uomvolumetric: 2,
-				            length: x.dimensi_p,
-				            width: x.dimensi_l,
-				            height: x.dimensi_t,
-				            codvalue: x.status_cod === 'BUKAN' ? '0' : '1',
-				            fee: x.total_harga,
-				            feetax: 'KOSONG',
-				            insurance: 'KOSONG',
-				            insurancetax: 'KOSONG',
+				            length: x.length,
+				            width: x.width,
+				            height: x.height,
+				            codvalue: x.codvalue,
+				            fee: x.fee,
+				            feetax: x.feetax,
+				            insurance: x.insurance,
+				            insurancetax: x.insurancetax,
 				            discount: 0,
-				            desctrans: x.isi_kiriman,
-				            receiverzipcode: 'DI PISAH DARI ALAMAT'
+				            desctrans: x.desctrans,
+				            receiverzipcode: x.receiverzipcode
 						});
 					});
 
-					console.log(payloadItem);
+					const allPayload = {
+						shipper: {
+							userId: this.props.dataLogin.userid,
+							name: filterState[0].shippername,
+							latitude: this.state.location.coords.latitude,
+							longitude: this.state.location.coords.longitude,
+					        phone: filterState[0].shipperphone,
+					        address: filterState[0].shipperaddress,
+					        city: filterState[0].shippersubdistrict,
+					        subdistrict: filterState[0].shippersubsubdistrict,
+					        zipcode: filterState[0].shipperzipcode,
+					        country: "Indonesia"
+						},
+						item: payloadItem
+					} 
+
+					this.props.addPickupBaru(allPayload, dateReal, unFilterState)
+						.then(() => {
+							//update status
+							this.updateStatusPickup(payloadItem);
+							
+							// this.setState({ loading: false, checked: {} });
+							// if (!this.props.pickupNumber) {
+							// 	Alert.alert(
+							// 	  'Notifikasi',
+							// 	  'Pickup sukses',
+							// 	  [
+							// 	  	{
+							// 	      text: 'Tutup',
+							// 	      style: 'cancel',
+							// 	    }
+							// 	  ],
+							// 	  {cancelable: false},
+							// 	);
+							// }else{
+							// 	Alert.alert(
+							// 	  'Notifikasi',
+							// 	  `Pickup sukses dengan nomor pickup : ${this.props.pickupNumber}`,
+							// 	  [
+							// 	  	{
+							// 	      text: 'Tutup',
+							// 	      style: 'cancel',
+							// 	    }
+							// 	  ],
+							// 	  {cancelable: false},
+							// 	);
+							// }
+						})
+						.catch(err => {
+							console.log(err);
+							this.setState({ loading: false });
+							if (!err.text) {
+								Alert.alert(
+								  'Whopps',
+								  'Pickup Gagal',
+								  [
+								  	{
+								      text: 'Tutup',
+								      style: 'cancel',
+								    }
+								  ],
+								  {cancelable: false},
+								);
+							}else{
+								this.setState({ loading: false });
+								Alert.alert(
+								  'Whopps',
+								  `${err.text}`,
+								  [
+								  	{
+								      text: 'Tutup',
+								      style: 'cancel',
+								    }
+								  ],
+								  {cancelable: false},
+								);
+							}
+						})
 				}else{
 					Alert.alert(
 					  'Notifikasi',
@@ -297,8 +393,65 @@ class DetailOrder extends React.Component{
 	    .catch(() => this.setState({ rejectLocation: true }));
 	}
 
+	updateStatusPickup = (arr) => {
+		const success = [];
+		arr.forEach(x => {
+			//i dont fucking care if success or not
+			//just response it with success
+			apiBaru.qob.updateStatus(x.extid, this.props.pickupNumber)
+				.then(res => {
+					console.log(res);
+					console.log("success");
+					if (!res.respcode) {
+						success.push({
+							res: '400',
+							extid: x.extid
+						});
+					}else{
+						success.push({
+							res: res.respcode,
+							extid: x.extid
+						});
+					}
+				})
+				.catch(err => {
+					console.log(err.response);
+					console.log("error");
+					if (!err.respcode) {
+						success.push({
+							res: '500',
+							extid: x.extid
+						});
+					}else{
+						success.push({
+							res: err.respcode,
+							extid: x.extid
+						});
+					}
+				})
+		});
+
+		// console.log(success);
+		// if (success.length > 0) { //al progress are done
+			this.setState({ loading: false, checked: {} });
+			setTimeout(() => {
+				Alert.alert(
+				  'Notifikasi',
+				  `${arr.length} item berhasil dipickup dengan nomor pickup : ${this.props.pickupNumber}`,
+				  [
+				  	{
+				      text: 'Tutup',
+				      style: 'cancel',
+				    }
+				  ],
+				  {cancelable: false},
+				);
+			}, 30);
+		// }
+	}
+
 	render(){
-		const { tab1, tab2, activePage } = this.state;
+		const { tab1, tab2, activePage, bounce } = this.state;
 		
 		return(
 			<View style={{flex: 1}}>
@@ -306,7 +459,7 @@ class DetailOrder extends React.Component{
 				<TopNavigation
 				    leftControl={this.BackAction()}
 				    title='Hasil Pencarian'
-				    subtitle={this.props.navigation.state.params.dateranges}
+				    subtitle={this.props.navigation.state.params.dateReal}
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    subtitleStyle={{color: '#FFF'}}
@@ -326,26 +479,39 @@ class DetailOrder extends React.Component{
 						</TouchableOpacity>
 					</View>
 				</View>
-				{ activePage === 1 ? <PickupView 
-						data={this.props.pickup} 
-						visible={this.state.visible}
-						showDetail={this.onShowDetail}
-						checked={this.state.checked}
-						onCheckedChange={this.onChecked}
-						onPickup={this.onPickup}
-						location={this.state.rejectLocation}
-					/> : <Text>Oke</Text> }
+				<View style={{marginBottom: 70, flex: 1}}>
+					<Animated.View
+						style={{
+							transform: [{translateX: bounce}],
+							opacity: this.state.fadeAnim,
+							flex: 1
+						}}
+					>
+						{ activePage === 1 ? <PickupView 
+									data={this.props.pickup} 
+									visible={this.state.visible}
+									showDetail={this.onShowDetail}
+									checked={this.state.checked}
+									onCheckedChange={this.onChecked}
+									onPickup={this.onPickup}
+									location={this.state.rejectLocation}/> 
+							 : <DataOrder data={this.props.other} />  }
+					
+					</Animated.View>
+				</View>
 			</View>
 		);
 	}
 }
 
 function mapStateToProps(state, props) {
-	const { dateranges } = props.navigation.state.params;
+	const { dateReal } = props.navigation.state.params;
 	return{
-		pickup: state.order.detailOrder.pickup[dateranges],
-		other: state.order.detailOrder.other[dateranges]
+		pickup: state.order.detailOrder.pickup[dateReal],
+		other: state.order.detailOrder.other[dateReal],
+		dataLogin: state.auth.dataLogin,
+		pickupNumber: state.order.pickupNumber
 	}
 }
 
-export default connect(mapStateToProps, null)(DetailOrder);
+export default connect(mapStateToProps, { addPickupBaru })(DetailOrder);

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StatusBar, TouchableOpacity, Alert, ScrollView } from "react-native";
 import styles from "./styles";
-import { Icon, RangeDatepicker, Input, NativeDateService, ListItem } from '@ui-kitten/components';
+import { Icon, Datepicker, Input, NativeDateService, ListItem } from '@ui-kitten/components';
 import Loader from "../../Loader";
 import { connect } from "react-redux";
 import { getDetailOrder } from "../../../actions/order";
@@ -27,41 +27,32 @@ const RenderListHistory = ({ list, onPressLink }) => {
 	);
 }
 
-const RenderIcon = (style, range, onPressIcon) => (
+const RenderIcon = (style, onPressIcon) => (
 	<TouchableOpacity onPress={onPressIcon}>
-		{ !range.endDate || !range.startDate ?
-			<Icon {...style} name='close-outline' /> : 
-			<Icon {...style} name='search-outline' /> }
+		<Icon {...style} name='close-outline' /> 
 	</TouchableOpacity>
 )
 
 const TopNavigationSearch = ({ goBack, isSearching, setSearching, onSubmit }) => {
 	const dateRef = React.useRef();
+	const [dateVal, setDate] = React.useState(null);
 
-	const dateService = new NativeDateService('en', { format: 'YYYY/MM/DD' });
-
-	const [range, setRange] = React.useState({});
+	// const dateService = new NativeDateService('en', { format: 'YYYY/MM/DD' });
 
 	const onSearching = () => {
 		setSearching();
 		setTimeout(() => dateRef.current.focus(), 100);
 	}
 
-	const onSetRange = (e) => {
-		setRange(e);
-		if (e.endDate !== null && e.startDate !== null) {
-    		dateRef.current.blur();
-    	}
+
+	const onSetDate = (e) => {
+		setDate(e);
+		setTimeout(() => dateRef.current.blur(), 100);
 	} 
 
 	const onPress = () => {
-		//detect if icon is icon close
-		if (!range.endDate || !range.startDate) {
-			setSearching();
-			setRange({});
-		}else{
-			onSubmit(range);
-		}
+		setSearching();
+		setDate(null);
 	}
 
 	return(
@@ -74,14 +65,20 @@ const TopNavigationSearch = ({ goBack, isSearching, setSearching, onSubmit }) =>
 				<TouchableOpacity style={styles.rightContent} onPress={onSearching}>
 					<Icon name='search-outline' fill='#FFF' width={23} height={23}/>
 				</TouchableOpacity>
-			</View> : <RangeDatepicker
-		        range={range}
-		        onSelect={onSetRange}
-		        icon={(style) => RenderIcon(style, range, onPress)}
-		        placeholder='Pilih tanggal order'
-		        ref={dateRef}
-		        dateService={dateService}
-		    /> }
+			</View> : 
+			<View style={styles.navigationContent}>
+				<Datepicker
+			        date={dateVal}
+			        onSelect={(e) => onSetDate(e)}
+			        icon={(style) => RenderIcon(style, onPress)}
+			        placeholder='Pilih tanggal order'
+			        ref={dateRef}
+			        style={{flex: 1}}
+			    />
+			    { dateVal && <TouchableOpacity style={styles.searchButton} onPress={() => onSubmit(dateVal)}>
+			    		<Icon name='search-outline' width={23} height={23} fill="black" />
+			    	</TouchableOpacity>}
+			</View> }
 		</View>
 	);
 }
@@ -97,28 +94,27 @@ class Index extends React.Component{
 		this.setState({ isSearching: !this.state.isSearching });
 	}
 
-	onSubmit = (range) => {
-		const { endDate, startDate } = range;
+	onSubmit = (date) => {
 		this.setState({ loading: true });
+
 		const payload = {
-			startdate: this.convertDate(startDate, 1),
-			enddate: this.convertDate(endDate, 1),
+			startdate: this.convertDate(date, 1),
+			enddate: this.convertDate(date, 1),
 			status: "0",
-			idorder: "",
+			extid: "",
 			email: this.props.dataLogin.detail.email
 		}
+
 		this.props.getDetailOrder(payload)
 			.then(() => {
-				const dateranges = `${this.convertDate(startDate, 2)}-${this.convertDate(endDate, 2)}`;
+				const dateReal = this.convertDate(date, 2);
 				this.setState({ loading: false });
-				this.props.navigation.navigate({
-					routeName: 'DetailOrder',
-					params: {
-						dateranges
-					}
+				this.props.navigation.replace('DetailOrder', {
+					dateReal
 				})
 			})
 			.catch(err => {
+				console.log(err);
 				this.setState({ loading: false });
 				if (err.result) {
 					Alert.alert(
@@ -165,12 +161,25 @@ class Index extends React.Component{
 	    }
 	}
 
-	onPressHistory = (dateranges) => this.props.navigation.navigate({
-		routeName: 'DetailOrder',
-		params: {
-			dateranges
+	onPressHistory = (dateReal) => {
+		const payload = {
+			startdate: this.convertDate(dateReal, 1),
+			enddate: this.convertDate(dateReal, 1),
+			status: "0",
+			extid: "",
+			email: this.props.dataLogin.detail.email
 		}
-	})
+
+		//dont need loading
+		this.props.getDetailOrder(payload);
+
+		this.props.navigation.navigate({
+			routeName: 'DetailOrder',
+			params: {
+				dateReal
+			}
+		})	
+	} 
 
 	render(){
 		const { pickup } = this.props.dataorder;

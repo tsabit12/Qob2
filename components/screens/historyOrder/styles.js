@@ -39,7 +39,7 @@ export default StyleSheet.create({
 		borderTopWidth: 0.4,
 		elevation: 5,
 		borderColor: '#cbccc4',
-		zIndex: 1
+		zIndex: 1,
 	},
 	tabLeft: {
 		flex: 1,
@@ -56,7 +56,15 @@ export default StyleSheet.create({
 	subTitleText: {
 		fontSize: 14,
 		fontFamily: 'open-sans-reg',
-		color: '#b8b6b6',
+		color: '#8a8a88',
 		paddingBottom: 3
+	},
+	searchButton: {
+		alignItems: 'center', 
+		justifyContent: 'center', 
+		marginLeft: 10,
+		backgroundColor: '#FFF',
+		padding: 8,
+		borderRadius: 20
 	}
 })

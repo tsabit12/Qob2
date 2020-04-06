@@ -37,7 +37,7 @@ const MenuNotMember = ({ navigation, showAlert }) => (
 						<Text style={styles.titleText}>Cek Tarif</Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity 
+				{ /*<TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => navigation.navigate({
                         routeName: 'RequestPickup'
@@ -50,8 +50,9 @@ const MenuNotMember = ({ navigation, showAlert }) => (
 					<View style={styles.subtitle}>
 						<Text style={styles.titleText}>Request Pickup</Text>
 					</View>
-				</TouchableOpacity>
-				{ /* <TouchableOpacity 
+				</TouchableOpacity> */}
+
+				<TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => Linking.openURL('tel:' + '161')}
 				>
@@ -62,7 +63,7 @@ const MenuNotMember = ({ navigation, showAlert }) => (
 					<View style={styles.subtitle}>
 						<Text style={styles.titleText}>Halo Pos</Text>
 					</View>
-				</TouchableOpacity> */ }
+				</TouchableOpacity>
 			</View>
 			<View style={styles.content}>
 				<TouchableOpacity 

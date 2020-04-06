@@ -3,7 +3,8 @@ import {
   StyleSheet,
   View,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
+  Text
 } from 'react-native';
 
 const Loader = props => {
@@ -21,6 +22,7 @@ const Loader = props => {
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
           <ActivityIndicator animating={loading} />
+          { props.messagenya && <Text style={{fontSize: 13, textAlign: 'center'}}>{props.messagenya}</Text> }
         </View>
       </View>
     </Modal>

@@ -183,7 +183,7 @@ class IndexSearch extends React.Component{
 				setTimeout(() => {
 					Alert.alert(
 					  'Oppps',
-					  `${res.desk_mess}`,
+					  `${err.desk_mess}`,
 					  [
 					  	{ text: 'Tutup', style: 'cancel' },
 					  ],
