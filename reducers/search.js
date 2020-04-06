@@ -4,7 +4,8 @@ import { omit } from 'lodash';
 const intialState = {
 	rekening: {},
 	trace: {},
-	errors: {}
+	errors: {},
+	version: '1.0.4'
 }
 
 export default function search(state=intialState, action={}){

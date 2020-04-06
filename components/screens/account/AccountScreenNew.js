@@ -81,11 +81,18 @@ const RenderSaldoView = ({ detail }) => (
 	</React.Fragment>
 );
 
-const PebisolInfo = ({ detail, userid }) => (
+const PebisolInfo = ({ detail, userid, onOpenEdit }) => (
 	<React.Fragment>
 		<View style={styles.info}>
-			<Text style={styles.title}>Userid</Text>
-			<Text style={styles.subtitle}>{userid}</Text>
+			<View style={{flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
+				<View style={{justifyContent: 'flex-start'}}>
+					<Text style={styles.title}>Userid</Text>
+					<Text style={styles.subtitle}>{userid}</Text>
+				</View>
+				<TouchableOpacity style={styles.editButton} onPress={() => onOpenEdit()}>
+					<Icon name='edit-2-outline' width={25} height={25} fill='#FFF' />
+				</TouchableOpacity>
+			</View>
 		</View>
 		<View style={styles.info}>
 			<Text style={styles.title}>Nama Online Shop</Text>
@@ -118,11 +125,18 @@ const PebisolInfo = ({ detail, userid }) => (
 	</React.Fragment>
 );
 
-const UserInfo = ({ detail, userid }) => (
+const UserInfo = ({ detail, userid, onOpenEdit }) => (
 	<React.Fragment>
 		<View style={styles.info}>
-			<Text style={styles.title}>Userid</Text>
-			<Text style={styles.subtitle}>{userid}</Text>
+			<View style={{flexDirection: 'row', flex: 1, justifyContent: 'space-between'}}>
+				<View style={{justifyContent: 'flex-start'}}>
+					<Text style={styles.title}>Userid</Text>
+					<Text style={styles.subtitle}>{userid}</Text>
+				</View>
+				<TouchableOpacity style={styles.editButton} onPress={() => onOpenEdit()}>
+					<Icon name='edit-2-outline' width={25} height={25} fill='#FFF' />
+				</TouchableOpacity>
+			</View>
 		</View>
 		<View style={styles.info}>
 			<Text style={styles.title}>Nomor Handphone</Text>
@@ -156,7 +170,8 @@ class AccountScreenNew extends React.Component{
 		errors: {},
 		responseKodepos: [],
 		choosed: null,
-		alamatUtama: ''
+		alamatUtama: '',
+		backgroundColor: 'rgb(255, 102, 0)'
 	}
 
 	// componentDidMount(){
@@ -295,6 +310,14 @@ class AccountScreenNew extends React.Component{
 		}
 	}
 
+	handleScroll = (e) => {
+		if (Math.round(e.nativeEvent.contentOffset.y) > 100) {
+			this.setState({ backgroundColor: '#ffbf00'});
+		}else{
+			this.setState({ backgroundColor: 'rgb(255, 102, 0)'});
+		}
+	} 
+
 	render(){
 		const { dataLogin } = this.props;
 		const { errors, responseKodepos } = this.state;
@@ -306,14 +329,11 @@ class AccountScreenNew extends React.Component{
 				<TopNavigation
 				    leftControl={this.BackAction()}
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
-				    style={{backgroundColor: 'rgb(255, 102, 0)'}}
+				    style={{backgroundColor: this.state.backgroundColor}}
 				    subtitleStyle={{color: '#FFF'}}
 				    rightControls={this.renderRightControls()}
 				/>
-				<TouchableOpacity style={styles.buttonEdit} onPress={this.onOpenEdit}>
-					<Icon name='edit-2-outline' width={25} height={25} fill='#FFF' />
-				</TouchableOpacity>
-				<ScrollView>
+				<ScrollView onScroll={this.handleScroll}>
 					<ImageBackground source={require('../../../assets/profil_back.png')} style={{height: height / 4.5, marginTop: -2, width: width + 2}}>
 						<View style={styles.card}>
 							{ dataLogin.detail.norek === '-' ? 
@@ -333,9 +353,15 @@ class AccountScreenNew extends React.Component{
 						</View>
 					</ImageBackground>
 					<View style={styles.detailProfil}>
-						{ dataLogin.userid.substring(0, 3) === '440' ? 
-							<PebisolInfo detail={dataLogin.detail} userid={dataLogin.userid} /> : 
-							<UserInfo detail={dataLogin.detail} userid={dataLogin.userid} />}
+						{ dataLogin.userid.substring(0, 3) === '440' ? <PebisolInfo 
+							detail={dataLogin.detail} 
+							userid={dataLogin.userid}
+							onOpenEdit={this.onOpenEdit}
+						/> : <UserInfo detail={dataLogin.detail} userid={dataLogin.userid} onOpenEdit={this.onOpenEdit} />}
+						<View style={{marginTop: 5, marginBottom: 20}}>
+							<Text style={{textAlign: 'center', color: '#9ca19d'}}>Versi apk saat ini</Text>
+							<Text style={{textAlign: 'center', color: '#9ca19d'}}>{this.props.version}</Text>
+						</View>
 					</View>
 					<Dialog.Container visible={this.state.open} contentStyle={{width: width - 25}}>
 						<Dialog.Input
@@ -430,7 +456,7 @@ const styles = StyleSheet.create({
 		minHeight: height / 1.5 + 27
 	},
 	buttonEdit: {
-		width: '10%',
+		width: '17%',
 		position: 'absolute', 
 		backgroundColor: 'red',
 		right: 0,
@@ -439,19 +465,30 @@ const styles = StyleSheet.create({
 		zIndex: 1,
 		alignItems: 'center',
 		padding: 8,
-		borderRadius: 50
+		borderRadius: height / 10,
+		minHeight: height / 11.6
 	},
 	scroll: {
 		height: height / 3,
 		paddingBottom: 50,
 		width: '109%',
 		marginLeft: -15
+	},
+	editButton: {
+		backgroundColor: 'red', 
+		justifyContent: 'center',
+		alignItems: 'center',
+		padding: 10,
+		minHeight: height / 20,
+		borderRadius: 50,
+		width: width / 8.5
 	}
 })
 
 function mapStateToProps(state) {
 	return{
-		dataLogin: state.auth.dataLogin
+		dataLogin: state.auth.dataLogin,
+		version: state.search.version
 	}
 }
 
