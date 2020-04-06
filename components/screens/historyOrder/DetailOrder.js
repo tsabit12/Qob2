@@ -112,7 +112,7 @@ const PickupView = ({ data, visible, showDetail, checked, onCheckedChange, onPic
 					</React.Fragment>
 				)}
 				<Button style={{margin: 10}} onPress={onPickup}>
-					{ location ? 'AKTIFKAN LOKASI' : 'PICKUP' }
+					{ location ? 'GET LOCATION' : 'PICKUP' }
 				</Button>
 			</ScrollView> : <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
 				<Text style={{fontSize: 16, color: '#cbccc4'}}>Data tidak ditemukan</Text>
@@ -135,8 +135,9 @@ class DetailOrder extends React.Component{
 		fadeAnim: new Animated.Value(0)
 	}
 
-	componentDidMount(){
+	async componentDidMount(){
 		this.runAnimated();
+		this._getLocationAsync();
 		// console.log(this.props.pickup);
 	}
 
@@ -361,10 +362,10 @@ class DetailOrder extends React.Component{
 				}else{
 					Alert.alert(
 					  'Notifikasi',
-					  'Kami belum mendapatkan lokasi anda saat ini. Harap aktifkan terlebih dahulu GPS anda',
+					  'Kami belum mendapatkan lokasi anda saat ini. Harap pastikan bahwa GPS anda sudah aktif terlebih dahulu',
 					  [
 					  	{ text: 'Batal', style: 'cancel'},
-					  	{ text: 'Aktifkan Lokasi', onPress: () => this._getLocationAsync()}
+					  	{ text: 'Get Lokasi', onPress: () => this._getLocationAsync()}
 					  ],
 					  {cancelable: false},
 					);
