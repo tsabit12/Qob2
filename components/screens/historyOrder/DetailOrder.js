@@ -139,7 +139,6 @@ class DetailOrder extends React.Component{
 	async componentDidMount(){
 		this.runAnimated();
 		this._getLocationAsync();
-		// console.log(this.props.pickup);
 	}
 
 	BackAction = () => (
@@ -257,8 +256,10 @@ class DetailOrder extends React.Component{
 					const filterState 	= this.props.pickup.filter(x => keys.includes(x.extid));
 					const unFilterState = this.props.pickup.filter(x => !keys.includes(x.extid));
 					const { dateReal } 	= this.props.navigation.state.params;
+					const { location }  = this.state; 
+					var payloadItem 	= [];
+					var payloadExtid 	= [];
 
-					var payloadItem = [];
 					filterState.forEach(x => {
 						payloadItem.push({
 							extid: x.extid,
@@ -280,14 +281,17 @@ class DetailOrder extends React.Component{
 				            desctrans: x.desctrans,
 				            receiverzipcode: x.receiverzipcode
 						});
-					});
 
+						payloadExtid.push({
+							extid: x.extid 
+						});
+					});
 					const allPayload = {
 						shipper: {
 							userId: this.props.dataLogin.userid,
 							name: filterState[0].shippername,
-							latitude: this.state.location.coords.latitude,
-							longitude: this.state.location.coords.longitude,
+							latitude: location.coords.latitude,
+							longitude: location.coords.longitude,
 					        phone: filterState[0].shipperphone,
 					        address: filterState[0].shipperaddress,
 					        city: filterState[0].shippersubdistrict,
@@ -300,7 +304,12 @@ class DetailOrder extends React.Component{
 
 					this.props.addPickupBaru(allPayload, dateReal, unFilterState)
 						.then(() => {
-							this.updateStatusPickup(payloadItem);
+							const payloadStatus = {
+								pickupNumber: this.props.pickupNumber,
+								extid: payloadExtid, //array object key extid
+								shipperLatlong: `${location.coords.latitude}|${location.coords.longitude}`
+							};
+							this.updateStatusPickup(payloadStatus);
 						})
 						.catch(err => {
 							console.log(err);
@@ -367,62 +376,43 @@ class DetailOrder extends React.Component{
 	    .catch(() => this.setState({ rejectLocation: true }));
 	}
 
-	updateStatusPickup = (arr) => {
-		const success = [];
-		arr.forEach(x => {
-			//i dont fucking care if success or not
-			//just response it with success
-			apiBaru.qob.updateStatus(x.extid, this.props.pickupNumber)
-				.then(res => {
-					console.log(res);
-					console.log("success");
-					if (!res.respcode) {
-						success.push({
-							res: '400',
-							extid: x.extid
-						});
-					}else{
-						success.push({
-							res: res.respcode,
-							extid: x.extid
-						});
-					}
-				})
-				.catch(err => {
-					console.log(err.response);
-					console.log("error");
-					if (!err.respcode) {
-						success.push({
-							res: '500',
-							extid: x.extid
-						});
-					}else{
-						success.push({
-							res: err.respcode,
-							extid: x.extid
-						});
-					}
-				})
-		});
+	updateStatusPickup = (payload) => {
+		apiBaru.qob.updateStatus(payload)
+			.then(res => {
+				this.setState({ loading: false, checked: {} });
 
-		// console.log(success);
-		// if (success.length > 0) { //al progress are done
-			this.setState({ loading: false, checked: {} });
-			setTimeout(() => {
-				Alert.alert(
-				  'Notifikasi',
-				  `${arr.length} item berhasil dipickup dengan nomor pickup : ${this.props.pickupNumber}`,
-				  [
-				  	{
-				      text: 'Tutup',
-				      style: 'cancel',
-				    }
-				  ],
-				  {cancelable: false},
-				);
-			}, 30);
-		// }
-	}
+				setTimeout(() => {
+					Alert.alert(
+					  'Notifikasi',
+					  `${res.length} item berhasil dipickup dengan nomor pickup : ${this.props.pickupNumber}`,
+					  [
+					  	{
+					      text: 'Tutup',
+					      style: 'cancel',
+					    }
+					  ],
+					  {cancelable: false},
+					);
+				}, 30);
+			})
+			.catch(err => {
+				this.setState({ loading: false, checked: {} });
+
+				setTimeout(() => {
+					Alert.alert(
+					  'Notifikasi',
+					  `Gagal insert pickup`,
+					  [
+					  	{
+					      text: 'Tutup',
+					      style: 'cancel',
+					    }
+					  ],
+					  {cancelable: false},
+					);
+				}, 30);
+			})
+	}	
 
 	getHistoryStatus = (payload) => {
 		this.setState({ loading: true, history: [] });

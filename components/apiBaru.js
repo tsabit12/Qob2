@@ -38,11 +38,14 @@ export default{
 				return Promise.reject(result);
 			}
 		}),
-		updateStatus: (extid, pickupNumber) => axios.post(`${url}/confirmPickup`, {
-			pickupid: pickupNumber,
-			extid: extid
+		updateStatus: (payload) => axios.post(`${url}/confirmPickup`, {
+			...payload
 		}).then(res => {
-			return res.data.result;
+			if (!res.data) {
+				return Promise.reject(res);
+			}else{
+				return res.data;
+			}
 		}),
 		getHistoryStatus: (payload) => axios.post(`${url}/history`, {
 			...payload
