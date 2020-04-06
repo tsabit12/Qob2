@@ -196,7 +196,7 @@ class Index extends React.Component{
 				{ Object.keys(pickup).length > 0 ? <ScrollView style={{flex: 1}}>
 						<RenderListHistory list={pickup} onPressLink={this.onPressHistory} />
 					</ScrollView> : <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-						<Text style={{fontSize: 16, color: '#cbccc4'}}>Riwayat pencarian tidak ditemukan</Text>
+						<Text style={{fontSize: 16, color: '#cbccc4', textAlign: 'center'}}>Riwayat pencarian tidak ditemukan. Silahkan klik tombol pencarian di pojok kanan atas</Text>
 					</View> }
 			</View>
 		);
