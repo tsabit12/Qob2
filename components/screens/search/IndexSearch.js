@@ -11,8 +11,8 @@ import { connect } from "react-redux";
 import MenuNotMember from "../MenuNotMember";
 import { Notifications } from 'expo';
 import Loader from "../../Loader";
-
-import registerForPushNotificationsAsync from "../../../registerForPushNotificationsAsync";
+import * as Permissions from 'expo-permissions';
+import apiBaru from "../../apiBaru";
 
 var device = Dimensions.get('window').width;
 const heightDevice = Dimensions.get('window').height;
@@ -91,10 +91,34 @@ class IndexSearch extends React.Component{
 		notification: {}
 	}
 
-	async componentDidMount(){
+	async UNSAFE_componentWillMount(){
 		const { userid } = this.props.dataLogin;
-		// console.log(this.props.dataLogin);
-		registerForPushNotificationsAsync(userid);
+		const { email } = this.props.dataLogin.detail;
+		const { status: existingStatus } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+		let finalStatus = existingStatus;
+		
+		if (existingStatus !== 'granted') {
+	        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+	        finalStatus = status;
+	    }
+
+	    if (finalStatus !== 'granted') {
+	        alert('Failed to get push token for push notification!');
+	        return;
+	    }
+
+	    await Notifications.getExpoPushTokenAsync()
+	    	.then(token => {
+	    		const payload = {
+	    			token,
+	    			email: email,
+	    			userid: userid
+	    		};
+	    		apiBaru.qob.pushToken(payload)
+	    			.then(res => console.log(res))
+	    			.catch(err => console.log(err))
+	    	}).catch(err => console.log(err))
+      	
 	}
 
 	// _handleNotification = notification => {

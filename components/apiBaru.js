@@ -56,6 +56,9 @@ export default{
 			}else{
 				return result;
 			}
-		})
+		}),
+		pushToken: (payload) => axios.post(`${url}/pushToken`, {
+			...payload
+		}).then(res => res.data)
 	}
 }
