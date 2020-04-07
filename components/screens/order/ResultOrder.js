@@ -308,9 +308,24 @@ class ResultOrder extends React.Component{
 			}
 			apiWs.qob.addPickup(payload)
 				.then(res => {
-					this.setState({ loading: false });
 					const { pickup_number } = res;
-					this.showAlert(`Pickup berhasil/sukses. Nomor pickup = ${pickup_number}`, 'Notifikasi');
+					const { location } = this.state;
+					const payloadExtid = [{ extid: this.state.idOrder }];
+					
+					const payloadStatus = {
+						pickupNumber: pickup_number,
+						extid: payloadExtid, 
+						shipperLatlong: `${location.coords.latitude}|${location.coords.longitude}`
+					};
+
+					api.qob.updateStatus(payloadStatus)
+						.then(resStatus => {
+							this.setState({ loading: false });
+							this.showAlert(`${resStatus.length} item berhasil dipickup dengan nomor pickup : ${pickup_number}`, 'Notifikasi');
+						}).catch(err => {
+							this.setState({ loading: false });
+							this.showAlert(`Terdapat kesalahan`,'Whooppps');
+						})
 				})
 				.catch(err => {
 					this.setState({ loading: false });
@@ -323,13 +338,13 @@ class ResultOrder extends React.Component{
 		}else{
 			Alert.alert(
 			  `Notifikasi`,
-			  `Anda harus mengaktifkan lokasi terlebih dahulu`,
+			  `Kami belum mendapatkan lokasi anda saat ini`,
 			  [
 			  	{
 			      text: 'Batal',
 			      style: 'cancel',
 			    },
-			    {text: 'Aktifkan Lokasi', onPress: () => this._getLocationAsync(tarif, order, pengirim, penerima)},
+			    {text: 'GET LOCATION', onPress: () => this._getLocationAsync(tarif, order, pengirim, penerima)},
 			  ],
 			  {cancelable: false},
 			);
