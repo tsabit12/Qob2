@@ -16,14 +16,13 @@ export default StyleSheet.create({
 	},
 	cardForm:{
 		padding: 6, 
-		borderRightWidth: 0.1, 
-		borderLeftWidth: 0.1,
-		borderTopWidth: 0.4,
-		borderBottomWidth: 0.4,
+		// borderRightWidth: 0.1, 
+		// borderLeftWidth: 0.1,
+		borderWidth: 0.4,
+		// borderBottomWidth: 0.4,
 		borderColor: '#909190', 
 		borderRadius: 5, 
 		marginTop: 5,
-		elevation: 1,
 		flex: 1
 	}
 })

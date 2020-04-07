@@ -5,7 +5,7 @@ import { Linking } from "expo";
 
 var device = Dimensions.get('window').width;
 
-const MenuNotMember = ({ navigation }) => (
+const MenuNotMember = ({ navigation, showAlert }) => (
 	<React.Fragment>
 		<View style={styles.container}>
 			<View style={styles.content}>
@@ -37,6 +37,21 @@ const MenuNotMember = ({ navigation }) => (
 						<Text style={styles.titleText}>Cek Tarif</Text>
 					</View>
 				</TouchableOpacity>
+				{ /*<TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => navigation.navigate({
+                        routeName: 'RequestPickup'
+                    })}
+				>
+					<Image 
+						source={require("../../assets/pickup.png")}
+						style={styles.img}
+					/>
+					<View style={styles.subtitle}>
+						<Text style={styles.titleText}>Request Pickup</Text>
+					</View>
+				</TouchableOpacity> */}
+
 				<TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => Linking.openURL('tel:' + '161')}
@@ -54,20 +69,6 @@ const MenuNotMember = ({ navigation }) => (
 				<TouchableOpacity 
 					style={styles.iconPress}
 					onPress={() => navigation.navigate({
-                        routeName: 'RequestPickup'
-                    })}
-				>
-					<Image 
-						source={require("../../assets/pickup.png")}
-						style={styles.img}
-					/>
-					<View style={styles.subtitle}>
-						<Text style={styles.titleText}>Request Pickup</Text>
-					</View>
-				</TouchableOpacity>
-				<TouchableOpacity 
-					style={styles.iconPress}
-					onPress={() => navigation.navigate({
                         routeName: 'RiwayatPickup'
                     })}
 				>
@@ -76,7 +77,19 @@ const MenuNotMember = ({ navigation }) => (
 						style={styles.img}
 					/>
 					<View style={styles.subtitle}>
-						<Text style={styles.titleText}>Riwayat Pickup</Text>
+						<Text style={styles.titleText}>{`Riwayat\nOrder`}</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity 
+					style={styles.iconPress}
+					onPress={() => showAlert('Anda akan melakukan generate token web')}
+				>
+					<Image 
+						source={require("../../assets/generatePwd.png")}
+						style={styles.img}
+					/>
+					<View style={styles.subtitle}>
+						<Text style={styles.titleText}>Generate Web Token</Text>
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity 
@@ -103,8 +116,13 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		margin: 3,
-		marginTop: 20,
-		height: '100%'
+		margin: 10,
+		height: '100%',
+		borderWidth: 0.6,
+		padding: 10,
+		paddingBottom: 5,
+		borderRadius: 5,
+		borderColor: '#b5b0b0'
 	},
 	content:{
 		flex: 1,
@@ -135,8 +153,7 @@ const styles = StyleSheet.create({
 	},
 	titleText: {
 		color: 'black', 
-		textAlign: 'center',
-		fontFamily: 'Roboto-Regular'
+		textAlign: 'center'
 	}
 })
 

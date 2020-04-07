@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, AsyncStorage, StatusBar } from "react-native";
+import { View, Text, StyleSheet, ScrollView, KeyboardAvoidingView, AsyncStorage, StatusBar, Alert } from "react-native";
 import { SafeAreaView } from 'react-navigation';
 import { Button, Input, TopNavigation, TopNavigationAction, Icon } from '@ui-kitten/components';
 import Loader from "../Loader";
@@ -28,7 +28,7 @@ const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='black' />
 );
 
-const MessageSucces = ({ message, visible, onPress, backHome }) => (
+const MessageSucces = ({ message, visible, backHome }) => (
 	<View>
         <Dialog.Container visible={true}>
           <Dialog.Description>
@@ -61,9 +61,7 @@ class PemulihanAkun extends React.Component{
 		loading: false,
 		success: {
 			status: false,
-			message: '',
-			statusVer: false,
-			messageVer: ''
+			message: ''
 		},
 		visible: false,
 		kode: '',
@@ -144,30 +142,18 @@ class PemulihanAkun extends React.Component{
 
 			api.registrasi.lupaPin(payload, data.userid)
 				.then(res => {
-					this.saveSessionRequest(valueSession)
-						.then(res => {
-							this.setState({ 
-								loading: false, 
-								visible: true, 
-								success: {
-									...this.state.success,
-									status: true,
-									message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, anda hanya tinggal menunggu kode verifikasi`
-								}
-							});
-						})
-						.catch(err => { //errors when save to storage
-							this.setState({ 
-								loading: false, 
-								visible: true, 
-								success: {
-									...this.state.success,
-									status: true,
-									message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, harap tunggu sampai kode verifikasi berhasil dikirim`
-								}
-							});
-						});
+					this.saveSessionRequest(valueSession);
+					this.setState({ 
+						loading: false, 
+						visible: true, 
+						success: {
+							...this.state.success,
+							status: true,
+							message: `Response status(${res.rc_mess}) \nRequest ${titlePemulihan} berhasil/sukses, anda hanya tinggal menunggu kode verifikasi`
+						}
+					});
 				}).catch(err => {
+					console.log(err);
 					if (Object.keys(err).length === 10) {
 						this.setState({ 
 							loading: false, 
@@ -199,9 +185,9 @@ class PemulihanAkun extends React.Component{
 
 	onBackHome = () => {
 		this.setState({ visible: false });
-		this.props.navigation.navigate({
-			routeName: 'Home'
-		})
+		setTimeout(() => {
+			this.props.navigation.push('Home');
+		}, 100);	
 	}
 
 	onChangeKode = (e) => this.setState({ kode: e })
@@ -268,20 +254,13 @@ class PemulihanAkun extends React.Component{
 						nohp: parsing[4],
 						email: parsing[5]
 					};
-					//update storage
+					
 					this.saveToStorage(payloadRes)
 						.then(() => {
-							this.setState({ 
-								loading: false, 
-								success: {
-									...this.state.success,
-									statusVer: true,
-									messageVer: res.response_data1
-								},
-								visible: true
-							})
+							this.setState({ loading: false });
+							this.showMessage(res.response_data1);
 							this.props.saveRegister(payloadRes);
-							this.removeSession(); //all history request
+							this.removeSession();
 						})
 						.catch(() => alert("Kami mengalami masalah saat menyimpan data. harap cobalagi dalam 24 jam"));
 				}).catch(err => {
@@ -294,6 +273,22 @@ class PemulihanAkun extends React.Component{
 					
 				});	
 		}
+	}
+
+	showMessage = (message) => {
+		Alert.alert(
+		  'Notifikasi',
+		  `${message}`,
+		  [
+		  	{
+		      text: 'Tutup',
+		      onPress: () => console.log('Cancel Pressed'),
+		      style: 'cancel',
+		    },
+		    {text: 'Login', onPress: () => this.props.navigation.push('Home')},
+		  ],
+		  {cancelable: false},
+		);
 	}
 
 	validateKode = (kode) => {
@@ -309,7 +304,7 @@ class PemulihanAkun extends React.Component{
 	);
 
 	render(){
-		const { data, errors, loading, success, visible } = this.state;
+		const { data, errors, loading, success } = this.state;
 
 		return(
 			<KeyboardAvoidingView 
@@ -327,12 +322,11 @@ class PemulihanAkun extends React.Component{
 					    style={{backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#e6e6e6'}}
 					/>
 					<Loader loading={loading} />
-					{ success.statusVer && <MessageSucces 
+					{ /* success.statusVer && <MessageSucces 
 							message={success.messageVer} 
 							visible={visible} 
-							onPress={() => this.setState({ visible: false })}
 							backHome={this.onBackHome}
-						/> }
+						/> */ }
 					{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} />}
 					<ScrollView>
 							{ !success.status ? <React.Fragment>

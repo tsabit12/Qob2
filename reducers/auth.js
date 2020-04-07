@@ -1,4 +1,12 @@
-import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, SAVE_STORAGE_REQUEST, CLEARE_STORAGE_REQUEST } from "../types";
+import { 
+	USER_LOGGED_IN, 
+	GET_DETAIL_USER, 
+	USER_LOGGED_OUT, 
+	SAVE_STORAGE_REQUEST, 
+	CLEARE_STORAGE_REQUEST, 
+	UPDATE_PROFILE,
+	UPDATE_PIN 
+} from "../types";
 const initialState = {
 	logged: false,
 	user: {},
@@ -7,7 +15,8 @@ const initialState = {
 		norek: '',
 		detail: {}
 	},
-	request: []
+	request: [],
+	pin: null
 }
 
 export default function auth(state=initialState, action={}){
@@ -20,7 +29,8 @@ export default function auth(state=initialState, action={}){
 					userid: action.userid,
 					norek: action.response.norek,
 					detail: action.response
-				}
+				},
+				pin: action.pin
 			}
 		case GET_DETAIL_USER:
 			return{
@@ -36,7 +46,8 @@ export default function auth(state=initialState, action={}){
 					norek: null,
 					detail: {}
 				},
-				user: {}
+				user: {},
+				pin: null
 			}
 		case SAVE_STORAGE_REQUEST:
 			return{
@@ -57,6 +68,40 @@ export default function auth(state=initialState, action={}){
 					kec: action.newPayload.kec
 				}
 			}
+		case 'UPDATE_REK_GIRO':
+			return{
+				...state,
+				dataLogin: {
+					...state.dataLogin,
+					norek: action.noRek,
+					detail: {
+						...state.dataLogin.detail,
+						saldo: action.saldo
+					}
+				}
+			}
+		case UPDATE_PROFILE:
+			return{
+				...state,
+				dataLogin: {
+					...state.dataLogin,
+					detail: {
+						...state.dataLogin.detail,
+						kecamatan: action.alamat.kec,
+						kelurahan: action.alamat.kel,
+						kodepos: action.alamat.kodepos,
+						kota: action.alamat.kab,
+						provinsi: action.alamat.prov,
+						alamatOl: action.alamat.alamatUtama
+					}	
+				}
+			}
+		case UPDATE_PIN: {
+			return{
+				...state,
+				pin: action.pin
+			}
+		}
 		default: return state;
 	}
 }

@@ -2,11 +2,12 @@ import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT } from "../types";
 import api from "../components/api";
 import apiWs from "../components/apiWs";
 
-export const setLoggedIn = (userid, response) => dispatch => {
+export const setLoggedIn = (userid, response, pin) => dispatch => {
 	dispatch({
 		type: USER_LOGGED_IN,
 		userid,
-		response
+		response,
+		pin
 	})
 }
 
@@ -92,5 +93,13 @@ export const getDetailUser = (userid) => dispatch =>
 export const loggedOut = () => dispatch => {
 	dispatch({
 		type: USER_LOGGED_OUT
+	})
+}
+
+export const updateLoginSes = (noRek, saldo) => dispatch => {
+	dispatch({
+		type: 'UPDATE_REK_GIRO',
+		noRek,
+		saldo
 	})
 }

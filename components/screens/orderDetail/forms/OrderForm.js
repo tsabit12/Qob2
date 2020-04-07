@@ -119,6 +119,7 @@ class OrderForm extends React.Component{
 				      status={errors.jenis && 'danger'}
 				      onSubmitEditing={() => this.beratRef.current.focus() }
 				      caption={errors.jenis && `${errors.jenis}`}
+				      returnKeyType='next'
 					/>
 					<Input
 				      placeholder='Berat kiriman dalam gram'
@@ -133,6 +134,7 @@ class OrderForm extends React.Component{
 				      onChangeText={(e) => this.onChange(e, this.beratRef.current.props)}
 				      onSubmitEditing={() => this.panjangRef.current.focus() }
 				      caption={errors.berat && `${errors.berat}`}
+				      returnKeyType='next'
 				    />
 				    <View style={styles.diametrikInput}>
 				    	<Input
@@ -148,6 +150,7 @@ class OrderForm extends React.Component{
 					      onChangeText={(e) => this.onChange(e, this.panjangRef.current.props)}
 					      onSubmitEditing={() => this.lebarRef.current.focus() }
 					      caption={errors.panjang && `${errors.panjang}`}
+					      returnKeyType='next'
 					    />
 					    <Input
 					      placeholder='XX (CM)'
@@ -162,6 +165,7 @@ class OrderForm extends React.Component{
 					      onChangeText={(e) => this.onChange(e, this.lebarRef.current.props)}
 					      onSubmitEditing={() => this.tinggiRef.current.focus() }
 					      caption={errors.lebar && `${errors.lebar}`}
+					      returnKeyType='next'
 					    />
 					    <Input
 					      placeholder='XX (CM)'
@@ -176,6 +180,7 @@ class OrderForm extends React.Component{
 					      onChangeText={(e) => this.onChange(e, this.tinggiRef.current.props)}
 					      onSubmitEditing={() => this.nilaiRef.current.focus() }
 					      caption={errors.tinggi && `${errors.tinggi}`}
+					      returnKeyType='next'
 					    />
 				    </View>
 				    <Input
@@ -190,6 +195,8 @@ class OrderForm extends React.Component{
 				      onChangeText={(e) => this.onChangeNilai(e)}
 				      status={errors.nilai && 'danger'}
 				      caption={errors.nilai && `${errors.nilai}`}
+				      onSubmitEditing={this.onSubmit}
+				      returnKeyType='done'
 				    />
 				    { /*<CheckBox
 				      text='Cod'

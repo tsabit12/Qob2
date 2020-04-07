@@ -14,7 +14,11 @@ const renderIcon = (style, search, checked) => (
 );
 
 const capitalize = (string) => {
-	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	if (string) {
+		return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	}else{
+		return string;
+	}
 }
 
 const ListKabupaten = ({ list, handleChange, selectedIndex, onPress }) => {
@@ -74,13 +78,20 @@ class FormPengirim extends React.PureComponent{
 		searchParams: ''
 	}
 
-	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
+	onChange = (e, { name }) => {
+		this.setState({ 
+			data: { ...this.state.data, [name]: e },
+			errors: { ...this.state.errors, [name]: undefined }
+		})
+	}
 
-	onChangeParams = (e, { name }) => this.setState({ searchParams: e })
+	onChangeParams = (e, { name }) => this.setState({ 
+		searchParams: e, 
+		errors: { ...this.state.errors, kodepos: undefined } 
+	})
 
 	componentDidMount(){
 		const { detail } = this.props.user;
-		console.log(detail);
 		const { kelurahan, kecamatan, kota, provinsi } = detail;
 		this.setState({
 			data: {
@@ -126,11 +137,17 @@ class FormPengirim extends React.PureComponent{
 							this.setState({ loading: false, responseKodepos });
 						})
 						.catch(err => {
+							console.log(err.response);
 							if (err.response) {
-								this.setState({ loading: false });
+								this.setState({ 
+									loading: false,
+									errors: { ...this.state.errors, kodepos: 'Data tidak ditemukan' }
+								});
 							}else{
-								this.setState({ loading: false });
-								alert("Network error");
+								this.setState({ 
+									loading: false,
+									errors: { ...this.state.errors, kodepos: 'Network error' }
+								});
 							}
 						})
 				}else{
@@ -252,6 +269,11 @@ class FormPengirim extends React.PureComponent{
 		if (!data.kodepos) errors.kodepos = "Kodepos harap diisi";
 		if (!data.noHp) errors.noHp = "Nomor handphone harap diisi";
 		if (!data.alamatDetail) errors.alamatDetail = "Kelurahan, kecamatan, kabupaten harap diisi";
+		if (data.email) {
+			//regex email
+			var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+			if (!re.test(data.email)) errors.email = "Email tidak valid";
+		}
 		return errors;
 	}
 
@@ -282,6 +304,8 @@ class FormPengirim extends React.PureComponent{
 						disabled={checked}
 						status={errors.nama ? 'danger' : 'primary'}
 						caption={errors.nama && `${errors.nama}`}
+						autoCapitalize='words'
+						returnKeyType='next'
 					/>
 					<Input 
 						ref={this.alamatUtamaRef}
@@ -296,12 +320,13 @@ class FormPengirim extends React.PureComponent{
 						disabled={checked}
 						status={errors.alamatUtama ? 'danger' : 'primary'}
 						caption={errors.alamatUtama && `${errors.alamatUtama}`}
+						returnKeyType='next'
 					/>
 					{ !checked && <Input 
 						ref={this.searchParamsRef}
 					    placeholder='Kodepos/kelurahan/kec/kab'
 						name='searchParams'
-						label='Cari Alamat Lengkap'
+						label='* Cari Alamat Lengkap'
 						value={this.state.searchParams}
 						style={styles.input}
 						labelStyle={styles.label}
@@ -309,10 +334,10 @@ class FormPengirim extends React.PureComponent{
 						icon={(style) => renderIcon(style, this.state.search, checked)}
 						onIconPress={this.onIconPress}
 						disabled={this.state.search === true || checked === true && true}
-						//keyboardType='phone-pad'
 						onSubmitEditing={this.onIconPress}
 						status={errors.kodepos ? 'danger' : 'primary'}
 						caption={errors.kodepos && `${errors.kodepos}`}
+						returnKeyType='search'
 					/> }
 					{ responseKodepos.length > 0 && 
 						<ListKabupaten 
@@ -325,7 +350,7 @@ class FormPengirim extends React.PureComponent{
 						ref={this.kodeposRef}
 					    placeholder='Cari alamat lengkap dahulu'
 						name='kodepos'
-						label='Kodepos'
+						label='* Kodepos'
 						value={data.kodepos}
 						style={styles.input}
 						labelStyle={styles.label}
@@ -337,15 +362,14 @@ class FormPengirim extends React.PureComponent{
 						ref={this.alamatDetailRef}
 					    placeholder='Cari alamat lengkap dahulu'
 						name='alamatDetail'
-						label='Alamat Lengkap'
+						label='* Alamat Lengkap'
 						value={data.alamatDetail}
 						style={styles.input}
 						labelStyle={styles.label}
-						// disabled={this.state.search === true || checked === true && true}
 						disabled={true}
 						onChangeText={(e) => this.onChange(e, this.alamatDetailRef.current.props)}
 						status={errors.alamatDetail && 'danger'}
-						caption={errors.alamatDetail && `${errors.alamatDetail}`}
+						// caption={errors.alamatDetail && `${errors.alamatDetail}`}
 						onSubmitEditing={() => this.emailRef.current.focus() }
 					/>
 					<Input 
@@ -360,6 +384,10 @@ class FormPengirim extends React.PureComponent{
 						onSubmitEditing={() => this.noHpRef.current.focus() }
 						disabled={checked}
 						status='primary'
+						keyboardType='email-address'
+						autoCapitalize='none'
+						status={errors.email ? 'danger' : 'primary'}
+						caption={errors.email && `${errors.email}`}
 					/>
 					<Input 
 						ref={this.noHpRef}
@@ -375,8 +403,8 @@ class FormPengirim extends React.PureComponent{
 						status={errors.noHp ? 'danger' : 'primary'}
 						caption={errors.noHp && `${errors.noHp}`}
 					/>
-					<Button status='warning' style={{marginTop: 7}} onPress={this.onSubmit}>Selanjutnya</Button>
 				</View>
+				<Button status='warning' style={{marginTop: 7}} onPress={this.onSubmit}>Selanjutnya</Button>
 			</React.Fragment>
 		);
 	}

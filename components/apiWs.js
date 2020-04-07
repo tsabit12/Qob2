@@ -64,7 +64,7 @@ export default{
 		}).then(res => res.data),
 		getKodePos: (kodepos) => axios.post(`${url}/getPostalCodeNew`, {
 			kodepos: kodepos
-		}).then(res => res.data)
+		}, configFast).then(res => res.data)
 	},
 	fetch: {
 		getAddPosting: (userid) => axios.post(`${url}/getAddPosting`, {

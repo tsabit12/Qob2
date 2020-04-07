@@ -89,15 +89,12 @@ export default StyleSheet.create({
       width: 0,
       height: 1,
     },
-    shadowOpacity: 0.20,
-    shadowRadius: 1.41,
     padding: 5, 
     borderBottomWidth: 2, 
     borderRightWidth: 2, 
     borderLeftWidth: 1, 
     borderTopWidth: 1, 
     borderColor: '#f08400',
-    borderRadius: 4,
-    elevation: 1
+    borderRadius: 4
   }
 });

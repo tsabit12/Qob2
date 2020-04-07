@@ -62,7 +62,7 @@ export default StyleSheet.create({
     paddingBottom: 4
   },
   labelTarif: {
-    borderBottomWidth: 1, 
+    borderBottomWidth: 0.4, 
     borderBottomColor: '#cbccc4', 
   },
   StatusBar: {

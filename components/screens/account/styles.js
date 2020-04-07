@@ -31,7 +31,8 @@ export default StyleSheet.create({
 	},
 	labelSubTitle: {
 		fontFamily: 'Roboto-Regular', 
-		color: '#a6a3a2'
+		color: '#a6a3a2',
+		marginRight: 10
 	},
 	icon: {
 		marginTop: 8
@@ -63,6 +64,6 @@ export default StyleSheet.create({
 	},
 	StatusBar: {
 	    height: Constants.statusBarHeight,
-	    backgroundColor: 'rgb(240, 132, 0)'
+	    backgroundColor: 'rgb(255, 102, 0)'
 	}
 })
