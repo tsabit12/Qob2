@@ -41,7 +41,7 @@ export const getDetailOrder = (payload) => dispatch =>
 		.then(res => {
 			// const daterange = convertDate(payload.startdate);
 			const { data } 	= res;
-			const pickup 	= data.filter(x => x.laststatus === 'Order');
+			const pickup 	= data.filter(x => x.pickupnumber === null);
 			// const other 	= data.filter(x => x.laststatus !== 'Order');
 			dispatch(detailFetched(data, pickup, convertDate(payload.startdate)))
 		})

@@ -139,7 +139,6 @@ class DetailOrder extends React.Component{
 	async componentDidMount(){
 		this.runAnimated();
 		this._getLocationAsync();
-		console.log(this.props.pickup);
 	}
 
 	BackAction = () => (
@@ -478,6 +477,7 @@ class DetailOrder extends React.Component{
 
 	render(){
 		const { tab1, tab2, activePage, bounce } = this.state;
+		const { other, pickup } = this.props;
 		
 		return(
 			<View style={{flex: 1}}>
@@ -495,13 +495,13 @@ class DetailOrder extends React.Component{
 					<View style={styles.tabLeft}>
 						<TouchableOpacity style={{alignItems: 'center'}} onPress={this.onPressTab1}>
 							<Icon name='shopping-cart-outline' width={28} height={28} fill={tab1.color} />
-							<Text style={{color: tab1.color}}>Request Pickup</Text>
+							<Text style={{color: tab1.color}}>Request Pickup ({pickup.length})</Text>
 						</TouchableOpacity>
 					</View>
 					<View style={styles.tabRight}>
 						<TouchableOpacity style={{alignItems: 'center'}} onPress={this.onPressTab2}>
 							<Icon name='bookmark-outline' width={28} height={28} fill={tab2.color} />
-							<Text style={{color: tab2.color}}>Data Order</Text>
+							<Text style={{color: tab2.color}}>Data Order ({other.length})</Text>
 						</TouchableOpacity>
 					</View>
 				</View>

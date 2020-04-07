@@ -109,9 +109,15 @@ class Index extends React.Component{
 			.then(() => {
 				const dateReal = this.convertDate(date, 2);
 				this.setState({ loading: false });
-				this.props.navigation.replace('DetailOrder', {
-					dateReal
-				})
+				// this.props.navigation.replace('DetailOrder', {
+				// 	dateReal
+				// })
+				this.props.navigation.navigate({
+					routeName: 'DetailOrder',
+					params: {
+						dateReal
+					}
+				})	
 			})
 			.catch(err => {
 				console.log(err);

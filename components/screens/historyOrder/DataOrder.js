@@ -88,13 +88,17 @@ const RenderModalContent = ({ data }) => (
 	      	<Text style={styles.judul}>Isi Kiriman</Text>
 	      	<Text style={styles.subjudul}>{capitalize(data.desctrans)}</Text>
       	</View>
-      	<View style={styles.lastList}>
+      	<View style={styles.list}>
 	      	<Text style={styles.judul}>Nilai Barang</Text>
 	      	<Text style={styles.subjudul}>{numberWithCommas(data.valuegoods)}</Text>
       	</View>
+      	<View style={styles.list}>
+	      	<Text style={styles.judul}>Riwayat Status Terakhir</Text>
+	      	<Text style={styles.subjudul}>{data.lasthistorystatus ? data.lasthistorystatus : '-'}</Text>
+      	</View>
       	<View style={styles.lastList}>
-	      	<Text style={styles.judul}>Status Terakhir</Text>
-	      	<Text style={styles.subjudul}>{data.laststatus}</Text>
+	      	<Text style={styles.judul}>Pickup Number</Text>
+	      	<Text style={styles.subjudul}>{data.pickupnumber ? data.pickupnumber : '-'}</Text>
       	</View>
     </View>
 ); 
@@ -141,10 +145,9 @@ const DataOrder = ({ data, email, getStatus, history, removeHistory, movToMapVie
 	} 
 
 	const onCekDriver = (id) => {
-		const pickupNumber = '1586197041_440000859';
 		const detail 	= data.find(x => x.extid === id);
 		const payload  = {
-			pickupNumber,
+			pickupNumber: detail.pickupnumber ? detail.pickupnumber : '0',
 			extid: id,
 			productname: detail.productname,
 			desctrans: detail.desctrans,
@@ -153,29 +156,34 @@ const DataOrder = ({ data, email, getStatus, history, removeHistory, movToMapVie
 			shippername: detail.shippername,
 			receivername: detail.receivername
 		};
+
 		movToMapView(payload);
 	}
 
 	return(
 		<View style={{flex: 1}}>
-			{ data.map((x, i) => <React.Fragment key={i}>
-					<ListItem 
-						title={x.desctrans} 
-						titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
-						description={`Status : (${x.laststatus})`}
-						accessory={(e) => renderItemAccessory(e, x.laststatusid, x.extid, onOpenDetail, onCekStatus, onCekDriver)}
-						style={{backgroundColor: 'trans'}}
-						descriptionStyle={{fontFamily: 'open-sans-reg', fontSize: 10}}
-						disabled={true}
-					/>
+			<ScrollView>
+				{ data.map((x, i) => <React.Fragment key={i}>
+						<ListItem 
+							title={x.desctrans} 
+							titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
+							description={`Status : (${x.laststatus})`}
+							accessory={(e) => renderItemAccessory(e, x.laststatusid, x.extid, onOpenDetail, onCekStatus, onCekDriver)}
+							style={{backgroundColor: 'trans'}}
+							descriptionStyle={{fontFamily: 'open-sans-reg', fontSize: 10}}
+							disabled={true}
+						/>
 			</React.Fragment> )}
+			</ScrollView>
 			{/*MODAL DETAIL*/}
 			<Modal isVisible={Object.keys(isVisible).length > 0 ? true : false }>
 			    <View style={{ backgroundColor: '#FFF', minHeight: deviceHeight / 2, borderRadius: 10 }}>
 			    	<TouchableOpacity style={styles.iconClose} onPress={() => setVisible({})}>
 			    		<Icon name='close' width={25} height={25} />
 			    	</TouchableOpacity>
-			      	<RenderModalContent data={isVisible} />
+			    	<ScrollView>
+			      		<RenderModalContent data={isVisible} />
+			      	</ScrollView>
 			    </View>
 			</Modal>
 			{/*MODAL HISTORY*/}
