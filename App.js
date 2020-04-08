@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux'
 import Router from './Router';
 import store from './store';
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Platform } from "react-native";
 import { ApplicationProvider, IconRegistry, Icon, Spinner } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva'; 
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
@@ -31,22 +31,39 @@ class App extends React.Component{
   state = {
     fontLoaded: false,
     notification:  {},
-    visible: false
+    visible: false,
+    mount: false
   };
+
+  UNSAFE_componentWillMount(){
+    if (Platform.OS === 'android') {
+      Notifications.createChannelAndroidAsync('qposin-messages', {
+        name: 'Chat messages',
+        sound: true,
+        priority: 'max',
+        vibrate: [0, 250, 250, 250]
+      });
+      this.setState({ mount: true });
+    }
+  }
+
 
   async componentDidMount(){
     // this._notificationSubscription = Notifications.addListener(this.handleNotification);
     if (!global.btoa) { global.btoa = encode; }
-    await Font.loadAsync({
-      'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
-      'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
-      'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
-    });
-    this.setState({ fontLoaded: true });
 
-    const { status } = await Permissions.getAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      const response = await Permissions.askAsync(Permissions.LOCATION);
+    if (this.state.mount) {
+      await Font.loadAsync({
+        'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
+        'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+        'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
+      });
+      this.setState({ fontLoaded: true });
+
+      const { status } = await Permissions.getAsync(Permissions.LOCATION);
+      if (status !== 'granted') {
+        const response = await Permissions.askAsync(Permissions.LOCATION);
+      }
     }
   }
 
