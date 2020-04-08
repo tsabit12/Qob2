@@ -1,5 +1,6 @@
-import React from 'react'
-import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-native'
+import React from 'react';
+import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-native';
+import { Notifications } from 'expo';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
@@ -169,6 +170,17 @@ const AppContainer = createAppContainer(AppNavigator);
 const LoginContainer = createAppContainer(LoginNavigator);
 
 class Router extends React.Component{
+  UNSAFE_componentWillMount(){
+    if (Platform.OS === 'android') {
+      Notifications.createChannelAndroidAsync('chat-messages', {
+        name: 'Chat messages',
+        sound: true,
+        priority: 'max',
+        vibrate: [0, 250, 250, 250]
+      });
+    }
+  }
+
   render(){
     return(
       <React.Fragment>

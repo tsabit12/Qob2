@@ -2,13 +2,12 @@ import React from "react";
 import { Button, Text, StyleSheet, View, ScrollView, StatusBar, Image, AsyncStorage, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import styles from "./styles";
 import { Ionicons } from '@expo/vector-icons';
-import Menu from "../Menu";
 import { SliderBox } from "react-native-image-slider-box";
 import Dialog from "react-native-dialog";
 import api from "../../api";
 import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { connect } from "react-redux";
-import MenuNotMember from "../MenuNotMember";
+import Menu from "../Menu";
 import { Notifications } from 'expo';
 import Loader from "../../Loader";
 import * as Permissions from 'expo-permissions';
@@ -257,9 +256,11 @@ class IndexSearch extends React.Component{
 				<Loader loading={this.state.loading} />
 				<ScrollView>
 					<SliderBox images={[
-						require('../../../assets/qob.jpg'),
-						require('../../../assets/qob2.jpg'),
-						require('../../../assets/qob3.png')
+						require('../../../assets/slider/qob.jpg'),
+						require('../../../assets/slider/qob2.jpg'),
+						require('../../../assets/slider/qob3.png'),
+						require('../../../assets/slider/qob4.jpg'),
+						require('../../../assets/slider/qob5.jpg'),
 					]} 
 					sliderBoxHeight={heightDevice / 2.5}
 					resizeMode={'stretch'}
@@ -291,7 +292,7 @@ class IndexSearch extends React.Component{
 							<Image source={require('../../../assets/giro.png')} style={{width: 25, height: 25}} />
 							<Text style={{marginLeft: 5, fontFamily: 'open-sans-bold', color: '#8c8c8c'}}>Hubungkan ke akun giro</Text>
 						</TouchableOpacity> : <RenderSaldo saldo={this.props.dataLogin.detail.saldo} /> }
-							<MenuNotMember 
+							<Menu 
 								navigation={this.props.navigation}
 								showAlert={this.onAlert}
 							/>  
