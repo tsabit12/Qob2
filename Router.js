@@ -1,5 +1,5 @@
-import React from 'react'
-import { View, Text, Button, TouchableOpacity, Image, Platform } from 'react-native'
+import React from 'react';
+import { View, Text, Button, TouchableOpacity, Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
@@ -168,15 +168,11 @@ const AppContainer = createAppContainer(AppNavigator);
 
 const LoginContainer = createAppContainer(LoginNavigator);
 
-class Router extends React.Component{
-  render(){
-    return(
-      <React.Fragment>
-          { this.props.isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
-      </React.Fragment>
-    );
-  }
-} 
+const Router = ({ isLoggedIn }) => (
+  <React.Fragment>
+      { isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
+  </React.Fragment>
+);
 
 function mapStateToProps(state) {
   return{

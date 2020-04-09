@@ -86,7 +86,6 @@ class LacakKiriman extends React.Component{
 						icon={this.renderIcon}
 						onIconPress={this.onIconPress}
 						onChangeText={this.onChange}
-						keyboardType='number-pad'
 						returnKeyType='search'
 						onSubmitEditing={this.onSearch}
 						// returnKeyLabel='Done'
