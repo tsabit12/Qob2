@@ -142,7 +142,7 @@ class DetailOrder extends React.Component{
 	}
 
 	BackAction = () => (
-  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.push('RiwayatPickup') }/>
+  		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack() }/>
 	)
 
 	runAnimated = (jenis) => {

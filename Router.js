@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/pendaftaran/IndexRegister";
 import { Layout, Icon, Avatar } from '@ui-kitten/components';
-import IndexSearch from "./components/screens/search/IndexSearch";
+import IndexMenu from "./components/screens/menu/Index";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
@@ -69,8 +69,8 @@ const AppNavigator = createStackNavigator({
       DetailSearch: {
         screen: RouteTab
       },
-      IndexSearch: {
-        screen: IndexSearch
+      IndexMenu: {
+        screen: IndexMenu
       },
       Account:{
         screen: AccountScreen
@@ -115,7 +115,7 @@ const AppNavigator = createStackNavigator({
         screen: DetailOrder
       }
   	},{
-  	initialRouteName: 'IndexSearch',
+  	initialRouteName: 'IndexMenu',
     defaultNavigationOptions: {
       header: null
     },
