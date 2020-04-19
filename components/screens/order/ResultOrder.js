@@ -83,6 +83,10 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPres
 				<Text style={styles.labelInformasi}>Nilai Barang</Text>
 				<Text style={styles.subTitle}>Rp {numberWithCommas(params.deskripsiOrder.nilai)}</Text>
 			</View>
+			{ params.deskripsiOrder.cod && <View style={styles.viewResult}>
+				<Text style={styles.labelInformasi}>Nilai Cod</Text>
+				<Text style={styles.subTitle}>Rp {numberWithCommas(params.deskripsiOrder.codvalue)}</Text>
+			</View> }
 			<View style={styles.viewResult}>
 				<Text style={styles.labelInformasi}>Estimasi Tarif</Text>
 				<Text style={styles.subTitle}>Rp {numberWithCommas(params.selectedTarif.tarif)}</Text>
@@ -95,10 +99,8 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPres
 					marginTop: 5, 
 					borderWidth: 0.8,
 					borderColor: '#9e9d9d',
-					flexWrap: 'wrap',
 					borderRadius: 5,
 					backgroundColor: '#dbdad7',
-					alignItems: 'flex-start',
 					padding: 6}}>
 				<CheckBox
 			      status='warning'
@@ -106,9 +108,11 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPres
 			      checked={checked}
 			      onChange={onCheckedChange}
 			    />
-			    <Text>Saya menyetujui</Text>
-				<Text style={{color: '#0000FF'}} onPress={() => onPressSyarat()}> Syarat dan ketentuan </Text>
-				<Text>yang berlaku di PT.POS INDONESIA</Text>
+			    <Text style={{alignItems: 'flex-end', flex: 1}}>
+				    <Text>Saya menyetujui</Text>
+					<Text style={{color: '#0000FF'}} onPress={() => onPressSyarat()}> Syarat dan ketentuan </Text>
+					<Text>yang berlaku di PT.POS INDONESIA</Text>
+				</Text>
 		    </View>
 		    <View style={{width: '40%'}}>
 				<Button status='warning' onPress={() => onSimpan()}>Simpan</Button>
@@ -177,13 +181,13 @@ class ResultOrder extends React.Component{
 		    "insurancetax": selectedTarif.ppnhtnb,
 		    "valuegoods": deskripsiOrder.nilai,
 		    "desctrans": deskripsiOrder.isiKiriman,
-		    "codvalue": Number(selectedTarif.beadasar) + Number(selectedTarif.ppn) + Number(selectedTarif.htnb) + Number(selectedTarif.ppnhtnb),
+		    "codvalue": deskripsiOrder.codvalue ? Number(deskripsiOrder.codvalue) : 0,
 		    "width": deskripsiOrder.lebar,
 		    "length": deskripsiOrder.panjang,
 		    "height": deskripsiOrder.tinggi,
 		    "diagonal": 0
 		};
-		
+
 		api.qob.booking(payloadWsdl)
 			.then(res => {
 				if (Object.keys(res.transref).length > 0) {
@@ -296,7 +300,7 @@ class ResultOrder extends React.Component{
 		            length: order.panjang,
 		            width: order.lebar,
 		            height: order.tinggi,
-		            codvalue: order.cod ? '1' : '0',
+		            codvalue: order.codvalue ? order.codvalue : '0',
 		            fee: tarif.beadasar,
 		            feetax: tarif.ppn,
 		            insurance: tarif.htnb,
@@ -385,7 +389,7 @@ class ResultOrder extends React.Component{
 
 	backHome = () => {
 		this.props.navigation.navigate({
-			routeName: 'IndexSearch',
+			routeName: 'IndexMenu',
 			params: {}
 		})
 	}

@@ -70,7 +70,7 @@ const PickupView = ({ data, visible, showDetail, checked, onCheckedChange, onPic
 						<ListItem 
 							title={x.extid} 
 							// description={x.orderDate.substring(0, 10)}
-							titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
+							titleStyle={{color: x.va === null ? '#3366ff' : 'red', fontFamily: 'open-sans-reg'}}
 							onPress={() => onPressItem(x.extid)}
 							description={x.desctrans}
 							accessory={(e) => renderItemAccessory(e, x.extid, checked, onCheckedChange )}

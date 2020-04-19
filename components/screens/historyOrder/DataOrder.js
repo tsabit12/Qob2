@@ -166,7 +166,7 @@ const DataOrder = ({ data, email, getStatus, history, removeHistory, movToMapVie
 				{ data.map((x, i) => <React.Fragment key={i}>
 						<ListItem 
 							title={x.desctrans} 
-							titleStyle={{color: '#3366ff', fontFamily: 'open-sans-reg'}}
+							titleStyle={{color: x.va === null ? '#3366ff' : 'red', fontFamily: 'open-sans-reg'}}
 							description={`Status : (${x.laststatus})`}
 							accessory={(e) => renderItemAccessory(e, x.laststatusid, x.extid, onOpenDetail, onCekStatus, onCekDriver)}
 							style={{backgroundColor: 'trans'}}

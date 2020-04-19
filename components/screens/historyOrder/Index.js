@@ -12,10 +12,17 @@ const MyStatusBar = () => (
 	</View>
 );
 
+
 const RenderListHistory = ({ list, onPressLink }) => {
+	// const datanya = list.sort(dynamicSort("-insertdate"));
+	const sorting = {}
+	Object.keys(list).sort().forEach(function(key) {
+	  sorting[key] = list[key];
+	});
+
 	return(
 		<View style={{flex: 1}}>
-			{ Object.keys(list).map((x, i) => 
+			{ Object.keys(sorting).map((x, i) => 
 				<ListItem
 					key={i}
 					title={x}

@@ -5,7 +5,8 @@ import {
 	SAVE_STORAGE_REQUEST, 
 	CLEARE_STORAGE_REQUEST, 
 	UPDATE_PROFILE,
-	UPDATE_PIN 
+	UPDATE_PIN,
+	ADD_COD
 } from "../types";
 const initialState = {
 	logged: false,
@@ -16,7 +17,8 @@ const initialState = {
 		detail: {}
 	},
 	request: [],
-	pin: null
+	pin: null,
+	codAktif: false
 }
 
 export default function auth(state=initialState, action={}){
@@ -102,6 +104,11 @@ export default function auth(state=initialState, action={}){
 				pin: action.pin
 			}
 		}
+		case ADD_COD:
+			return{
+				...state,
+				codAktif: true
+			}
 		default: return state;
 	}
 }

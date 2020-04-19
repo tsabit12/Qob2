@@ -1,8 +1,14 @@
 import React from "react";
-import { View, Text, StatusBar, KeyboardAvoidingView, ScrollView } from "react-native";
+import { View, Text, StatusBar, KeyboardAvoidingView, ScrollView, Alert, AsyncStorage } from "react-native";
 import styles from "./styles";
-import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { Icon, TopNavigation, TopNavigationAction, Input, Button } from '@ui-kitten/components';
 import OrderForm from "./forms/OrderForm";
+import { connect } from "react-redux";
+import Dialog from "react-native-dialog";
+import Loader from "../../Loader";
+import { synchronizeWebGiro, setCodeToTrue } from "../../../actions/auth";
+import api from "../../api";
+import apiBaru from "../../apiBaru";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -16,7 +22,27 @@ const BackIcon = (style) => (
 
 
 class Order extends React.Component{
-	state = {}
+	state = {
+		visible: false,
+		loading: false,
+		textLoading: 'Loading...'
+	}
+
+	async componentDidMount(){
+		//only run when codAkitf is false
+		const { isCod } = this.props;
+		if (!isCod) {
+			//get from storage
+			try{
+				const value = await AsyncStorage.getItem('isCod');
+				if (value !== null) {
+					this.props.setCodeToTrue();
+				}
+			}catch(error){
+				console.log("ok");
+			}
+		}
+	}
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -30,42 +56,158 @@ class Order extends React.Component{
 			lebar: data.lebar.replace(/\D/g, ''),
 			isiKiriman: data.jenis,
 			nilai: data.nilaiVal.replace(/\D/g, ''),
+			codvalue: data.codvalue.replace(/\D/g, ''),
 			cod: data.checked
 		};
 		
-		this.props.navigation.navigate({
-			routeName: 'KelolaPengirim',
-			params: {
-				deskripsiOrder
-			}
+		this.props.navigation.push('KelolaPengirim', {
+			deskripsiOrder
 		})
 	}
 
+	// keyboardDidShow = (event) => {
+	// 	//only set when backdrop is open
+	// 	if (this.state.visible) {
+	// 		this.setState({ keyboard: { open: true, height: event.endCoordinates.height } })
+	// 	}
+	// }
+
+	// keyboardDidHide = () => {
+	// 	if (this.state.visible) {
+	// 		this.setState({ keyboard: { open: false, height: 0 } })
+	// 	}
+	// }
+
+	onSynchronize = () => {
+		this.setState({ loading: true, visible: false, textLoading: 'Getting token...' });
+		const { norek, detail, userid } = this.props.dataLogin;
+		const payload = {
+			email: detail.email,
+			account: norek
+		}
+		//jancuk
+		//generate pin dulu
+		api.auth.genpwdweb(userid)
+			.then(res => {
+				const payload2 = {
+					email: detail.email,
+					pin: res.response_data1
+				};
+				this.setState({ textLoading: 'Synchronizing user...'})
+				apiBaru.qob.syncronizeUser(payload2)
+					.then(res => { //response = 00 artinya user baru create
+						this.syncGiro(payload);
+					})
+					.catch(err => {
+						if (!err.respcode) {
+							this.setState({ loading: false });
+							//lebih ke internal server
+							this.showAlert('Sync user gagal, silahkan cobalagi', 'Failed');
+						}else{
+							if(err.respcode === '21'){ //alerdy
+								this.syncGiro(payload);
+							}else{//error on sync user
+								this.setState({ loading: false });
+								this.showAlert('Sync user gagal, silahkan cobalagi', 'Failed');
+							}
+						}
+					})
+			})
+			.catch(err => { //generate pin error
+				this.setState({ loading: false, textLoading: 'Loading...'});
+				if (!err.desk_mess) {
+					this.showAlert('Untuk saat ini kami tidak dapat menghubungkan ke server, mohon cobalagi nanti','Terdapat kesalahan');
+				}else{
+					this.showAlert(err.desk_mess, 'Whooppps');
+				}
+			})
+	}
+
+	syncGiro = (payload) => {
+		this.setState({ textLoading: 'Menyiapkan...'});
+		this.props.synchronizeWebGiro(payload)
+			.then(() => {
+				this.setState({ loading: false });
+				this.showAlert('Untuk order kiriman dengan fitur cod silahkan centang kolom COD', 'Sukses/Berhasil');
+			})
+			.catch(err => {
+				this.setState({ loading: false });
+				if (!err.respmsg) {
+					this.showAlert('Internal Server Error', 'Failed');
+				}else{
+					this.showAlert(err.respmsg, 'Failed');
+				}
+			})
+	}
+
+	showAlert = (msg, title) => {
+		Alert.alert(
+		  `${title}`,
+		  `${msg}`,
+		  [
+		  	{
+		      text: 'Tutup',
+		      style: 'cancel',
+		    },
+		  ],
+		  {cancelable: false},
+		);
+	}
+
 	render(){
+		const { visible, loading, textLoading } = this.state;
+		const { norek } = this.props.dataLogin;
+		
 		return(
 			<View style={{flex: 1}}>
-				<MyStatusBar />
-				<TopNavigation
-				    leftControl={this.BackAction()}
-				    subtitle='Kelola deskripsi kiriman'
-				    title='Order'
-				    alignment='start'
-				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
-				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
-				    subtitleStyle={{color: '#FFF'}}
-				/>
+				{ /* this view for hide status bar color */ }
+				<Loader loading={loading} messagenya={textLoading} /> 
+				<View style={{backgroundColor: 'rgb(240, 132, 0)'}}>
+					<TopNavigation
+					    leftControl={this.BackAction()}
+					    subtitle='Kelola deskripsi kiriman'
+					    title='Order'
+					    alignment='start'
+					    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
+					    style={styles.navigation}
+					    subtitleStyle={{color: '#FFF'}}
+					/>
+				</View>
+				{ norek !== '-' && !this.props.isCod && <View style={styles.notif}>
+					<Text>
+						<Text>Untuk mengaktifkan kiriman COD anda harus melakukan synchronize akun giro dahulu</Text>
+						<Text style={{color: 'blue'}} onPress={() => this.setState({ visible: true })}> disini</Text>
+					</Text>
+				</View> }
 				<KeyboardAvoidingView
 					style={{flex:1}} 
 					behavior="padding" 
 					enabled
 				>
 					<ScrollView keyboardShouldPersistTaps='always'>	
-						<OrderForm onSubmit={this.onSubmit} />
+						<OrderForm onSubmit={this.onSubmit} isCod={this.props.isCod} />
 					</ScrollView>
 				</KeyboardAvoidingView>
+				<View>
+				<Dialog.Container visible={visible}>
+		          <Dialog.Title>Notifikasi</Dialog.Title>
+		          <Dialog.Description>
+		            {`Proses synchronize akun ini hanya sekali saja, yaitu untuk membuka fitur baru COD pada aplikasi QPOSin AJA`}
+		          </Dialog.Description>
+		          <Dialog.Button label="Batal" onPress={() => this.setState({ visible: false })} />
+		          <Dialog.Button label="Lanjutkan" onPress={this.onSynchronize} />
+		        </Dialog.Container>
+		        </View>
 			</View>
 		);
 	}
 }
 
-export default Order;
+function mapStateToProps(state) {
+	return{
+		dataLogin: state.auth.dataLogin,
+		isCod: state.auth.codAktif //bool
+	}
+}
+
+export default connect(mapStateToProps, { synchronizeWebGiro, setCodeToTrue })(Order);
