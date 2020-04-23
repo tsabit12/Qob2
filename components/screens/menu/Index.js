@@ -12,6 +12,7 @@ import api from "../../api";
 import * as Permissions from 'expo-permissions';
 import { Notifications } from 'expo';
 import apiBaru from "../../apiBaru";
+import { Ionicons } from '@expo/vector-icons';
 
 export const ENTRIES1 = [
     {
@@ -28,9 +29,20 @@ export const ENTRIES1 = [
 
 const SLIDER_1_FIRST_ITEM = 1;
 
-const ProfileIcon = (style) => (
-	<Icon {...style} name='person' fill='#FFF'/>
-);
+const ProfileIcon = (style) => {
+	console.log(style);
+	// return(
+	// 	<Icon {...style} name='person' fill='#FFF'/>
+	// )
+	return(
+		<Ionicons
+	        style={{ backgroundColor: 'transparent' }}
+	        name='md-person'
+	        size={25}
+	        color="white"
+	    />
+	);
+}
 
 const ProfileAction = (props) => (
   <TopNavigationAction {...props} icon={ProfileIcon}/>
@@ -45,9 +57,9 @@ const numberWithCommas = (number) => {
 }
 
 const RenderButtonGiro = ({ norek, detail, onPressGiro }) => (
-	<React.Fragment>
+	<View style={{marginTop: 5}}>
 		<Text 
-			style={{fontWeight: '700', marginLeft: 15, marginRight: 15}}
+			style={{fontWeight: '700', marginLeft: 15, marginRight: 15, textAlign: 'center', fontSize: 16}}
 			numberOfLines={1}
 		>{detail.nama}</Text>
 		{ norek === '-' ? <TouchableOpacity 
@@ -66,7 +78,7 @@ const RenderButtonGiro = ({ norek, detail, onPressGiro }) => (
 				<Text style={styles.textLabel}>Rp {numberWithCommas(detail.saldo)}</Text>
 			</View>
 		</View>}
-	</React.Fragment>
+	</View>
 );
 
 class Index extends React.Component{

@@ -54,7 +54,7 @@ const barcode = (props) => {
           style={StyleSheet.absoluteFillObject}
       >
           <View style={{alignItems: 'flex-end', flex: 1, margin: 10}}>
-            <TouchableOpacity onPress={() => props.navigation.navigate({ routeName: 'IndexMenu' })}>
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
               <Icon name='close-outline' width={25} height={25} fill='#FFF' />
             </TouchableOpacity>
           </View>
