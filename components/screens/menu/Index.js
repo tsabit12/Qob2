@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, Alert, ScrollView } from "react-native";
-import Menu from "./Menu";
+import Menu from "./MenuOld";
 import styles, { colors } from './styles/index.style';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import SliderEntry from './components/SliderEntry';
@@ -15,35 +15,15 @@ import apiBaru from "../../apiBaru";
 
 export const ENTRIES1 = [
     {
-        title: 'Beautiful and dramatic Antelope Canyon',
-        subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-        illustration: 'https://i.imgur.com/UYiroysl.jpg'
+        // title: 'Delivery is yours',
+        // subtitle: 'subtitle',
+        illustration: require('../../../assets/slider/qob.jpg')
     },
-    {
-        title: 'Earlier this morning, NYC',
-        subtitle: 'Lorem ipsum dolor sit amet',
-        illustration: 'https://i.imgur.com/UPrs1EWl.jpg'
-    },
-    {
-        title: 'White Pocket Sunset',
-        subtitle: 'Lorem ipsum dolor sit amet et nuncat ',
-        illustration: 'https://i.imgur.com/MABUbpDl.jpg'
-    },
-    {
-        title: 'Acrocorinth, Greece',
-        subtitle: 'Lorem ipsum dolor sit amet et nuncat mergitur',
-        illustration: 'https://i.imgur.com/KZsmUi2l.jpg'
-    },
-    {
-        title: 'The lone tree, majestic landscape of New Zealand',
-        subtitle: 'Lorem ipsum dolor sit amet',
-        illustration: 'https://i.imgur.com/2nCt3Sbl.jpg'
-    },
-    {
-        title: 'Middle Earth, Germany',
-        subtitle: 'Lorem ipsum dolor sit amet',
-        illustration: 'https://i.imgur.com/lceHsT6l.jpg'
-    }
+    { illustration: require('../../../assets/slider/qob2.jpg') },
+    { illustration: require('../../../assets/slider/qob3.png') },
+    { illustration: require('../../../assets/slider/qob4.jpg') },
+    { illustration: require('../../../assets/slider/qob5.jpg') },
+    { illustration: require('../../../assets/slider/qob6.jpg') }
 ];
 
 const SLIDER_1_FIRST_ITEM = 1;
@@ -66,19 +46,24 @@ const numberWithCommas = (number) => {
 
 const RenderButtonGiro = ({ norek, detail, onPressGiro }) => (
 	<React.Fragment>
+		<Text 
+			style={{fontWeight: '700', marginLeft: 15, marginRight: 15}}
+			numberOfLines={1}
+		>{detail.nama}</Text>
 		{ norek === '-' ? <TouchableOpacity 
-				style={{padding: 10, elevation: 5, backgroundColor: 'rgb(245, 90, 12)', margin: 8, borderRadius: 2}}
+				style={styles.labelGiro}
 				activeOpacity={0.5}
 				onPress={onPressGiro}
 			>
 			<View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
-				<Image source={require('../../../assets/giro.png')} style={{width: 25, height: 25}} />
-				<Text style={{textAlign: 'center', color: '#FFF', paddingLeft: 10, fontWeight: '700'}}>Hubungkan ke akun giro</Text>
+				<Image source={require('../../../assets/giro.png')} style={{width: 20, height: 20}} />
+				<Text style={styles.textLabel}>Hubungkan ke akun giro</Text>
 			</View>
-		</TouchableOpacity> : <View style={{padding: 10, margin: 8, backgroundColor: 'rgb(245, 90, 12)', elevation: 5, borderRadius: 3 }}>
+		</TouchableOpacity> : <View 
+			style={styles.labelGiro}>
 			<View style={{alignItems: 'center', flexDirection: 'row', justifyContent: 'center'}}>
-				<Image source={require('../../../assets/giro.png')} style={{width: 25, height: 25}} />
-				<Text style={{textAlign: 'center', color: '#FFF', paddingLeft: 10, fontWeight: '700'}}>Rp {numberWithCommas(detail.saldo)}</Text>
+				<Image source={require('../../../assets/giro.png')} style={{width: 20, height: 20}} />
+				<Text style={styles.textLabel}>Rp {numberWithCommas(detail.saldo)}</Text>
 			</View>
 		</View>}
 	</React.Fragment>
@@ -195,16 +180,18 @@ class Index extends React.Component{
 		const { userid, norek, detail } = this.props.dataLogin;
 
 		return(
-			<View style={{flex: 1, backgroundColor: 'rgb(240, 132, 0)'}}>
+			<View style={{flex: 1}}>
 				<Loader loading={loading} />
-				<TopNavigation
-				    //leftControl={this.renderLeftControl()}
-				    title='QPOSin AJA'
-				    alignment='start'
-				    titleStyle={{fontSize: 19, fontWeight: '700', color: '#FFF'}}
-				    style={styles.navigation}
-				    rightControls={this.renderRightControls()}
-				/>
+				<View style={styles.navigationView}>
+					<TopNavigation
+					    //leftControl={this.renderLeftControl()}
+					    title='QPOSin AJA'
+					    alignment='start'
+					    titleStyle={{fontSize: 19, fontWeight: '700', color: '#FFF'}}
+					    style={styles.navigation}
+					    rightControls={this.renderRightControls()}
+					/>
+				</View>
 				<ScrollView>
 					<View style={styles.exampleContainer}>
 						<Carousel
@@ -221,7 +208,7 @@ class Index extends React.Component{
 		                  containerCustomStyle={styles.slider}
 		                  contentContainerCustomStyle={styles.sliderContentContainer}
 		                  loop={true}
-		                  autoplay={true}
+		                  // autoplay={true}
 		                  loopClonesPerSide={2}
 		                  autoplayDelay={500}
 		                  autoplayInterval={3000}
@@ -231,7 +218,7 @@ class Index extends React.Component{
 		                  dotsLength={ENTRIES1.length}
 		                  activeDotIndex={slider1ActiveSlide}
 		                  containerStyle={styles.paginationContainer}
-		                  dotColor={'rgba(255, 255, 255, 0.92)'}
+		                  dotColor={'rgb(245, 90, 12)'}
 		                  dotStyle={styles.paginationDot}
 		                  inactiveDotColor={colors.black}
 		                  inactiveDotOpacity={0.4}
@@ -240,7 +227,6 @@ class Index extends React.Component{
 		                  tappableDots={!!this._slider1Ref}
 		                />
 					</View>
-					
 					{ /* RENDER BUTTON GIRO*/}
 					<RenderButtonGiro 
 						norek={norek} 

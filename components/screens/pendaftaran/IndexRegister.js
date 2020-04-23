@@ -55,7 +55,7 @@ class IndexRegister extends React.Component{
 							    		fontSize: 16, 
 							    		fontFamily: 'open-sans-bold', 
 							    		textAlign: 'center'
-							    	}}>Registrasi Sebagai ?</Text>
+							    	}}>Registrasi Sebagai</Text>
 								</View>
 								<Button style={styles.button} status='warning' onPress={this.onPebisol}>PEBISNIS ONLINE</Button>
 								<Button style={styles.button} status='warning' onPress={this.onNonPebisol}>NON PEBISNIS ONLINE</Button>

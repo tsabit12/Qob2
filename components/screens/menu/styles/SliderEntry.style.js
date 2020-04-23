@@ -9,12 +9,12 @@ function wp (percentage) {
     return Math.round(value);
 }
 
-const slideHeight = viewportHeight * 0.36;
+export const slideHeight = viewportHeight * 0.36;
 const slideWidth = wp(75);
 const itemHorizontalMargin = wp(2);
 
 export const sliderWidth = viewportWidth;
-export const itemWidth = slideWidth + itemHorizontalMargin * 2;
+export const itemWidth = slideWidth + itemHorizontalMargin * 4;
 
 const entryBorderRadius = 8;
 
@@ -40,19 +40,18 @@ export default StyleSheet.create({
     imageContainer: {
         flex: 1,
         marginBottom: IS_IOS ? 0 : -1, // Prevent a random Android rendering issue
-        backgroundColor: 'white',
-        borderTopLeftRadius: entryBorderRadius,
-        borderTopRightRadius: entryBorderRadius
+        backgroundColor: '#ededed',
+        borderRadius: entryBorderRadius
     },
     imageContainerEven: {
         backgroundColor: colors.black
     },
     image: {
         ...StyleSheet.absoluteFillObject,
-        resizeMode: 'cover',
-        borderRadius: IS_IOS ? entryBorderRadius : 0,
-        borderTopLeftRadius: entryBorderRadius,
-        borderTopRightRadius: entryBorderRadius
+        resizeMode: 'contain',
+        // borderRadius: IS_IOS ? entryBorderRadius : 0,
+        // borderTopLeftRadius: entryBorderRadius,
+        // borderTopRightRadius: entryBorderRadius
     },
     // image's border radius is buggy on iOS; let's hack it!
     radiusMask: {
@@ -61,7 +60,7 @@ export default StyleSheet.create({
         left: 0,
         right: 0,
         height: entryBorderRadius,
-        backgroundColor: 'white'
+        backgroundColor: '#ededed'
     },
     radiusMaskEven: {
         backgroundColor: colors.black
@@ -71,7 +70,7 @@ export default StyleSheet.create({
         paddingTop: 20 - entryBorderRadius,
         paddingBottom: 20,
         paddingHorizontal: 16,
-        backgroundColor: 'white',
+        backgroundColor: '#ededed',
         borderBottomLeftRadius: entryBorderRadius,
         borderBottomRightRadius: entryBorderRadius
     },

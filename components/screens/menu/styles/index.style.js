@@ -57,10 +57,10 @@ export default StyleSheet.create({
         overflow: 'visible' // for custom animations
     },
     sliderContentContainer: {
-        paddingVertical: 10 // for custom animation
+        paddingVertical: 2 // for custom animation
     },
     paginationContainer: {
-        paddingVertical: 8
+        paddingVertical: 3
     },
     paginationDot: {
         width: 8,
@@ -69,8 +69,28 @@ export default StyleSheet.create({
         marginHorizontal: 8
     },
     navigation: {
+        backgroundColor: 'transparent'
+    },
+    navigationView: {
+        paddingTop: Constants.statusBarHeight,
         backgroundColor: 'rgb(240, 132, 0)',
-        marginTop: Constants.statusBarHeight,
         elevation: 5
+    },
+    labelGiro: {
+        padding: 10, 
+        elevation: 5, 
+        backgroundColor: 'rgb(245, 90, 12)', 
+        marginLeft: 15, 
+        marginRight: 15, 
+        marginBottom: 8,
+        marginTop: 5,
+        borderRadius: 2
+    },
+    textLabel: {
+        textAlign: 'center', 
+        color: '#FFF', 
+        paddingLeft: 10, 
+        fontWeight: '700', 
+        fontSize: 12
     }
 });

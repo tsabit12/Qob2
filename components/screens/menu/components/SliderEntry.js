@@ -18,7 +18,7 @@ export default class SliderEntry extends Component {
 
         return parallax ? (
             <ParallaxImage
-              source={{ uri: illustration }}
+              source={illustration}
               containerStyle={[styles.imageContainer, even ? styles.imageContainerEven : {}]}
               style={styles.image}
               parallaxFactor={0.35}
@@ -28,7 +28,7 @@ export default class SliderEntry extends Component {
             />
         ) : (
             <Image
-              source={{ uri: illustration }}
+              source={illustration}
               style={styles.image}
             />
         );
@@ -55,9 +55,9 @@ export default class SliderEntry extends Component {
                 <View style={styles.shadow} />
                 <View style={[styles.imageContainer, even ? styles.imageContainerEven : {}]}>
                     { this.image }
-                    <View style={[styles.radiusMask, even ? styles.radiusMaskEven : {}]} />
                 </View>
-                <View style={[styles.textContainer, even ? styles.textContainerEven : {}]}>
+                
+                { /* <View style={[styles.textContainer, even ? styles.textContainerEven : {}]}>
                     { uppercaseTitle }
                     <Text
                       style={[styles.subtitle, even ? styles.subtitleEven : {}]}
@@ -65,7 +65,7 @@ export default class SliderEntry extends Component {
                     >
                         { subtitle }
                     </Text>
-                </View>
+                </View> */ }
             </TouchableOpacity>
         );
     }
