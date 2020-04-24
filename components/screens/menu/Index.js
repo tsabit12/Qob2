@@ -30,7 +30,7 @@ export const ENTRIES1 = [
 const SLIDER_1_FIRST_ITEM = 1;
 
 const ProfileIcon = (style) => {
-	console.log(style);
+	// console.log(style);
 	// return(
 	// 	<Icon {...style} name='person' fill='#FFF'/>
 	// )

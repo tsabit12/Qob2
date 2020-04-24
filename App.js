@@ -12,6 +12,7 @@ import * as Font from "expo-font";
 import * as Permissions from 'expo-permissions';
 import Dialog from "react-native-dialog";
 import { MenuProvider } from 'react-native-popup-menu';
+import * as Updates from 'expo-updates';
 
 const ModalDialog = ({ onPress }) => (
   <Dialog.Container visible={true}>
@@ -23,8 +24,11 @@ const ModalDialog = ({ onPress }) => (
     </Dialog.Container>
 );  
 
-const LoadFont = () => (
+const LoadFont = ({ text }) => (
+  <View style={{alignItems: 'center'}}>
     <Spinner size='medium' />
+    <Text style={{textAlign: 'center'}}>{text}</Text>
+  </View>
 );
 
 class App extends React.Component{
@@ -32,7 +36,8 @@ class App extends React.Component{
     fontLoaded: false,
     notification:  {},
     visible: false,
-    mount: false
+    mount: false,
+    textUpdate: ''
   };
 
   UNSAFE_componentWillMount(){
@@ -43,8 +48,9 @@ class App extends React.Component{
         priority: 'max',
         vibrate: [0, 250, 250, 250]
       });
-      this.setState({ mount: true });
     }
+  
+    this.setState({ mount: true });
   }
 
 
@@ -53,17 +59,35 @@ class App extends React.Component{
     if (!global.btoa) { global.btoa = encode; }
 
     if (this.state.mount) {
+
       await Font.loadAsync({
         'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
         'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
         'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
       });
-      this.setState({ fontLoaded: true });
-
-      const { status } = await Permissions.getAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-        const response = await Permissions.askAsync(Permissions.LOCATION);
+      //checking update
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        this.setState({ textUpdate: 'Checking updates...'});
+        if (update.isAvailable) {
+          this.setState({ textUpdate: 'Updating app...'});
+          await Updates.fetchUpdateAsync();
+          this.setState({ textUpdate: 'Apps updated...'});
+          await Updates.reloadAsync();
+        }
+      } catch (e) {
+        this.setState({ textUpdate: 'Cannot updated apps'});
+        // handle or log error
       }
+
+      setTimeout(() => {
+        this.setState({ fontLoaded: true });
+      }, 300);
+      
+      // const { status } = await Permissions.getAsync(Permissions.LOCATION);
+      // if (status !== 'granted') {
+      //   const response = await Permissions.askAsync(Permissions.LOCATION);
+      // }
     }
   }
 
@@ -81,9 +105,9 @@ class App extends React.Component{
       <Provider store={store}>
         <IconRegistry icons={EvaIconsPack} />
         <ApplicationProvider mapping={mapping} theme={lightTheme}>
-        { visible && <ModalDialog onPress={this.onPressOke} /> }
+        
         <MenuProvider>
-          { fontLoaded ? <Router /> : <View style={styles.container}><LoadFont /></View> }
+          { fontLoaded ? <Router /> : <View style={styles.container}><LoadFont text={this.state.textUpdate} /></View> }
         </MenuProvider>
         </ApplicationProvider>
       </Provider>
