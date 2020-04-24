@@ -9,6 +9,7 @@ import Dialog from "react-native-dialog";
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
 import { saveRegister, saveRequest, clearRequestStore } from "../../actions/register";
+import { setLocalUser } from "../../actions/user";
 import { Header } from 'react-navigation-stack';
 import { curdate } from "../utils/helper";
 
@@ -18,9 +19,13 @@ import { curdate } from "../utils/helper";
 // 	</View>
 // );
 
+const numberWithCommas = (number) => {
+	return number.toString().replace(/\B(?=(\d{4})+(?!\d))/g, "-");
+}
+
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
-		<StatusBar translucent barStyle="dark-content" />
+		<StatusBar translucent barStyle="light-content" />
 	</View>
 );
 
@@ -116,7 +121,23 @@ class PemulihanAkun extends React.Component{
 	}
 
 
-	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
+	onChange = (e, { name }) => {
+		if (name === 'nohp') {
+			var val = e.replace(/\D/g, '');
+			var x 	= Number(val);
+			const value = numberWithCommas(x);
+
+			this.setState({ 
+				data: { ...this.state.data, [name]: value },
+				errors: { ...this.state.errors, [name]: undefined }
+			})
+		}else{
+			this.setState({ 
+				data: { ...this.state.data, [name]: e },
+				errors: { ...this.state.errors, [name]: undefined }
+			})
+		}
+	}
 
 	onSubmit = () => {
 		let jenis		= this.state.jenis;
@@ -127,19 +148,22 @@ class PemulihanAkun extends React.Component{
 
 			const { data } 	= this.state;
 			const { titlePemulihan } = this.props.navigation.state.params;
+			const phoneValues  = `0${data.nohp.replace(/\D/g, '')}`;
+
 			const valueSession = {
 				userid: data.userid,
 				nama: data.nama,
-				nohp: data.nohp,
+				nohp: phoneValues,
 				email: data.email,
 				jenis: jenis
 			};
+
 			//need to detect if user
 			//alerady submit request form 1 (request pemulihan)
 			const payload = {
-				param1: `${data.userid}|${data.nama}|${data.nohp}|${data.email}|${data.imei}|${jenis}`	
+				param1: `${data.userid}|${data.nama}|${phoneValues}|${data.email}|${data.imei}|${jenis}`	
 			};
-
+			
 			api.registrasi.lupaPin(payload, data.userid)
 				.then(res => {
 					this.saveSessionRequest(valueSession);
@@ -178,8 +202,21 @@ class PemulihanAkun extends React.Component{
 		if (jenis === 0) errors.jenis = "Jenis belum dipilih";
 		if (!data.userid) errors.userid = "Masukan userid";
 		if (!data.nama) errors.nama = "Masukan nama";
-		if (!data.nohp) errors.nohp = "Masukan nomor handphone";
-		if (!data.email) errors.email = "Masukan email";
+		if (!data.email){
+			errors.email = "Masukan email";	
+		}else{
+			var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+			if (!re.test(data.email)) errors.email = "Email tidak valid";
+		}
+
+		if (!data.nohp){
+			errors.nohp = "Masukan nomor handphone";	
+		}else{
+			var regex 			= /(\()?(\+62|62|0)(\d{2,3})?\)?[ .-]?\d{2,4}[ .-]?\d{2,4}[ .-]?\d{2,4}/;
+  			const phoneValues 	= `+62-${data.nohp}`;
+  			if (!regex.test(phoneValues)) errors.nohp = "Nomor handphone tidak valid"; 
+		}
+
 		return errors;
 	}
 
@@ -254,8 +291,14 @@ class PemulihanAkun extends React.Component{
 						nohp: parsing[4],
 						email: parsing[5]
 					};
+
+					//save to redux for handle 
+					//user login after pemulihan
+					//without close app
+					this.props.setLocalUser(payloadRes);
 					
-					this.saveToStorage(payloadRes)
+					setTimeout(() => {
+						this.saveToStorage(payloadRes)
 						.then(() => {
 							this.setState({ loading: false });
 							this.showMessage(res.response_data1);
@@ -263,6 +306,8 @@ class PemulihanAkun extends React.Component{
 							this.removeSession();
 						})
 						.catch(() => alert("Kami mengalami masalah saat menyimpan data. harap cobalagi dalam 24 jam"));
+					}, 100);
+
 				}).catch(err => {
 					this.setState({ loading: false });
 					if (Object.keys(err).length === 10) {
@@ -358,20 +403,27 @@ class PemulihanAkun extends React.Component{
 										status={errors.nama && 'danger'}
 									/>
 									{ errors.nama && <Text style={styles.labelErr}>{errors.nama}</Text>}
-									<Input 
-										label='Nomor Handphone'
-										ref={this.nohpRef}
-										labelStyle={styles.label}
-										placeholder='Masukan nomor handphone'
-										onChangeText={(e) => this.onChange(e, this.nohpRef.current.props)}
-										style={styles.input}
-										value={data.nohp}
-										name='nohp'
-										onSubmitEditing={() => this.emailRef.current.focus() }
-										status={errors.nohp && 'danger'}
-										keyboardType='numeric'
-									/>
-									{ errors.nohp && <Text style={styles.labelErr}>{errors.nohp}</Text>}
+									<View>
+										<Text style={[styles.label, {paddingBottom: 4}]}>Nomor Handphone</Text>
+										<View style={{flexDirection: 'row', alignItems: 'center', paddingBottom: 5}}>
+											<Text style={{fontSize: 16}}>+62</Text>
+											<Input 
+												// label='Nomor Handphone'
+												ref={this.nohpRef}
+												// labelStyle={styles.label}
+												placeholder='8XX-XXXX-XXXX'
+												onChangeText={(e) => this.onChange(e, this.nohpRef.current.props)}
+												style={{ flex: 1, marginLeft: 5 }}
+												value={data.nohp}
+												name='nohp'
+												onSubmitEditing={() => this.emailRef.current.focus() }
+												status={errors.nohp && 'danger'}
+												keyboardType='numeric'
+											/>
+										</View>
+										{ errors.nohp && <Text style={styles.labelErr}>{errors.nohp}</Text>}
+									</View>
+									
 									<Input 
 										label='Email'
 										ref={this.emailRef}
@@ -383,16 +435,16 @@ class PemulihanAkun extends React.Component{
 										name='email'
 										onSubmitEditing={() => this.onSubmit() }
 										status={errors.email && 'danger'}
+										keyboardType='email-address'
+										autoCapitalize='none'
 									/>
 									{ errors.email && <Text style={styles.labelErr}>{errors.email}</Text>}
 								</View>
-								<View style={{padding: 6, marginTop: -6}}>
-									<Button status='info' onPress={this.onSubmit}>
-										{ this.state.jenis === 1 && 'Dapatkan PIN Baru' }
-										{ this.state.jenis === 2 && 'Pulihkan' }
-										{ this.state.jenis === 3 && 'Buka kembali akun saya' }
-									</Button>
-								</View>
+								<Button status='info' onPress={this.onSubmit} style={{margin: 5}}>
+									{ this.state.jenis === 1 && 'Dapatkan PIN Baru' }
+									{ this.state.jenis === 2 && 'Pulihkan' }
+									{ this.state.jenis === 3 && 'Buka kembali akun saya' }
+								</Button>
 							</React.Fragment> : <View style={{margin: 10}}>
 								<View style={{backgroundColor: '#c7e4eb', padding: 5, borderRadius: 3}}>
 									<Text style={{fontFamily: 'open-sans-reg'}}>{success.message}</Text>
@@ -425,7 +477,7 @@ function mapStateToProps(state) {
 	}
 }
 
-export default connect(mapStateToProps, { saveRegister, saveRequest, clearRequestStore })(PemulihanAkun);
+export default connect(mapStateToProps, { saveRegister, saveRequest, clearRequestStore, setLocalUser })(PemulihanAkun);
 
 const styles = StyleSheet.create({
 	label: {
@@ -447,10 +499,10 @@ const styles = StyleSheet.create({
 	  	backgroundColor: '#FFF'
 	},
 	form: {
-		margin: 7,
+		margin: 5,
 		padding: 10,
 		borderWidth: 1,
-		borderRadius: 10,
+		borderRadius: 2,
 		borderColor: '#c9d1d1'
 	}
 });

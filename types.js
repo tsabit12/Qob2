@@ -20,3 +20,5 @@ export const FETCH_HISTORY_PICKUP = 'FETCH_HISTORY_PICKUP';
 export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 export const UPDATE_PIN = 'UPDATE_PIN';
 export const FETCH_DETAIL_ORDER = 'FETCH_DETAIL_ORDER';
+export const ADD_COD = 'ADD_COD';
+export const SET_LOCAL_USER = 'SET_LOCAL_USER';

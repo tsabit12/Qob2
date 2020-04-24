@@ -4,6 +4,10 @@ import { Input, Button,TouchableOpacity, Icon, RadioGroup, Radio } from '@ui-kit
 import Loader from "../../../Loader";
 import apiWs from "../../../apiWs";
 
+const numberWithCommas = (number) => {
+	return number.toString().replace(/\B(?=(\d{4})+(?!\d))/g, "-");
+}
+
 const RenderListAlamat = ({ list, handleChange, selectedIndex }) => {
 	return(
 		<View style={{backgroundColor: '#c3c4be', padding: 10 }}>
@@ -74,7 +78,23 @@ class NonPebisolForm extends React.Component{
 		alamat: {}
 	}
 
-	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
+	onChange = (e, { name }) => {
+		if (name === 'noHp') {
+			var val = e.replace(/\D/g, '');
+			var x 	= Number(val);
+			const value = numberWithCommas(x);
+
+			this.setState({ 
+				data: { ...this.state.data, [name]: value },
+				errors: { ...this.state.errors, [name]: undefined }
+			})
+		}else{
+			this.setState({ 
+				data: { ...this.state.data, [name]: e },
+				errors: { ...this.state.errors, [name]: undefined }
+			})
+		}
+	}
 
 
 	renderIcon = (style) => (
@@ -159,8 +179,10 @@ class NonPebisolForm extends React.Component{
   				const { data, alamat } = this.state;
   				const payload = {
   					...data,
+  					noHp: `0${data.noHp.replace(/\D/g, '')}`,
   					...alamat
   				}
+
   				this.props.onSubmit(payload);
   			}else{
   				Alert.alert(
@@ -181,6 +203,19 @@ class NonPebisolForm extends React.Component{
   		if (!data.alamatUtama) errors.alamatUtama = "Alamat utama harap diisi";
   		if (!data.noHp) errors.noHp = "Nomor handphone harap diisi";
   		if (!data.email) errors.email = "Email harap diisi";
+
+  		if (data.noHp) {
+  			var regex 			= /(\()?(\+62|62|0)(\d{2,3})?\)?[ .-]?\d{2,4}[ .-]?\d{2,4}[ .-]?\d{2,4}/;
+  			const phoneValues 	= `+62-${data.noHp}`;
+  			if (!regex.test(phoneValues)) errors.noHp = "Nomor handphone tidak valid"; 
+  		}
+
+  		if (data.email) {
+			//regex email
+			var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+			if (!re.test(data.email)) errors.email = "Email tidak valid";
+		}
+
   		return errors;
   	}
 
@@ -240,22 +275,28 @@ class NonPebisolForm extends React.Component{
 							handleChange={this.onChangeAlamat} 
 							selectedIndex={this.state.selectedIndex}
 						/> }
-					<Input 
-						ref={this.noHpRef}
-					    placeholder='628/08 XXXX'
-						name='noHp'
-						label='* Nomor Handphone'
-						value={data.noHp}
-						style={styles.input}
-						labelStyle={styles.label}
-						keyboardType='phone-pad'
-						onChangeText={(e) => this.onChange(e, this.noHpRef.current.props)}
-						onSubmitEditing={() => this.emailRef.current.focus() }
-						status={errors.noHp ? 'danger' : 'primary'}
-						caption={errors.noHp && `${errors.noHp}`}
-					/>
-					{ data.noHp.length > 0 && !!errors.noHp === false &&
-						<Text style={{color: 'blue', fontSize: 12, marginTop: -5}}>Harap pastikan bahwa nomor handphone anda sudah terhubung dengan whats'app</Text>}
+					
+					<View style={{marginTop: 5, marginBottom: 5}}>
+						<Text style={styles.label}>* Nomor Handphone (WhatsApp)</Text>
+						<View style={{flexDirection: 'row', alignItems: 'center'}}>
+							<Text style={{fontSize: 16}}>+62</Text>
+							<Input 
+								ref={this.noHpRef}
+							    placeholder='8XX-XXXX-XXXX'
+								name='noHp'
+								// label='* Nomor Handphone'
+								value={data.noHp}
+								style={{ marginTop: 5, flex: 1, marginLeft: 5 }}
+								labelStyle={styles.label}
+								keyboardType='phone-pad'
+								onChangeText={(e) => this.onChange(e, this.noHpRef.current.props)}
+								onSubmitEditing={() => this.emailRef.current.focus() }
+								status={errors.noHp ? 'danger' : 'primary'}
+								caption={errors.noHp && `${errors.noHp}`}
+							/>
+						</View>
+					</View>
+					
 					<Input 
 						ref={this.emailRef}
 					    placeholder='Masukkan alamat email'
@@ -268,6 +309,8 @@ class NonPebisolForm extends React.Component{
 						onSubmitEditing={this.onSubmit}
 						status={errors.email ? 'danger' : 'primary'}
 						caption={errors.email && `${errors.email}`}
+						keyboardType='email-address'
+						autoCapitalize='none'
 					/>
 				</View>
 				<Button style={{margin: 6}} onPress={this.onSubmit}>Daftar</Button>

@@ -1,5 +1,5 @@
 import api from "../components/api";
-import { UPDATE_PROFILE, UPDATE_PIN } from "../types";
+import { UPDATE_PROFILE, UPDATE_PIN, SET_LOCAL_USER } from "../types";
 import { AsyncStorage } from "react-native";
 
 export const profileUpdated = (alamat) => ({
@@ -14,9 +14,10 @@ export const updateProfil = (string, object) => dispatch =>
 			// console.log(res);
 		})
 
-export const pinUpdated = (pin) => dispatch => ({
+export const pinUpdated = (pin, rumusPin) => dispatch => ({
 	type: UPDATE_PIN,
-	pin
+	pin,
+	rumusPin
 })
 
 //1c874c6e20a313f29031d4fcb82ee8
@@ -37,7 +38,7 @@ export const updatePin = (payload, pin, toSaveProps, rumusPin) => dispatch =>
 				email: toSaveProps.email
 			};	
 			saveToStorage(toSave)
-				.then(() => dispatch(pinUpdated(pin)))
+				.then(() => dispatch(pinUpdated(pin, rumusPin)))
 		})
 
 export const saveToStorage = async (payload) => {
@@ -48,4 +49,11 @@ export const saveToStorage = async (payload) => {
 		console.log(errors);
 		return Promise.reject(errors);
 	}
+}
+
+export const setLocalUser = (userData) => dispatch => {
+	dispatch({
+		type: SET_LOCAL_USER,
+		userData
+	})
 }

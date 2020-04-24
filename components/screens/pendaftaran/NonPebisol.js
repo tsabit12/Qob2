@@ -1,10 +1,12 @@
 import React from "react";
+import { connect } from "react-redux";
 import { View, Text, StatusBar, StyleSheet, Keyboard, KeyboardAvoidingView, ScrollView, Alert, AsyncStorage } from "react-native";
 import Constants from 'expo-constants';
 import NonPebisolForm from "./forms/NonPebisolForm";
 import { Spinner, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import Loader from "../../Loader";
 import api from "../../api";
+import { setLocalUser } from "../../../actions/user";
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -88,7 +90,14 @@ class NonPebisol extends React.Component{
 					nohp: x[4],
 					email: x[5]
 				};
-				this.saveToStorage(toSave)
+
+				//save to redux for handle 
+				//user login after register
+				//without close app
+				this.props.setLocalUser(toSave);
+				
+				setTimeout(() => {
+					this.saveToStorage(toSave)
 					.then(() => {
 						this.setState({ loading: false });
 						Alert.alert(
@@ -110,6 +119,7 @@ class NonPebisol extends React.Component{
 						  {cancelable: false},
 						);
 					});
+				}, 100);	
 			}) //error api
 			.catch(err => {
 				this.setState({ loading: false });
@@ -197,4 +207,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default NonPebisol;
+export default connect(null, { setLocalUser })(NonPebisol);

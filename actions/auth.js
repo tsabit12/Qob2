@@ -1,6 +1,8 @@
-import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT } from "../types"; 
+import { USER_LOGGED_IN, GET_DETAIL_USER, USER_LOGGED_OUT, ADD_COD } from "../types"; 
 import api from "../components/api";
 import apiWs from "../components/apiWs";
+import apiBaru from "../components/apiBaru";
+import {AsyncStorage} from 'react-native';
 
 export const setLoggedIn = (userid, response, pin) => dispatch => {
 	dispatch({
@@ -102,4 +104,27 @@ export const updateLoginSes = (noRek, saldo) => dispatch => {
 		noRek,
 		saldo
 	})
+}
+
+export const setCodeToTrue = () => dispatch => dispatch(codFeatures());
+
+export const codFeatures = () => ({
+	type: ADD_COD
+})
+
+export const synchronizeWebGiro = (payload) => dispatch => 
+	apiBaru.user.syncronizeCod(payload).then(res => {
+		//1 success
+		saveToStorage()
+			.then(() => dispatch(codFeatures()))
+	})	
+
+
+export const saveToStorage = async () => {
+	try{
+		await AsyncStorage.setItem('isCod', '1');
+		return Promise.resolve('oke');
+	}catch(errors){
+		return Promise.reject(errors);
+	}
 }

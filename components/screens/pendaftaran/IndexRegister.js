@@ -18,15 +18,11 @@ const MyStatusBar = () => (
 
 class IndexRegister extends React.Component{
 	onPebisol = () => {
-		this.props.navigation.navigate({
-			routeName: 'RegisterPebisol'
-		})
+		this.props.navigation.push('RegisterPebisol');
 	}
 
 	onNonPebisol = () => {
-		this.props.navigation.navigate({
-			routeName: 'RegistrasiNonPebisol'
-		})
+		this.props.navigation.push('RegistrasiNonPebisol')
 	}
 
 	render(){
@@ -55,7 +51,7 @@ class IndexRegister extends React.Component{
 							    		fontSize: 16, 
 							    		fontFamily: 'open-sans-bold', 
 							    		textAlign: 'center'
-							    	}}>Registrasi Sebagai ?</Text>
+							    	}}>Registrasi Sebagai</Text>
 								</View>
 								<Button style={styles.button} status='warning' onPress={this.onPebisol}>PEBISNIS ONLINE</Button>
 								<Button style={styles.button} status='warning' onPress={this.onNonPebisol}>NON PEBISNIS ONLINE</Button>

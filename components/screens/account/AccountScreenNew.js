@@ -171,7 +171,10 @@ class AccountScreenNew extends React.Component{
 		responseKodepos: [],
 		choosed: null,
 		alamatUtama: '',
-		backgroundColor: 'rgb(255, 102, 0)'
+		styleState: {
+			backgroundColor: 'rgb(255, 102, 0)',
+			elevation: 5
+		}
 	}
 
 	// componentDidMount(){
@@ -312,15 +315,23 @@ class AccountScreenNew extends React.Component{
 
 	handleScroll = (e) => {
 		if (Math.round(e.nativeEvent.contentOffset.y) > 100) {
-			this.setState({ backgroundColor: '#ffbf00'});
+			this.setState({ 
+				styleState: {
+					backgroundColor: '#ffbf00', 
+					elevation: 0
+				}
+			});
 		}else{
-			this.setState({ backgroundColor: 'rgb(255, 102, 0)'});
+			this.setState({ styleState: {
+				backgroundColor: 'rgb(255, 102, 0)',
+				elevation: 5
+			}});
 		}
 	} 
 
 	render(){
 		const { dataLogin } = this.props;
-		const { errors, responseKodepos } = this.state;
+		const { errors, responseKodepos, styleState } = this.state;
 		//console.log(height / 28);
 		return(
 			<View style={{flex: 1, backgroundColor: '#ffd000'}}>
@@ -329,7 +340,7 @@ class AccountScreenNew extends React.Component{
 				<TopNavigation
 				    leftControl={this.BackAction()}
 				    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
-				    style={{backgroundColor: this.state.backgroundColor}}
+				    style={{backgroundColor: styleState.backgroundColor, elevation: styleState.elevation}}
 				    subtitleStyle={{color: '#FFF'}}
 				    rightControls={this.renderRightControls()}
 				/>

@@ -9,6 +9,7 @@ class OrderForm extends React.Component{
 	lebarRef = React.createRef();
 	tinggiRef = React.createRef();
 	nilaiRef = React.createRef();
+	codvalueRef = React.createRef();
 
 	state = {
 		data: {
@@ -18,7 +19,8 @@ class OrderForm extends React.Component{
 			lebar: '0',
 			tinggi: '0',
 			nilaiVal: '0',
-			checked: false
+			checked: false,
+			codvalue: ''
 		},
 		errors: {}
 	}
@@ -29,12 +31,18 @@ class OrderForm extends React.Component{
 
 	onChange = (e, { name }) => {
 		if (name === 'jenis') {
-			this.setState({ data: { ...this.state.data, [name]: e }});
+			this.setState({ 
+				data: { ...this.state.data, [name]: e },
+				errors: { ...this.state.errors, [name]: undefined }
+			});
 		}else{
 			var val = e.replace(/\D/g, '');
 			var x 	= Number(val);
 			const value = this.numberWithCommas(x);
-			this.setState({ data: { ...this.state.data, [name]: value }});
+			this.setState({ 
+				data: { ...this.state.data, [name]: value },
+				errors: { ...this.state.errors, [name]: undefined }
+			});
 		}
 	}
 
@@ -95,14 +103,28 @@ class OrderForm extends React.Component{
 			}
 		}
 
+		//only validate if cod is aktif
+		if (data.checked) {
+			if (!data.codvalue || data.codvalue <= 0) {
+				errors.codvalue = "Nilai cod harap diisi";
+			}
+		}
 
 		return errors;
 	}
 
-	onCheckedChange = () => this.setState({ data: { ...this.state.data, checked: !this.state.data.checked }})
+	onCheckedChange = () => this.setState({ 
+		data: { 
+			...this.state.data, 
+			checked: !this.state.data.checked,
+			codvalue: ''
+		},
+		errors: { ...this.state.errors, codvalue: undefined }
+	})
 
 	render(){
 		const { data, errors } = this.state;
+		const { isCod } = this.props;
 
 		return(
 			<React.Fragment>
@@ -195,17 +217,30 @@ class OrderForm extends React.Component{
 				      onChangeText={(e) => this.onChangeNilai(e)}
 				      status={errors.nilai && 'danger'}
 				      caption={errors.nilai && `${errors.nilai}`}
-				      onSubmitEditing={this.onSubmit}
 				      returnKeyType='done'
 				    />
-				    { /*<CheckBox
-				      text='Cod'
-				      style={{ marginTop: 5 }}
-				      textStyle={{ color: 'red'}}
-				      status='warning'
-				      checked={data.checked}
-				      onChange={this.onCheckedChange}
-				    /> */ }
+				    { isCod && <CheckBox
+					      text='COD'
+					      style={{ marginTop: 5 }}
+					      textStyle={{ color: 'red'}}
+					      status='warning'
+					      checked={data.checked}
+					      onChange={this.onCheckedChange}
+					    /> }
+
+					{ data.checked && <Input 
+							placeholder='Masukan nilai COD'
+							ref={this.codvalueRef}
+							name='codvalue'
+							labelStyle={styles.label}
+							style={styles.input}
+							value={data.codvalue}
+							keyboardType='numeric'
+							onChangeText={(e) => this.onChange(e, this.codvalueRef.current.props)}
+							returnKeyType='done'
+							status={errors.codvalue && 'danger'}
+				      		caption={errors.codvalue && `${errors.codvalue}`}
+						/> }
 				</View>
 				<View style={{ margin: 10, marginTop: -6}}>
 					<Button status='warning' onPress={this.onSubmit}>Selanjutnya</Button>

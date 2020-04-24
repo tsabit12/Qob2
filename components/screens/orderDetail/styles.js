@@ -14,6 +14,11 @@ export default StyleSheet.create({
 	  	fontSize: 14,
 	  	fontFamily: 'open-sans-reg'
 	},
+	labelRek:{
+		color: 'blue',
+	  	fontSize: 14,
+	  	fontFamily: 'open-sans-reg'
+	},
 	cardForm:{
 		padding: 6, 
 		// borderRightWidth: 0.1, 
@@ -24,5 +29,18 @@ export default StyleSheet.create({
 		borderRadius: 5, 
 		marginTop: 5,
 		flex: 1
+	},
+	notif:{
+		backgroundColor: '#c4c1c0', 
+		margin: 10, 
+		marginBottom: 5, 
+		borderRadius: 3, 
+		minHeight: 60, 
+		padding: 10
+	},
+	navigation: {
+		backgroundColor: 'rgb(240, 132, 0)',
+		marginTop: Constants.statusBarHeight,
+		elevation: 5
 	}
 })

@@ -1,24 +1,24 @@
 import React from "react";
-import { View, Text, StatusBar, TextInput } from "react-native";
+import { View, Text, StatusBar, TextInput, TouchableOpacity } from "react-native";
 import { Icon, Input } from '@ui-kitten/components';
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
 import { lacakKiriman, removeErrors } from "../../actions/search";
-
-const InputIcon = (style) => (
-	<View style={{width: '100%', marginBottom: 20, marginRight: 15, flexDirection: 'row'}}>
-		 <TextInput
-	      style={{ height: 40, width: 265, borderColor: '#FFF', borderBottomWidth: 0.5, color: '#FFF', fontFamily: 'open-sans-reg', fontSize: 16}}
-	      //onChangeText={text => onChangeText(text)}
-	      autoFocus={true}
-	      value='aku'
-	      placeholder='Masukkan external id'
-	    />
-	    <View style={{height: 40, justifyContent: 'center', borderBottomWidth: 0.5, borderColor: '#FFF'}}>
-	    	<Icon name='close-outline' width={25} height={25} fill='#FFF' />
-	   	</View>
-    </View>
-);
+import { Ionicons } from '@expo/vector-icons';
+// const InputIcon = (style) => (
+// 	<View style={{width: '100%', marginBottom: 20, marginRight: 15, flexDirection: 'row'}}>
+// 		 <TextInput
+// 	      style={{ height: 40, width: 265, borderColor: '#FFF', borderBottomWidth: 0.5, color: '#FFF', fontFamily: 'open-sans-reg', fontSize: 16}}
+// 	      //onChangeText={text => onChangeText(text)}
+// 	      autoFocus={true}
+// 	      value='aku'
+// 	      placeholder='Masukkan external id'
+// 	    />
+// 	    <View style={{height: 40, justifyContent: 'center', borderBottomWidth: 0.5, borderColor: '#FFF'}}>
+// 	    	<Icon name='close-outline' width={25} height={25} fill='#FFF' />
+// 	   	</View>
+//     </View>
+// );
 
 const MyStatusBar = () => (
 	<View style={{
@@ -75,11 +75,24 @@ class LacakKiriman extends React.Component{
 		return(
 			<View style={{flex: 1}}>
 				<MyStatusBar />
-				<View style={{height: 55, backgroundColor: 'rgb(240, 132, 0)', flexDirection: 'row'}}>
+				<View style={{height: 55, backgroundColor: 'rgb(240, 132, 0)', flexDirection: 'row', padding: 5}}>
+					<TouchableOpacity 
+						style={{justifyContent: 'center', marginLeft: 3}}
+						onPress={() => this.props.navigation.navigate({
+							routeName: 'Barcode'
+						})}
+					>
+						<Ionicons
+					        style={{ backgroundColor: 'transparent' }}
+					        name='ios-camera'
+					        size={30}
+					        color="white"
+					    />
+					</TouchableOpacity>
 					<Input 
 						placeholder='Masukkan kode barcode'
 						ref={this.searchRef}
-						style={{flex: 1, margin: 5}}
+						style={{flex: 1, marginLeft: 10, marginRight: 5}}
 						value={this.state.searchText}
 						textStyle={{textAlign: this.state.textAlign, fontFamily: 'open-sans-reg'}}
 						onFocus={() => this.setState({ textAlign: 'left', searching: true})}

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { SafeAreaView } from 'react-navigation';
 import { Text } from '@ui-kitten/components';
 import api from "../api";
-import { StyleSheet, View, AsyncStorage, ImageBackground, StatusBar, Image } from 'react-native';
+import { StyleSheet, View, ImageBackground, StatusBar, Image } from 'react-native';
 import { Button, Input } from '@ui-kitten/components';
 import Loader from "../Loader";
 import Modal from "../Modal";
@@ -68,17 +68,17 @@ const MyStatusBar = () => (
 	</View>
 );
 
-const RenderLoading = () => (
-	<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-		<Text style={{fontFamily: 'open-sans-reg', textAlign: 'center'}}>Memuat...</Text>
-	</View>
-);
+// const RenderLoading = () => (
+// 	<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+// 		<Text style={{fontFamily: 'open-sans-reg', textAlign: 'center'}}>Memuat...</Text>
+// 	</View>
+// );
 
-const TutorialView = () => (
-	<View>
-		<Text>Hello world</Text>
-	</View>
-);
+// const TutorialView = () => (
+// 	<View>
+// 		<Text>Hello world</Text>
+// 	</View>
+// );
 
 const RenderPinView = ({ loading, errors, onCompletePin, onDaftar, onHelp }) => (
 	<React.Fragment>
@@ -110,95 +110,92 @@ class Home extends React.Component {
 		pin: '',
 		loading: false,
 		errors: {},
-		localUser: {
-			email: '-',
-			nama: '-',
-			nohp: '-',
-			pin: '-',
-			userid: '-',
-			username: '-'
-		},
-		mount: false,
-		loadingMount: true,
-		done: false
+		done: false,
+		mount: false
 	}
 
-	async UNSAFE_componentWillMount(){
-		const value = await AsyncStorage.getItem("qobUserPrivasi");
-		if (value !== null) {
-			const toObje 	= JSON.parse(value);
-			this.setState({ 
-				mount: true, 
-				loadingMount: false,
-				localUser: {
-					email: toObje.email,
-					nama: toObje.nama,
-					nohp: toObje.nohp,
-					pin: toObje.pinMd5,
-					userid: toObje.userid,
-					username: toObje.username
-				}
-			});
-		}else{//user not installed
-			this.setState({ loadingMount: false });
-		}
+	UNSAFE_componentWillMount(){
+		setTimeout(() => {
+			this.setState({ mount: true });
+		}, 100);
 	}
+	// async UNSAFE_componentWillMount(){
+	// 	const value = await AsyncStorage.getItem("qobUserPrivasi");
+	// 	if (value !== null) {
+	// 		const toObje 	= JSON.parse(value);
+	// 		this.setState({ 
+	// 			mount: true, 
+	// 			loadingMount: false,
+	// 			localUser: {
+	// 				email: toObje.email,
+	// 				nama: toObje.nama,
+	// 				nohp: toObje.nohp,
+	// 				pin: toObje.pinMd5,
+	// 				userid: toObje.userid,
+	// 				username: toObje.username
+	// 			}
+	// 		});
+	// 	}else{//user not installed
+	// 		this.setState({ loadingMount: false });
+	// 	}
+	// }
 
-	async saveToStorage(payload){
-		try{
-			await AsyncStorage.setItem('sessionLogin', JSON.stringify(payload));
-			return Promise.resolve(payload);
-		}catch(errors){
-			return Promise.reject(errors);
-		}
-	}
+	// async saveToStorage(payload){
+	// 	try{
+	// 		await AsyncStorage.setItem('sessionLogin', JSON.stringify(payload));
+	// 		return Promise.resolve(payload);
+	// 	}catch(errors){
+	// 		return Promise.reject(errors);
+	// 	}
+	// }
 
 
 	onComplete = (val, clear) => {
-		this.setState({ loading: true });
+		//make sure localuser is not empty
+		if (Object.keys(this.props.localUser).length > 0) {
+			this.setState({ loading: true });
+			const { userid, nohp, email } = this.props.localUser;
+			let 	imei = Constants.deviceId;
+			const pinMd5 = md5.hex_md5(userid+val+nohp+email+imei+'8b321770897ac2d5bfc26965d9bf64a1');
+			
+			const payload = {
+				param1: `${userid}|${pinMd5}|${nohp}|${email}|${imei}`
+			};
+			
+			api.auth.login(payload, userid)
+				.then(res => {
+					const { response_data1, response_data4, response_data5 } = res;
+					const x 	= response_data4.split('|');
+					const x2 	= response_data1.split('|'); 
 
-		const { userid, nohp, email } = this.state.localUser;
-		let 	imei = Constants.deviceId;
-		const pinMd5 = md5.hex_md5(userid+val+nohp+email+imei+'8b321770897ac2d5bfc26965d9bf64a1');
-		
-		const payload = {
-			param1: `${userid}|${pinMd5}|${nohp}|${email}|${imei}`
-		};
-		
-		console.log(payload);
-		api.auth.login(payload, userid)
-			.then(res => {
-				const { response_data1, response_data4, response_data5 } = res;
-				const x 	= response_data4.split('|');
-				const x2 	= response_data1.split('|'); 
+					const payload2 = {
+						nama: x2[0],
+						email: x2[1],
+						nohp: x2[2],
+						norek: x2[3],
+						saldo: response_data5,
+						namaOl: x[0],
+						jenisOl: x[1],
+						alamatOl: x[2],
+						provinsi: x[3],
+						kota: x[4],
+						kecamatan: x[5],
+						kelurahan: x[6],
+						kodepos: x[7]
+					};
 
-				const payload2 = {
-					nama: x2[0],
-					email: x2[1],
-					nohp: x2[2],
-					norek: x2[3],
-					saldo: response_data5,
-					namaOl: x[0],
-					jenisOl: x[1],
-					alamatOl: x[2],
-					provinsi: x[3],
-					kota: x[4],
-					kecamatan: x[5],
-					kelurahan: x[6],
-					kodepos: x[7]
-				};
-
-				this.setState({ loading: false });
-				this.props.setLoggedIn(userid, payload2, val);
-			})
-			.catch(err => {
-				clear();
-				if (err.desk_mess) { //handle undefined
-					this.setState({ loading: false, errors: {global: err.desk_mess } });
-				}else{
-					this.setState({ loading: false, errors: {global: 'Terdapat kesalahan saat menghubungkan ke server, harap cobalagi nanti'} });
-				}
-			});
+					this.setState({ loading: false });
+					this.props.setLoggedIn(userid, payload2, val);
+				})
+				.catch(err => {
+					clear();
+					if (err.desk_mess) { //handle undefined
+						this.setState({ loading: false, errors: {global: err.desk_mess } });
+					}else{
+						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan saat menghubungkan ke server, harap cobalagi nanti'} });
+					}
+				});
+		}
 	}
 
 	_renderItem = ({ item, dimensions }) => (
@@ -229,15 +226,15 @@ class Home extends React.Component {
 	    </LinearGradient>
 	);
 
-	async removeItemValue() {
-	    try {
-	        await AsyncStorage.removeItem('qobUserPrivasi');
-	        return true;
-	    }
-	    catch(exception) {
-	        return false;
-	    }
-	}
+	// async removeItemValue() {
+	//     try {
+	//         await AsyncStorage.removeItem('qobUserPrivasi');
+	//         return true;
+	//     }
+	//     catch(exception) {
+	//         return false;
+	//     }
+	// }
 
 	_onDone = () => {
 		this.setState({ done: true });
@@ -256,29 +253,17 @@ class Home extends React.Component {
 		})
 	}
 
-	onResetSession = () => {
-		const test = this.removeItemValue();
-		if (test) {
-			alert("Oke");
-			this.props.navigation.push('Home');
-		}else{
-			alert("Failed");
-		}
-	}
-
 
 
 	render() {
-    	const { errors, loading, localUser, loadingMount, done } = this.state;
-    	// console.log(localUser);
+    	const { errors, loading, done } = this.state;
+    	const { localUser } = this.props;
     	
 		return (
 			<React.Fragment>
-				{ loadingMount ? 
-					<RenderLoading /> : <React.Fragment>
+				{ this.state.mount && <React.Fragment>
 						{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> }
-						{ this.state.mount ? 
-							<View style={styles.container}>
+						{ Object.keys(localUser).length > 0 ?  <View style={styles.container}>
 								<RenderPinView 
 									loading={loading} 
 									errors={errors}
@@ -288,26 +273,30 @@ class Home extends React.Component {
 						        	})}
 						        	onHelp={this.onLupaPin}
 								/> 
-								{ /* <Button onPress={this.onResetSession}>Reset</Button> */ }
-							</View> : 
-								<React.Fragment>
-									{ done ? <HomePage2 navigation={this.props.navigation} /> :
-										<AppIntroSlider
-									        slides={slides}
-									        renderItem={this._renderItem}
-									        showPrevButton
-									        showSkipButton
-									        onDone={this._onDone}
-									        // onSkip={() => console.log("skipped")}
-									      /> }
-								</React.Fragment> }
+							</View> : <React.Fragment>
+								{ done ? <HomePage2 navigation={this.props.navigation} /> :
+									<AppIntroSlider
+								        slides={slides}
+								        renderItem={this._renderItem}
+								        showPrevButton
+								        showSkipButton
+								        onDone={this._onDone}
+								        // onSkip={() => console.log("skipped")}
+								      /> }
+							</React.Fragment> }
 					</React.Fragment> }
 		   	</React.Fragment>
 		);
 	}
 }
 
-export default connect(null, { setLoggedIn })(Home);
+function mapStatToProps(state) {
+	return{
+		localUser: state.auth.localUser
+	}
+}
+
+export default connect(mapStatToProps, { setLoggedIn })(Home);
 
 const styles = StyleSheet.create({
 	input: {

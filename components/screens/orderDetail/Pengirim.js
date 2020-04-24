@@ -60,12 +60,9 @@ class Pengirim extends React.Component{
 		};
 
 
-		this.props.navigation.navigate({
-			routeName: 'OrderPenerimaNonMember',
-			params: {
-				...this.props.navigation.state.params,
-				pengirimnya
-			}
+		this.props.navigation.push('OrderPenerimaNonMember',{
+			...this.props.navigation.state.params,
+			pengirimnya
 		})
 	}
 

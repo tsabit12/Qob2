@@ -22,7 +22,7 @@ const Loader = props => {
       <View style={styles.modalBackground}>
         <View style={styles.activityIndicatorWrapper}>
           <ActivityIndicator animating={loading} />
-          { props.messagenya && <Text style={{fontSize: 13, textAlign: 'center'}}>{props.messagenya}</Text> }
+          { props.messagenya && <Text style={{fontSize: 13, textAlign: 'center', marginTop: 5}}>{props.messagenya}</Text> }
         </View>
       </View>
     </Modal>
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-around'
+    justifyContent: 'center'
   }
 });
 

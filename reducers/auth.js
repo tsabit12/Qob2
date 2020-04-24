@@ -5,8 +5,11 @@ import {
 	SAVE_STORAGE_REQUEST, 
 	CLEARE_STORAGE_REQUEST, 
 	UPDATE_PROFILE,
-	UPDATE_PIN 
+	UPDATE_PIN,
+	ADD_COD,
+	SET_LOCAL_USER
 } from "../types";
+
 const initialState = {
 	logged: false,
 	user: {},
@@ -16,7 +19,9 @@ const initialState = {
 		detail: {}
 	},
 	request: [],
-	pin: null
+	pin: null,
+	codAktif: false,
+	localUser: {}
 }
 
 export default function auth(state=initialState, action={}){
@@ -99,9 +104,23 @@ export default function auth(state=initialState, action={}){
 		case UPDATE_PIN: {
 			return{
 				...state,
-				pin: action.pin
+				pin: action.pin,
+				localUser: {
+					...state.localUser,
+					pinMd5: action.rumusPin
+				}
 			}
 		}
+		case ADD_COD:
+			return{
+				...state,
+				codAktif: true
+			}
+		case SET_LOCAL_USER:
+			return{
+				...state,
+				localUser: action.userData
+			}
 		default: return state;
 	}
 }
