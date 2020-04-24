@@ -6,8 +6,10 @@ import {
 	CLEARE_STORAGE_REQUEST, 
 	UPDATE_PROFILE,
 	UPDATE_PIN,
-	ADD_COD
+	ADD_COD,
+	SET_LOCAL_USER
 } from "../types";
+
 const initialState = {
 	logged: false,
 	user: {},
@@ -18,7 +20,8 @@ const initialState = {
 	},
 	request: [],
 	pin: null,
-	codAktif: false
+	codAktif: false,
+	localUser: {}
 }
 
 export default function auth(state=initialState, action={}){
@@ -108,6 +111,11 @@ export default function auth(state=initialState, action={}){
 			return{
 				...state,
 				codAktif: true
+			}
+		case SET_LOCAL_USER:
+			return{
+				...state,
+				localUser: action.userData
 			}
 		default: return state;
 	}

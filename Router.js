@@ -3,6 +3,7 @@ import { View, Text, Button, TouchableOpacity, Image } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
+import { setLocalUser } from "./actions/user";
 import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/pendaftaran/IndexRegister";
 import { Layout, Icon, Avatar } from '@ui-kitten/components';
@@ -169,11 +170,19 @@ const AppContainer = createAppContainer(AppNavigator);
 
 const LoginContainer = createAppContainer(LoginNavigator);
 
-const Router = ({ isLoggedIn }) => (
-  <React.Fragment>
+const Router = ({ isLoggedIn, localUser, setLocalUser }) => {
+  React.useEffect(() => {
+    if (Object.keys(localUser).length > 0) {
+      setLocalUser(localUser);
+    }
+  }, []);
+
+  return(
+    <React.Fragment>
       { isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
-  </React.Fragment>
-);
+    </React.Fragment>
+  )
+}
 
 function mapStateToProps(state) {
   return{
@@ -181,4 +190,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, null)(Router);
+export default connect(mapStateToProps, { setLocalUser })(Router); 

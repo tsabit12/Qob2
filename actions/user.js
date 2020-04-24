@@ -1,5 +1,5 @@
 import api from "../components/api";
-import { UPDATE_PROFILE, UPDATE_PIN } from "../types";
+import { UPDATE_PROFILE, UPDATE_PIN, SET_LOCAL_USER } from "../types";
 import { AsyncStorage } from "react-native";
 
 export const profileUpdated = (alamat) => ({
@@ -48,4 +48,11 @@ export const saveToStorage = async (payload) => {
 		console.log(errors);
 		return Promise.reject(errors);
 	}
+}
+
+export const setLocalUser = (userData) => dispatch => {
+	dispatch({
+		type: SET_LOCAL_USER,
+		userData
+	})
 }

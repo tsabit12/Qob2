@@ -9,6 +9,7 @@ import Dialog from "react-native-dialog";
 import Constants from 'expo-constants';
 import { connect } from "react-redux";
 import { saveRegister, saveRequest, clearRequestStore } from "../../actions/register";
+import { setLocalUser } from "../../actions/user";
 import { Header } from 'react-navigation-stack';
 import { curdate } from "../utils/helper";
 
@@ -290,8 +291,14 @@ class PemulihanAkun extends React.Component{
 						nohp: parsing[4],
 						email: parsing[5]
 					};
+
+					//save to redux for handle 
+					//user login after pemulihan
+					//without close app
+					this.props.setLocalUser(payloadRes);
 					
-					this.saveToStorage(payloadRes)
+					setTimeout(() => {
+						this.saveToStorage(payloadRes)
 						.then(() => {
 							this.setState({ loading: false });
 							this.showMessage(res.response_data1);
@@ -299,6 +306,8 @@ class PemulihanAkun extends React.Component{
 							this.removeSession();
 						})
 						.catch(() => alert("Kami mengalami masalah saat menyimpan data. harap cobalagi dalam 24 jam"));
+					}, 100);
+
 				}).catch(err => {
 					this.setState({ loading: false });
 					if (Object.keys(err).length === 10) {
@@ -468,7 +477,7 @@ function mapStateToProps(state) {
 	}
 }
 
-export default connect(mapStateToProps, { saveRegister, saveRequest, clearRequestStore })(PemulihanAkun);
+export default connect(mapStateToProps, { saveRegister, saveRequest, clearRequestStore, setLocalUser })(PemulihanAkun);
 
 const styles = StyleSheet.create({
 	label: {

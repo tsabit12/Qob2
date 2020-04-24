@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux'
 import Router from './Router';
 import store from './store';
-import { Text, StyleSheet, View, Platform } from "react-native";
+import { Text, StyleSheet, View, Platform, AsyncStorage } from "react-native";
 import { ApplicationProvider, IconRegistry, Icon, Spinner } from '@ui-kitten/components';
 import { mapping, light as lightTheme } from '@eva-design/eva'; 
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
@@ -10,19 +10,19 @@ import { encode } from 'base-64';
 import { Notifications } from 'expo';
 import * as Font from "expo-font";
 import * as Permissions from 'expo-permissions';
-import Dialog from "react-native-dialog";
+//import Dialog from "react-native-dialog";
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Updates from 'expo-updates';
 
-const ModalDialog = ({ onPress }) => (
-  <Dialog.Container visible={true}>
-    <Dialog.Title>Notifications</Dialog.Title>
-        <View style={{margin: 17}}>
-            <Text>Dirver pickup ditemukan</Text>
-        </View>
-        <Dialog.Button label="Oke" onPress={() => onPress()}/>
-    </Dialog.Container>
-);  
+// const ModalDialog = ({ onPress }) => (
+//   <Dialog.Container visible={true}>
+//     <Dialog.Title>Notifications</Dialog.Title>
+//         <View style={{margin: 17}}>
+//             <Text>Dirver pickup ditemukan</Text>
+//         </View>
+//         <Dialog.Button label="Oke" onPress={() => onPress()}/>
+//     </Dialog.Container>
+// );  
 
 const LoadFont = ({ text }) => (
   <View style={{alignItems: 'center'}}>
@@ -37,7 +37,8 @@ class App extends React.Component{
     notification:  {},
     visible: false,
     mount: false,
-    textUpdate: ''
+    textUpdate: '',
+    localUser: {}
   };
 
   UNSAFE_componentWillMount(){
@@ -65,6 +66,23 @@ class App extends React.Component{
         'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
         'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
       });
+
+      //get user data
+      const value = await AsyncStorage.getItem("qobUserPrivasi");
+      if (value !== null) {
+        const toObje  = JSON.parse(value);
+        this.setState({ 
+         localUser: {
+            email: toObje.email,
+            nama: toObje.nama,
+            nohp: toObje.nohp,
+            pin: toObje.pinMd5,
+            userid: toObje.userid,
+            username: toObje.username
+          }
+        });
+      }
+
       //checking update
       try {
         const update = await Updates.checkForUpdateAsync();
@@ -82,7 +100,7 @@ class App extends React.Component{
 
       setTimeout(() => {
         this.setState({ fontLoaded: true });
-      }, 300);
+      }, 100);
       
       // const { status } = await Permissions.getAsync(Permissions.LOCATION);
       // if (status !== 'granted') {
@@ -107,7 +125,12 @@ class App extends React.Component{
         <ApplicationProvider mapping={mapping} theme={lightTheme}>
         
         <MenuProvider>
-          { fontLoaded ? <Router /> : <View style={styles.container}><LoadFont text={this.state.textUpdate} /></View> }
+          { fontLoaded ? <Router 
+                localUser={this.state.localUser}
+            /> : 
+            <View style={styles.container}>
+              <LoadFont text={this.state.textUpdate} />
+            </View> }
         </MenuProvider>
         </ApplicationProvider>
       </Provider>
