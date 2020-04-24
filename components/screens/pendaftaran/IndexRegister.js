@@ -18,15 +18,11 @@ const MyStatusBar = () => (
 
 class IndexRegister extends React.Component{
 	onPebisol = () => {
-		this.props.navigation.navigate({
-			routeName: 'RegisterPebisol'
-		})
+		this.props.navigation.push('RegisterPebisol');
 	}
 
 	onNonPebisol = () => {
-		this.props.navigation.navigate({
-			routeName: 'RegistrasiNonPebisol'
-		})
+		this.props.navigation.push('RegistrasiNonPebisol')
 	}
 
 	render(){
