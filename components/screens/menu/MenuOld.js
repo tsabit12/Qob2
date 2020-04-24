@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
 		marginLeft: 5,
 		marginRight: 5,
 		marginBottom: 5,
-		marginTop: -5,
 		borderColor: 'black'
 	},
 	img: {
