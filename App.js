@@ -37,7 +37,7 @@ class App extends React.Component{
     notification:  {},
     visible: false,
     mount: false,
-    textUpdate: '',
+    textUpdate: 'Memuat...',
     localUser: {}
   };
 
@@ -98,9 +98,7 @@ class App extends React.Component{
         // handle or log error
       }
 
-      setTimeout(() => {
-        this.setState({ fontLoaded: true });
-      }, 100);
+      this.setState({ fontLoaded: true });
       
       // const { status } = await Permissions.getAsync(Permissions.LOCATION);
       // if (status !== 'granted') {

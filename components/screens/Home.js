@@ -110,9 +110,15 @@ class Home extends React.Component {
 		pin: '',
 		loading: false,
 		errors: {},
-		done: false
+		done: false,
+		mount: false
 	}
 
+	UNSAFE_componentWillMount(){
+		setTimeout(() => {
+			this.setState({ mount: true });
+		}, 100);
+	}
 	// async UNSAFE_componentWillMount(){
 	// 	const value = await AsyncStorage.getItem("qobUserPrivasi");
 	// 	if (value !== null) {
@@ -255,28 +261,29 @@ class Home extends React.Component {
     	
 		return (
 			<React.Fragment>
-				{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> }
-
-				{ Object.keys(localUser).length > 0 ?  <View style={styles.container}>
-						<RenderPinView 
-							loading={loading} 
-							errors={errors}
-							onCompletePin={this.onComplete} 
-							onDaftar={() => this.props.navigation.navigate({
-				        		routeName: 'IndexRegister'
-				        	})}
-				        	onHelp={this.onLupaPin}
-						/> 
-					</View> : <React.Fragment>
-						{ done ? <HomePage2 navigation={this.props.navigation} /> :
-							<AppIntroSlider
-						        slides={slides}
-						        renderItem={this._renderItem}
-						        showPrevButton
-						        showSkipButton
-						        onDone={this._onDone}
-						        // onSkip={() => console.log("skipped")}
-						      /> }
+				{ this.state.mount && <React.Fragment>
+						{ errors.global && <Modal loading={!!errors.global} text={errors.global} handleClose={() => this.setState({ errors: {} })} /> }
+						{ Object.keys(localUser).length > 0 ?  <View style={styles.container}>
+								<RenderPinView 
+									loading={loading} 
+									errors={errors}
+									onCompletePin={this.onComplete} 
+									onDaftar={() => this.props.navigation.navigate({
+						        		routeName: 'IndexRegister'
+						        	})}
+						        	onHelp={this.onLupaPin}
+								/> 
+							</View> : <React.Fragment>
+								{ done ? <HomePage2 navigation={this.props.navigation} /> :
+									<AppIntroSlider
+								        slides={slides}
+								        renderItem={this._renderItem}
+								        showPrevButton
+								        showSkipButton
+								        onDone={this._onDone}
+								        // onSkip={() => console.log("skipped")}
+								      /> }
+							</React.Fragment> }
 					</React.Fragment> }
 		   	</React.Fragment>
 		);
