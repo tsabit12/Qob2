@@ -104,7 +104,11 @@ export default function auth(state=initialState, action={}){
 		case UPDATE_PIN: {
 			return{
 				...state,
-				pin: action.pin
+				pin: action.pin,
+				localUser: {
+					...state.localUser,
+					pinMd5: action.rumusPin
+				}
 			}
 		}
 		case ADD_COD:

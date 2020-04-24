@@ -94,7 +94,7 @@ class App extends React.Component{
           await Updates.reloadAsync();
         }
       } catch (e) {
-        this.setState({ textUpdate: 'Cannot updated apps'});
+        this.setState({ textUpdate: 'Cannot update apps'});
         // handle or log error
       }
 
