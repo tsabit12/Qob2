@@ -89,7 +89,7 @@ class Index extends React.Component{
 
 	async UNSAFE_componentWillMount(){
 		const { userid } = this.props.dataLogin;
-		const { email } = this.props.dataLogin.detail;
+		const { email, nohp } = this.props.dataLogin.detail;
 		const { status: existingStatus } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
 		let finalStatus = existingStatus;
 		
@@ -108,7 +108,8 @@ class Index extends React.Component{
 	    		const payload = {
 	    			token,
 	    			email: email,
-	    			userid: userid
+	    			userid: userid,
+	    			phone: nohp
 	    		};
 	    		apiBaru.qob.pushToken(payload)
 	    			.then(res => console.log(res))
