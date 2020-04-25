@@ -220,7 +220,7 @@ class Index extends React.Component{
 		                  containerCustomStyle={styles.slider}
 		                  contentContainerCustomStyle={styles.sliderContentContainer}
 		                  loop={true}
-		                  // autoplay={true}
+		                  autoplay={true}
 		                  loopClonesPerSide={2}
 		                  autoplayDelay={500}
 		                  autoplayInterval={3000}
