@@ -59,7 +59,7 @@ const numberWithCommas = (number) => {
 const RenderButtonGiro = ({ norek, detail, onPressGiro }) => (
 	<View style={{marginTop: 5}}>
 		<Text 
-			style={{fontWeight: '700', marginLeft: 15, marginRight: 15, textAlign: 'center', fontSize: 16}}
+			style={{fontWeight: '700', marginLeft: 5, marginRight: 5, textAlign: 'center', fontSize: 16}}
 			numberOfLines={1}
 		>{detail.nama}</Text>
 		{ norek === '-' ? <TouchableOpacity 
