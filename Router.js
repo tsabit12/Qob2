@@ -11,7 +11,6 @@ import IndexMenu from "./components/screens/menu/Index";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
-import RekeningScreen from "./components/screens/search/tab/RekeningScreen";
 import LacakBarcode from "./components/screens/LacakBarcode";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 import Barcode from './components/screens/helper/barcode';
