@@ -23,7 +23,7 @@ export default StyleSheet.create({
         width: itemWidth,
         height: slideHeight,
         paddingHorizontal: itemHorizontalMargin,
-        paddingBottom: 18 // needed for shadow
+        paddingBottom: 10 // needed for shadow
     },
     shadow: {
         position: 'absolute',
@@ -39,7 +39,6 @@ export default StyleSheet.create({
     },
     imageContainer: {
         flex: 1,
-        marginBottom: IS_IOS ? 0 : -1, // Prevent a random Android rendering issue
         backgroundColor: '#ededed',
         borderRadius: entryBorderRadius
     },
@@ -47,8 +46,7 @@ export default StyleSheet.create({
         backgroundColor: colors.black
     },
     image: {
-        ...StyleSheet.absoluteFillObject,
-        resizeMode: 'contain',
+        resizeMode: 'stretch',
         // borderRadius: IS_IOS ? entryBorderRadius : 0,
         // borderTopLeftRadius: entryBorderRadius,
         // borderTopRightRadius: entryBorderRadius

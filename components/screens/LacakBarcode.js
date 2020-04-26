@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ScrollView, StatusBar, Image, Dimensions } from "react-native";
+import { View, Text, ScrollView, StatusBar, Image, Dimensions, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { Icon, TopNavigation, TopNavigationAction, Spinner } from '@ui-kitten/components';
 import { removeErrors } from "../../actions/search";

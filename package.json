@@ -34,6 +34,7 @@
     "react-native-confirmation-code-input": "^1.0.4",
     "react-native-dialog": "^5.6.0",
     "react-native-gesture-handler": "^1.5.6",
+    "react-native-image-slider-box": "^1.0.12",
     "react-native-image-slider-show": "^1.0.3",
     "react-native-maps": "^0.26.1",
     "react-native-md5": "^1.0.0",
