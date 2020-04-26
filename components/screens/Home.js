@@ -245,9 +245,9 @@ class Home extends React.Component {
 
 	onLupaPin = () => {
 		this.props.navigation.navigate({
-			routeName: 'PemulihanAkun',
+			routeName: 'Pemulihan',
 			params: {
-				titlePemulihan: 'Lupa PIN',
+				title: 'Lupa PIN',
 				jenis: 1
 			}
 		})
