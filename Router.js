@@ -8,25 +8,16 @@ import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/pendaftaran/IndexRegister";
 import { Layout, Icon, Avatar } from '@ui-kitten/components';
 import IndexMenu from "./components/screens/menu/Index";
-//import IndexMenu from "./components/screens/search/IndexSearch";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
-import LacakScreen from "./components/screens/search/tab/LacakScreen";
-import RekeningScreen from "./components/screens/search/tab/RekeningScreen";
-import MyTab from "./components/screens/search/MyTab";
-import LacakBarcode from "./components/screens/search/result/LacakBarcode";
-import ResultRekeningSearch from "./components/screens/search/result/ResultRekeningSearch";
+import LacakBarcode from "./components/screens/LacakBarcode";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 import Barcode from './components/screens/helper/barcode';
 import AccountScreen from "./components/screens/account/AccountScreenNew";
 import AboutScreen from "./components/screens/about/AboutScreen";
 import CekTarif from "./components/screens/CekTarif";
-import PemulihanAkun from "./components/screens/PemulihanAkun";
-import ListOrder from "./components/screens/ListOrder";
-import SearchOrderScreen from "./components/screens/SearchOrderScreen";
-import BantuanScreen from "./components/screens/BantuanScreen";
-import RequestPickupScreen from "./components/screens/RequestPickupScreen";
+// import PemulihanAkun from "./components/screens/PemulihanAkun";
 import OrderNonMember from "./components/screens/orderDetail/Order";
 import OrderPenerimaNonMember from "./components/screens/orderDetail/Penerima";
 import MapsScreen from "./components/screens/historyOrder/MapScreen";
@@ -38,16 +29,7 @@ import RegistrasiNonPebisol from "./components/screens/pendaftaran/NonPebisol";
 import ValidasiRekening from "./components/screens/ValidasiRekening";
 import ChangePinScreen from "./components/screens/ChangePinScreen";
 import DetailOrder from "./components/screens/historyOrder/DetailOrder";
-
-const RouteTab = createMaterialTopTabNavigator(
-  {
-    Lacak: LacakScreen,
-    Rekening: RekeningScreen,
-  },
-  {
-    tabBarComponent: ({ navigation }) => <MyTab navigation={navigation} />,
-  }
-);
+import Pemulihan from "./components/screens/bantuan/Pemulihan";
 
 const AppNavigator = createStackNavigator({
       PilihTarif: {
@@ -59,17 +41,11 @@ const AppNavigator = createStackNavigator({
       LacakBarcode: {
         screen: LacakBarcode
       },
-      ResultRekeningSearch: {
-        screen: ResultRekeningSearch 
-      },
       Barcode: {
         screen: Barcode
       },
       Pembayaran: {
         screen: Pembayaran
-      },
-      DetailSearch: {
-        screen: RouteTab
       },
       IndexMenu: {
         screen: IndexMenu
@@ -79,15 +55,6 @@ const AppNavigator = createStackNavigator({
       },
       CekTarif: {
         screen: CekTarif
-      },
-      ListOrder: {
-        screen: ListOrder
-      },
-      SearchOrder: {
-        screen: SearchOrderScreen
-      },
-      RequestPickup: {
-        screen: RequestPickupScreen
       },
       OrderNonMember: {
         screen: OrderNonMember
@@ -145,14 +112,14 @@ const LoginNavigator = createStackNavigator({
       header: null
     }
   },
-  PemulihanAkun: {
-    screen: PemulihanAkun,
-    navigationOptions: { 
-      header: null
-    }
-  },
-  Bantuan: {
-    screen: BantuanScreen,
+  // PemulihanAkun: {
+  //   screen: PemulihanAkun,
+  //   navigationOptions: { 
+  //     header: null
+  //   }
+  // },
+  Pemulihan: {
+    screen: Pemulihan,
     navigationOptions: { 
       header: null
     }

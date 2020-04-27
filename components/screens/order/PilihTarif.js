@@ -31,50 +31,85 @@ const numberWithCommas = (number) => {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+// const ListTarifOld = ({ onAccept, list }) => {
+// 	// console.log(list);
+// 	return(
+// 		<View style={{paddingBottom: 10}}>
+// 			{ list.map((x, i) => {
+// 				const parsing = x.split('*');
+// 				let produk = parsing[0];
+// 				if (x.length > 0) { //handle tarif last index cause parsing (#)
+// 					// console.log(parsing);
+// 					let tarif = parsing[1];
+// 					tarif = tarif.split('|');
+// 					// console.log(tarif);
+// 					let fee 		= Math.floor(tarif[0]);
+// 					let ppn 		= Math.floor(tarif[1]);
+// 					let htnb 		= Math.floor(tarif[2]);
+// 					let ppnhtnb 	= Math.floor(tarif[3]);
+// 					let totalTarif 	= Math.floor(tarif[4]);
+
+// 					//get id serve
+// 					let idService = produk.split('-');
+// 					idService = idService[0];
+
+// 					const payload = {
+// 						id: idService,
+// 						description: produk,
+// 						tarif: totalTarif,
+// 						beadasar: fee,
+// 						ppn: ppn,
+// 						htnb: htnb,
+// 						ppnhtnb: ppnhtnb
+// 					};
+
+// 					return(
+// 						<ListItem
+// 							key={i}
+// 						    title={`Rp. ${numberWithCommas(totalTarif)}`}
+// 						    description={produk}
+// 							accessory={(e) => renderItemAccessory(e, payload, onAccept)}
+// 							onPress={() => onAccept(payload)}
+// 						/>
+// 					)
+// 				}
+// 			})}
+// 	</View>
+// 	);
+// }
+
 const ListTarif = ({ onAccept, list }) => (
 	<View style={{paddingBottom: 10}}>
-			{ list.map((x, i) => {
-				const parsing = x.split('*');
-				let produk = parsing[0];
-				if (x.length > 0) { //handle tarif last index cause parsing (#)
-					// console.log(parsing);
-					let tarif = parsing[1];
-					tarif = tarif.split('|');
-					// console.log(tarif);
-					let fee 		= Math.floor(tarif[0]);
-					let ppn 		= Math.floor(tarif[1]);
-					let htnb 		= Math.floor(tarif[2]);
-					let ppnhtnb 	= Math.floor(tarif[3]);
-					let totalTarif 	= Math.floor(tarif[4]);
+		{ list.map((x, i) => {
+			const tarif 	= x.refTarif.split('|');
+			let fee 		= Math.floor(tarif[0]);
+			let ppn 		= Math.floor(tarif[1]);
+			let htnb 		= Math.floor(tarif[2]);
+			let ppnhtnb 	= Math.floor(tarif[3]);
+			let totalTarif 	= Math.floor(tarif[4]);
 
-					//get id serve
-					let idService = produk.split('-');
-					idService = idService[0];
+			const payload = {
+				id: x.id,
+				description: x.name,
+				tarif: totalTarif,
+				beadasar: fee,
+				ppn: ppn,
+				htnb: htnb,
+				ppnhtnb: ppnhtnb
+			};
 
-					const payload = {
-						id: idService,
-						description: produk,
-						tarif: totalTarif,
-						beadasar: fee,
-						ppn: ppn,
-						htnb: htnb,
-						ppnhtnb: ppnhtnb
-					};
-
-					return(
-						<ListItem
-							key={i}
-						    title={`Rp. ${numberWithCommas(totalTarif)}`}
-						    description={produk}
-							accessory={(e) => renderItemAccessory(e, payload, onAccept)}
-							onPress={() => onAccept(payload)}
-						/>
-					)
-				}
-			})}
+			return(
+				<ListItem 
+					key={i}
+					title={`Rp. ${numberWithCommas(totalTarif)}`}
+					description={x.name}
+					accessory={(e) => renderItemAccessory(e, payload, onAccept)}
+					disabled={true}
+				/>
+			);
+		})}
 	</View>
 );
-
 
 class PilihTarif extends React.Component{
 	state = {
@@ -96,14 +131,32 @@ class PilihTarif extends React.Component{
 
 			api.qob.getTarif(payload)
 				.then(res => {
-					this.setState({ loading: false });
-					// console.log(res);
 					const response = res.split('#');
-					this.setState({ tarif: response });
+					const toWhatIwant = [];
+					response.forEach(x => {
+						var values = x.split('*');
+						var getId = values[0].split('-')[0];
+						//last array is empty space
+						if (values.length > 1) {
+							toWhatIwant.push({
+								id: getId,
+								name: values[0],
+								refTarif: values[1]
+							})
+						}
+					});
+
+					const filterVal = ['240','EC2','2Q9','447'];
+					const filters 	= toWhatIwant.filter(x => filterVal.includes(x.id));
+					
+					this.setState({ 
+						tarif: filters,
+						loading: false
+					});
 					// console.log(response);
 				}).catch(err => {
 					this.setState({ loading: false });
-					console.log(err.response.data);
+					console.log(err);
 				})
 		}
 		//console.log(this.props.navigation.state.params);

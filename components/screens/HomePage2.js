@@ -24,9 +24,9 @@ const HomePage2 = ({ navigation }) => (
 				<Text 
 					style={{textAlign: 'center', fontFamily: 'open-sans-bold', color: 'blue'}}
 					onPress={() => navigation.navigate({ 
-						routeName: 'PemulihanAkun',
+						routeName: 'Pemulihan',
 						params: {
-							titlePemulihan: 'Pemulihan Akun',
+							title: 'Pemulihan Akun',
 							jenis: 2
 						}
 					})}

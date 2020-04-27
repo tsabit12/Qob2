@@ -115,8 +115,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: 'center',
-		marginLeft: 16,
-		marginRight: 16,
+		marginLeft: 5,
+		marginRight: 5,
 		marginBottom: 10,
 		height: '100%',
 		padding: 2,
@@ -134,9 +134,8 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginLeft: 5,
-		marginRight: 5,
-		marginBottom: 5,
+		marginLeft: 10,
+		marginRight: 10,
 		borderColor: 'black'
 	},
 	img: {
