@@ -1,11 +1,23 @@
 import React from "react";
-import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Image, StatusBar } from "react-native";
+import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Image, StatusBar, Dimensions } from "react-native";
 import { Layout, Input, Button, ListItem, Icon,  TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
 import Loader from "../Loader";
 import api from "../api";
+import apiWs from "../apiWs";
 import { SafeAreaView } from 'react-navigation';
 import Constants from 'expo-constants';
+
+const device = Dimensions.get('window').width;
+
+
+const capitalize = (string) => {
+	if (string) {
+		return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	}else{
+		return '-';
+	}
+}
 
 const Judul = ({ navigation }) => (
 	<View>
@@ -123,6 +135,10 @@ class CekTarif extends React.Component{
 		return errors;
 	}
 
+	numberWithCommas = (number) => {
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+	}
+
 	onReset = () => this.setState({ 
 		success: [],
 		data: {
@@ -139,7 +155,16 @@ class CekTarif extends React.Component{
 		}
 	})
 
-	onChange = (e, { name }) => this.setState({ data: { ...this.state.data, [name]: e }})
+	onChange = (e, { name }) => {
+		if (name === 'lebar' || name === 'tinggi' || name === 'nilai' || name === 'panjang') {
+			var val = e.replace(/\D/g, '');
+			var x 	= Number(val);
+			const value = this.numberWithCommas(x);
+			this.setState({ data: { ...this.state.data, [name]: value }})
+		}else{
+			this.setState({ data: { ...this.state.data, [name]: e }})
+		}
+	}
 
 	onChangeKotaA = (e) => {
 		clearTimeout(this.timer);
@@ -158,16 +183,16 @@ class CekTarif extends React.Component{
 		// var value = null;
 		if (jenis === 'A') {
 			let value = data.kotaAsal;
-			if (value.length >= 6) {
+			if (value.length >= 5) {
 				this.setState({ loadingGet: true });
-				api.qob.getAlamat(value)
+				apiWs.qob.getKodePos(value)
 					.then(res => {
 						const listAlamat1 = [];
-						res.forEach(x => {
+						res.result.forEach(x => {
 							listAlamat1.push({
-								title: x.text.replace('   ',''),
-								kodepos: x.id,
-								kota: x.kota		
+								title: capitalize(`${x.kelurahan} - ${x.kecamatan}`),
+								kodepos: x.kodepos,
+								kota: x.kabupaten		
 							});
 						});
 						this.setState({ loadingGet: false, listAlamat1, show1: true });
@@ -178,16 +203,16 @@ class CekTarif extends React.Component{
 			}
 		}else{
 			let value = data.kotaTujuan;
-			if (value.length >= 6) {
+			if (value.length >= 5) {
 				this.setState({ loadingGet2: true });	
-				api.qob.getAlamat(value)
+				apiWs.qob.getKodePos(value)
 					.then(res => {
 						const listAlamat2 = [];
-						res.forEach(x => {
+						res.result.forEach(x => {
 							listAlamat2.push({
-								title: x.text.replace('   ',''),
-								kodepos: x.id,
-								kota: x.kota		
+								title: capitalize(`${x.kelurahan} - ${x.kecamatan}`),
+								kodepos: x.kodepos,
+								kota: x.kabupaten	
 							});
 						});
 						this.setState({ loadingGet2: false, listAlamat2, show2: true });
@@ -284,7 +309,7 @@ class CekTarif extends React.Component{
 								      placeholder='Kota/kab/kec/kel'
 								      ref={this.kotaAsalRef}
 								      name='kotaAsal'
-								      label='Kota Asal (Min 6 karakter)'
+								      label='Kota Asal (Min 5 karakter)'
 								      labelStyle={styles.label}
 								      style={styles.input}
 								      value={data.kotaAsal}
@@ -311,7 +336,7 @@ class CekTarif extends React.Component{
 								      placeholder='Kota/kab/kec/kel'
 								      ref={this.kotaTujuanRef}
 								      name='kotaTujuan'
-								      label='Kota Tujuan (Min 6 karakter)'
+								      label='Kota Tujuan (Min 5 karakter)'
 								      labelStyle={styles.label}
 								      style={styles.input}
 								      value={data.kotaTujuan}
@@ -445,7 +470,7 @@ const styles = StyleSheet.create({
 		marginTop: -3
 	},
 	scroll: {
-		height: 100,
+		height: device*0.3,
 		paddingBottom: 50
 	},
 	StatusBar: {
