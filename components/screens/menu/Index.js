@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, Alert, ScrollView, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert, ScrollView, Dimensions, BackHandler, ToastAndroid } from "react-native";
 import Menu from "./MenuOld";
 import styles, { colors } from './styles/index.style';
 //import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -14,29 +14,12 @@ import { Notifications } from 'expo';
 import apiBaru from "../../apiBaru";
 import { SliderBox } from "react-native-image-slider-box";
 import { Ionicons } from '@expo/vector-icons';
+import {  StackActions } from 'react-navigation';
+import { loggedOut } from "../../../actions/auth";
 
 const heightDevice = Dimensions.get('window').height;
 
-// export const ENTRIES1 = [
-//     {
-//         // title: 'Delivery is yours',
-//         // subtitle: 'subtitle',
-//         illustration: require('../../../assets/slider/qob.jpg')
-//     },
-//     { illustration: require('../../../assets/slider/qob2.jpg') },
-//     { illustration: require('../../../assets/slider/qob3.png') },
-//     { illustration: require('../../../assets/slider/qob4.jpg') },
-//     { illustration: require('../../../assets/slider/qob5.jpg') },
-//     { illustration: require('../../../assets/slider/qob6.jpg') }
-// ];
-
-const SLIDER_1_FIRST_ITEM = 1;
-
 const ProfileIcon = (style) => {
-	// console.log(style);
-	// return(
-	// 	<Icon {...style} name='person' fill='#FFF'/>
-	// )
 	return(
 		<Ionicons
 	        style={{ backgroundColor: 'transparent' }}
@@ -84,42 +67,95 @@ const RenderButtonGiro = ({ norek, detail, onPressGiro }) => (
 	</View>
 );
 
+let backHandlerClickCount = 0;
+
 class Index extends React.Component{
 	state = {
-		slider1ActiveSlide: SLIDER_1_FIRST_ITEM,
-		loading: false
+		loading: false,
+		mount: false,
+		clickedPosition: 0
 	}
 
-	async UNSAFE_componentWillMount(){
-		const { userid } = this.props.dataLogin;
-		const { email, nohp } = this.props.dataLogin.detail;
-		const { status: existingStatus } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-		let finalStatus = existingStatus;
-		
-		if (existingStatus !== 'granted') {
-	        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-	        finalStatus = status;
-	    }
 
-	    if (finalStatus !== 'granted') {
-	        alert('Failed to get push token for push notification!');
-	        return;
-	    }
-
-	    await Notifications.getExpoPushTokenAsync()
-	    	.then(token => {
-	    		const payload = {
-	    			token,
-	    			email: email,
-	    			userid: userid,
-	    			phone: nohp
-	    		};
-	    		apiBaru.qob.pushToken(payload)
-	    			.then(res => console.log(res))
-	    			.catch(err => console.log(err))
-	    	}).catch(err => console.log(err))
-      	
+	UNSAFE_componentWillMount(){
+		this.unsubscribe = this.props.navigation.addListener('didFocus', payload =>
+			BackHandler.addEventListener('hardwareBackPress', () => this.onBackButtonPressAndroid(payload)));
+		this.setState({ mount: true });
 	}
+
+
+	async componentDidMount(){
+		if (this.state.mount) {
+			const { userid } = this.props.dataLogin;
+			const { email, nohp } = this.props.dataLogin.detail;
+			const { status: existingStatus } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+			let finalStatus = existingStatus;
+			
+			if (existingStatus !== 'granted') {
+		        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+		        finalStatus = status;
+		    }
+
+		    if (finalStatus !== 'granted') {
+		        alert('Failed to get push token for push notification!');
+		        return;
+		    }
+
+		    await Notifications.getExpoPushTokenAsync()
+		    	.then(token => {
+		    		const payload = {
+		    			token,
+		    			email: email,
+		    			userid: userid,
+		    			phone: nohp
+		    		};
+		    		apiBaru.qob.pushToken(payload)
+		    			.then(res => console.log(res))
+		    			.catch(err => console.log(err))
+		    	}).catch(err => console.log(err))			
+		}
+	}
+
+	shortToast = message => {
+        ToastAndroid.showWithGravityAndOffset(
+          message,
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50
+        );
+    }
+
+	onBackButtonPressAndroid = () => {
+        // const { clickedPosition } = this.state;
+
+        if (this.props.navigation.isFocused()) {
+          Alert.alert(
+            'Exit Application',
+            'Do you want to quit application?', [{
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel'
+            }, {
+              text: 'OK',
+              onPress: () => this.onBackPress()
+            }], {
+              cancelable: false
+            }
+          );
+        } else {
+          this.props.navigation.dispatch(StackActions.pop({
+            n: 1
+          }));
+        }
+        return true;
+  	}
+
+    onBackPress = () => {
+    	BackHandler.exitApp();
+    	this.props.loggedOut();
+    	this.unsubscribe.remove();
+    }
 	
 	_renderItemWithParallax ({item, index}, parallaxProps) {
         return (
@@ -209,41 +245,6 @@ class Index extends React.Component{
 					/>
 				</View>
 				<ScrollView>
-					{ /* <View style={styles.exampleContainer}>
-						IF USING CAURSE 
-							<Carousel
-			                  ref={c => this._slider1Ref = c}
-			                  data={ENTRIES1}
-			                  renderItem={this._renderItemWithParallax}
-			                  sliderWidth={sliderWidth}
-			                  itemWidth={itemWidth}
-			                  hasParallaxImages={true}
-			                  firstItem={SLIDER_1_FIRST_ITEM}
-			                  inactiveSlideScale={0.94}
-			                  inactiveSlideOpacity={0.7}
-			                  // inactiveSlideShift={20}
-			                  containerCustomStyle={styles.slider}
-			                  contentContainerCustomStyle={styles.sliderContentContainer}
-			                  loop={true}
-			                  autoplay={true}
-			                  loopClonesPerSide={2}
-			                  autoplayDelay={500}
-			                  autoplayInterval={3000}
-			                  onSnapToItem={(index) => this.setState({ slider1ActiveSlide: index }) }
-			                />
-			                <Pagination
-			                  dotsLength={ENTRIES1.length}
-			                  activeDotIndex={slider1ActiveSlide}
-			                  containerStyle={styles.paginationContainer}
-			                  dotColor={'rgb(245, 90, 12)'}
-			                  dotStyle={styles.paginationDot}
-			                  inactiveDotColor={colors.black}
-			                  inactiveDotOpacity={0.4}
-			                  inactiveDotScale={0.6}
-			                  carouselRef={this._slider1Ref}
-			                  tappableDots={!!this._slider1Ref}
-			                />
-					</View> */ }
 					<View style={{marginBottom: 5}}>
 						<SliderBox images={[
 								require('../../../assets/slider/qob.jpg'),
@@ -290,4 +291,4 @@ function mapStateToProps(state) {
 	}
 }
 
-export default connect(mapStateToProps, null)(Index);
+export default connect(mapStateToProps, { loggedOut })(Index);
