@@ -345,7 +345,13 @@ class AccountScreenNew extends React.Component{
 				    rightControls={this.renderRightControls()}
 				/>
 				<ScrollView onScroll={this.handleScroll}>
-					<ImageBackground source={require('../../../assets/profil_back.png')} style={{height: height / 4.5, marginTop: -2, width: width + 2}}>
+					<ImageBackground 
+						source={require('../../../assets/profil_back.png')} 
+						style={{
+							flex: 1,
+							width: width + 2,
+							marginBottom: 15
+						}}>
 						<View style={styles.card}>
 							{ dataLogin.norek === '-' ? 
 								<React.Fragment>
@@ -494,7 +500,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: 10,
-		minHeight: widthBtn,
+		height: widthBtn,
 		width: widthBtn,
 		borderRadius: widthBtn / 2
 	}
