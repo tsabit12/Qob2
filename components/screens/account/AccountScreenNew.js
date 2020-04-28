@@ -63,7 +63,7 @@ const numberWithCommas = (number) => {
 	}
 }
 
-const RenderSaldoView = ({ detail }) => (
+const RenderSaldoView = ({ detail, norek }) => (
 	<React.Fragment>
 		<View style={{marginBottom: 10}}>
 			<Text style={{fontFamily: 'open-sans-bold', textAlign: 'center', fontSize: 18, color: 'white'}}>{detail.nama}</Text>
@@ -75,7 +75,7 @@ const RenderSaldoView = ({ detail }) => (
 			</View>
 			<View>
 				<Text style={{fontFamily: 'open-sans-reg', color: 'white', fontSize: 16}}>NOMOR REKENING</Text>
-				<Text style={{fontFamily: 'open-sans-bold', color: 'white', fontSize: 16}}>{detail.norek}</Text>
+				<Text style={{fontFamily: 'open-sans-bold', color: 'white', fontSize: 16}}>{norek}</Text>
 			</View>
 		</View>
 	</React.Fragment>
@@ -332,7 +332,7 @@ class AccountScreenNew extends React.Component{
 	render(){
 		const { dataLogin } = this.props;
 		const { errors, responseKodepos, styleState } = this.state;
-		//console.log(height / 28);
+
 		return(
 			<View style={{flex: 1, backgroundColor: '#ffd000'}}>
 				<Loader loading={this.state.loading} />
@@ -347,7 +347,7 @@ class AccountScreenNew extends React.Component{
 				<ScrollView onScroll={this.handleScroll}>
 					<ImageBackground source={require('../../../assets/profil_back.png')} style={{height: height / 4.5, marginTop: -2, width: width + 2}}>
 						<View style={styles.card}>
-							{ dataLogin.detail.norek === '-' ? 
+							{ dataLogin.norek === '-' ? 
 								<React.Fragment>
 									<Text style={{color: 'white', fontSize: 17, textAlign: 'center', marginBottom: 10}}>
 										Anda belum terhubung ke akun giro
@@ -360,6 +360,7 @@ class AccountScreenNew extends React.Component{
 									>Hubungkan</Button>
 								</React.Fragment>: <RenderSaldoView 
 									detail={dataLogin.detail}
+									norek={dataLogin.norek}
 								/> }
 						</View>
 					</ImageBackground>
@@ -424,6 +425,9 @@ class AccountScreenNew extends React.Component{
 		);
 	}
 }
+
+// const heightBtn = height / 20;
+const widthBtn = width / 8.5;
 
 const styles = StyleSheet.create({
 	StatusBar: {
@@ -490,9 +494,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: 10,
-		minHeight: height / 20,
-		borderRadius: 50,
-		width: width / 8.5
+		minHeight: widthBtn,
+		width: widthBtn,
+		borderRadius: widthBtn / 2
 	}
 })
 
