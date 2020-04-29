@@ -181,7 +181,7 @@ class Index extends React.Component{
 
 	onAlert = (message) => {
 		Alert.alert(
-		  'Apakah anda yakin?',
+		  'Notifikasi',
 		  `${message}`,
 		  [
 		  	{
@@ -189,28 +189,48 @@ class Index extends React.Component{
 		      onPress: () => console.log('Cancel Pressed'),
 		      style: 'cancel',
 		    },
-		    {text: 'Ya', onPress: () => this.generateToken()},
+		    {text: 'Konfirmasi', onPress: () => this.generateToken()},
 		  ],
 		  {cancelable: false},
 		);
 	}
 
 	generateToken = () => {
-		const { userid } = this.props.dataLogin;
+		const { userid, detail } = this.props.dataLogin;
 		this.setState({ loading: true });
 		api.auth.genpwdweb(userid)
 			.then(res => {
-				this.setState({ loading: false });
-				setTimeout(() => {
-					Alert.alert(
-					  'Sukses',
-					  `${res.desk_mess}`,
-					  [
-					  	{ text: 'Tutup', style: 'cancel' },
-					  ],
-					  {cancelable: false},
-					);
-				}, 200);
+				const payload = {
+					email: detail.email,
+					pin: res.response_data1
+				}
+				apiBaru.qob.syncronizeUserPwd(payload)
+					.then(res2 => {
+						this.setState({ loading: false });
+						setTimeout(() => {
+							Alert.alert(
+							  'Sukses',
+							  `${res.desk_mess}`,
+							  [
+							  	{ text: 'Tutup', style: 'cancel' },
+							  ],
+							  {cancelable: false},
+							);
+						}, 200);
+					})
+					.catch(err2 => {
+						this.setState({ loading: false });
+						setTimeout(() => {
+							Alert.alert(
+							  'Oppps',
+							  `Terdapat kesalahan, harap cobalagi`,
+							  [
+							  	{ text: 'Tutup', style: 'cancel' },
+							  ],
+							  {cancelable: false},
+							);
+						}, 200);
+					})
 			})
 			.catch(err => {
 				this.setState({ loading: false });
