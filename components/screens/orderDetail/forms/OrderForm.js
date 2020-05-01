@@ -1,6 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Input, Button, CheckBox } from '@ui-kitten/components';
+import { Input, Button, CheckBox, Select } from '@ui-kitten/components';
+
+const dataOptions = [
+  { text: 'Paket', value: 1},
+  { text: 'Surat', value: 0}
+];
 
 class OrderForm extends React.Component{
 	jenisRef = React.createRef();
@@ -20,7 +25,8 @@ class OrderForm extends React.Component{
 			tinggi: '0',
 			nilaiVal: '0',
 			checked: false,
-			codvalue: ''
+			codvalue: '',
+			jenisKiriman: dataOptions[0]
 		},
 		errors: {}
 	}
@@ -57,7 +63,12 @@ class OrderForm extends React.Component{
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
-			this.props.onSubmit(this.state.data);
+			const { data } = this.state;
+			const payload = {
+				...data,
+				itemtype: data.jenisKiriman.value
+			}
+			this.props.onSubmit(payload);
 		}
 	}
 
@@ -219,6 +230,16 @@ class OrderForm extends React.Component{
 				      caption={errors.nilai && `${errors.nilai}`}
 				      returnKeyType='done'
 				    />
+				    <Select
+						label='Jenis Kiriman'
+				        data={dataOptions}
+				        labelStyle={styles.label}
+				        style={{marginTop: 8, marginBottom: 8}}
+				        name='jenisKiriman'
+				        selectedOption={data.jenisKiriman}
+				        onSelect={(e) => this.setState({ data: { ...this.state.data, jenisKiriman: e} })}
+				    />
+
 				    { isCod && <CheckBox
 					      text='COD'
 					      style={{ marginTop: 5 }}

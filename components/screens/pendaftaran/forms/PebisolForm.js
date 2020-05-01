@@ -213,8 +213,8 @@ class PebisolForm extends React.Component{
   		if (!data.jenisUsaha) errors.jenisUsaha = "Jenis usaha harap diisi";
   		
   		if (data.noHp) {
-  			var regex 			= /(\()?(\+62|62|0)(\d{2,3})?\)?[ .-]?\d{2,4}[ .-]?\d{2,4}[ .-]?\d{2,4}/;
-  			const phoneValues 	= `+62-${data.noHp}`;
+  			var regex 			= /^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/;
+  			const phoneValues 	= `0${data.noHp.replace(/\D/g, '')}`;
   			if (!regex.test(phoneValues)) errors.noHp = "Nomor handphone tidak valid"; 
   		}
 

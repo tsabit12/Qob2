@@ -57,9 +57,10 @@ class Order extends React.Component{
 			isiKiriman: data.jenis,
 			nilai: data.nilaiVal.replace(/\D/g, ''),
 			codvalue: data.codvalue.replace(/\D/g, ''),
-			cod: data.checked
+			cod: data.checked,
+			itemtype: data.itemtype
 		};
-		
+			
 		this.props.navigation.push('KelolaPengirim', {
 			deskripsiOrder
 		})

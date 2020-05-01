@@ -122,11 +122,16 @@ class PilihTarif extends React.Component{
 		// console.log(params);
 
 		if (Object.keys(params).length > 0) {
+			const { deskripsiOrder } = params;
 			const payload = {
 				kodePosA: params.pengirimnya.kodepos,
 				kodePosB: params.deskripsiPenerima.kodepos,
-				berat: params.deskripsiOrder.berat,
-				nilai: params.deskripsiOrder.nilai
+				berat: Number(deskripsiOrder.berat),
+				nilai: Number(deskripsiOrder.nilai),
+				panjang: Number(deskripsiOrder.panjang),
+				lebar: Number(deskripsiOrder.lebar),
+				tinggi: Number(deskripsiOrder.tinggi),
+				itemtype: deskripsiOrder.itemtype
 			}
 
 			api.qob.getTarif(payload)
@@ -146,7 +151,9 @@ class PilihTarif extends React.Component{
 						}
 					});
 
-					const filterVal = ['240','EC2','2Q9','447'];
+					console.log(toWhatIwant);
+
+					const filterVal = ['210','240','EC2','EC1','1Q9','2Q9','447','401','417'];
 					const filters 	= toWhatIwant.filter(x => filterVal.includes(x.id));
 					
 					this.setState({ 
