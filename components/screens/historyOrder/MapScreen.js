@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StatusBar, TouchableOpacity } from "react-native";
 import apiWs from "../../apiWs";
-import { Spinner, Icon } from '@ui-kitten/components';
+import { Spinner, Icon, Button } from '@ui-kitten/components';
 import MapView from 'react-native-maps';
 import axios from "axios";
 import { Polyline, Marker } from "react-native-maps";
@@ -22,10 +22,14 @@ const capitalize = (string) => {
 	}
 }
 
+const StarIcon = (style) => (
+  <Icon {...style} name='arrow-back'/>
+);
 
-const EmptyMessage = () => (
+const EmptyMessage = ({ handleBack }) => (
 	<View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
 		<Text>Lokasi Faster tidak ditemukan. Harap cobalagi nanti</Text>
+		<Button primary style={{marginTop: 10}} icon={StarIcon} onPress={() => handleBack()}>Kembali</Button>
 	</View>
 );
 
@@ -178,6 +182,8 @@ class MapScreen extends React.Component{
 		// }
 	}
 
+	onGoBack = () => this.props.navigation.goBack()
+
 	render(){
 		const { pickupLocation, fasterLocation, routeForMap, visible, responseDetail, success } = this.state;
 		const { params } = this.props.navigation.state;
@@ -232,7 +238,7 @@ class MapScreen extends React.Component{
 				        }}>
 				          	<RenderDetail list={params.detail} />
 				    </Backdrop>
-			    </React.Fragment> : <EmptyMessage /> }
+			    </React.Fragment> : <EmptyMessage handleBack={this.onGoBack} /> }
 			</React.Fragment>
 		);
 	}
