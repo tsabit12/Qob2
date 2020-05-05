@@ -30,6 +30,7 @@ import ValidasiRekening from "./components/screens/ValidasiRekening";
 import ChangePinScreen from "./components/screens/ChangePinScreen";
 import DetailOrder from "./components/screens/historyOrder/DetailOrder";
 import Pemulihan from "./components/screens/bantuan/Pemulihan";
+import { Aktivasi as AktivasiScreen } from "./components/screens/Aktivasi";
 
 const AppNavigator = createStackNavigator({
       PilihTarif: {
@@ -82,7 +83,7 @@ const AppNavigator = createStackNavigator({
       },
       DetailOrder: {
         screen: DetailOrder
-      }
+      },
   	},{
   	initialRouteName: 'IndexMenu',
     defaultNavigationOptions: {
@@ -120,6 +121,12 @@ const LoginNavigator = createStackNavigator({
   // },
   Pemulihan: {
     screen: Pemulihan,
+    navigationOptions: { 
+      header: null
+    }
+  },
+  Aktivasi: {
+    screen: AktivasiScreen,
     navigationOptions: { 
       header: null
     }
