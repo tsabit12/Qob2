@@ -125,6 +125,7 @@ class Order extends React.Component{
 	}
 
 	syncGiro = (payload) => {
+		console.log({ payload });
 		this.setState({ textLoading: 'Menyiapkan...'});
 		this.props.synchronizeWebGiro(payload)
 			.then(() => {

@@ -1,6 +1,9 @@
 import React from "react";
-import { View, Text, StatusBar, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, StatusBar, StyleSheet, Image, Dimensions } from "react-native";
 import Constants from 'expo-constants';
+import { LinearGradient } from 'expo-linear-gradient';
+
+var {width} = Dimensions.get('window');
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -9,9 +12,14 @@ const MyStatusBar = () => (
 );
 
 const HomePage2 = ({ navigation }) => (
-	<View style={{flex: 1}}>
-		<MyStatusBar />
-		<ImageBackground source={require('../../assets/homepage.png')} style={styles.backgroundImage}>
+	<LinearGradient colors={['#e8c61e', '#F5A946', '#ff781f']} style={{flex: 1}}>
+		<View style={{flex: 1}}>
+			<Image 
+				source={require('../../assets/banner.png')} 
+				resizeMode='contain'
+				style = {[styles.image,{overflow: 'visible'}]}
+			/>
+		</View>
 		<View style={styles.label}>
 			<Text style={{textAlign: 'center'}}>
 				<Text style={styles.text}>Belum memiliki akun?</Text>
@@ -39,14 +47,13 @@ const HomePage2 = ({ navigation }) => (
 				> disini</Text>
 			</Text>
 		</View>
-		</ImageBackground>
-	</View>
+	</LinearGradient>
 );
 
 const styles = StyleSheet.create({
-	backgroundImage: {
-	    flex: 1,
-	    justifyContent : 'center'
+	image: {
+	    width: width * 1,
+	    flex: 1
 	},
 	StatusBar: {
         height: Constants.statusBarHeight,
@@ -59,7 +66,7 @@ const styles = StyleSheet.create({
     label: {
     	flex: 1, 
     	position: 'absolute', 
-    	bottom: 10, 
+    	bottom: 20, 
     	left: 10, 
     	right: 10, 
     	backgroundColor: 'white',

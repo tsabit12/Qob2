@@ -73,7 +73,6 @@ const PointInHours = () => (
 			height: 10,
 			borderRadius: 10/2, 
 			backgroundColor: 'green', 
-			marginLeft: 8,
 			marginTop: 4,
 			marginLeft: -6
 		}} />
@@ -145,8 +144,17 @@ const ListTrace = ({ listdata }) => {
 	return(
 		<View style={{flex: 1}}>
 			<View style={styles.card}>
-				<View style={{ alignItems: 'center', marginTop: 4, marginBottom: 10}}>
-					<Image source={iconQ9} style={{width: device*0.4, height: device*0.4, borderWidth: 2, borderColor: '#f08400', borderRadius: 75}}/>
+				<View style={{alignItems: 'center'}}>
+					<Image 
+						source={iconQ9} 
+						style={{
+							width: device*0.4, 
+							height: device*0.4, 
+							borderWidth: 2, 
+							borderColor: '#f08400', 
+							borderRadius: device*0.4 / 2,
+							margin: 15
+						}}/>
 				</View>
 				{listContent}
 			</View>
@@ -209,9 +217,7 @@ class LacakBarcode extends React.Component{
 				/>
 		       	{ listKiriman ? 
 		       		<ScrollView>
-						<View style={styles.containerTime}>
-		       				<ListTrace listdata={sorted} /> 
-		       			</View>
+		       			<ListTrace listdata={sorted} /> 
 		       		</ScrollView> : <React.Fragment> 
 		       		{ hasError.global ? <HasErrorView message={hasError.global} /> : <LoadingView />}
 		       	</React.Fragment> }
@@ -246,10 +252,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600'
   },
-  containerTime: {
-    flex: 1,
-    padding: 10,
-  },
   list: {
     flex: 1
   },
@@ -271,7 +273,7 @@ const styles = StyleSheet.create({
   borderVertical: {
     borderStyle: 'dotted',
     borderLeftWidth:3,
-    marginLeft: 100,
+    marginLeft: device/4+3,
     borderLeftColor: '#d97716'
   },
   circleAktif:{
@@ -311,18 +313,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(240, 132, 0)'
   },
   card: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    padding: 5, 
-    borderBottomWidth: 2, 
-    borderRightWidth: 2, 
-    borderLeftWidth: 1, 
-    borderTopWidth: 1, 
-    borderColor: '#f08400',
-    borderRadius: 4
+    padding: 10,
+    flex: 1
   }
 });
 

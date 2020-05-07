@@ -9,6 +9,7 @@ import Loader from "../../Loader";
 import { addPickupBaru } from "../../../actions/order";
 import DataOrder from "./DataOrder";
 import apiBaru from "../../apiBaru";
+import { Ionicons } from '@expo/vector-icons';
 
 const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='#FFF'/>
@@ -494,13 +495,21 @@ class DetailOrder extends React.Component{
 				<View style={styles.tab}>
 					<View style={styles.tabLeft}>
 						<TouchableOpacity style={{alignItems: 'center'}} onPress={this.onPressTab1}>
-							<Icon name='shopping-cart-outline' width={28} height={28} fill={tab1.color} />
+							<Ionicons 
+								name="ios-cart" 
+								size={28} 
+								color={tab1.color} 
+							/>
 							<Text style={{color: tab1.color}}>Request Pickup ({pickup.length})</Text>
 						</TouchableOpacity>
 					</View>
 					<View style={styles.tabRight}>
 						<TouchableOpacity style={{alignItems: 'center'}} onPress={this.onPressTab2}>
-							<Icon name='bookmark-outline' width={28} height={28} fill={tab2.color} />
+							<Ionicons
+						        name='ios-bookmark'
+						        size={28}
+						        color={tab2.color}
+						    />
 							<Text style={{color: tab2.color}}>Data Order ({other.length})</Text>
 						</TouchableOpacity>
 					</View>
