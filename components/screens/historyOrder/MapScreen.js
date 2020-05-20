@@ -11,19 +11,29 @@ import { Ionicons } from '@expo/vector-icons';
 
 const device = Dimensions.get('window').width;
 
-const Toast = props => {
-  if (props.visible) {
+shortToast = message => {
     ToastAndroid.showWithGravityAndOffset(
-      props.message,
-      ToastAndroid.LONG,
+      message,
+      ToastAndroid.SHORT,
       ToastAndroid.BOTTOM,
       25,
       50
     );
-    return null;
-  }
-  return null;
-};
+}
+
+// const Toast = props => {
+//   if (props.visible) {
+//     ToastAndroid.showWithGravityAndOffset(
+//       props.message,
+//       ToastAndroid.LONG,
+//       ToastAndroid.BOTTOM,
+//       25,
+//       50
+//     );
+//     return null;
+//   }
+//   return null;
+// };
 
 const LoadingView = () => (
 	<View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
@@ -108,8 +118,8 @@ class MapScreen extends React.Component{
 		success: false,
 		visible: false,
 		responseDetail: [],
-		toast: true,
-		fasterPhone: ''
+		fasterPhone: '',
+		start: true
 	}
 
 	UNSAFE_componentWillMount(){
@@ -173,6 +183,10 @@ class MapScreen extends React.Component{
 
 	getRoute = (newState) => {
 		const { pickupLocation, fasterLocation } = newState;
+		if (this.state.start) {
+        	shortToast("Menu chat pickuper ada di kanan atas ya");
+        }
+        
 		axios.get(`https://route.ls.hereapi.com/routing/7.2/calculateroute.json?apiKey=eF6ofksmF3MMfyeHi96K0Qf8P6DMZyZhEEnsxBLmTYo&waypoint0=geo!${fasterLocation.latitude},${fasterLocation.longitude}&waypoint1=geo!${pickupLocation.latitude},${pickupLocation.longitude}&mode=fastest;car;traffic:disabled&legAttributes=shape`)
         .then(res => {
         	let routeCoordinates = [];
@@ -182,13 +196,15 @@ class MapScreen extends React.Component{
 	            let longitude = parseFloat(latlong[1]);
 	            routeCoordinates.push({latitude: latitude, longitude: longitude});
 	        });
+
 	        this.setState({ 
 	        	pickupLocation: newState.pickupLocation,
 	        	fasterLocation: newState.fasterLocation,
 	        	routeForMap: routeCoordinates,
-	        	toast: false,
-	        	fasterPhone: newState.phoneValues
+	        	fasterPhone: newState.phoneValues,
+	        	start: false
 	        })
+
 	    })
 	    .catch(err => {
 	    	this.setState({ success: false })
@@ -253,8 +269,6 @@ class MapScreen extends React.Component{
 							/>
 						</MapView>
 					</React.Fragment> : <LoadingView /> }
-				
-				<Toast visible={this.state.toast} message="Menu chat pickuper ada di kanan atas ya" />
 				
 				</View>
 					{ !visible && <RenderButtonView onPress={this.getDetail} /> } 
