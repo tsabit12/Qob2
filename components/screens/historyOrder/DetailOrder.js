@@ -438,9 +438,23 @@ class DetailOrder extends React.Component{
 		apiBaru.qob.getHistoryStatus(payload)
 			.then(res => {
 				//sorting
+				const phoneFaster = res.data.find(x => x.driverphone !== null);
 				const datanya = res.data.sort(this.dynamicSort("-insertdate"));
-				
 				this.setState({ loading: false, history: datanya });
+				if (!phoneFaster) {
+					shortToast("Tidak ada status terbaru");
+				}else{
+					const payloadPhone = {
+						pickupnumber: payload.pickupnumber,
+						phone: phoneFaster.driverphone,
+						fastername: phoneFaster.driver,
+						latitude: phoneFaster.latitude,
+						longitude: phoneFaster.longitude
+					}
+					apiBaru.updatePhoneFaster(payloadPhone)
+						.then(res2 => shortToast("Sukses update"))
+						.catch(err => shortToast("Tidak ada status terbaru"));
+				}
 			})
 			.catch(err => {
 				this.setState({ loading: false });

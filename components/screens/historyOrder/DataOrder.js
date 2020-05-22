@@ -29,7 +29,7 @@ const numberWithCommas = (number) => {
 	}
 }
 
-const renderItemAccessory = (style, status, extid, openDetail, cekStatus, cekDriver) => {
+const renderItemAccessory = (style, status, extid, openDetail, cekStatus, cekDriver, pickupNumber) => {
 	return(
 		<React.Fragment>
 			<Menu>
@@ -42,7 +42,7 @@ const renderItemAccessory = (style, status, extid, openDetail, cekStatus, cekDri
 			          		<Text>Lihat Detail</Text>
 			          	</View>
 					</MenuOption>
-					<MenuOption onSelect={() => cekStatus(extid)}>
+					<MenuOption onSelect={() => cekStatus(extid, pickupNumber)}>
 			        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
 			          		<Text>Cek Riwayat Status</Text>
 			          	</View>
@@ -136,10 +136,11 @@ const DataOrder = ({ data, email, getStatus, history, removeHistory, movToMapVie
 		setVisible(newState);
 	}
 
-	const onCekStatus = (id) => {
+	const onCekStatus = (id, pickupNumber) => {
 		const payload = {
 			email,
-			extid: id
+			extid: id,
+			pickupnumber: pickupNumber
 		}
 		getStatus(payload);
 	} 
@@ -160,6 +161,7 @@ const DataOrder = ({ data, email, getStatus, history, removeHistory, movToMapVie
 		movToMapView(payload);
 	}
 
+
 	return(
 		<View style={{flex: 1}}>
 			<ScrollView>
@@ -168,7 +170,7 @@ const DataOrder = ({ data, email, getStatus, history, removeHistory, movToMapVie
 							title={x.desctrans} 
 							titleStyle={{color: x.va === null ? '#3366ff' : 'red', fontFamily: 'open-sans-reg'}}
 							description={`Status : (${x.laststatus})`}
-							accessory={(e) => renderItemAccessory(e, x.laststatusid, x.extid, onOpenDetail, onCekStatus, onCekDriver)}
+							accessory={(e) => renderItemAccessory(e, x.laststatusid, x.extid, onOpenDetail, onCekStatus, onCekDriver, x.pickupnumber)}
 							style={{backgroundColor: 'trans'}}
 							descriptionStyle={{fontFamily: 'open-sans-reg', fontSize: 10}}
 							disabled={true}
