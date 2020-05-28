@@ -51,7 +51,6 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPres
 				<Text style={styles.labelInformasi}>Alamat Pengirim</Text>
 				<Text style={styles.subTitle}>
 					{params.pengirimnya.alamat}, 
-					{params.pengirimnya.kel}, 
 					{params.pengirimnya.kec}, 
 					{params.pengirimnya.kota}, 
 					{params.pengirimnya.provinsi} ({params.pengirimnya.kodepos})
@@ -65,7 +64,6 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPres
 				<Text style={styles.labelInformasi}>Alamat Penerima</Text>
 				<Text style={styles.subTitle}>
 					{params.deskripsiPenerima.alamatUtama}, 
-					{params.deskripsiPenerima.kelurahan},  
 					{params.deskripsiPenerima.kecamatan},  
 					{params.deskripsiPenerima.kabupaten},  
 					{params.deskripsiPenerima.provinsi} ({params.deskripsiPenerima.kodepos})
@@ -158,7 +156,8 @@ class ResultOrder extends React.Component{
 		    "serviceid": selectedTarif.id,
 		    "shippername": pengirimnya.nama,
 		    "shipperaddress": pengirimnya.alamat,
-		    "shippersubsubdistrict": pengirimnya.kel,
+		    //"shippersubsubdistrict": pengirimnya.kel,
+		    "shippersubsubdistrict": "0",
 		    "shippersubdistrict": pengirimnya.kec,
 		    "shippercity": pengirimnya.kota,
 		    "shipperprovince": pengirimnya.provinsi,
@@ -167,7 +166,8 @@ class ResultOrder extends React.Component{
 		    "shipperphone": pengirimnya.nohp,
 		    "receivername": deskripsiPenerima.nama,
 		    "receiveraddress": deskripsiPenerima.alamatUtama,
-		    "receiversubsubdistrict": deskripsiPenerima.kelurahan,
+		    //"receiversubsubdistrict": deskripsiPenerima.kelurahan,
+		    "receiversubsubdistrict": "0",
 		    "receiversubdistrict": deskripsiPenerima.kecamatan,
 		    "receivercity": deskripsiPenerima.kabupaten,
 		    "receiverprovince": deskripsiPenerima.provinsi,

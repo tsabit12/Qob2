@@ -262,7 +262,7 @@ class CekTarif extends React.Component{
 						const listAlamat1 = [];
 						res.result.forEach(x => {
 							listAlamat1.push({
-								title: capitalize(`${x.kelurahan} - ${x.kecamatan}`),
+								title: capitalize(`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`),
 								kodepos: x.kodepos,
 								kota: x.kabupaten		
 							});
@@ -282,7 +282,7 @@ class CekTarif extends React.Component{
 						const listAlamat2 = [];
 						res.result.forEach(x => {
 							listAlamat2.push({
-								title: capitalize(`${x.kelurahan} - ${x.kecamatan}`),
+								title: capitalize(`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`),
 								kodepos: x.kodepos,
 								kota: x.kabupaten	
 							});
@@ -378,10 +378,10 @@ class CekTarif extends React.Component{
 							<View style={{borderWidth: 1, borderRadius: 4, padding: 5, borderColor: '#dbdad9'}}>
 								<View style={{padding: 4}}>
 									<Input
-								      placeholder='Kab/kec/kel/kodepos'
+								      placeholder='Masukan kecamatan'
 								      ref={this.kotaAsalRef}
 								      name='kotaAsal'
-								      label='Kota Asal (Min 5 karakter)'
+								      label='Kecamatan Asal (Min 5 karakter)'
 								      labelStyle={styles.label}
 								      style={styles.input}
 								      value={data.kotaAsal}
@@ -391,27 +391,28 @@ class CekTarif extends React.Component{
 								    />
 								    { errors.kotaAsal && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaAsal}</Text>}
 
-								    { listAlamat1.length > 0 && show1 && <View style={styles.scroll}>
-								    	<Text style={styles.textPilih}>Pilih Alamat</Text>
-									   	{ listAlamat1.map((x, i) => 
-									   		<ListItem
-									   			key={i}
-										    	style={{backgroundColor: 'transparent'}}
-										    	titleStyle={styles.listItemTitle}
-										    	descriptionStyle={styles.listItemDescription}
-										    	title={x.title}
-										    	// onPress={() => this.onClickGet('A', x.title, x.kodepos, x.kota)}
-										    	disabled={true}
-										    	accessory={(e) => renderItemAccessory(e, x.title, x.kodepos, x.kota, 'A', this.onClickGet)}
-											/> )}
-								    </View> }
+								    { listAlamat1.length > 0 && show1 && 
+								    	<View style={styles.scroll}>
+									    	<ScrollView nestedScrollEnabled={true}>
+									    		<Text style={styles.textPilih}>Pilih Alamat</Text>
+											   	{ listAlamat1.map((x, i) => 
+											   		<ListItem
+											   			key={i}
+												    	titleStyle={styles.listItemTitle}
+												    	descriptionStyle={styles.listItemDescription}
+												    	title={x.title}
+												    	onPress={() => this.onClickGet('A', x.title, x.kodepos, x.kota)}
+												    	//accessory={(e) => renderItemAccessory(e, x.title, x.kodepos, x.kota, 'A', this.onClickGet)}
+													/> )}
+									    	</ScrollView> 
+								    	</View>}
 								</View>
 								<View style={{padding: 4}}>
 									<Input
-								      placeholder='Kab/kec/kel/kodepos'
+								      placeholder='Masukan kecamatan'
 								      ref={this.kotaTujuanRef}
 								      name='kotaTujuan'
-								      label='Kota Tujuan (Min 5 karakter)'
+								      label='Kecamatan Tujuan (Min 5 karakter)'
 								      labelStyle={styles.label}
 								      style={styles.input}
 								      value={data.kotaTujuan}
@@ -422,17 +423,17 @@ class CekTarif extends React.Component{
 								    { errors.kotaTujuan && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaTujuan}</Text>}
 
 								     { listAlamat2.length > 0 && show2 && <View style={styles.scroll}>
-								     	<Text style={styles.textPilih}>Pilih Alamat</Text>
-									   	{ listAlamat2.map((x, i) => 
-									   		<ListItem
-									   			key={i}
-										    	style={{backgroundColor: 'transparent'}}
-										    	titleStyle={styles.listItemTitle}
-										    	title={x.title}
-										    	disabled={true}
-										    	accessory={(e) => renderItemAccessory(e, x.title, x.kodepos, x.kota, 'B', this.onClickGet)}
-										    	//onPress={() => this.onClickGet('B', x.title, x.kodepos, x.kota)}
-											/> )}
+								     	<ScrollView nestedScrollEnabled={true}>
+									     	<Text style={styles.textPilih}>Pilih Alamat</Text>
+										   	{ listAlamat2.map((x, i) => 
+										   		<ListItem
+										   			key={i}
+											    	titleStyle={styles.listItemTitle}
+											    	title={x.title}
+											    	// accessory={(e) => renderItemAccessory(e, x.title, x.kodepos, x.kota, 'B', this.onClickGet)}
+											    	onPress={() => this.onClickGet('B', x.title, x.kodepos, x.kota)}
+												/> )}
+									   	</ScrollView>
 								    </View> }
 								</View>
 								<View style={styles.hitung}>
@@ -558,10 +559,9 @@ const styles = StyleSheet.create({
 		marginRight: 5
 	},
 	scroll: {
-		// height: device*0.3,
-		// paddingBottom: 50,
-		padding: 5,
-		backgroundColor: '#d6d7da'
+		height: device*0.5,
+		//backgroundColor: '#d6d7da',
+		borderWidth: 0.3
 	},
 	StatusBar: {
 	    height: Constants.statusBarHeight,
