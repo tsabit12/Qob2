@@ -45,6 +45,8 @@
       "color": "#f68527",
       "androidMode": "default",
       "iosDisplayInForeground": true
-    }
+    },
+    "facebookAppId": "1310908769299572",
+    "facebookDisplayName": "Qposin"
   }
 }
