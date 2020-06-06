@@ -17,11 +17,10 @@ import Barcode from './components/screens/helper/barcode';
 import AccountScreen from "./components/screens/account/AccountScreenNew";
 import AboutScreen from "./components/screens/about/AboutScreen";
 import CekTarif from "./components/screens/CekTarif";
-// import PemulihanAkun from "./components/screens/PemulihanAkun";
 import OrderNonMember from "./components/screens/orderDetail/Order";
 import OrderPenerimaNonMember from "./components/screens/orderDetail/Penerima";
 import MapsScreen from "./components/screens/historyOrder/MapScreen";
-import RiwayatPickup from "./components/screens/historyOrder/Index";
+// import RiwayatPickup from "./components/screens/historyOrder/Index";
 import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
 import RegisterPebisol from "./components/screens/pendaftaran/Pebisol";
@@ -31,6 +30,7 @@ import ChangePinScreen from "./components/screens/ChangePinScreen";
 import DetailOrder from "./components/screens/historyOrder/DetailOrder";
 import Pemulihan from "./components/screens/bantuan/Pemulihan";
 import { Aktivasi as AktivasiScreen } from "./components/screens/Aktivasi";
+import { History as RiwayatPickup } from "./components/screens/history";
 
 const AppNavigator = createStackNavigator({
       PilihTarif: {
