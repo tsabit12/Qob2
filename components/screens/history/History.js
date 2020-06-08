@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StatusBar, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StatusBar, TouchableOpacity, ScrollView, ToastAndroid } from "react-native";
 import {
 	StylesHistory
 } from "./styles";
@@ -8,6 +8,16 @@ import { Input, Calendar, Select } from "@ui-kitten/components";
 import { Loader, Message, ResultOrder } from "./components";
 import api from "../../apiBaru";
 import { connect } from "react-redux";
+
+shortToast = message => {
+    ToastAndroid.showWithGravityAndOffset(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+}
 
 const convertToLabel = (date) => {
 	const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -51,7 +61,8 @@ const History = props => {
 		loading: true,
 		errors: {},
 		listOrder: [],
-		selectedOption: listStatus[0]
+		selectedOption: listStatus[0],
+		historyStatus: []
 	});
 
 	React.useEffect(() => {
@@ -147,6 +158,48 @@ const History = props => {
 		}
 	}
 
+	const dynamicSort = (property) => {
+	    var sortOrder = 1;
+	    if(property[0] === "-") {
+	        sortOrder = -1;
+	        property = property.substr(1);
+	    }
+
+	    return function (a,b) {
+	        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+	        return result * sortOrder;
+	    }
+	}
+
+	const onGetHistoryStatus = (id) => {
+		const payload = {
+			email: props.dataLogin.detail.email,
+			extid: id
+		}
+		setState(prevState => ({
+			...prevState,
+			loading: true,
+			historyStatus: []
+		}));
+
+		api.qob.getHistoryStatus(payload)
+			.then(res => {
+				const datanya = res.data.sort(dynamicSort("-insertdate"));
+				setState(prevState => ({
+					...prevState,
+					loading: false,
+					historyStatus: datanya
+				}));
+			})
+			.catch(err => {
+				setState(prevState => ({
+					...prevState,
+					loading: false
+				}));
+				shortToast("Terdapat kesalahan");
+			});
+	}
+
 	const { calendarStart, calendarEnd, start, end, loading, errors } = state;
 
 	return(
@@ -230,6 +283,9 @@ const History = props => {
 				<ResultOrder 
 					data={state.listOrder} 
 					filterByStatus={state.selectedOption}
+					getHistoryStatus={onGetHistoryStatus}
+					historyStatus={state.historyStatus}
+					closeModalHistory={() => setState(prevState => ({ ...prevState, historyStatus: [] }))}
 				/> }
 			</ScrollView>
 		</View>

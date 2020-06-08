@@ -11,6 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import ModalContent from "./ModalContent";
+import ModalContentHistory from "./ModalContentHistory";
 
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
@@ -77,7 +78,7 @@ const ResultOrder = props => {
 		visible: {}
 	});
 
-	const { data, filterByStatus } = props;
+	const { data, filterByStatus, historyStatus } = props;
 
 	const list = [];
 	if (filterByStatus.value === 0) {
@@ -144,6 +145,8 @@ const ResultOrder = props => {
 		}))
 	}
 
+	const cekStatus = (id) => props.getHistoryStatus(id);
+
 	const renderAccessory = (style, id, laststatus) => (
 		<React.Fragment>
 			{ laststatus === 1 ? <React.Fragment>
@@ -179,7 +182,7 @@ const ResultOrder = props => {
 					          		<Text>Lihat Detail</Text>
 					          	</View>
 							</MenuOption>
-							<MenuOption>
+							<MenuOption onSelect={() => cekStatus(id)}>
 					        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
 					          		<Text>Cek Riwayat Status</Text>
 					          	</View>
@@ -229,6 +232,25 @@ const ResultOrder = props => {
 		      	</ScrollView>
 		    </View>
 		</Modal>
+
+		{/*MODAL HISTORY*/}
+		<Modal isVisible={historyStatus.length > 0 ? true : false }>
+			<View style={{ backgroundColor: '#FFF', borderRadius: 10 }}>
+				<TouchableOpacity 
+					style={styles.iconClose} 
+					onPress={props.closeModalHistory}
+				>
+		    		<Icon name='close' width={25} height={25} />
+		    	</TouchableOpacity>
+				<ScrollView>
+					{ historyStatus.length > 0 && <ModalContentHistory 
+						data={historyStatus} 
+						allOrder={data}
+					/> }
+		    	</ScrollView>
+			</View>
+		</Modal>
+
 		</React.Fragment>
 	);
 }
