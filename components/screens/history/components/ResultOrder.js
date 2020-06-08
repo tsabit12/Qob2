@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Alert, Dimensions, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Alert, Dimensions, TouchableOpacity, ScrollView, ToastAndroid } from "react-native";
 import { ListItem, CheckBox, Icon } from '@ui-kitten/components';
 import { omit } from 'lodash';
 import {
@@ -12,9 +12,20 @@ import { Ionicons } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import ModalContent from "./ModalContent";
 import ModalContentHistory from "./ModalContentHistory";
+import * as Location from 'expo-location';
 
 const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
+
+shortToast = message => {
+    ToastAndroid.showWithGravityAndOffset(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+}
 
 const convertDate = (date) => {
 	var d = new Date(date),
@@ -56,6 +67,28 @@ const styles = StyleSheet.create({
 		height: deviceHeight / 19,
 		zIndex: 1
 	},
+	btnPickup: {
+		position: 'absolute',
+		bottom: 15,
+		right: 15,
+		backgroundColor: 'rgb(240, 132, 0)',
+		width: deviceWidth / 6.6,
+		height: deviceWidth / 6.6,
+		alignItems: 'center',
+		justifyContent: 'center',
+		borderRadius: deviceWidth / 6.6 / 2,
+		elevation: 5
+	},
+	textBtnPickup: {
+		textAlign: 'center', 
+		color: "white", 
+		fontSize: 13
+	},
+	textMenu: {
+		paddingLeft: 10, 
+		paddingBottom: 6, 
+		paddingTop: 6
+	}
 })
 
 const capitalize = (string) => {
@@ -75,10 +108,21 @@ const RenderEmpty = ({ status }) => (
 const ResultOrder = props => {
 	const [state, setState] = React.useState({
 		checked: {},
-		visible: {}
+		visible: {},
+		location: {}
 	});
 
 	const { data, filterByStatus, historyStatus } = props;
+
+	//handle reset checked
+	React.useEffect(() => {
+		if (data.length > 0) {
+			setState(prevState => ({
+				...prevState,
+				checked: {}
+			}))
+		}
+	}, [data])
 
 	const list = [];
 	if (filterByStatus.value === 0) {
@@ -145,11 +189,28 @@ const ResultOrder = props => {
 		}))
 	}
 
-	const cekStatus = (id) => props.getHistoryStatus(id);
+	const cekStatus = (id, pickupNumber) => props.getHistoryStatus(id, pickupNumber);
 
-	const renderAccessory = (style, id, laststatus) => (
+	const handelTracking = (pickupNumber) => {
+		const findByPickupnumber = data.filter(x => x.pickupnumber === pickupNumber);
+		const payload = {
+			pickupNumber: pickupNumber,
+			detail: {
+				productname: findByPickupnumber[0].productname,
+				desctrans: findByPickupnumber[0].desctrans,
+				extid: findByPickupnumber[0].extid,
+				receiverfulladdress: findByPickupnumber[0].receiverfulladdress,
+				shipperfulladdress: findByPickupnumber[0].shipperfulladdress,
+				receivername: findByPickupnumber[0].receivername,
+				shippername: findByPickupnumber[0].shippername
+			}
+		};
+		props.goMaps(payload);
+	}
+
+	const renderAccessory = (style, id, laststatus, pickupNumber) => (
 		<React.Fragment>
-			{ laststatus === 1 ? <React.Fragment>
+			{ pickupNumber === null ? <React.Fragment>
 				<CheckBox
 			      checked={state.checked[id]}
 			      onChange={() => onCheckedChange(id)}			      
@@ -159,13 +220,13 @@ const ResultOrder = props => {
 						<Ionicons name="md-more" size={24} color="black" style={{marginRight: 10, marginLeft: 20}} />
 					</MenuTrigger>
 					<MenuOptions>
-						<MenuOption>
-				        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
+						<MenuOption onSelect={() => openDetail(id)}>
+				        	<View style={styles.textMenu}>
 				          		<Text>Lihat Detail</Text>
 				          	</View>
 						</MenuOption>
-						<MenuOption>
-				        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
+						<MenuOption onSelect={() => cekStatus(id, pickupNumber)}>
+				        	<View style={styles.textMenu}>
 				          		<Text>Cek Riwayat Status</Text>
 				          	</View>
 				        </MenuOption>
@@ -178,17 +239,17 @@ const ResultOrder = props => {
 						</MenuTrigger>
 						<MenuOptions>
 							<MenuOption onSelect={() => openDetail(id)}>
-					        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
+					        	<View style={styles.textMenu}>
 					          		<Text>Lihat Detail</Text>
 					          	</View>
 							</MenuOption>
-							<MenuOption onSelect={() => cekStatus(id)}>
-					        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
+							<MenuOption onSelect={() => cekStatus(id, pickupNumber)}>
+					        	<View style={styles.textMenu}>
 					          		<Text>Cek Riwayat Status</Text>
 					          	</View>
 					        </MenuOption>
-					        <MenuOption>
-					        	<View style={{paddingLeft: 10, paddingBottom: 6, paddingTop: 6}}>
+					        <MenuOption onSelect={() => handelTracking(pickupNumber)}>
+					        	<View style={styles.textMenu}>
 					          		<Text>Tracking Pickup</Text>
 					          	</View>
 					        </MenuOption>
@@ -197,6 +258,83 @@ const ResultOrder = props => {
 			</React.Fragment> }
 	    </React.Fragment>
 	);
+
+	const handlePickup = async () => {
+		//get current location
+		let { status } = await Location.requestPermissionsAsync();
+		if (status !== 'granted') {
+			shortToast("Tidak dapat mengambil lokasi anda");
+		}else{
+			await Location.getCurrentPositionAsync({})
+				.then(res => {
+					// console.log(res);
+					const { latitude, longitude } = res.coords;
+					//CONVERT OBJECT KEYS TO ARRAY
+					var keys = [];
+					const { checked } 		= state;
+					for (var k in checked) keys.push(k);
+					const filterData 	= data.filter(x => keys.includes(x.extid));	
+					const payloadItem 	= [];
+					const payloadExtid 	= [];
+					filterData.forEach(x => {
+						payloadItem.push({
+							extid: x.extid,
+							itemtypeid: 1,
+				            productid: x.productid,
+				            valuegoods: x.valuegoods,
+				            uomload: 5,
+				            weight: x.weight,
+				            uomvolumetric: 2,
+				            length: x.length,
+				            width: x.width,
+				            height: x.height,
+				            codvalue: x.codvalue,
+				            fee: x.fee,
+				            feetax: x.feetax,
+				            insurance: x.insurance,
+				            insurancetax: x.insurancetax,
+				            discount: 0,
+				            desctrans: x.desctrans,
+				            receiverzipcode: x.receiverzipcode
+						});
+
+						payloadExtid.push({
+							extid: x.extid 
+						});
+					});
+					const allPayload = {
+						shipper: {
+							userId: props.user.userid,
+							name: filterData[0].shippername,
+							latitude: latitude,
+							longitude: longitude,
+					        phone: filterData[0].shipperphone,
+					        address: filterData[0].shipperaddress,
+					        city: filterData[0].shippersubdistrict,
+					        subdistrict: filterData[0].shippersubsubdistrict,
+					        zipcode: filterData[0].shipperzipcode,
+					        country: "Indonesia"
+						},
+						item: payloadItem,
+						status: {
+							extid: payloadExtid,
+							shipperLatlong: `${latitude}|${longitude}`
+						}
+					};
+					props.onPickup(allPayload);
+				})
+				.catch(err => {
+					console.log(err);
+					shortToast("Lokasi anda belum kami dapatkan, silahkan klik pickup kembali");
+				})
+		}
+		// var keys = [];
+		// const { checked } 		= state;
+		// for (var k in checked) keys.push(k);
+		
+		// const filterData 	= data.filter(x => keys.includes(x.extid));	
+		
+	}
 
 	return(
 		<React.Fragment>
@@ -207,7 +345,7 @@ const ResultOrder = props => {
 						disabled
 						titleStyle={{color: row.va === null ? '#3366ff' : 'red', fontFamily: 'open-sans-reg'}}
 						description={`${row.insertdate.substring(0, 10)} - ${row.desctrans} ${row.va !== null ? '(COD)' : '' } - ${row.laststatus}`}
-						accessory={(e) => renderAccessory(e, row.extid, row.laststatusid)}
+						accessory={(e) => renderAccessory(e, row.extid, row.laststatusid, row.pickupnumber)}
 						descriptionStyle={{fontFamily: 'open-sans-reg', fontSize: 10}}
 						icon={() => renderItemIcon(index)}
 					/> 
@@ -251,6 +389,13 @@ const ResultOrder = props => {
 			</View>
 		</Modal>
 
+		{ Object.keys(state.checked).length > 0 && 
+			<TouchableOpacity 
+				style={styles.btnPickup}
+				onPress={handlePickup}
+			>
+				<Text style={styles.textBtnPickup}>Pickup</Text>
+			</TouchableOpacity> }
 		</React.Fragment>
 	);
 }

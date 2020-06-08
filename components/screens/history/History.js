@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Input, Calendar, Select } from "@ui-kitten/components";
 import { Loader, Message, ResultOrder } from "./components";
 import api from "../../apiBaru";
+import apiWs from "../../apiWs";
 import { connect } from "react-redux";
 
 shortToast = message => {
@@ -171,7 +172,7 @@ const History = props => {
 	    }
 	}
 
-	const onGetHistoryStatus = (id) => {
+	const onGetHistoryStatus = (id, pickupNumber) => {
 		const payload = {
 			email: props.dataLogin.detail.email,
 			extid: id
@@ -185,11 +186,27 @@ const History = props => {
 		api.qob.getHistoryStatus(payload)
 			.then(res => {
 				const datanya = res.data.sort(dynamicSort("-insertdate"));
+				const phoneFaster = res.data.find(x => x.driverphone !== null);
 				setState(prevState => ({
 					...prevState,
 					loading: false,
 					historyStatus: datanya
 				}));
+				if (!phoneFaster || pickupNumber === null) {
+					shortToast("Tidak ada status terbaru");
+				}else{
+					const payloadPhone = {
+						pickupnumber: pickupNumber,
+						phone: phoneFaster.driverphone,
+						fastername: phoneFaster.driver,
+						latitude: phoneFaster.latitude,
+						longitude: phoneFaster.longitude
+					};
+
+					api.updatePhoneFaster(payloadPhone)
+						.then(res2 => shortToast("Sukses update"))
+						.catch(err => shortToast("Tidak ada status terbaru"));
+				}
 			})
 			.catch(err => {
 				setState(prevState => ({
@@ -201,6 +218,71 @@ const History = props => {
 	}
 
 	const { calendarStart, calendarEnd, start, end, loading, errors } = state;
+
+	const handlePickup = (param) => {
+		const payloadPickup = {
+			shipper: param.shipper,
+			item: param.item
+		};
+
+		setState(prevState => ({
+			...prevState,
+			loading: true
+		}));
+
+		apiWs.qob.addPickup(payloadPickup)
+			.then(res => {
+				const { pickup_number } = res;
+				const payloadStatus = {
+					...param.status,
+					pickupNumber: pickup_number
+				};
+				api.qob.updateStatus(payloadStatus)
+					.then(res => {
+						setState(prevState => ({
+							...prevState,
+							loading: false
+						}));
+						//refresh
+						const payload = {
+							startdate: convertDate(start),
+							enddate: convertDate(end),
+							status: "0",
+							extid: "",
+							email: props.dataLogin.detail.email
+						};
+						shortToast(`${res.length} item berhasil dipickup (${pickup_number})`,);
+
+						api.qob.getDetailOrder(payload)
+						.then(res => {
+							const { data } = res;
+							setState(prevState => ({
+								...prevState,
+								listOrder: data
+							}))
+						})
+					})
+					.catch(err => { //failed update status
+						setState(prevState => ({
+							...prevState,
+							loading: false
+						}));
+						shortToast("Gagal update status");
+					})
+			})
+			.catch(err => {
+				setState(prevState => ({
+					...prevState,
+					loading: false
+				}));
+
+				if (!err.text) {
+					shortToast("Network error, silahkan coba kembali");
+				}else{
+					shortToast(`${err.text}`);
+				}
+			});
+	} 
 
 	return(
 		<View style={StylesHistory.content}>
@@ -286,6 +368,12 @@ const History = props => {
 					getHistoryStatus={onGetHistoryStatus}
 					historyStatus={state.historyStatus}
 					closeModalHistory={() => setState(prevState => ({ ...prevState, historyStatus: [] }))}
+					user={props.dataLogin}
+					onPickup={handlePickup}
+					goMaps={(params) => props.navigation.navigate({
+						routeName: 'Maps',
+						params
+					})}
 				/> }
 			</ScrollView>
 		</View>
