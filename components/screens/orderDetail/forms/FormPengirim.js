@@ -7,10 +7,10 @@ import apiWs from "../../../apiWs";
 // import Dialog from "react-native-dialog";
 const device = Dimensions.get('window').width;
 
-const renderIcon = (style, search, checked) => (
-	<View style={{backgroundColor: checked ? '#0d4cde' : search ? '#fa4a0a' : '#909190', alignItems: 'center', borderRadius: 13, justifyContent: 'center'}}>
+const renderIcon = (style, disabled, checked) => (
+	<View style={{backgroundColor: checked ? '#0d4cde' : disabled ? '#fa4a0a' : '#909190', alignItems: 'center', borderRadius: 13, justifyContent: 'center'}}>
     	{ checked ? <Icon name='checkmark-outline' width={18} height={19} fill='#FFF'/> :
-    		<Icon name={search ? 'close-outline' : 'search-outline'} width={18} height={19} fill='#FFF'/> }
+    		<Icon name={disabled ? 'close-outline' : 'search-outline'} width={18} height={19} fill='#FFF'/> }
     </View>
 );
 
@@ -74,7 +74,8 @@ class FormPengirim extends React.PureComponent{
 		errors: {},
 		selectedIndex: null,
 		checked: true,
-		searchParams: ''
+		searchParams: '',
+		disabledKodePos: false
 	}
 
 	onChange = (e, { name }) => {
@@ -116,12 +117,13 @@ class FormPengirim extends React.PureComponent{
 			if (!this.state.searchParams) {
 				alert("Alamat lengkap harap diisi");
 			}else{
-				const { search } = this.state;
-				if (!search) {
+				const { disabledKodePos } = this.state;
+				if (!disabledKodePos) {
 					this.setState({ search: true, loading: true });
 					Keyboard.dismiss();
 					apiWs.qob.getKodePos(this.state.searchParams)
 						.then(res => {
+							console.log(res);
 							const { result } = res;
 							const responseKodepos = [];
 							result.forEach(x => {
@@ -163,7 +165,8 @@ class FormPengirim extends React.PureComponent{
 						},
 						searchParams: '',
 						responseKodepos: [],
-						selectedIndex: null
+						selectedIndex: null,
+						disabledKodePos: false
 					});
 				}
 			}
@@ -204,7 +207,8 @@ class FormPengirim extends React.PureComponent{
 				kodepos: choosed.kodepos
 			},
 			responseKodepos: [],
-			selectedIndex: index
+			selectedIndex: index,
+			disabledKodePos: true
 		});	
 	}
 
@@ -256,7 +260,9 @@ class FormPengirim extends React.PureComponent{
 					email: detail.email,
 					noHp: detail.nohp
 				},
-				search: false
+				search: false,
+				responseKodepos: [],
+				searchParams: ''
 			})
 		}
 	}
@@ -323,16 +329,16 @@ class FormPengirim extends React.PureComponent{
 					/>
 					{ !checked && <Input 
 						ref={this.searchParamsRef}
-					    placeholder='Masukkan kecamatan'
+					    placeholder='Masukkan kecamatan/kota'
 						name='searchParams'
-						label='* Cari Kecamatan'
+						label='* Cari Kecamatan/Kota'
 						value={this.state.searchParams}
 						style={styles.input}
 						labelStyle={styles.label}
 						onChangeText={(e) => this.onChangeParams(e, this.searchParamsRef.current.props)}
-						icon={(style) => renderIcon(style, this.state.search, checked)}
+						icon={(style) => renderIcon(style, this.state.disabledKodePos, checked)}
 						onIconPress={this.onIconPress}
-						disabled={this.state.search === true || checked === true && true}
+						disabled={this.state.disabledKodePos}
 						onSubmitEditing={this.onIconPress}
 						status={errors.kodepos ? 'danger' : 'primary'}
 						caption={errors.kodepos && `${errors.kodepos}`}
@@ -349,7 +355,7 @@ class FormPengirim extends React.PureComponent{
 						</ScrollView>}
 					<Input 
 						ref={this.kodeposRef}
-					    placeholder='Cari kecamatan dahulu'
+					    placeholder='Cari kecamatan/kota dahulu'
 						name='kodepos'
 						label='* Kodepos'
 						value={data.kodepos}
@@ -361,7 +367,7 @@ class FormPengirim extends React.PureComponent{
 					/>
 					<Input 
 						ref={this.alamatDetailRef}
-					    placeholder='Cari kecamatan dahulu'
+					    placeholder='Cari kecamatan/kota dahulu'
 						name='alamatDetail'
 						label='* Alamat Lengkap'
 						value={data.alamatDetail}

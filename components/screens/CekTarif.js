@@ -378,10 +378,10 @@ class CekTarif extends React.Component{
 							<View style={{borderWidth: 1, borderRadius: 4, padding: 5, borderColor: '#dbdad9'}}>
 								<View style={{padding: 4}}>
 									<Input
-								      placeholder='Masukan kecamatan'
+								      placeholder='Masukan kecamatan/kota'
 								      ref={this.kotaAsalRef}
 								      name='kotaAsal'
-								      label='Kecamatan Asal (Min 5 karakter)'
+								      label='Kecamatan/kota Asal'
 								      labelStyle={styles.label}
 								      style={styles.input}
 								      value={data.kotaAsal}
@@ -409,10 +409,10 @@ class CekTarif extends React.Component{
 								</View>
 								<View style={{padding: 4}}>
 									<Input
-								      placeholder='Masukan kecamatan'
+								      placeholder='Masukan kecamatan/kota'
 								      ref={this.kotaTujuanRef}
 								      name='kotaTujuan'
-								      label='Kecamatan Tujuan (Min 5 karakter)'
+								      label='Kecamatan/kota Tujuan'
 								      labelStyle={styles.label}
 								      style={styles.input}
 								      value={data.kotaTujuan}

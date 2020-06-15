@@ -262,8 +262,8 @@ class NonPebisolForm extends React.Component{
 						name='searchParams'
 						style={styles.input}
 						labelStyle={styles.label}
-						label='Cari Kecamatan'
-						placeholder='Masukkan kecamatan'
+						label='Cari Kecamatan/kota'
+						placeholder='Masukkan kecamatan/kota'
 						onIconPress={this.searchAlamat}
 						icon={(style) => this.renderIcon(style)}
 						onChangeText={this.onChangeParams}

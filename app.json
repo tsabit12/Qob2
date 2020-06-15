@@ -47,6 +47,7 @@
       "iosDisplayInForeground": true
     },
     "facebookAppId": "2274373556191901",
-    "facebookDisplayName": "qposin"
+    "facebookDisplayName": "qposin",
+    "facebookAutoLogAppEventsEnabled": true
   }
 }

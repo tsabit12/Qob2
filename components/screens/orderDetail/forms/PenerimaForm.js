@@ -232,8 +232,8 @@ class PenerimaForm extends React.Component{
 						name='searchParams'
 						style={styles.inputFlex}
 						labelStyle={styles.label}
-						label='Cari Kecamatan'
-						placeholder='Masukkan kecamatan'
+						label='Cari Kecamatan/Kota'
+						placeholder='Masukkan kecamatan/Kota'
 						onIconPress={this.handlePressIcon}
 						disabled={this.state.disabledKodePos}
 						icon={(style) => this.renderIcon(style)}
@@ -258,11 +258,11 @@ class PenerimaForm extends React.Component{
 						style={styles.inputFlex}
 						labelStyle={styles.label}
 						label='Kodepos'
-						placeholder='Cari kecamatan dahulu'
+						placeholder='Cari kecamatan/kota dahulu'
 						disabled={true}
 					/>
 					<Input 
-					    placeholder='Cari kecamatan dahulu'
+					    placeholder='Cari kecamatan/kota dahulu'
 						name='alamatDetail'
 						label='Alamat Lengkap'
 						value={data.alamatDetail}
