@@ -230,6 +230,11 @@ const ResultOrder = props => {
 				          		<Text>Cek Riwayat Status</Text>
 				          	</View>
 				        </MenuOption>
+				        <MenuOption onSelect={() => props.goLacak(id)}>
+				        	<View style={styles.textMenu}>
+				          		<Text>Lacak Kiriman</Text>
+				          	</View>
+				        </MenuOption>
 					</MenuOptions>
 				</Menu> 
 		    </React.Fragment> : <React.Fragment> 
@@ -253,6 +258,11 @@ const ResultOrder = props => {
 					          		<Text>Tracking Pickup</Text>
 					          	</View>
 					        </MenuOption>
+					        <MenuOption onSelect={() => props.goLacak(id)}>
+				        	<View style={styles.textMenu}>
+				          		<Text>Lacak Kiriman</Text>
+				          	</View>
+				        </MenuOption>
 						</MenuOptions>
 					</Menu> 
 			</React.Fragment> }

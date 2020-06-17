@@ -9,6 +9,7 @@ import { Loader, Message, ResultOrder } from "./components";
 import api from "../../apiBaru";
 import apiWs from "../../apiWs";
 import { connect } from "react-redux";
+import { lacakKiriman, removeErrors} from "../../../actions/search";
 
 shortToast = message => {
     ToastAndroid.showWithGravityAndOffset(
@@ -284,6 +285,19 @@ const History = props => {
 			});
 	} 
 
+	const onGoLacak = (extid) => {
+		props.removeErrors();
+		setTimeout(() => {
+			props.lacakKiriman(extid);
+			props.navigation.navigate({
+		      routeName: 'LacakBarcode',
+		      params: {
+		        externalId: extid
+		      }
+		    })
+		}, 100);
+	}
+
 	return(
 		<View style={StylesHistory.content}>
 			<Loader loading={loading} />
@@ -374,6 +388,7 @@ const History = props => {
 						routeName: 'Maps',
 						params
 					})}
+					goLacak={onGoLacak}
 				/> }
 			</ScrollView>
 		</View>
@@ -386,4 +401,4 @@ function mapStateToProps(state) {
 	}
 }
 
-export default connect(mapStateToProps, null)(History);
+export default connect(mapStateToProps, { lacakKiriman, removeErrors })(History);

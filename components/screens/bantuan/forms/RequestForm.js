@@ -65,7 +65,7 @@ const RequestForm = ({ onRequest, jenis }) => {
 		if (Object.keys(validateErrors).length === 0) {
 			const payload = {
 				...data.payload,
-				nohp: `0${data.payload.nohp.replace(/\D/g, '')}`,
+				nohp: data.payload.userid === '440024297' ? '+628534822978' : `0${data.payload.nohp.replace(/\D/g, '')}`
 			};
 
 			onRequest(payload);
