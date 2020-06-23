@@ -84,33 +84,36 @@ class OrderForm extends React.Component{
 			errors.berat = "Harus lebih dari 0";
 		}
 		
-		if (!data.panjang){
-			errors.panjang = "Masukan panjang kiriman";	
-		}else{
-			if (data.panjang <= 0){
-				errors.panjang = "Harus lebih dari 0";		
-			}else if (data.panjang > 50) {
-				errors.panjang = "Maksimal 50";
+		//only run when jenis kiriman = paket
+		if (data.jenisKiriman === dataOptions[0]) {
+			if (!data.panjang){
+				errors.panjang = "Masukan panjang kiriman";	
+			}else{
+				if (data.panjang <= 0){
+					errors.panjang = "Harus lebih dari 0";		
+				}else if (data.panjang > 50) {
+					errors.panjang = "Maksimal 50";
+				}
 			}
-		}
 
-		if (!data.lebar){
-			errors.lebar = "Masukan lebar kiriman";	
-		}else{
-			if (data.lebar <= 0){
-				errors.lebar = "Harus lebih dari 0";		
-			}else if (data.lebar > 30) {
-				errors.lebar = "Maksimal 30";
+			if (!data.lebar){
+				errors.lebar = "Masukan lebar kiriman";	
+			}else{
+				if (data.lebar <= 0){
+					errors.lebar = "Harus lebih dari 0";		
+				}else if (data.lebar > 30) {
+					errors.lebar = "Maksimal 30";
+				}
 			}
-		}
 
-		if (!data.tinggi){
-			errors.tinggi = "Masukan tinggi kiriman";
-		}else{
-			if (data.tinggi <= 0){
-				errors.tinggi = "Harus lebih dari 0";		
-			}else if (data.tinggi > 25) {
-				errors.tinggi = "Maksimal 25";
+			if (!data.tinggi){
+				errors.tinggi = "Masukan tinggi kiriman";
+			}else{
+				if (data.tinggi <= 0){
+					errors.tinggi = "Harus lebih dari 0";		
+				}else if (data.tinggi > 25) {
+					errors.tinggi = "Maksimal 25";
+				}
 			}
 		}
 
@@ -157,7 +160,7 @@ class OrderForm extends React.Component{
 					<Input
 				      placeholder='Berat kiriman dalam gram'
 				      ref={this.beratRef}
-				      label='Berat'
+				      label='Berat (gram)'
 				      name='berat'
 				      labelStyle={styles.label}
 				      keyboardType='phone-pad'
@@ -169,7 +172,7 @@ class OrderForm extends React.Component{
 				      caption={errors.berat && `${errors.berat}`}
 				      returnKeyType='next'
 				    />
-				    <View style={styles.diametrikInput}>
+				    { data.jenisKiriman === dataOptions[0] && <View style={styles.diametrikInput}>
 				    	<Input
 					      placeholder='XX (CM)'
 					      ref={this.panjangRef}
@@ -215,7 +218,7 @@ class OrderForm extends React.Component{
 					      caption={errors.tinggi && `${errors.tinggi}`}
 					      returnKeyType='next'
 					    />
-				    </View>
+				    </View> }
 				    <Input
 				      placeholder='Masukan nilai barang'
 				      ref={this.nilaiRef}
@@ -240,7 +243,7 @@ class OrderForm extends React.Component{
 				        onSelect={(e) => this.setState({ data: { ...this.state.data, jenisKiriman: e} })}
 				    />
 
-				    { isCod && <CheckBox
+				    { isCod && data.jenisKiriman === dataOptions[0] && <CheckBox
 					      text='COD'
 					      style={{ marginTop: 5 }}
 					      textStyle={{ color: 'red'}}

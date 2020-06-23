@@ -128,3 +128,18 @@ export const getCurdateWithStrip = () => {
     var date = year+'-'+month+'-'+day; //+' '+hour+':'+minute+':'+second;   
     return date;   
 }
+
+export const convertAddres = (array) => {
+    const res = [];
+    array.forEach(x => {
+        const address = x.address.split("Kec.");
+        res.push({
+            kelurahan: `${address[0].replace('   ','')}`,
+            kecamatan: `Kec.${address[1]}`,
+            kabupaten: x.city,
+            kodepos: x.posCode
+        })
+    }) 
+
+    return res;
+}

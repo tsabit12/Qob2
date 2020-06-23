@@ -254,45 +254,43 @@ class CekTarif extends React.Component{
 		const { data } = this.state;
 		// var value = null;
 		if (jenis === 'A') {
+			if (!data.kotaAsal || data.kotaAsal.length <= 2) return;
 			let value = data.kotaAsal;
-			if (value.length >= 5) {
-				this.setState({ loadingGet: true });
-				apiWs.qob.getKodePos(value)
-					.then(res => {
-						const listAlamat1 = [];
-						res.result.forEach(x => {
-							listAlamat1.push({
-								title: capitalize(`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`),
-								kodepos: x.kodepos,
-								kota: x.kabupaten		
-							});
+			this.setState({ loadingGet: true });
+			apiWs.qob.getKodePos(value)
+				.then(res => {
+					const listAlamat1 = [];
+					res.result.forEach(x => {
+						listAlamat1.push({
+							title: capitalize(`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`),
+							kodepos: x.kodepos,
+							kota: x.kabupaten		
 						});
-						this.setState({ loadingGet: false, listAlamat1, show1: true });
-					}).catch(err => {
-						console.log(err);
-						this.setState({ loadingGet: false });
 					});
-			}
+					this.setState({ loadingGet: false, listAlamat1, show1: true });
+				}).catch(err => {
+					console.log(err);
+					this.setState({ loadingGet: false });
+				});
 		}else{
 			let value = data.kotaTujuan;
-			if (value.length >= 5) {
-				this.setState({ loadingGet2: true });	
-				apiWs.qob.getKodePos(value)
-					.then(res => {
-						const listAlamat2 = [];
-						res.result.forEach(x => {
-							listAlamat2.push({
-								title: capitalize(`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`),
-								kodepos: x.kodepos,
-								kota: x.kabupaten	
-							});
+			if (!data.kotaTujuan || data.kotaTujuan.length <= 2) return;
+			this.setState({ loadingGet2: true });	
+			apiWs.qob.getKodePos(value)
+				.then(res => {
+					const listAlamat2 = [];
+					res.result.forEach(x => {
+						listAlamat2.push({
+							title: capitalize(`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`),
+							kodepos: x.kodepos,
+							kota: x.kabupaten	
 						});
-						this.setState({ loadingGet2: false, listAlamat2, show2: true });
-					}).catch(err => {
-						console.log(err);
-						this.setState({ loadingGet2: false });
 					});
-			}
+					this.setState({ loadingGet2: false, listAlamat2, show2: true });
+				}).catch(err => {
+					console.log(err);
+					this.setState({ loadingGet2: false });
+				});
 		}
 
 	}
