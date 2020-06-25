@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ToastAndroid } from "react-native";
 import { Input, Button, CheckBox, Select } from '@ui-kitten/components';
 
 const dataOptions = [
@@ -29,6 +29,16 @@ class OrderForm extends React.Component{
 			jenisKiriman: dataOptions[0]
 		},
 		errors: {}
+	}
+
+	shortToast = message => {
+	    ToastAndroid.showWithGravityAndOffset(
+	      message,
+	      ToastAndroid.LONG,
+	      ToastAndroid.BOTTOM,
+	      25,
+	      50
+	    );
 	}
 
 	numberWithCommas = (number) => {
@@ -127,21 +137,26 @@ class OrderForm extends React.Component{
 		return errors;
 	}
 
-	onCheckedChange = () => this.setState({ 
-		data: { 
-			...this.state.data, 
-			checked: !this.state.data.checked,
-			codvalue: ''
-		},
-		errors: { ...this.state.errors, codvalue: undefined }
-	})
+	onCheckedChange = () => {
+		this.setState({ 
+			data: { 
+				...this.state.data, 
+				checked: !this.state.data.checked,
+				codvalue: ''
+			},
+			errors: { ...this.state.errors, codvalue: undefined }
+		});
+	} 
 
 	render(){
 		const { data, errors } = this.state;
-		const { isCod } = this.props;
+		const { isCod, invalid } = this.props;
 
 		return(
 			<React.Fragment>
+				{ invalid.global && <View style={styles.message}>
+					<Text style={{color: 'white'}}>COD disabled. {'\n'}{invalid.global}</Text>
+				</View> }
 				<View style={styles.container}>
 					<Input 
 				      ref={this.jenisRef}
@@ -242,29 +257,31 @@ class OrderForm extends React.Component{
 				        selectedOption={data.jenisKiriman}
 				        onSelect={(e) => this.setState({ data: { ...this.state.data, jenisKiriman: e} })}
 				    />
+				    <React.Fragment>
+				    	{ isCod && data.jenisKiriman === dataOptions[0] && <CheckBox
+						      text='COD'
+						      style={{ marginTop: 5 }}
+						      textStyle={{ color: 'red'}}
+						      status='warning'
+						      checked={data.checked}
+						      onChange={this.onCheckedChange}
+						      disabled={!!invalid.global}
+						    /> }
 
-				    { isCod && data.jenisKiriman === dataOptions[0] && <CheckBox
-					      text='COD'
-					      style={{ marginTop: 5 }}
-					      textStyle={{ color: 'red'}}
-					      status='warning'
-					      checked={data.checked}
-					      onChange={this.onCheckedChange}
-					    /> }
-
-					{ data.checked && <Input 
-							placeholder='Masukan nilai COD'
-							ref={this.codvalueRef}
-							name='codvalue'
-							labelStyle={styles.label}
-							style={styles.input}
-							value={data.codvalue}
-							keyboardType='numeric'
-							onChangeText={(e) => this.onChange(e, this.codvalueRef.current.props)}
-							returnKeyType='done'
-							status={errors.codvalue && 'danger'}
-				      		caption={errors.codvalue && `${errors.codvalue}`}
-						/> }
+						{ data.checked && <Input 
+								placeholder='Masukan nilai COD'
+								ref={this.codvalueRef}
+								name='codvalue'
+								labelStyle={styles.label}
+								style={styles.input}
+								value={data.codvalue}
+								keyboardType='numeric'
+								onChangeText={(e) => this.onChange(e, this.codvalueRef.current.props)}
+								returnKeyType='done'
+								status={errors.codvalue && 'danger'}
+					      		caption={errors.codvalue && `${errors.codvalue}`}
+							/> }
+				    </React.Fragment>
 				</View>
 				<View style={{ margin: 10, marginTop: -6}}>
 					<Button status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
@@ -300,6 +317,15 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		marginTop: 5
+	},
+	message: {
+		marginLeft: 10,
+		marginRight: 10,
+		marginTop: 10,
+		borderRadius: 5,
+		padding: 10,
+		backgroundColor: '#95857D',
+		elevation: 4
 	}
 })
 

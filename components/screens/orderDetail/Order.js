@@ -25,7 +25,8 @@ class Order extends React.Component{
 	state = {
 		visible: false,
 		loading: false,
-		textLoading: 'Loading...'
+		textLoading: 'Loading...',
+		errors: {}
 	}
 
 	async componentDidMount(){
@@ -41,6 +42,30 @@ class Order extends React.Component{
 			}catch(error){
 				console.log("ok");
 			}
+		}else{
+			this.setState({
+				loading: true
+			});
+
+			api.search.rekeningType(this.props.dataLogin.norek)
+				.then(res => {
+					this.setState({ loading: false });	
+				})
+				.catch(err => {
+					if (!err.global) {
+						this.setState({ 
+							loading: false,
+							errors: {
+								global: 'Terdapat kesalahan, validasi COD gagal'
+							}
+						});
+					}else{
+						this.setState({ 
+							loading: false,
+							errors: err
+						});
+					}
+				})
 		}
 	}
 
@@ -159,7 +184,7 @@ class Order extends React.Component{
 	render(){
 		const { visible, loading, textLoading } = this.state;
 		const { norek } = this.props.dataLogin;
-		
+
 		return(
 			<View style={{flex: 1}}>
 				{ /* this view for hide status bar color */ }
@@ -187,7 +212,11 @@ class Order extends React.Component{
 					enabled
 				>
 					<ScrollView keyboardShouldPersistTaps='always'>	
-						<OrderForm onSubmit={this.onSubmit} isCod={this.props.isCod} />
+						<OrderForm 
+							onSubmit={this.onSubmit} 
+							isCod={this.props.isCod} 
+							invalid={this.state.errors}
+						/>
 					</ScrollView>
 				</KeyboardAvoidingView>
 				<View>
