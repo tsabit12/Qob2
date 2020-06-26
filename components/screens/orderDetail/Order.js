@@ -26,7 +26,8 @@ class Order extends React.Component{
 		visible: false,
 		loading: false,
 		textLoading: 'Loading...',
-		errors: {}
+		errors: {},
+		update: false
 	}
 
 	async componentDidMount(){
@@ -39,35 +40,49 @@ class Order extends React.Component{
 				const value = await AsyncStorage.getItem('isCod');
 				if (value !== null) {
 					this.props.setCodeToTrue();
+					//handle validasi when cod not yet fetched
+					this.validasiCod(this.props.dataLogin.norek);
 				}
 			}catch(error){
 				console.log("ok");
 			}
-		}else{
-			this.setState({
-				loading: true
-			});
-
-			api.search.rekeningType(this.props.dataLogin.norek)
-				.then(res => {
-					this.setState({ loading: false });	
-				})
-				.catch(err => {
-					if (!err.global) {
-						this.setState({ 
-							loading: false,
-							errors: {
-								global: 'Terdapat kesalahan saat mengambil data rekening anda, fitur COD di nonaktifkan'
-							}
-						});
-					}else{
-						this.setState({ 
-							loading: false,
-							errors: err
-						});
-					}
-				})
+		}else{ 
+			this.validasiCod(this.props.dataLogin.norek);
 		}
+	}
+
+	// //this will run on user first open app
+	// UNSAFE_componentWillReceiveProps(nextProps){
+	// 	console.log(nextProps.cod);
+	// 	if (nextProps.cod) {
+	// 		console.log("oke runnnnn");
+	// 	}
+	// }
+
+	validasiCod = (norek) => {
+		this.setState({
+			loading: true
+		});
+
+		api.search.rekeningType(norek)
+			.then(res => {
+				this.setState({ loading: false });	
+			})
+			.catch(err => {
+				if (!err.global) {
+					this.setState({ 
+						loading: false,
+						errors: {
+							global: 'Terdapat kesalahan saat mengambil data rekening anda, fitur COD di nonaktifkan'
+						}
+					});
+				}else{
+					this.setState({ 
+						loading: false,
+						errors: err
+					});
+				}
+			})
 	}
 
 	BackAction = () => (
