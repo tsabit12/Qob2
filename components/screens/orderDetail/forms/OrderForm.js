@@ -137,10 +137,8 @@ class OrderForm extends React.Component{
 		this.setState({ 
 			data: { 
 				...this.state.data, 
-				checked: !this.state.data.checked,
-				codvalue: ''
-			},
-			errors: { ...this.state.errors, codvalue: undefined }
+				checked: !this.state.data.checked
+			}
 		});
 	} 
 

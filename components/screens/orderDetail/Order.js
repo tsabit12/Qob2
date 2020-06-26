@@ -97,7 +97,6 @@ class Order extends React.Component{
 			lebar: data.lebar.replace(/\D/g, ''),
 			isiKiriman: data.jenis,
 			nilai: data.nilaiVal.replace(/\D/g, ''),
-			codvalue: data.codvalue.replace(/\D/g, ''),
 			cod: data.checked,
 			itemtype: data.itemtype
 		};
