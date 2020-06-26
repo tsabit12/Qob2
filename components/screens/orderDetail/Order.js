@@ -34,6 +34,7 @@ class Order extends React.Component{
 		const { isCod } = this.props;
 		if (!isCod) {
 			//get from storage
+			//I sure this is will having issue when user clear data app
 			try{
 				const value = await AsyncStorage.getItem('isCod');
 				if (value !== null) {
@@ -56,7 +57,7 @@ class Order extends React.Component{
 						this.setState({ 
 							loading: false,
 							errors: {
-								global: 'Terdapat kesalahan, validasi COD gagal'
+								global: 'Terdapat kesalahan saat mengambil data rekening anda, fitur COD di nonaktifkan'
 							}
 						});
 					}else{

@@ -91,7 +91,7 @@ class PenerimaForm extends React.Component{
 				})
 				.catch(err => {
 					if (err.response) {
-						this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan' } });
+						this.setState({ loading: false, errors: { searchParams: 'Alamat tidak ditemukan' } });
 					}else{
 						this.setState({ loading: false, errors: { searchParams: 'Network Error'} });
 					}
@@ -164,7 +164,7 @@ class PenerimaForm extends React.Component{
   			const { choosed, data } = this.state;
   			// console.log(choosed);
   			if (choosed === null) {
-  				alert("Whopppps, kelurahan/kecamatan/kabupaten belum dipilih. Harap klik cari pada kolom kodepos, lalu pilih kelurahan penerima");
+  				alert("Kelurahan/kecamatan/kabupaten belum dipilih. Harap klik cari pada kolom kodepos, lalu pilih kelurahan penerima");
   			}else{
   				const payload = {
   					nama: data.nama,

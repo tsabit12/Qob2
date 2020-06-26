@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StatusBar } from "react-native";
 import styles from "./styles";
-import { ListItem, Button, Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { ListItem, Button, Icon, TopNavigation, TopNavigationAction, CheckBox } from '@ui-kitten/components';
 import api from "../../api";
 import Loader from "../../Loader";
 
@@ -114,12 +114,12 @@ const ListTarif = ({ onAccept, list }) => (
 class PilihTarif extends React.Component{
 	state = {
 		loading: true,
-		tarif: []
+		tarif: [],
+		freeOngkir: false
 	}
 	
 	async componentDidMount(){
 		const { params } = this.props.navigation.state;
-		// console.log(params);
 
 		if (Object.keys(params).length > 0) {
 			const { deskripsiOrder } = params;
@@ -151,8 +151,6 @@ class PilihTarif extends React.Component{
 						}
 					});
 
-					console.log(toWhatIwant);
-
 					const filterVal = ['210','240','EC2','EC1','1Q9','2Q9','447','401','417'];
 					const filters 	= toWhatIwant.filter(x => filterVal.includes(x.id));
 					
@@ -170,11 +168,16 @@ class PilihTarif extends React.Component{
 	}
 
 	onSelectTarif = (payload) => {
+		const value = {
+			...payload,
+			freeOngkir: this.state.freeOngkir
+		}
+
 		this.props.navigation.navigate({
 			routeName: 'ResultOrder',
 			params: {
 				...this.props.navigation.state.params,
-				selectedTarif: payload
+				selectedTarif: value
 			}
 		})
 	}
@@ -184,7 +187,9 @@ class PilihTarif extends React.Component{
 	)
 
 	render(){
-		const { loading, tarif } = this.state;
+		const { loading, tarif, freeOngkir } = this.state;
+		const { cod } = this.props.navigation.state.params.deskripsiOrder;
+
 		return(
 			<View style={{flex: 1}}>
 				<MyStatusBar />
@@ -197,6 +202,17 @@ class PilihTarif extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
+				{ cod && <React.Fragment>
+					<CheckBox
+						checked={freeOngkir}
+						style={{marginLeft: 15, marginTop: 10, marginBottom: 10}}
+						text='Free ongkir (Ongkir ditanggung seller)'
+						status='info'
+						textStyle={{ color: freeOngkir ? 'blue' : 'black'}}
+						onChange={() => this.setState({ freeOngkir: !this.state.freeOngkir})}
+					/> 
+					<View style={{borderBottomWidth: 0.9, borderColor: '#E2E2E2', marginLeft: 15, marginRight: 15}} />
+				</React.Fragment>}
 				<Loader loading={loading} />
 				{ tarif.length > 0 ? <ListTarif onAccept={this.onSelectTarif} list={tarif} /> : 
 					<React.Fragment>

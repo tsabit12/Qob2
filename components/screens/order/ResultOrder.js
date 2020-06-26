@@ -82,8 +82,13 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPres
 				<Text style={styles.subTitle}>Rp {numberWithCommas(params.deskripsiOrder.nilai)}</Text>
 			</View>
 			{ params.deskripsiOrder.cod && <View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Nilai Cod</Text>
-				<Text style={styles.subTitle}>Rp {numberWithCommas(params.deskripsiOrder.codvalue)}</Text>
+				<Text style={styles.labelInformasi}>Nilai Cod { params.selectedTarif.freeOngkir && '(Free Ongkir)'}</Text>
+				<Text style={styles.subTitle}>
+					{ !params.selectedTarif.freeOngkir ? 
+						`Rp ${numberWithCommas(Number(params.deskripsiOrder.codvalue) + Number(params.selectedTarif.tarif))}` 
+						: `Rp ${numberWithCommas(params.deskripsiOrder.codvalue)}`}
+
+				</Text>
 			</View> }
 			<View style={styles.viewResult}>
 				<Text style={styles.labelInformasi}>Estimasi Tarif</Text>
@@ -144,6 +149,16 @@ class ResultOrder extends React.Component{
 		const { dataLogin } = this.props;
 		const { params }	= this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
+		var nilaiCod;
+		if (deskripsiOrder.cod) {
+			if (selectedTarif.freeOngkir) {
+				nilaiCod = Number(deskripsiOrder.codvalue);
+			}else{
+				nilaiCod = Number(deskripsiOrder.codvalue) + Number(selectedTarif.tarif);
+			}
+		}else{
+			nilaiCod = 0;
+		}
 
 		const payloadWsdl = {
 			"email": dataLogin.detail.email,
@@ -181,7 +196,7 @@ class ResultOrder extends React.Component{
 		    "insurancetax": selectedTarif.ppnhtnb,
 		    "valuegoods": deskripsiOrder.nilai,
 		    "desctrans": deskripsiOrder.isiKiriman,
-		    "codvalue": deskripsiOrder.codvalue ? Number(deskripsiOrder.codvalue) : 0,
+		    "codvalue": nilaiCod,
 		    "width": deskripsiOrder.lebar,
 		    "length": deskripsiOrder.panjang,
 		    "height": deskripsiOrder.tinggi,
@@ -274,6 +289,17 @@ class ResultOrder extends React.Component{
 	}
 
 	pickupKiriman = (tarif, order, pengirim, penerima) => {
+		var nilaiCod;
+		if (order.cod) {
+			if (tarif.freeOngkir) {
+				nilaiCod = Number(order.codvalue);
+			}else{
+				nilaiCod = Number(order.codvalue) + Number(tarif.tarif);
+			}
+		}else{
+			nilaiCod = 0;
+		}
+
 		if (Object.keys(this.state.location).length > 0 ) {
 			this.setState({ loading: true });
 			const payload = {
@@ -300,7 +326,7 @@ class ResultOrder extends React.Component{
 		            length: order.panjang,
 		            width: order.lebar,
 		            height: order.tinggi,
-		            codvalue: order.codvalue ? order.codvalue : '0',
+		            codvalue: nilaiCod,
 		            fee: tarif.beadasar,
 		            feetax: tarif.ppn,
 		            insurance: tarif.htnb,

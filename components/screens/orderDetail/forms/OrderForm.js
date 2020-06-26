@@ -155,7 +155,7 @@ class OrderForm extends React.Component{
 		return(
 			<React.Fragment>
 				{ invalid.global && <View style={styles.message}>
-					<Text style={{color: 'white'}}>COD disabled. {'\n'}{invalid.global}</Text>
+					<Text style={{color: 'white'}}>{invalid.global}</Text>
 				</View> }
 				<View style={styles.container}>
 					<Input 
