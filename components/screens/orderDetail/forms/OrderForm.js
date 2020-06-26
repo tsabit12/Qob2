@@ -14,7 +14,6 @@ class OrderForm extends React.Component{
 	lebarRef = React.createRef();
 	tinggiRef = React.createRef();
 	nilaiRef = React.createRef();
-	codvalueRef = React.createRef();
 
 	state = {
 		data: {
@@ -25,7 +24,6 @@ class OrderForm extends React.Component{
 			tinggi: '0',
 			nilaiVal: '0',
 			checked: false,
-			codvalue: '',
 			jenisKiriman: dataOptions[0]
 		},
 		errors: {}
@@ -86,7 +84,12 @@ class OrderForm extends React.Component{
 		const errors = {};
 
 		if (!data.jenis) errors.jenis = "Masukan jenis kiriman";
-		if (!data.nilaiVal) errors.nilai = "Masukan nilai";
+		if (!data.nilaiVal){
+			errors.nilai = "Masukan nilai";		
+		}else{
+			var nilaiii = data.nilaiVal.replace(/\D/g, '');
+			if (data.checked && parseInt(nilaiii) < 1500) errors.nilai = "Nilai barang untuk COD minimal 1.500";
+		}
 
 		if (!data.berat){
 			errors.berat = "Masukan berat kiriman";			
@@ -124,13 +127,6 @@ class OrderForm extends React.Component{
 				}else if (data.tinggi > 25) {
 					errors.tinggi = "Maksimal 25";
 				}
-			}
-		}
-
-		//only validate if cod is aktif
-		if (data.checked) {
-			if (!data.codvalue || data.codvalue <= 0) {
-				errors.codvalue = "Nilai cod harap diisi";
 			}
 		}
 
@@ -267,20 +263,6 @@ class OrderForm extends React.Component{
 						      onChange={this.onCheckedChange}
 						      disabled={!!invalid.global}
 						    /> }
-
-						{ data.checked && <Input 
-								placeholder='Masukan nilai COD'
-								ref={this.codvalueRef}
-								name='codvalue'
-								labelStyle={styles.label}
-								style={styles.input}
-								value={data.codvalue}
-								keyboardType='numeric'
-								onChangeText={(e) => this.onChange(e, this.codvalueRef.current.props)}
-								returnKeyType='done'
-								status={errors.codvalue && 'danger'}
-					      		caption={errors.codvalue && `${errors.codvalue}`}
-							/> }
 				    </React.Fragment>
 				</View>
 				<View style={{ margin: 10, marginTop: -6}}>

@@ -151,12 +151,31 @@ class Order extends React.Component{
 	}
 
 	syncGiro = (payload) => {
-		console.log({ payload });
 		this.setState({ textLoading: 'Menyiapkan...'});
 		this.props.synchronizeWebGiro(payload)
 			.then(() => {
-				this.setState({ loading: false });
-				this.showAlert('Untuk order kiriman dengan fitur cod silahkan centang kolom COD', 'Sukses/Berhasil');
+				//cek rekening (without test) :p
+				api.search.rekeningType(this.props.dataLogin.norek)
+					.then(res => {
+						this.setState({ loading: false });	
+						this.showAlert('Untuk order kiriman dengan fitur cod silahkan centang kolom COD', 'Sukses/Berhasil');
+					})
+					.catch(err => {
+						if (!err.global) {
+							this.setState({ 
+								loading: false,
+								errors: {
+									global: 'Terdapat kesalahan saat mengambil data rekening anda, fitur COD di nonaktifkan'
+								}
+							});
+						}else{
+							this.setState({ 
+								loading: false,
+								errors: err
+							});
+						}
+					})
+				
 			})
 			.catch(err => {
 				this.setState({ loading: false });

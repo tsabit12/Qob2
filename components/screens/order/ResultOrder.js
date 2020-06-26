@@ -77,17 +77,12 @@ const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPres
 				<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
 				<Text style={styles.subTitle}>{ params.deskripsiOrder.cod ? 'Cod' : 'Non Cod' }</Text>
 			</View> }
-			<View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Nilai Barang</Text>
-				<Text style={styles.subTitle}>Rp {numberWithCommas(params.deskripsiOrder.nilai)}</Text>
-			</View>
 			{ params.deskripsiOrder.cod && <View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Nilai Cod { params.selectedTarif.freeOngkir && '(Free Ongkir)'}</Text>
+				<Text style={styles.labelInformasi}>Nilai Barang { params.selectedTarif.freeOngkir && '(Free Ongkir)'}</Text>
 				<Text style={styles.subTitle}>
 					{ !params.selectedTarif.freeOngkir ? 
-						`Rp ${numberWithCommas(Number(params.deskripsiOrder.codvalue) + Number(params.selectedTarif.tarif))}` 
-						: `Rp ${numberWithCommas(params.deskripsiOrder.codvalue)}`}
-
+						`Rp ${numberWithCommas(Number(params.deskripsiOrder.nilai) + Number(params.selectedTarif.tarif))}` 
+						: `Rp ${numberWithCommas(params.deskripsiOrder.nilai)}`}
 				</Text>
 			</View> }
 			<View style={styles.viewResult}>
@@ -149,15 +144,16 @@ class ResultOrder extends React.Component{
 		const { dataLogin } = this.props;
 		const { params }	= this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
+
 		var nilaiCod;
 		if (deskripsiOrder.cod) {
 			if (selectedTarif.freeOngkir) {
-				nilaiCod = Number(deskripsiOrder.codvalue);
+				nilaiCod = Number(deskripsiOrder.nilai);
 			}else{
-				nilaiCod = Number(deskripsiOrder.codvalue) + Number(selectedTarif.tarif);
+				nilaiCod = Number(deskripsiOrder.nilai) + Number(selectedTarif.tarif);
 			}
 		}else{
-			nilaiCod = 0;
+			nilaiCod = deskripsiOrder.nilai;
 		}
 
 		const payloadWsdl = {
@@ -171,7 +167,6 @@ class ResultOrder extends React.Component{
 		    "serviceid": selectedTarif.id,
 		    "shippername": pengirimnya.nama,
 		    "shipperaddress": pengirimnya.alamat,
-		    //"shippersubsubdistrict": pengirimnya.kel,
 		    "shippersubsubdistrict": "0",
 		    "shippersubdistrict": pengirimnya.kec,
 		    "shippercity": pengirimnya.kota,
@@ -181,7 +176,6 @@ class ResultOrder extends React.Component{
 		    "shipperphone": pengirimnya.nohp,
 		    "receivername": deskripsiPenerima.nama,
 		    "receiveraddress": deskripsiPenerima.alamatUtama,
-		    //"receiversubsubdistrict": deskripsiPenerima.kelurahan,
 		    "receiversubsubdistrict": "0",
 		    "receiversubdistrict": deskripsiPenerima.kecamatan,
 		    "receivercity": deskripsiPenerima.kabupaten,
@@ -194,7 +188,7 @@ class ResultOrder extends React.Component{
 		    "feetax": selectedTarif.ppn,
 		    "insurance": selectedTarif.htnb,
 		    "insurancetax": selectedTarif.ppnhtnb,
-		    "valuegoods": deskripsiOrder.nilai,
+		    "valuegoods": nilaiCod,
 		    "desctrans": deskripsiOrder.isiKiriman,
 		    "codvalue": nilaiCod,
 		    "width": deskripsiOrder.lebar,
@@ -292,12 +286,12 @@ class ResultOrder extends React.Component{
 		var nilaiCod;
 		if (order.cod) {
 			if (tarif.freeOngkir) {
-				nilaiCod = Number(order.codvalue);
+				nilaiCod = Number(order.nilai);
 			}else{
-				nilaiCod = Number(order.codvalue) + Number(tarif.tarif);
+				nilaiCod = Number(order.nilai) + Number(tarif.tarif);
 			}
 		}else{
-			nilaiCod = 0;
+			nilaiCod = order.nilai;
 		}
 
 		if (Object.keys(this.state.location).length > 0 ) {
@@ -319,7 +313,7 @@ class ResultOrder extends React.Component{
 					extid: this.state.idOrder,
 					itemtypeid: 1,
 		            productid: tarif.id,
-		            valuegoods: order.nilai,
+		            valuegoods: nilaiCod,
 		            uomload: 5,
 		            weight: order.berat,
 		            uomvolumetric: 2,
