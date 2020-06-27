@@ -64,7 +64,17 @@ export default{
 		}).then(res => res.data),
 		getKodePos: (kodepos) => axios.post(`${url}/getPostalCodeBaru`, {
 			kodepos: kodepos
-		}, configFast).then(res => res.data)
+		}, configFast).then(res => {
+			if (!res.data.result) {
+				const errors = {
+					global: 'Data tidak ditemukan',
+					status: 404
+				}
+				return Promise.reject(errors);
+			}else{
+				return Promise.resolve(res.data);
+			}
+		})
 	},
 	fetch: {
 		getAddPosting: (userid) => axios.post(`${url}/getAddPosting`, {

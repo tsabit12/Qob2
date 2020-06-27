@@ -32,6 +32,10 @@ import Pemulihan from "./components/screens/bantuan/Pemulihan";
 import { Aktivasi as AktivasiScreen } from "./components/screens/Aktivasi";
 import { History as RiwayatPickup } from "./components/screens/history";
 
+import {
+  Home as HomeView
+} from "./views";
+
 const AppNavigator = createStackNavigator({
       PilihTarif: {
         screen: PilihTarif
@@ -93,7 +97,10 @@ const AppNavigator = createStackNavigator({
 
 const LoginNavigator = createStackNavigator({
   Home: { 
-    screen: Home
+    screen: HomeView,
+    navigationOptions: { 
+      header: null
+    }
   },
   IndexRegister:{
     screen: IndexRegister,
@@ -113,12 +120,6 @@ const LoginNavigator = createStackNavigator({
       header: null
     }
   },
-  // PemulihanAkun: {
-  //   screen: PemulihanAkun,
-  //   navigationOptions: { 
-  //     header: null
-  //   }
-  // },
   Pemulihan: {
     screen: Pemulihan,
     navigationOptions: { 

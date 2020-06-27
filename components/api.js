@@ -177,7 +177,38 @@ export default{
 				}else{
 					return Promise.reject(res.data);
 				}
-			})
+			}),
+		rekeningType: (rekening) => axios.post(url, {
+			messtype: '226',
+			param1: rekening,
+			hashing: getHasing('226', rekening)
+		}, config).then(res => {
+			if (res.data.rc_mess === '99') {
+				const { response_data2 } = res.data;
+				const value = response_data2.split("|");
+				if (value[5] === 'GIROPOS REGULER') {
+					if (parseInt(value[2]) < 10000) {
+						const errors = {
+							global: 'Fitur COD dinonaktifkan. Saldo rekening minimal adalah 10.000 ribu, silahkan lakukan top up terlebih dahulu'
+						};
+						return Promise.reject(errors);
+					}else{
+						return Promise.resolve(res.data);
+					}
+				}else{//invalid rekening type
+					const errors = {
+						global: 'Fitur COD dinonaktifkan. Harap hubungi CS untuk mengubah tipe rekening menjadi reguler'
+					};
+					return Promise.reject(errors);
+				}
+			}else{
+				const { desk_mess } = res.data;
+				const errors = {
+					global: `Fitur COD dinonaktifkan. ${desk_mess}`
+				};
+				return Promise.reject(errors);
+			}
+		})
 	},
 	qob: {
 		getAlamat: (searchTerm) => 

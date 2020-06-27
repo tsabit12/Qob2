@@ -1,147 +1,148 @@
-import React from 'react';
-import { Provider } from 'react-redux'
-import Router from './Router';
-import store from './store';
-import { Text, StyleSheet, View, Platform, AsyncStorage } from "react-native";
-import { ApplicationProvider, IconRegistry, Icon, Spinner } from '@ui-kitten/components';
-import { mapping, light as lightTheme } from '@eva-design/eva'; 
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { encode } from 'base-64';
-import { Notifications } from 'expo';
+import React from "react";
+import { View, Text, StyleSheet, AsyncStorage } from "react-native";
 import * as Font from "expo-font";
-import * as Permissions from 'expo-permissions';
-//import Dialog from "react-native-dialog";
-import { MenuProvider } from 'react-native-popup-menu';
+import { useFonts } from '@use-expo/font';
+import { Notifications } from 'expo';
+import { 
+  Spinner,
+  ApplicationProvider,
+  IconRegistry
+} from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { mapping, light as lightTheme } from '@eva-design/eva'; 
 import * as Updates from 'expo-updates';
+import PropTypes from "prop-types";
+import { encode } from 'base-64';
+import { MenuProvider } from 'react-native-popup-menu';
 
-// const ModalDialog = ({ onPress }) => (
-//   <Dialog.Container visible={true}>
-//     <Dialog.Title>Notifications</Dialog.Title>
-//         <View style={{margin: 17}}>
-//             <Text>Dirver pickup ditemukan</Text>
-//         </View>
-//         <Dialog.Button label="Oke" onPress={() => onPress()}/>
-//     </Dialog.Container>
-// );  
+import Router from './Router';
 
-const LoadFont = ({ text }) => (
-  <View style={{alignItems: 'center'}}>
-    <Spinner size='medium' />
-    <Text style={{textAlign: 'center'}}>{text}</Text>
-  </View>
-);
-
-class App extends React.Component{
-  state = {
-    fontLoaded: false,
-    notification:  {},
-    visible: false,
-    mount: false,
-    textUpdate: 'Memuat...',
-    localUser: {}
-  };
-
-  UNSAFE_componentWillMount(){
-    if (Platform.OS === 'android') {
-      Notifications.createChannelAndroidAsync('qposin-messages', {
-        name: 'Chat messages',
-        sound: true,
-        priority: 'max',
-        vibrate: [0, 250, 250, 250]
-      });
-    }
-  
-    this.setState({ mount: true });
-  }
-
-
-  async componentDidMount(){
-    // this._notificationSubscription = Notifications.addListener(this.handleNotification);
-    if (!global.btoa) { global.btoa = encode; }
-
-    if (this.state.mount) {
-
-      await Font.loadAsync({
-        'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
-        'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
-        'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
-      });
-
-      //get user data
-      const value = await AsyncStorage.getItem("qobUserPrivasi");
-      if (value !== null) {
-        const toObje  = JSON.parse(value);
-        this.setState({ 
-         localUser: {
-            email: toObje.email,
-            nama: toObje.nama,
-            nohp: toObje.nohp,
-            pin: toObje.pinMd5,
-            userid: toObje.userid,
-            username: toObje.username
-          }
-        });
-      }
-
-      //checking update
-      try {
-        const update = await Updates.checkForUpdateAsync();
-        this.setState({ textUpdate: 'Checking updates...'});
-        if (update.isAvailable) {
-          this.setState({ textUpdate: 'Updating app...'});
-          await Updates.fetchUpdateAsync();
-          this.setState({ textUpdate: 'Apps updated...'});
-          await Updates.reloadAsync();
-        }
-      } catch (e) {
-        this.setState({ textUpdate: 'Cannot update apps'});
-        // handle or log error
-      }
-
-      this.setState({ fontLoaded: true });
-      
-      // const { status } = await Permissions.getAsync(Permissions.LOCATION);
-      // if (status !== 'granted') {
-      //   const response = await Permissions.askAsync(Permissions.LOCATION);
-      // }
-    }
-  }
-
-  handleNotification = (notification) => {
-    this.setState({ notification: notification, visible: true });
-  }
-
-  onPressOke = () => {
-    this.setState({ visible: false });
-  }
-
-  render(){
-    const { fontLoaded, visible } = this.state;
-    return(
-      <Provider store={store}>
-        <IconRegistry icons={EvaIconsPack} />
-        <ApplicationProvider mapping={mapping} theme={lightTheme}>
-        
-        <MenuProvider>
-          { fontLoaded ? <Router 
-                localUser={this.state.localUser}
-            /> : 
-            <View style={styles.container}>
-              <LoadFont text={this.state.textUpdate} />
-            </View> }
-        </MenuProvider>
-        </ApplicationProvider>
-      </Provider>
-    );
-  }
-}
+//settingup redux
+import { Provider } from 'react-redux';
+import store from './store';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center', 
   },
+  font: {
+    fontFamily: 'open-sans-bold'
+  }
 })
 
-export default App;
+const AppLoading = props => (
+  <View style={styles.container}>
+    <Spinner size='medium' />
+    <Text style={{textAlign: 'center'}}>{props.text}</Text>
+  </View>
+)
+
+AppLoading.propTypes = {
+  text: PropTypes.string.isRequired
+}
+
+const MainApp = props => {
+  return(
+    <React.Fragment>
+      { Object.keys(props.data).length > 0 ? <Router localUser={props.data} /> : <AppLoading text='Menyiapkan...' />}
+    </React.Fragment>
+  );
+}
+
+MainApp.propTypes = {
+  data: PropTypes.object.isRequired
+}
+
+const MyApp = props => {
+  if (!global.btoa) { global.btoa = encode; }
+
+  const [loaded] = useFonts({
+    'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
+    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+    'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf')
+  });
+
+  const [state, setState] = React.useState({
+    localUser: {},
+    text: 'Loading...',
+    mount: false
+  });
+
+
+  /*ADD CHANNEL NOTIFICATION AND CHECK UPDATE*/
+  React.useEffect(() => {
+      (async () => {
+        
+        AddNotif();
+
+        try {
+          const update = await Updates.checkForUpdateAsync();
+
+          if (update.isAvailable) {
+            setState(prevState => ({
+              ...prevState,
+              text: 'Updating app...',
+              mount: true
+            }));
+
+            await Updates.fetchUpdateAsync();
+            await Updates.reloadAsync();
+          }
+        } catch (e) {
+          setState(prevState => ({
+            ...prevState,
+            text: 'Failed for update app',
+            mount: true
+          }));
+        }
+      })();
+  }, []);
+
+  React.useEffect(() => {
+    (async () => {
+      if (state.mount) {
+        const value = await AsyncStorage.getItem("qobUserPrivasi");
+        if (value !== null) {
+          const toObje  = JSON.parse(value);
+          setState(prevState => ({
+            ...prevState,
+            localUser: {
+              email: toObje.email,
+              nama: toObje.nama,
+              nohp: toObje.nohp,
+              pin: toObje.pinMd5,
+              userid: toObje.userid,
+              username: toObje.username
+            }
+          }))
+        }
+      }
+    })();
+  }, [state.mount]);   
+
+  const AddNotif = () => {
+    Notifications.createChannelAndroidAsync('qposin-messages', {
+      name: 'Chat messages',
+      sound: true,
+      priority: 'max',
+      vibrate: [0, 250, 250, 250]
+    });
+  }
+
+  return(
+    <Provider store={store}>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider mapping={mapping} theme={lightTheme}>
+        <MenuProvider>
+          { !loaded ? <AppLoading text={state.text} /> : <React.Fragment>
+            { state.mount ? <MainApp data={state.localUser} /> : <AppLoading text={state.text} /> }
+          </React.Fragment> }
+        </MenuProvider>
+      </ApplicationProvider>
+    </Provider>
+  );
+}
+
+export default MyApp;
