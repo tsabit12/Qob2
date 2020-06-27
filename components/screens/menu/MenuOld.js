@@ -82,7 +82,7 @@ const MenuOld = ({ navigation, showAlert }) => (
 				</TouchableOpacity>
 				<TouchableOpacity 
 					style={styles.iconPress}
-					onPress={() => showAlert('Anda akan melakukan generate token web')}
+					onPress={() => showAlert('Anda akan melakukan generate token untuk login pada web qposin. Silahkan klik tombol konfirmasi dibawah')}
 				>
 					<Image 
 						source={require("../../../assets/generatePwd.png")}

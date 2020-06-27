@@ -114,6 +114,7 @@ export const codFeatures = () => ({
 
 export const synchronizeWebGiro = (payload) => dispatch => 
 	apiBaru.user.syncronizeCod(payload).then(res => {
+		console.log({res});
 		//1 success
 		saveToStorage()
 			.then(() => dispatch(codFeatures()))

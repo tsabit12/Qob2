@@ -1,15 +1,16 @@
 import React from "react";
-import { View, Text, Keyboard } from "react-native";
+import { View, Text, Keyboard, ScrollView, Dimensions } from "react-native";
 import { Input, Button, Icon, TouchableOpacity, Radio, RadioGroup, Toggle } from '@ui-kitten/components';
 import styles from "../styles";
 import Loader from "../../../Loader";
 import apiWs from "../../../apiWs";
 // import Dialog from "react-native-dialog";
+const device = Dimensions.get('window').width;
 
-const renderIcon = (style, search, checked) => (
-	<View style={{backgroundColor: checked ? '#0d4cde' : search ? '#fa4a0a' : '#909190', alignItems: 'center', borderRadius: 13, justifyContent: 'center'}}>
+const renderIcon = (style, disabled, checked) => (
+	<View style={{backgroundColor: checked ? '#0d4cde' : disabled ? '#fa4a0a' : '#909190', alignItems: 'center', borderRadius: 13, justifyContent: 'center'}}>
     	{ checked ? <Icon name='checkmark-outline' width={18} height={19} fill='#FFF'/> :
-    		<Icon name={search ? 'close-outline' : 'search-outline'} width={18} height={19} fill='#FFF'/> }
+    		<Icon name={disabled ? 'close-outline' : 'search-outline'} width={18} height={19} fill='#FFF'/> }
     </View>
 );
 
@@ -23,24 +24,22 @@ const capitalize = (string) => {
 
 const ListKabupaten = ({ list, handleChange, selectedIndex, onPress }) => {
 	return(
-		<View>
-	        <View style={{flex: 1, backgroundColor: '#c3c4be', padding: 10 }}>
-	        	<View style={{borderBottomWidth: 0.6}}>
-	        		<Text style={{textAlign: 'center', fontFamily: 'open-sans-reg'}}>Pilih Alamat Lengkap</Text>
-	        	</View>
-	        	<RadioGroup
-					selectedIndex={selectedIndex}
-		        	onChange={(e) => handleChange(e)}
-				>
-				{ list.map((x, i) => 
-					<Radio
-						key={i}
-				        style={{flex: 1}}
-				        status='warning'
-				        text={`${x.kelurahan}, ${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`}
-				      /> )}
-				</RadioGroup>
-	        </View>
+        <View style={{flex: 1, backgroundColor: '#c3c4be', padding: 10 }}>
+        	<View style={{borderBottomWidth: 0.6}}>
+        		<Text style={{textAlign: 'center', fontFamily: 'open-sans-reg'}}>Pilih Alamat Lengkap</Text>
+        	</View>
+        	<RadioGroup
+				selectedIndex={selectedIndex}
+	        	onChange={(e) => handleChange(e)}
+			>
+			{ list.map((x, i) => 
+				<Radio
+					key={i}
+			        style={{flex: 1}}
+			        status='warning'
+			        text={`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`}
+			      /> )}
+			</RadioGroup>
         </View>
 	)
 }
@@ -75,7 +74,8 @@ class FormPengirim extends React.PureComponent{
 		errors: {},
 		selectedIndex: null,
 		checked: true,
-		searchParams: ''
+		searchParams: '',
+		disabledKodePos: false
 	}
 
 	onChange = (e, { name }) => {
@@ -100,9 +100,9 @@ class FormPengirim extends React.PureComponent{
 				kodepos: detail.kodepos,
 				kota: capitalize(kota),
 				kecamatan: capitalize(kecamatan),
-				kelurahan: capitalize(kelurahan),
+				kelurahan: '0',
 				provinsi: capitalize(provinsi),
-				alamatDetail: `${capitalize(kelurahan)}, ${capitalize(kecamatan)}, ${capitalize(kota)}, ${capitalize(provinsi)}`,
+				alamatDetail: `${capitalize(kecamatan)}, ${capitalize(kota)}, ${capitalize(provinsi)}`,
 				email: detail.email,
 				noHp: detail.nohp
 			},
@@ -117,12 +117,13 @@ class FormPengirim extends React.PureComponent{
 			if (!this.state.searchParams) {
 				alert("Alamat lengkap harap diisi");
 			}else{
-				const { search } = this.state;
-				if (!search) {
+				const { disabledKodePos } = this.state;
+				if (!disabledKodePos) {
 					this.setState({ search: true, loading: true });
 					Keyboard.dismiss();
 					apiWs.qob.getKodePos(this.state.searchParams)
 						.then(res => {
+							console.log(res);
 							const { result } = res;
 							const responseKodepos = [];
 							result.forEach(x => {
@@ -164,7 +165,8 @@ class FormPengirim extends React.PureComponent{
 						},
 						searchParams: '',
 						responseKodepos: [],
-						selectedIndex: null
+						selectedIndex: null,
+						disabledKodePos: false
 					});
 				}
 			}
@@ -198,14 +200,15 @@ class FormPengirim extends React.PureComponent{
 			data: {
 				...this.state.data,
 				kota: choosed.kabupaten,
-				alamatDetail: `${choosed.kelurahan}, ${choosed.kecamatan}, ${choosed.kabupaten}, ${choosed.provinsi}`,
+				alamatDetail: `${choosed.kecamatan}, ${choosed.kabupaten}, ${choosed.provinsi}`,
 				kecamatan: choosed.kecamatan,
 				kelurahan: choosed.kelurahan,
 				provinsi: choosed.provinsi,
 				kodepos: choosed.kodepos
 			},
 			responseKodepos: [],
-			selectedIndex: index
+			selectedIndex: index,
+			disabledKodePos: true
 		});	
 	}
 
@@ -251,13 +254,15 @@ class FormPengirim extends React.PureComponent{
 					kodepos: detail.kodepos,
 					kota: capitalize(kota),
 					kecamatan: capitalize(kecamatan),
-					kelurahan: capitalize(kelurahan),
+					kelurahan: '0',
 					provinsi: capitalize(provinsi),
-					alamatDetail: `${capitalize(kelurahan)}, ${capitalize(kecamatan)}, ${capitalize(kota)}, ${capitalize(provinsi)}`,
+					alamatDetail: `${capitalize(kecamatan)}, ${capitalize(kota)}, ${capitalize(provinsi)}`,
 					email: detail.email,
 					noHp: detail.nohp
 				},
-				search: false
+				search: false,
+				responseKodepos: [],
+				searchParams: ''
 			})
 		}
 	}
@@ -268,7 +273,7 @@ class FormPengirim extends React.PureComponent{
 		if (!data.alamatUtama) errors.alamatUtama = "Alamat utama harap diisi";
 		if (!data.kodepos) errors.kodepos = "Kodepos harap diisi";
 		if (!data.noHp) errors.noHp = "Nomor handphone harap diisi";
-		if (!data.alamatDetail) errors.alamatDetail = "Kelurahan, kecamatan, kabupaten harap diisi";
+		if (!data.alamatDetail) errors.alamatDetail = "Kelurahan, kecamatan, harap diisi";
 		if (data.email) {
 			//regex email
 			var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -324,31 +329,33 @@ class FormPengirim extends React.PureComponent{
 					/>
 					{ !checked && <Input 
 						ref={this.searchParamsRef}
-					    placeholder='Kodepos/kelurahan/kec/kab'
+					    placeholder='Masukkan kecamatan/kota'
 						name='searchParams'
-						label='* Cari Alamat Lengkap'
+						label='* Cari Kecamatan/Kota'
 						value={this.state.searchParams}
 						style={styles.input}
 						labelStyle={styles.label}
 						onChangeText={(e) => this.onChangeParams(e, this.searchParamsRef.current.props)}
-						icon={(style) => renderIcon(style, this.state.search, checked)}
+						icon={(style) => renderIcon(style, this.state.disabledKodePos, checked)}
 						onIconPress={this.onIconPress}
-						disabled={this.state.search === true || checked === true && true}
+						disabled={this.state.disabledKodePos}
 						onSubmitEditing={this.onIconPress}
 						status={errors.kodepos ? 'danger' : 'primary'}
 						caption={errors.kodepos && `${errors.kodepos}`}
 						returnKeyType='search'
 					/> }
 					{ responseKodepos.length > 0 && 
-						<ListKabupaten 
-							list={responseKodepos} 
-							handleChange={this.onChoose}
-							selectedIndex={this.state.selectedIndex}
-							onPress={this.handleClose}
-						/>}
+						<ScrollView style={{height: device*0.5}} nestedScrollEnabled={true}>
+							<ListKabupaten 
+								list={responseKodepos} 
+								handleChange={this.onChoose}
+								selectedIndex={this.state.selectedIndex}
+								onPress={this.handleClose}
+							/>
+						</ScrollView>}
 					<Input 
 						ref={this.kodeposRef}
-					    placeholder='Cari alamat lengkap dahulu'
+					    placeholder='Cari kecamatan/kota dahulu'
 						name='kodepos'
 						label='* Kodepos'
 						value={data.kodepos}
@@ -360,7 +367,7 @@ class FormPengirim extends React.PureComponent{
 					/>
 					<Input 
 						ref={this.alamatDetailRef}
-					    placeholder='Cari alamat lengkap dahulu'
+					    placeholder='Cari kecamatan/kota dahulu'
 						name='alamatDetail'
 						label='* Alamat Lengkap'
 						value={data.alamatDetail}

@@ -5,7 +5,7 @@ const intialState = {
 	rekening: {},
 	trace: {},
 	errors: {},
-	version: '1.0.6'
+	version: '1.0.7'
 }
 
 export default function search(state=intialState, action={}){

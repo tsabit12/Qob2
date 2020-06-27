@@ -1,7 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, Keyboard } from "react-native";
+import { View, Text, StyleSheet, Keyboard, ScrollView, Dimensions } from "react-native";
 import { Input, Button, Radio, RadioGroup, Icon } from '@ui-kitten/components';
 import apiWs from "../../../apiWs";
+
+const device = Dimensions.get('window').width;
 
 const capitalize = (string) => {
 	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
@@ -21,7 +23,7 @@ const OptionsKodepos = ({ list, handleChange, selectedIndex }) => (
 				key={i}
 		        style={styles.radio}
 		        status='warning'
-		        text={`${x.kelurahan}, ${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`}
+		        text={`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`}
 		      /> )}
 		</RadioGroup>
 	</View>
@@ -89,7 +91,7 @@ class PenerimaForm extends React.Component{
 				})
 				.catch(err => {
 					if (err.response) {
-						this.setState({ loading: false, errors: { searchParams: 'Data tidak ditemukan' } });
+						this.setState({ loading: false, errors: { searchParams: 'Alamat tidak ditemukan' } });
 					}else{
 						this.setState({ loading: false, errors: { searchParams: 'Network Error'} });
 					}
@@ -110,7 +112,7 @@ class PenerimaForm extends React.Component{
 				kecamatan: choos.kecamatan,
 				kelurahan: choos.kelurahan,
 				provinsi: choos.provinsi,
-				alamatDetail: `${choos.kelurahan}, ${choos.kecamatan}, ${choos.kabupaten}, ${choos.provinsi}`,
+				alamatDetail: `${choos.kecamatan}, ${choos.kabupaten}, ${choos.provinsi}`,
 			},
 			responseKodepos: []
 		})
@@ -162,7 +164,7 @@ class PenerimaForm extends React.Component{
   			const { choosed, data } = this.state;
   			// console.log(choosed);
   			if (choosed === null) {
-  				alert("Whopppps, kelurahan/kecamatan/kabupaten belum dipilih. Harap klik cari pada kolom kodepos, lalu pilih kelurahan penerima");
+  				alert("Kelurahan/kecamatan/kabupaten belum dipilih. Harap klik cari pada kolom kodepos, lalu pilih kelurahan penerima");
   			}else{
   				const payload = {
   					nama: data.nama,
@@ -230,8 +232,8 @@ class PenerimaForm extends React.Component{
 						name='searchParams'
 						style={styles.inputFlex}
 						labelStyle={styles.label}
-						label='Cari Alamat Lengkap'
-						placeholder='Kodepos/kelurahan/kec/kab'
+						label='Cari Kecamatan/Kota'
+						placeholder='Masukkan kecamatan/Kota'
 						onIconPress={this.handlePressIcon}
 						disabled={this.state.disabledKodePos}
 						icon={(style) => this.renderIcon(style)}
@@ -243,22 +245,24 @@ class PenerimaForm extends React.Component{
 					/>
 					{ loading && <Text style={{marginTop: 5, marginBottom: 5}}>Searching...</Text>}
 					{ responseKodepos.length > 0 && 
-						<OptionsKodepos 
-							list={responseKodepos} 
-							handleChange={this.onChangeOptions}
-							selectedIndex={this.state.choosed}
-						/> }
+						<ScrollView style={{height: device*0.5}} nestedScrollEnabled={true}>
+							<OptionsKodepos 
+								list={responseKodepos} 
+								handleChange={this.onChangeOptions}
+								selectedIndex={this.state.choosed}
+							/> 
+						</ScrollView>}
 					<Input 
 						value={data.kodepos}
 						name='kodepos'
 						style={styles.inputFlex}
 						labelStyle={styles.label}
 						label='Kodepos'
-						placeholder='Cari alamat lengkap dahulu'
+						placeholder='Cari kecamatan/kota dahulu'
 						disabled={true}
 					/>
 					<Input 
-					    placeholder='Cari alamat lengkap dahulu'
+					    placeholder='Cari kecamatan/kota dahulu'
 						name='alamatDetail'
 						label='Alamat Lengkap'
 						value={data.alamatDetail}

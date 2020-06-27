@@ -1,8 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, Dimensions, ScrollView } from "react-native";
 import { Input, Button,TouchableOpacity, Icon, RadioGroup, Radio } from '@ui-kitten/components';
 import Loader from "../../../Loader";
 import apiWs from "../../../apiWs";
+const device = Dimensions.get('window').width;
 
 const RenderListAlamat = ({ list, handleChange, selectedIndex }) => {
 	return(
@@ -19,7 +20,7 @@ const RenderListAlamat = ({ list, handleChange, selectedIndex }) => {
 					key={i}
 			        style={styles.radio}
 			        status='warning'
-			        text={`${x.kelurahan}, ${x.kecamatan}, ${x.kabupaten}, ${x.provinsi} (${x.kodepos})`}
+			        text={`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi} (${x.kodepos})`}
 			      /> )}
 			</RadioGroup>
 		</View>
@@ -46,7 +47,7 @@ const renderIconInput = (style) => (
 const RenderInputAlamat = ({ datanya, resetSearchParams }) => (
 	<Input 
 		label='Alamat lengkap'
-		value={`Kel ${datanya.kelurahan}, Kec. ${datanya.kecamatan}, Kab. ${datanya.kabupaten}, Prov. ${datanya.provinsi}`}
+		value={`${datanya.kecamatan}, Kab. ${datanya.kabupaten}, Prov. ${datanya.provinsi}`}
 		style={styles.input}
 		labelStyle={styles.label}
 		disabled
@@ -140,7 +141,7 @@ class PebisolForm extends React.Component{
 							kecamatan: x.kecamatan,
 							kabupaten: x.kabupaten,
 							provinsi: x.provinsi,
-							kelurahan: x.kelurahan,
+							kelurahan: '0',
 							kodepos: x.kodepos
 						})
 					});
@@ -163,7 +164,7 @@ class PebisolForm extends React.Component{
   			responseKodepos: [], 
   			alamat: {
   				kecamatan: responseKodepos[index].kecamatan,
-  				kelurahan: responseKodepos[index].kelurahan,
+  				kelurahan: '0',
   				kabupaten: responseKodepos[index].kabupaten,
   				provinsi: responseKodepos[index].provinsi,
   				kodepos: responseKodepos[index].kodepos
@@ -213,8 +214,8 @@ class PebisolForm extends React.Component{
   		if (!data.jenisUsaha) errors.jenisUsaha = "Jenis usaha harap diisi";
   		
   		if (data.noHp) {
-  			var regex 			= /(\()?(\+62|62|0)(\d{2,3})?\)?[ .-]?\d{2,4}[ .-]?\d{2,4}[ .-]?\d{2,4}/;
-  			const phoneValues 	= `+62-${data.noHp}`;
+  			var regex 			= /^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/;
+  			const phoneValues 	= `0${data.noHp.replace(/\D/g, '')}`;
   			if (!regex.test(phoneValues)) errors.noHp = "Nomor handphone tidak valid"; 
   		}
 
@@ -295,8 +296,8 @@ class PebisolForm extends React.Component{
 						name='searchParams'
 						style={styles.input}
 						labelStyle={styles.label}
-						label='Cari Alamat Lengkap'
-						placeholder='Kodepos/kelurahan/kec/kab'
+						label='Cari Kecamatan/kota'
+						placeholder='Masukkan kecamatan/kota'
 						onIconPress={this.searchAlamat}
 						icon={(style) => this.renderIcon(style)}
 						onChangeText={this.onChangeParams}
@@ -305,11 +306,13 @@ class PebisolForm extends React.Component{
 						onSubmitEditing={this.searchAlamat}
 					/> }
 					{ responseKodepos.length > 0 && 
-						<RenderListAlamat 
-							list={responseKodepos} 
-							handleChange={this.onChangeAlamat} 
-							selectedIndex={this.state.selectedIndex}
-						/> }
+						<ScrollView style={{height: device*0.5}} nestedScrollEnabled={true}>
+							<RenderListAlamat 
+								list={responseKodepos} 
+								handleChange={this.onChangeAlamat} 
+								selectedIndex={this.state.selectedIndex}
+							/>
+						</ScrollView> }
 					<View style={{marginTop: 5, marginBottom: 5}}>
 						<Text style={styles.label}>* Nomor Handphone (WhatsApp)</Text>
 						<View style={{flexDirection: 'row', alignItems: 'center'}}>

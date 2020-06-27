@@ -25,7 +25,9 @@ class Order extends React.Component{
 	state = {
 		visible: false,
 		loading: false,
-		textLoading: 'Loading...'
+		textLoading: 'Loading...',
+		errors: {},
+		update: false
 	}
 
 	async componentDidMount(){
@@ -33,15 +35,54 @@ class Order extends React.Component{
 		const { isCod } = this.props;
 		if (!isCod) {
 			//get from storage
+			//I sure this is will having issue when user clear data app
 			try{
 				const value = await AsyncStorage.getItem('isCod');
 				if (value !== null) {
 					this.props.setCodeToTrue();
+					//handle validasi when cod not yet fetched
+					this.validasiCod(this.props.dataLogin.norek);
 				}
 			}catch(error){
 				console.log("ok");
 			}
+		}else{ 
+			this.validasiCod(this.props.dataLogin.norek);
 		}
+	}
+
+	// //this will run on user first open app
+	// UNSAFE_componentWillReceiveProps(nextProps){
+	// 	console.log(nextProps.cod);
+	// 	if (nextProps.cod) {
+	// 		console.log("oke runnnnn");
+	// 	}
+	// }
+
+	validasiCod = (norek) => {
+		this.setState({
+			loading: true
+		});
+
+		api.search.rekeningType(norek)
+			.then(res => {
+				this.setState({ loading: false });	
+			})
+			.catch(err => {
+				if (!err.global) {
+					this.setState({ 
+						loading: false,
+						errors: {
+							global: 'Terdapat kesalahan saat mengambil data rekening anda, fitur COD di nonaktifkan'
+						}
+					});
+				}else{
+					this.setState({ 
+						loading: false,
+						errors: err
+					});
+				}
+			})
 	}
 
 	BackAction = () => (
@@ -56,10 +97,10 @@ class Order extends React.Component{
 			lebar: data.lebar.replace(/\D/g, ''),
 			isiKiriman: data.jenis,
 			nilai: data.nilaiVal.replace(/\D/g, ''),
-			codvalue: data.codvalue.replace(/\D/g, ''),
-			cod: data.checked
+			cod: data.checked,
+			itemtype: data.itemtype
 		};
-		
+			
 		this.props.navigation.push('KelolaPengirim', {
 			deskripsiOrder
 		})
@@ -127,8 +168,28 @@ class Order extends React.Component{
 		this.setState({ textLoading: 'Menyiapkan...'});
 		this.props.synchronizeWebGiro(payload)
 			.then(() => {
-				this.setState({ loading: false });
-				this.showAlert('Untuk order kiriman dengan fitur cod silahkan centang kolom COD', 'Sukses/Berhasil');
+				//cek rekening (without test) :p
+				api.search.rekeningType(this.props.dataLogin.norek)
+					.then(res => {
+						this.setState({ loading: false });	
+						this.showAlert('Untuk order kiriman dengan fitur cod silahkan centang kolom COD', 'Sukses/Berhasil');
+					})
+					.catch(err => {
+						if (!err.global) {
+							this.setState({ 
+								loading: false,
+								errors: {
+									global: 'Terdapat kesalahan saat mengambil data rekening anda, fitur COD di nonaktifkan'
+								}
+							});
+						}else{
+							this.setState({ 
+								loading: false,
+								errors: err
+							});
+						}
+					})
+				
 			})
 			.catch(err => {
 				this.setState({ loading: false });
@@ -157,7 +218,7 @@ class Order extends React.Component{
 	render(){
 		const { visible, loading, textLoading } = this.state;
 		const { norek } = this.props.dataLogin;
-		
+
 		return(
 			<View style={{flex: 1}}>
 				{ /* this view for hide status bar color */ }
@@ -185,7 +246,11 @@ class Order extends React.Component{
 					enabled
 				>
 					<ScrollView keyboardShouldPersistTaps='always'>	
-						<OrderForm onSubmit={this.onSubmit} isCod={this.props.isCod} />
+						<OrderForm 
+							onSubmit={this.onSubmit} 
+							isCod={this.props.isCod} 
+							invalid={this.state.errors}
+						/>
 					</ScrollView>
 				</KeyboardAvoidingView>
 				<View>

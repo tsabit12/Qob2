@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StatusBar, TouchableOpacity, ScrollView, Alert, Animated } from "react-native";
+import { View, Text, StatusBar, TouchableOpacity, ScrollView, Alert, Animated, ToastAndroid } from "react-native";
 import { connect } from "react-redux";
 import styles from "./styles";
 import { Icon, TopNavigation, TopNavigationAction, ListItem, CheckBox, Button } from '@ui-kitten/components';
@@ -9,6 +9,17 @@ import Loader from "../../Loader";
 import { addPickupBaru } from "../../../actions/order";
 import DataOrder from "./DataOrder";
 import apiBaru from "../../apiBaru";
+import { Ionicons } from '@expo/vector-icons';
+
+shortToast = message => {
+    ToastAndroid.showWithGravityAndOffset(
+      message,
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+}
 
 const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='#FFF'/>
@@ -369,11 +380,19 @@ class DetailOrder extends React.Component{
 	}
 
 	_getLocationAsync = async () => {
-	    await Location.getCurrentPositionAsync({})
-	    .then(res => {
-	    	this.setState({ rejectLocation: false, location: res });
-	    })
-	    .catch(() => this.setState({ rejectLocation: true }));
+		let { status } = await Location.requestPermissionsAsync();
+		
+		if (status !== 'granted') {
+			shortToast("Qposin gagal mengambil lokasi anda");
+			this.setState({ rejectLocation: true });
+		}else{
+		    await Location.getCurrentPositionAsync({})
+		    .then(res => {
+		    	this.setState({ rejectLocation: false, location: res });
+		    })
+		    .catch(() => this.setState({ rejectLocation: true }));
+		}
+	    
 	}
 
 	updateStatusPickup = (payload) => {
@@ -419,9 +438,23 @@ class DetailOrder extends React.Component{
 		apiBaru.qob.getHistoryStatus(payload)
 			.then(res => {
 				//sorting
+				const phoneFaster = res.data.find(x => x.driverphone !== null);
 				const datanya = res.data.sort(this.dynamicSort("-insertdate"));
-				
 				this.setState({ loading: false, history: datanya });
+				if (!phoneFaster) {
+					shortToast("Tidak ada status terbaru");
+				}else{
+					const payloadPhone = {
+						pickupnumber: payload.pickupnumber,
+						phone: phoneFaster.driverphone,
+						fastername: phoneFaster.driver,
+						latitude: phoneFaster.latitude,
+						longitude: phoneFaster.longitude
+					}
+					apiBaru.updatePhoneFaster(payloadPhone)
+						.then(res2 => shortToast("Sukses update"))
+						.catch(err => shortToast("Tidak ada status terbaru"));
+				}
 			})
 			.catch(err => {
 				this.setState({ loading: false });
@@ -494,13 +527,21 @@ class DetailOrder extends React.Component{
 				<View style={styles.tab}>
 					<View style={styles.tabLeft}>
 						<TouchableOpacity style={{alignItems: 'center'}} onPress={this.onPressTab1}>
-							<Icon name='shopping-cart-outline' width={28} height={28} fill={tab1.color} />
+							<Ionicons 
+								name="ios-cart" 
+								size={28} 
+								color={tab1.color} 
+							/>
 							<Text style={{color: tab1.color}}>Request Pickup ({pickup.length})</Text>
 						</TouchableOpacity>
 					</View>
 					<View style={styles.tabRight}>
 						<TouchableOpacity style={{alignItems: 'center'}} onPress={this.onPressTab2}>
-							<Icon name='bookmark-outline' width={28} height={28} fill={tab2.color} />
+							<Ionicons
+						        name='ios-bookmark'
+						        size={28}
+						        color={tab2.color}
+						    />
 							<Text style={{color: tab2.color}}>Data Order ({other.length})</Text>
 						</TouchableOpacity>
 					</View>

@@ -1,15 +1,31 @@
 import React from "react";
-import { View, Text, StyleSheet, KeyboardAvoidingView, ScrollView, Image, StatusBar, Dimensions } from "react-native";
-import { Layout, Input, Button, ListItem, Icon,  TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { 
+	View, 
+	Text, 
+	StyleSheet, 
+	KeyboardAvoidingView, 
+	ScrollView, 
+	Image, 
+	StatusBar, 
+	Dimensions, 
+	TouchableOpacity, 
+	Keyboard 
+} from "react-native";
+import { Layout, Input, Button, ListItem, Icon,  TopNavigation, TopNavigationAction, Select } from '@ui-kitten/components';
 import { Header } from 'react-navigation-stack';
 import Loader from "../Loader";
 import api from "../api";
 import apiWs from "../apiWs";
 import { SafeAreaView } from 'react-navigation';
 import Constants from 'expo-constants';
+import { Ionicons } from '@expo/vector-icons';
 
 const device = Dimensions.get('window').width;
 
+const dataOptions = [
+  { text: 'Paket', value: 1},
+  { text: 'Surat', value: 0}
+];
 
 const capitalize = (string) => {
 	if (string) {
@@ -27,6 +43,17 @@ const Judul = ({ navigation }) => (
 
 const BackIcon = (style) => (
   <Icon {...style} name='arrow-back' fill='#FFF'/>
+);
+
+const renderItemAccessory = (style, title, kodepos, kota, jenis, onClick) => (
+	<TouchableOpacity onPress={() => onClick(jenis, title, kodepos, kota)}>
+		<Ionicons
+	        style={{ backgroundColor: 'transparent' }}
+	        name='ios-add-circle'
+	        size={27}
+	        color="green"
+	    />
+	</TouchableOpacity>
 );
 
 const MyStatusBar = () => (
@@ -53,6 +80,7 @@ const ListTarif = ({ list }) => {
 						key={i}
 					    title={`Rp. ${numberWithCommas(totalTarif)}`}
 					    description={`${produk}`}
+					    disabled={true}
 					/>
 				);
 			}
@@ -94,21 +122,43 @@ class CekTarif extends React.Component{
 		listAlamat1: [],
 		listAlamat2: [],
 		show1: false,
-		show2: false
+		show2: false,
+		keyboardOpen: false,
+		jenisKiriman: dataOptions[0]
 	}
+
+	componentDidMount () {
+	    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
+	    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+	}
+
+	keyboardDidShow = (event) => this.setState({ keyboardOpen: true })
+
+	keyboardDidHide = () => this.setState({ keyboardOpen: false })
+
+	componentWillUnmount () {
+	    this.keyboardDidShowListener.remove();
+	    this.keyboardDidHideListener.remove();
+	}
+
 
 	onClick = () => {
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
+			const { data, jenisKiriman } = this.state;
 			this.setState({ loading: true });
 			const payload = {
-				kodePosA: this.state.data.kodeposA,
-				kodePosB: this.state.data.kodeposB,
-				berat: this.state.data.nilai,
-				nilai: 0
+				kodePosA: data.kodeposA,
+				kodePosB: data.kodeposB,
+				berat: Number(data.nilai.replace(/\D/g, '')),
+				nilai: Number(0),
+				panjang: Number(data.panjang.replace(/\D/g, '')),
+				lebar: Number(data.lebar.replace(/\D/g, '')),
+				tinggi: Number(data.tinggi.replace(/\D/g, '')),
+				itemtype: jenisKiriman.value
 			}
-
+			
 			api.qob.getTarif(payload)
 				.then(res => {
 					///console.log(res);
@@ -126,8 +176,18 @@ class CekTarif extends React.Component{
 
 	validate = (data) => {
 		const errors = {};
-		if (!data.kotaAsal) errors.kotaAsal = "Kota asal belum dipilih";
-		if (!data.kotaTujuan) errors.kotaTujuan = "Kota tujuan belum dipilih";
+		if (!data.kotaAsal){
+			errors.kotaAsal = "Kota asal belum dipilih";	
+		}else{
+			if (!data.kodeposA) errors.kotaAsal = "Alamat asal tidak lengkap";	
+		}
+
+		if (!data.kotaTujuan){
+			errors.kotaTujuan = "Kota tujuan belum dipilih";	
+		}else{
+			if (!data.kodeposB) errors.kotaTujuan = "Alamat tujuan tidak lengkap";	
+		}
+
 		if (!data.panjang) errors.panjang = "Required";
 		if (!data.tinggi) errors.tinggi = "Required";
 		if (!data.lebar) errors.lebar = "Required";
@@ -160,21 +220,33 @@ class CekTarif extends React.Component{
 			var val = e.replace(/\D/g, '');
 			var x 	= Number(val);
 			const value = this.numberWithCommas(x);
-			this.setState({ data: { ...this.state.data, [name]: value }})
+			this.setState({ 
+				data: { ...this.state.data, [name]: value },
+				errors: { ...this.state.errors, [name]: undefined}
+			})
 		}else{
-			this.setState({ data: { ...this.state.data, [name]: e }})
+			this.setState({ 
+				data: { ...this.state.data, [name]: e },
+				errors: { ...this.state.errors, [name]: undefined}
+			})
 		}
 	}
 
 	onChangeKotaA = (e) => {
 		clearTimeout(this.timer);
-		this.setState({ data: { ...this.state.data, kotaAsal: e }});
+		this.setState({ 
+			data: { ...this.state.data, kotaAsal: e },
+			errors: { ...this.state.errors, kotaAsal: undefined }
+		});
 		this.timer = setTimeout(() => this.getKodepos('A'), 500);
 	}
 
 	onChangeKotaB = (e) => {
 		clearTimeout(this.timer);
-		this.setState({ data: { ...this.state.data, kotaTujuan: e }});
+		this.setState({ 
+			data: { ...this.state.data, kotaTujuan: e },
+			errors: { ...this.state.errors, kotaTujuan: undefined }
+		});
 		this.timer = setTimeout(() => this.getKodepos('B'), 500);	
 	}
 
@@ -182,45 +254,43 @@ class CekTarif extends React.Component{
 		const { data } = this.state;
 		// var value = null;
 		if (jenis === 'A') {
+			if (!data.kotaAsal || data.kotaAsal.length <= 2) return;
 			let value = data.kotaAsal;
-			if (value.length >= 5) {
-				this.setState({ loadingGet: true });
-				apiWs.qob.getKodePos(value)
-					.then(res => {
-						const listAlamat1 = [];
-						res.result.forEach(x => {
-							listAlamat1.push({
-								title: capitalize(`${x.kelurahan} - ${x.kecamatan}`),
-								kodepos: x.kodepos,
-								kota: x.kabupaten		
-							});
+			this.setState({ loadingGet: true });
+			apiWs.qob.getKodePos(value)
+				.then(res => {
+					const listAlamat1 = [];
+					res.result.forEach(x => {
+						listAlamat1.push({
+							title: capitalize(`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`),
+							kodepos: x.kodepos,
+							kota: x.kabupaten		
 						});
-						this.setState({ loadingGet: false, listAlamat1, show1: true });
-					}).catch(err => {
-						console.log(err);
-						this.setState({ loadingGet: false });
 					});
-			}
+					this.setState({ loadingGet: false, listAlamat1, show1: true });
+				}).catch(err => {
+					console.log(err);
+					this.setState({ loadingGet: false });
+				});
 		}else{
 			let value = data.kotaTujuan;
-			if (value.length >= 5) {
-				this.setState({ loadingGet2: true });	
-				apiWs.qob.getKodePos(value)
-					.then(res => {
-						const listAlamat2 = [];
-						res.result.forEach(x => {
-							listAlamat2.push({
-								title: capitalize(`${x.kelurahan} - ${x.kecamatan}`),
-								kodepos: x.kodepos,
-								kota: x.kabupaten	
-							});
+			if (!data.kotaTujuan || data.kotaTujuan.length <= 2) return;
+			this.setState({ loadingGet2: true });	
+			apiWs.qob.getKodePos(value)
+				.then(res => {
+					const listAlamat2 = [];
+					res.result.forEach(x => {
+						listAlamat2.push({
+							title: capitalize(`${x.kecamatan}, ${x.kabupaten}, ${x.provinsi}`),
+							kodepos: x.kodepos,
+							kota: x.kabupaten	
 						});
-						this.setState({ loadingGet2: false, listAlamat2, show2: true });
-					}).catch(err => {
-						console.log(err);
-						this.setState({ loadingGet2: false });
 					});
-			}
+					this.setState({ loadingGet2: false, listAlamat2, show2: true });
+				}).catch(err => {
+					console.log(err);
+					this.setState({ loadingGet2: false });
+				});
 		}
 
 	}
@@ -297,19 +367,19 @@ class CekTarif extends React.Component{
 				/>
 				<KeyboardAvoidingView 
 					behavior="padding" 
-					enabled
+					enabled={this.state.keyboardOpen}
 					style={{flex: 1}}
 				>
 					<Loader loading={loading} />
 					<ScrollView keyboardShouldPersistTaps='always'>
 						<Layout style={styles.container}>
-							<View style={{borderWidth: 1, borderRadius: 10, padding: 10, borderColor: '#dbdad9'}}>
+							<View style={{borderWidth: 1, borderRadius: 4, padding: 5, borderColor: '#dbdad9'}}>
 								<View style={{padding: 4}}>
 									<Input
-								      placeholder='Kota/kab/kec/kel'
+								      placeholder='Masukan kecamatan/kota'
 								      ref={this.kotaAsalRef}
 								      name='kotaAsal'
-								      label='Kota Asal (Min 5 karakter)'
+								      label='Kecamatan/kota Asal'
 								      labelStyle={styles.label}
 								      style={styles.input}
 								      value={data.kotaAsal}
@@ -319,24 +389,28 @@ class CekTarif extends React.Component{
 								    />
 								    { errors.kotaAsal && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaAsal}</Text>}
 
-								    { listAlamat1.length > 0 && show1 && <ScrollView style={styles.scroll} nestedScrollEnabled={true}>
-									   	{ listAlamat1.map((x, i) => 
-									   		<ListItem
-									   			key={i}
-										    	style={{backgroundColor: '#d6d7da'}}
-										    	titleStyle={styles.listItemTitle}
-										    	descriptionStyle={styles.listItemDescription}
-										    	title={x.title}
-										    	onPress={() => this.onClickGet('A', x.title, x.kodepos, x.kota)}
-											/> )}
-								    </ScrollView> }
+								    { listAlamat1.length > 0 && show1 && 
+								    	<View style={styles.scroll}>
+									    	<ScrollView nestedScrollEnabled={true}>
+									    		<Text style={styles.textPilih}>Pilih Alamat</Text>
+											   	{ listAlamat1.map((x, i) => 
+											   		<ListItem
+											   			key={i}
+												    	titleStyle={styles.listItemTitle}
+												    	descriptionStyle={styles.listItemDescription}
+												    	title={x.title}
+												    	onPress={() => this.onClickGet('A', x.title, x.kodepos, x.kota)}
+												    	//accessory={(e) => renderItemAccessory(e, x.title, x.kodepos, x.kota, 'A', this.onClickGet)}
+													/> )}
+									    	</ScrollView> 
+								    	</View>}
 								</View>
 								<View style={{padding: 4}}>
 									<Input
-								      placeholder='Kota/kab/kec/kel'
+								      placeholder='Masukan kecamatan/kota'
 								      ref={this.kotaTujuanRef}
 								      name='kotaTujuan'
-								      label='Kota Tujuan (Min 5 karakter)'
+								      label='Kecamatan/kota Tujuan'
 								      labelStyle={styles.label}
 								      style={styles.input}
 								      value={data.kotaTujuan}
@@ -346,16 +420,19 @@ class CekTarif extends React.Component{
 								    />
 								    { errors.kotaTujuan && <Text style={{fontSize: 12, color: 'red'}}>{errors.kotaTujuan}</Text>}
 
-								     { listAlamat2.length > 0 && show2 && <ScrollView style={styles.scroll} nestedScrollEnabled={true}>
-									   	{ listAlamat2.map((x, i) => 
-									   		<ListItem
-									   			key={i}
-										    	style={{backgroundColor: '#d6d7da'}}
-										    	titleStyle={styles.listItemTitle}
-										    	title={x.title}
-										    	onPress={() => this.onClickGet('B', x.title, x.kodepos, x.kota)}
-											/> )}
-								    </ScrollView> }
+								     { listAlamat2.length > 0 && show2 && <View style={styles.scroll}>
+								     	<ScrollView nestedScrollEnabled={true}>
+									     	<Text style={styles.textPilih}>Pilih Alamat</Text>
+										   	{ listAlamat2.map((x, i) => 
+										   		<ListItem
+										   			key={i}
+											    	titleStyle={styles.listItemTitle}
+											    	title={x.title}
+											    	// accessory={(e) => renderItemAccessory(e, x.title, x.kodepos, x.kota, 'B', this.onClickGet)}
+											    	onPress={() => this.onClickGet('B', x.title, x.kodepos, x.kota)}
+												/> )}
+									   	</ScrollView>
+								    </View> }
 								</View>
 								<View style={styles.hitung}>
 								    <Input
@@ -424,6 +501,16 @@ class CekTarif extends React.Component{
 								    />
 								    { errors.nilai && <Text style={{fontSize: 12, color: 'red'}}>{errors.nilai}</Text>}
 								</View>
+								<View style={{padding: 4}}>
+									<Select
+										label='Jenis Kiriman'
+								        data={dataOptions}
+								        labelStyle={styles.label}
+								        selectedOption={this.state.jenisKiriman}
+								        onSelect={(e) => this.setState({ jenisKiriman: e })}
+								        // placeholder='Pilih jenis Kiriman'
+								    />
+								</View>
 							</View>
 						</Layout>
 						<View style={styles.button}>
@@ -456,7 +543,7 @@ const styles = StyleSheet.create({
 	  	fontFamily: 'open-sans-reg'
 	},
 	container: {
-	    padding: 10,
+	    padding: 5,
 	},
 	inputHitung: {
 	  	paddingRight: 4,
@@ -466,16 +553,24 @@ const styles = StyleSheet.create({
 	button: {
 		flexDirection: 'row',
 		alignSelf: 'stretch',
-		margin: 7,
-		marginTop: -3
+		marginLeft: 5,
+		marginRight: 5
 	},
 	scroll: {
-		height: device*0.3,
-		paddingBottom: 50
+		height: device*0.5,
+		//backgroundColor: '#d6d7da',
+		borderWidth: 0.3
 	},
 	StatusBar: {
 	    height: Constants.statusBarHeight,
 	    backgroundColor: 'rgb(240, 132, 0)'
+	},
+	textPilih: {
+		fontSize: 14, 
+		textAlign: 'center', 
+		fontWeight: '700',
+		borderBottomWidth: 0.3,
+		paddingBottom: 3
 	}
 });
 

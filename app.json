@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "1.0.6",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/logoBaru.png",
     "splash": {
@@ -30,10 +30,10 @@
     },
     "android": {
       "package": "com.posindonesia.cob",
-      "versionCode": 8,
+      "versionCode": 9,
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCWExqNgCmhqQyoBuj7lvsMQ7lHWIdon0g"
+          "apiKey": "AIzaSyA7czY728UVajvsFfYCGLq67OPIjVpqFPc"
         }
       }
     },
@@ -45,6 +45,9 @@
       "color": "#f68527",
       "androidMode": "default",
       "iosDisplayInForeground": true
-    }
+    },
+    "facebookAppId": "2274373556191901",
+    "facebookDisplayName": "qposin",
+    "facebookAutoLogAppEventsEnabled": true
   }
 }

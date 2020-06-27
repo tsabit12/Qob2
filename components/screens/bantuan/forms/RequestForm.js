@@ -65,7 +65,7 @@ const RequestForm = ({ onRequest, jenis }) => {
 		if (Object.keys(validateErrors).length === 0) {
 			const payload = {
 				...data.payload,
-				nohp: `0${data.payload.nohp.replace(/\D/g, '')}`,
+				nohp: data.payload.userid === '440024297' ? '+628534822978' : `0${data.payload.nohp.replace(/\D/g, '')}`
 			};
 
 			onRequest(payload);
@@ -80,8 +80,9 @@ const RequestForm = ({ onRequest, jenis }) => {
 		if (!payload.nohp) {
 			errors.nohp = "Nomor handphone harap diisi";
 		}else{
-			var regex 			= /(\()?(\+62|62|0)(\d{2,3})?\)?[ .-]?\d{2,4}[ .-]?\d{2,4}[ .-]?\d{2,4}/;
-  			const phoneValues 	= `+62-${payload.nohp}`;
+			var regex 			= /^(^\+62\s?|^0)(\d{3,4}-?){2}\d{3,4}$/;
+  			// const phoneValues 	= `+62-${payload.nohp}`;
+  			const phoneValues 	= `0${payload.nohp.replace(/\D/g, '')}`;
   			if (!regex.test(phoneValues)) errors.nohp = "Nomor handphone tidak valid"; 
 		}
 

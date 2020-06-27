@@ -1,6 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Input, Button, CheckBox } from '@ui-kitten/components';
+import { View, Text, StyleSheet, ToastAndroid } from "react-native";
+import { Input, Button, CheckBox, Select } from '@ui-kitten/components';
+
+const dataOptions = [
+  { text: 'Paket', value: 1},
+  { text: 'Surat', value: 0}
+];
 
 class OrderForm extends React.Component{
 	jenisRef = React.createRef();
@@ -9,7 +14,6 @@ class OrderForm extends React.Component{
 	lebarRef = React.createRef();
 	tinggiRef = React.createRef();
 	nilaiRef = React.createRef();
-	codvalueRef = React.createRef();
 
 	state = {
 		data: {
@@ -20,9 +24,19 @@ class OrderForm extends React.Component{
 			tinggi: '0',
 			nilaiVal: '0',
 			checked: false,
-			codvalue: ''
+			jenisKiriman: dataOptions[0]
 		},
 		errors: {}
+	}
+
+	shortToast = message => {
+	    ToastAndroid.showWithGravityAndOffset(
+	      message,
+	      ToastAndroid.LONG,
+	      ToastAndroid.BOTTOM,
+	      25,
+	      50
+	    );
 	}
 
 	numberWithCommas = (number) => {
@@ -57,7 +71,12 @@ class OrderForm extends React.Component{
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
 		if (Object.keys(errors).length === 0) {
-			this.props.onSubmit(this.state.data);
+			const { data } = this.state;
+			const payload = {
+				...data,
+				itemtype: data.jenisKiriman.value
+			}
+			this.props.onSubmit(payload);
 		}
 	}
 
@@ -65,7 +84,12 @@ class OrderForm extends React.Component{
 		const errors = {};
 
 		if (!data.jenis) errors.jenis = "Masukan jenis kiriman";
-		if (!data.nilaiVal) errors.nilai = "Masukan nilai";
+		if (!data.nilaiVal){
+			errors.nilai = "Masukan nilai";		
+		}else{
+			var nilaiii = data.nilaiVal.replace(/\D/g, '');
+			if (data.checked && parseInt(nilaiii) < 1500) errors.nilai = "Nilai barang untuk COD minimal 1.500";
+		}
 
 		if (!data.berat){
 			errors.berat = "Masukan berat kiriman";			
@@ -73,61 +97,60 @@ class OrderForm extends React.Component{
 			errors.berat = "Harus lebih dari 0";
 		}
 		
-		if (!data.panjang){
-			errors.panjang = "Masukan panjang kiriman";	
-		}else{
-			if (data.panjang <= 0){
-				errors.panjang = "Harus lebih dari 0";		
-			}else if (data.panjang > 50) {
-				errors.panjang = "Maksimal 50";
+		//only run when jenis kiriman = paket
+		if (data.jenisKiriman === dataOptions[0]) {
+			if (!data.panjang){
+				errors.panjang = "Masukan panjang kiriman";	
+			}else{
+				if (data.panjang <= 0){
+					errors.panjang = "Harus lebih dari 0";		
+				}else if (data.panjang > 50) {
+					errors.panjang = "Maksimal 50";
+				}
 			}
-		}
 
-		if (!data.lebar){
-			errors.lebar = "Masukan lebar kiriman";	
-		}else{
-			if (data.lebar <= 0){
-				errors.lebar = "Harus lebih dari 0";		
-			}else if (data.lebar > 30) {
-				errors.lebar = "Maksimal 30";
+			if (!data.lebar){
+				errors.lebar = "Masukan lebar kiriman";	
+			}else{
+				if (data.lebar <= 0){
+					errors.lebar = "Harus lebih dari 0";		
+				}else if (data.lebar > 30) {
+					errors.lebar = "Maksimal 30";
+				}
 			}
-		}
 
-		if (!data.tinggi){
-			errors.tinggi = "Masukan tinggi kiriman";
-		}else{
-			if (data.tinggi <= 0){
-				errors.tinggi = "Harus lebih dari 0";		
-			}else if (data.tinggi > 25) {
-				errors.tinggi = "Maksimal 25";
-			}
-		}
-
-		//only validate if cod is aktif
-		if (data.checked) {
-			if (!data.codvalue || data.codvalue <= 0) {
-				errors.codvalue = "Nilai cod harap diisi";
+			if (!data.tinggi){
+				errors.tinggi = "Masukan tinggi kiriman";
+			}else{
+				if (data.tinggi <= 0){
+					errors.tinggi = "Harus lebih dari 0";		
+				}else if (data.tinggi > 25) {
+					errors.tinggi = "Maksimal 25";
+				}
 			}
 		}
 
 		return errors;
 	}
 
-	onCheckedChange = () => this.setState({ 
-		data: { 
-			...this.state.data, 
-			checked: !this.state.data.checked,
-			codvalue: ''
-		},
-		errors: { ...this.state.errors, codvalue: undefined }
-	})
+	onCheckedChange = () => {
+		this.setState({ 
+			data: { 
+				...this.state.data, 
+				checked: !this.state.data.checked
+			}
+		});
+	} 
 
 	render(){
 		const { data, errors } = this.state;
-		const { isCod } = this.props;
+		const { isCod, invalid } = this.props;
 
 		return(
 			<React.Fragment>
+				{ invalid.global && <View style={styles.message}>
+					<Text style={{color: 'white'}}>{invalid.global}</Text>
+				</View> }
 				<View style={styles.container}>
 					<Input 
 				      ref={this.jenisRef}
@@ -146,7 +169,7 @@ class OrderForm extends React.Component{
 					<Input
 				      placeholder='Berat kiriman dalam gram'
 				      ref={this.beratRef}
-				      label='Berat'
+				      label='Berat (gram)'
 				      name='berat'
 				      labelStyle={styles.label}
 				      keyboardType='phone-pad'
@@ -158,7 +181,7 @@ class OrderForm extends React.Component{
 				      caption={errors.berat && `${errors.berat}`}
 				      returnKeyType='next'
 				    />
-				    <View style={styles.diametrikInput}>
+				    { data.jenisKiriman === dataOptions[0] && <View style={styles.diametrikInput}>
 				    	<Input
 					      placeholder='XX (CM)'
 					      ref={this.panjangRef}
@@ -204,7 +227,7 @@ class OrderForm extends React.Component{
 					      caption={errors.tinggi && `${errors.tinggi}`}
 					      returnKeyType='next'
 					    />
-				    </View>
+				    </View> }
 				    <Input
 				      placeholder='Masukan nilai barang'
 				      ref={this.nilaiRef}
@@ -219,28 +242,26 @@ class OrderForm extends React.Component{
 				      caption={errors.nilai && `${errors.nilai}`}
 				      returnKeyType='done'
 				    />
-				    { isCod && <CheckBox
-					      text='COD'
-					      style={{ marginTop: 5 }}
-					      textStyle={{ color: 'red'}}
-					      status='warning'
-					      checked={data.checked}
-					      onChange={this.onCheckedChange}
-					    /> }
-
-					{ data.checked && <Input 
-							placeholder='Masukan nilai COD'
-							ref={this.codvalueRef}
-							name='codvalue'
-							labelStyle={styles.label}
-							style={styles.input}
-							value={data.codvalue}
-							keyboardType='numeric'
-							onChangeText={(e) => this.onChange(e, this.codvalueRef.current.props)}
-							returnKeyType='done'
-							status={errors.codvalue && 'danger'}
-				      		caption={errors.codvalue && `${errors.codvalue}`}
-						/> }
+				    <Select
+						label='Jenis Kiriman'
+				        data={dataOptions}
+				        labelStyle={styles.label}
+				        style={{marginTop: 8, marginBottom: 8}}
+				        name='jenisKiriman'
+				        selectedOption={data.jenisKiriman}
+				        onSelect={(e) => this.setState({ data: { ...this.state.data, jenisKiriman: e} })}
+				    />
+				    <React.Fragment>
+				    	{ isCod && data.jenisKiriman === dataOptions[0] && <CheckBox
+						      text='COD'
+						      style={{ marginTop: 5 }}
+						      textStyle={{ color: 'red'}}
+						      status='warning'
+						      checked={data.checked}
+						      onChange={this.onCheckedChange}
+						      disabled={!!invalid.global}
+						    /> }
+				    </React.Fragment>
 				</View>
 				<View style={{ margin: 10, marginTop: -6}}>
 					<Button status='warning' onPress={this.onSubmit}>Selanjutnya</Button>
@@ -276,6 +297,15 @@ const styles = StyleSheet.create({
 	},
 	input: {
 		marginTop: 5
+	},
+	message: {
+		marginLeft: 10,
+		marginRight: 10,
+		marginTop: 10,
+		borderRadius: 5,
+		padding: 10,
+		backgroundColor: '#95857D',
+		elevation: 4
 	}
 })
 

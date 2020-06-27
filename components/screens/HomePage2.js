@@ -1,6 +1,9 @@
 import React from "react";
-import { View, Text, StatusBar, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, StatusBar, StyleSheet, Image, Dimensions } from "react-native";
 import Constants from 'expo-constants';
+import { LinearGradient } from 'expo-linear-gradient';
+
+var {width} = Dimensions.get('window');
 
 const MyStatusBar = () => (
 	<View style={styles.StatusBar}>
@@ -9,20 +12,31 @@ const MyStatusBar = () => (
 );
 
 const HomePage2 = ({ navigation }) => (
-	<View style={{flex: 1}}>
-		<MyStatusBar />
-		<ImageBackground source={require('../../assets/homepage.png')} style={styles.backgroundImage}>
-		<View style={{flex: 1, position: 'absolute', bottom: 20, left: 0, right: 0}}>
-			<View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-				<Text style={{fontFamily: 'open-sans-bold', fontSize: 15}}>Belum memilik akun?</Text>
+	<LinearGradient colors={['#e8c61e', '#F5A946', '#ff781f']} style={{flex: 1}}>
+		<View style={{flex: 1}}>
+			<Image 
+				source={require('../../assets/banner.png')} 
+				resizeMode='contain'
+				style = {[styles.image,{overflow: 'visible'}]}
+			/>
+		</View>
+		<View style={styles.label}>
+			<Text style={{textAlign: 'center'}}>
+				<Text style={styles.text}>Belum memiliki akun?</Text>
 				<Text 
-					style={{fontFamily: 'open-sans-bold', fontSize: 15, color: 'blue'}} 
+					style={[styles.text,{color: 'blue'}]} 
 					onPress={() => navigation.navigate({ routeName: 'IndexRegister'})}
 				> Daftar disini</Text>
-			</View>
-			<View style={{flex: 1}}>
+				<Text style={styles.text}>{'\n'}Sudah registrasi di web qposin?</Text>
 				<Text 
-					style={{textAlign: 'center', fontFamily: 'open-sans-bold', color: 'blue'}}
+					style={[styles.text, {color: 'blue'}]}
+					onPress={() => navigation.navigate({ 
+						routeName: 'Aktivasi'
+					})}
+				> Aktifasi disini</Text>
+				<Text style={styles.text}>{'\n'}Atau pulihkan akun</Text>
+				<Text 
+					style={[styles.text, {color: 'blue'}]}
 					onPress={() => navigation.navigate({ 
 						routeName: 'Pemulihan',
 						params: {
@@ -30,21 +44,35 @@ const HomePage2 = ({ navigation }) => (
 							jenis: 2
 						}
 					})}
-				>Pulihkan Akun</Text>
-			</View>
+				> disini</Text>
+			</Text>
 		</View>
-		</ImageBackground>
-	</View>
+	</LinearGradient>
 );
 
 const styles = StyleSheet.create({
-	backgroundImage: {
-	    flex: 1,
-	    justifyContent : 'center'
+	image: {
+	    width: width * 1,
+	    flex: 1
 	},
 	StatusBar: {
         height: Constants.statusBarHeight,
         backgroundColor: '#ffcf4f'
+    },
+    text: {
+    	fontFamily: 'open-sans-bold', 
+    	fontSize: 13
+    },
+    label: {
+    	flex: 1, 
+    	position: 'absolute', 
+    	bottom: 20, 
+    	left: 10, 
+    	right: 10, 
+    	backgroundColor: 'white',
+    	borderRadius: 5,
+    	padding: 5,
+    	elevation: 5
     }
 })
 

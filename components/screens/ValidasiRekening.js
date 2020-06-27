@@ -116,7 +116,7 @@ class ValidasiRekening extends React.Component{
 	onSucces = (nomorRekening, saldo) => {
 		this.props.updateLoginSes(nomorRekening, saldo);
 		setTimeout(() => {
-			this.props.navigation.push('IndexSearch');
+			this.props.navigation.push('IndexMenu');
 		}, 100);	
 	}
 

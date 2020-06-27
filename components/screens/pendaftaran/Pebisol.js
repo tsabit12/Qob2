@@ -160,7 +160,7 @@ class Pebisol extends React.Component{
 
 	redirectToHelp = () => {
 		this.props.navigation.navigate({
-			routeName: 'PemulihanAkun',
+			routeName: 'Pemulihan',
 			params: {
 				titlePemulihan: 'Pemulihan Akun',
 				jenis: 2

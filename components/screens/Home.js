@@ -185,14 +185,17 @@ class Home extends React.Component {
 					};
 
 					this.setState({ loading: false });
-					this.props.setLoggedIn(userid, payload2, val);
+					this.props.setLoggedIn(userid, payload2, val);hen(res => {
+								
+				})
 				})
 				.catch(err => {
+					console.log(err.response);
 					clear();
 					if (err.desk_mess) { //handle undefined
 						this.setState({ loading: false, errors: {global: err.desk_mess } });
 					}else{
-						this.setState({ loading: false, errors: {global: 'Terdapat kesalahan saat menghubungkan ke server, harap cobalagi nanti'} });
+						this.setState({ loading: false, errors: {global: 'Mohon maaf untuk sementara kami mengalami masalah saat menghubungkan ke server, mohon cobalagi nanti'} });
 					}
 				});
 		}
