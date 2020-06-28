@@ -165,14 +165,27 @@ const Home = props => {
 		done: true
 	}))
 
+	const hadleHelp = () => {
+		props.navigation.navigate({
+			routeName: 'Pemulihan',
+			params: {
+				title: 'Lupa PIN',
+				jenis: 1
+			}
+		})
+	}
+
 	return(
 		<View style={styles.root}>
 			<Loader loading={state.loading} />
 			<View style={styles.statusBar}>
 				<StatusBar translucent barStyle="light-content" />
 			</View>
-			{Object.keys(localUser).length === 0 ?  
-				<Pin onLogin={handleLogin}/> : <React.Fragment>
+			{Object.keys(localUser).length > 0 ?  
+				<Pin 
+					onLogin={handleLogin}
+					onHelp={hadleHelp}
+				/> : <React.Fragment>
 				{ state.done ? <Registrasi navigation={props.navigation} /> : <AppIntroSlider
 			        slides={slides}
 			        renderItem={renderItem}

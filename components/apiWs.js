@@ -68,7 +68,8 @@ export default{
 			if (!res.data.result) {
 				const errors = {
 					global: 'Data tidak ditemukan',
-					status: 404
+					status: 404,
+					response: 'Data tidak ditemukan'
 				}
 				return Promise.reject(errors);
 			}else{

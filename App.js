@@ -70,57 +70,48 @@ const MyApp = props => {
     mount: false
   });
 
-
-  /*ADD CHANNEL NOTIFICATION AND CHECK UPDATE*/
-  React.useEffect(() => {
-      (async () => {
-        
-        AddNotif();
-
-        try {
-          const update = await Updates.checkForUpdateAsync();
-
-          if (update.isAvailable) {
-            setState(prevState => ({
-              ...prevState,
-              text: 'Updating app...',
-              mount: true
-            }));
-
-            await Updates.fetchUpdateAsync();
-            await Updates.reloadAsync();
-          }
-        } catch (e) {
-          setState(prevState => ({
-            ...prevState,
-            text: 'Failed for update app',
-            mount: true
-          }));
-        }
-      })();
-  }, []);
-
   React.useEffect(() => {
     (async () => {
-      if (state.mount) {
-        const value = await AsyncStorage.getItem("qobUserPrivasi");
-        if (value !== null) {
-          const toObje  = JSON.parse(value);
+      AddNotif();
+
+      try {
+        const update = await Updates.checkForUpdateAsync();
+
+        if (update.isAvailable) {
           setState(prevState => ({
             ...prevState,
-            localUser: {
-              email: toObje.email,
-              nama: toObje.nama,
-              nohp: toObje.nohp,
-              pin: toObje.pinMd5,
-              userid: toObje.userid,
-              username: toObje.username
-            }
-          }))
+            text: 'Updating app...'
+          }));
+
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
         }
+
+      } catch (e) {
+        setState(prevState => ({
+          ...prevState,
+          text: 'Failed for update app'
+        }));
       }
+
+      const value = await AsyncStorage.getItem("qobUserPrivasi");
+      if (value !== null) {
+        const toObje  = JSON.parse(value);
+        setState(prevState => ({
+          ...prevState,
+          localUser: {
+            email: toObje.email,
+            nama: toObje.nama,
+            nohp: toObje.nohp,
+            pin: toObje.pinMd5,
+            userid: toObje.userid,
+            username: toObje.username
+          }
+        }))
+      }
+
     })();
-  }, [state.mount]);   
+  }, []);   
 
   const AddNotif = () => {
     Notifications.createChannelAndroidAsync('qposin-messages', {
@@ -136,9 +127,7 @@ const MyApp = props => {
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <MenuProvider>
-          { !loaded ? <AppLoading text={state.text} /> : <React.Fragment>
-            { state.mount ? <MainApp data={state.localUser} /> : <AppLoading text={state.text} /> }
-          </React.Fragment> }
+          { !loaded ? <AppLoading text={state.text} /> : <MainApp data={state.localUser} /> }
         </MenuProvider>
       </ApplicationProvider>
     </Provider>
