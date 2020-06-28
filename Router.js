@@ -4,7 +4,6 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
 import { setLocalUser } from "./actions/user";
-import Home from "./components/screens/Home";
 import IndexRegister from "./components/screens/pendaftaran/IndexRegister";
 import { Layout, Icon, Avatar } from '@ui-kitten/components';
 import IndexMenu from "./components/screens/menu/Index";
@@ -33,10 +32,14 @@ import { Aktivasi as AktivasiScreen } from "./components/screens/Aktivasi";
 import { History as RiwayatPickup } from "./components/screens/history";
 
 import {
-  Home as HomeView
+  Home as HomeView,
+  Menu as MenuView
 } from "./views";
 
 const AppNavigator = createStackNavigator({
+      IndexMenu: {
+        screen: MenuView
+      },
       PilihTarif: {
         screen: PilihTarif
       },
@@ -51,9 +54,6 @@ const AppNavigator = createStackNavigator({
       },
       Pembayaran: {
         screen: Pembayaran
-      },
-      IndexMenu: {
-        screen: IndexMenu
       },
       Account:{
         screen: AccountScreen

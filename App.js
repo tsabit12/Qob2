@@ -46,7 +46,7 @@ AppLoading.propTypes = {
 const MainApp = props => {
   return(
     <React.Fragment>
-      { Object.keys(props.data).length > 0 ? <Router localUser={props.data} /> : <AppLoading text='Menyiapkan...' />}
+      { Object.keys(props.data).length > 0 ? <Router localUser={props.data} /> : <AppLoading text={props.text} />}
     </React.Fragment>
   );
 }
@@ -127,7 +127,7 @@ const MyApp = props => {
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <MenuProvider>
-          { !loaded ? <AppLoading text={state.text} /> : <MainApp data={state.localUser} /> }
+          { !loaded ? <AppLoading text={state.text} /> : <MainApp data={state.localUser} text={state.text} /> }
         </MenuProvider>
       </ApplicationProvider>
     </Provider>

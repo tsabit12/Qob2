@@ -40,5 +40,19 @@ export default{
 				}
 				return Promise.reject(errors);
 			}
-		})
+		}),
+	generateToken: (userid) => axios.post(url, {
+		messtype: '213',
+		param1: userid,
+		hashing: getHashing('213', userid)
+	}, config).then(res => {
+		if (res.data.rc_mess === '00') {
+			return Promise.resolve(res.data);
+		}else{
+			const errors = {
+				global: res.data.desk_mess
+			}
+			return Promise.reject(errors);
+		}
+	})
 }
