@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, AsyncStorage } from "react-native";
-import * as Font from "expo-font";
 import { useFonts } from '@use-expo/font';
 import { Notifications } from 'expo';
 import { 
@@ -43,18 +42,6 @@ AppLoading.propTypes = {
   text: PropTypes.string.isRequired
 }
 
-const MainApp = props => {
-  return(
-    <React.Fragment>
-      { Object.keys(props.data).length > 0 ? <Router localUser={props.data} /> : <AppLoading text={props.text} />}
-    </React.Fragment>
-  );
-}
-
-MainApp.propTypes = {
-  data: PropTypes.object.isRequired
-}
-
 const MyApp = props => {
   if (!global.btoa) { global.btoa = encode; }
 
@@ -73,45 +60,34 @@ const MyApp = props => {
   React.useEffect(() => {
     (async () => {
       AddNotif();
+      if (loaded) { //only fetch update when font is loaded
+        try {
+          const update = await Updates.checkForUpdateAsync();
 
-      try {
-        const update = await Updates.checkForUpdateAsync();
+          if (update.isAvailable) {
+            setState(prevState => ({
+              ...prevState,
+              text: 'Updating app...'
+            }));
 
-        if (update.isAvailable) {
+            await Updates.fetchUpdateAsync();
+            await Updates.reloadAsync();
+          }
+
+        } catch (e) {
           setState(prevState => ({
             ...prevState,
-            text: 'Updating app...'
+            text: 'Failed for update app'
           }));
-
-          await Updates.fetchUpdateAsync();
-          await Updates.reloadAsync();
         }
 
-      } catch (e) {
         setState(prevState => ({
           ...prevState,
-          text: 'Failed for update app'
-        }));
-      }
-
-      const value = await AsyncStorage.getItem("qobUserPrivasi");
-      if (value !== null) {
-        const toObje  = JSON.parse(value);
-        setState(prevState => ({
-          ...prevState,
-          localUser: {
-            email: toObje.email,
-            nama: toObje.nama,
-            nohp: toObje.nohp,
-            pin: toObje.pinMd5,
-            userid: toObje.userid,
-            username: toObje.username
-          }
+          mount: true
         }))
       }
-
     })();
-  }, []);   
+  }, [loaded]);   
 
   const AddNotif = () => {
     Notifications.createChannelAndroidAsync('qposin-messages', {
@@ -127,7 +103,7 @@ const MyApp = props => {
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider mapping={mapping} theme={lightTheme}>
         <MenuProvider>
-          { !loaded ? <AppLoading text={state.text} /> : <MainApp data={state.localUser} text={state.text} /> }
+          { !state.mount ? <AppLoading text={state.text} /> : <Router /> }
         </MenuProvider>
       </ApplicationProvider>
     </Provider>

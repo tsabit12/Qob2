@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, TouchableOpacity, Image } from 'react-native';
+import { View, Text, Button, TouchableOpacity, Image, AsyncStorage } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { connect } from "react-redux";
@@ -31,10 +31,21 @@ import Pemulihan from "./components/screens/bantuan/Pemulihan";
 import { Aktivasi as AktivasiScreen } from "./components/screens/Aktivasi";
 import { History as RiwayatPickup } from "./components/screens/history";
 
+import { 
+  Spinner
+} from '@ui-kitten/components';
+
 import {
   Home as HomeView,
   Menu as MenuView
 } from "./views";
+
+const AppLoading = props => (
+  <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', }}>
+    <Spinner size='medium' />
+    <Text style={{textAlign: 'center'}}>Menyiapkan..</Text>
+  </View>
+)
 
 const AppNavigator = createStackNavigator({
       IndexMenu: {
@@ -145,16 +156,37 @@ const AppContainer = createAppContainer(AppNavigator);
 
 const LoginContainer = createAppContainer(LoginNavigator);
 
-const Router = ({ isLoggedIn, localUser, setLocalUser }) => {
+const Router = ({ isLoggedIn, setLocalUser }) => {
+  const [mount, setMount] = React.useState(false);
+
   React.useEffect(() => {
-    if (Object.keys(localUser).length > 0) {
-      setLocalUser(localUser);
-    }
+    (async () => {
+      const value = await AsyncStorage.getItem("qobUserPrivasi");
+      if (value !== null) { //detect user was register
+        const toObje  = JSON.parse(value);
+        if (value !== null) {
+          const payload = {
+            email: toObje.email,
+            nama: toObje.nama,
+            nohp: toObje.nohp,
+            pin: toObje.pinMd5,
+            userid: toObje.userid,
+            username: toObje.username
+          };
+
+          setLocalUser(payload);
+        }
+      }
+
+      setMount(true);
+    })();
   }, []);
 
   return(
     <React.Fragment>
-      { isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
+      { mount ? <React.Fragment>
+          { isLoggedIn ? <AppContainer /> : <LoginContainer /> } 
+        </React.Fragment> : <AppLoading />}
     </React.Fragment>
   )
 }
