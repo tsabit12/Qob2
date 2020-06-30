@@ -19,12 +19,11 @@ import CekTarif from "./components/screens/CekTarif";
 import OrderNonMember from "./components/screens/orderDetail/Order";
 import OrderPenerimaNonMember from "./components/screens/orderDetail/Penerima";
 import MapsScreen from "./components/screens/historyOrder/MapScreen";
-// import RiwayatPickup from "./components/screens/historyOrder/Index";
 import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
 import RegisterPebisol from "./components/screens/pendaftaran/Pebisol";
 import RegistrasiNonPebisol from "./components/screens/pendaftaran/NonPebisol";
-import ValidasiRekening from "./components/screens/ValidasiRekening";
+// import ValidasiRekening from "./components/screens/ValidasiRekening";
 import ChangePinScreen from "./components/screens/ChangePinScreen";
 import DetailOrder from "./components/screens/historyOrder/DetailOrder";
 import Pemulihan from "./components/screens/bantuan/Pemulihan";
@@ -37,7 +36,8 @@ import {
 
 import {
   Home as HomeView,
-  Menu as MenuView
+  Menu as MenuView,
+  ValidasiRekening
 } from "./views";
 
 const AppLoading = props => (

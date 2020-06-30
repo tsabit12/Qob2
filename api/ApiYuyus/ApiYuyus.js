@@ -54,5 +54,34 @@ export default{
 			}
 			return Promise.reject(errors);
 		}
-	})
+	}),
+	connectToGiro: (rek, userid) => axios.post(url, {
+		messtype: '217',
+		param1: rek,
+		param2: userid,
+		hashing: getHashing('217', rek)
+	}, config).then(res => {
+		if (res.data.rc_mess === '00') {
+			return res.data;
+		}else{
+			const errors = {
+				global: res.data.desk_mess
+			};
+			return Promise.reject(errors);
+		}
+	}),
+	validateGiro: (param1) => axios.post(url, {
+		messtype: '218',
+		param1,
+		hashing: getHashing('218', param1)
+	}, config).then(res => {
+		if (res.data.rc_mess === '00') {
+			return res.data;
+		}else{
+			const errors = {
+				global: res.data.desk_mess
+			};
+			return Promise.reject(errors);
+		}
+	}),
 }
