@@ -84,4 +84,32 @@ export default{
 			return Promise.reject(errors);
 		}
 	}),
+	bantuan: (param1, userid) => axios.post(url, {
+		messtype: '220',
+		param1,
+		hashing: getHashing('220', param1)
+	}, config).then(res => {
+		if (res.data.rc_mess === '00' || res.data.rc_mess === '02' || res.data.rc_mess === '01') {
+			return res.data;
+		}else{
+			const errors = {
+				global: res.data.desk_mess
+			};
+			return Promise.reject(errors);
+		}
+	}),
+	verifikasiBantuan: (param1, userid) => axios.post(url, {
+		messtype: '221',
+		param1: param1,
+		hashing: getHashing('221', param1)
+	}, config).then(res => {
+		if (res.data.rc_mess === '00') {
+			return res.data;
+		}else{
+			const errors = {
+				global: res.data.desk_mess
+			};
+			return Promise.reject(errors);
+		}
+	})
 }
