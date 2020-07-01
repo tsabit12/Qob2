@@ -26,7 +26,6 @@ import RegistrasiNonPebisol from "./components/screens/pendaftaran/NonPebisol";
 // import ValidasiRekening from "./components/screens/ValidasiRekening";
 import ChangePinScreen from "./components/screens/ChangePinScreen";
 import DetailOrder from "./components/screens/historyOrder/DetailOrder";
-//import Pemulihan from "./components/screens/bantuan/Pemulihan";
 import { Aktivasi as AktivasiScreen } from "./components/screens/Aktivasi";
 import { History as RiwayatPickup } from "./components/screens/history";
 
@@ -38,7 +37,8 @@ import {
   Home as HomeView,
   Menu as MenuView,
   ValidasiRekening,
-  Bantuan as BantuanView
+  Bantuan as BantuanView,
+  Order as OrderView
 } from "./views";
 
 const AppLoading = props => (
@@ -74,7 +74,7 @@ const AppNavigator = createStackNavigator({
         screen: CekTarif
       },
       OrderNonMember: {
-        screen: OrderNonMember
+        screen: OrderView
       },
       OrderPenerimaNonMember: {
         screen: OrderPenerimaNonMember

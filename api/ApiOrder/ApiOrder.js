@@ -14,5 +14,15 @@ export default  {
 	}),
 	pushToken: (payload) => axios.post(`${url}/pushToken`, {
 		...payload
-	}).then(res => res.data)
+	}).then(res => res.data),
+	syncronizeUserPwd: (payload) => axios.post(`${url}/sync`, {
+		...payload
+	}).then(res => {
+		const { result } = res.data;
+		if (result.respcode === '00' || result.respcode === '21') {
+			return result;
+		}else{
+			return Promise.reject(result);
+		}
+	}),
 }
