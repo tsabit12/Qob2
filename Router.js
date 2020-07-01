@@ -38,7 +38,8 @@ import {
   Menu as MenuView,
   ValidasiRekening,
   Bantuan as BantuanView,
-  Order as OrderView
+  Order as OrderView,
+  Invoice as InvoiceView
 } from "./views";
 
 const AppLoading = props => (
@@ -99,6 +100,9 @@ const AppNavigator = createStackNavigator({
       },
       DetailOrder: {
         screen: DetailOrder
+      },
+      Invoice: {
+        screen: InvoiceView
       },
   	},{
   	initialRouteName: 'IndexMenu',
