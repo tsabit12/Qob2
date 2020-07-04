@@ -31,53 +31,6 @@ const numberWithCommas = (number) => {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// const ListTarifOld = ({ onAccept, list }) => {
-// 	// console.log(list);
-// 	return(
-// 		<View style={{paddingBottom: 10}}>
-// 			{ list.map((x, i) => {
-// 				const parsing = x.split('*');
-// 				let produk = parsing[0];
-// 				if (x.length > 0) { //handle tarif last index cause parsing (#)
-// 					// console.log(parsing);
-// 					let tarif = parsing[1];
-// 					tarif = tarif.split('|');
-// 					// console.log(tarif);
-// 					let fee 		= Math.floor(tarif[0]);
-// 					let ppn 		= Math.floor(tarif[1]);
-// 					let htnb 		= Math.floor(tarif[2]);
-// 					let ppnhtnb 	= Math.floor(tarif[3]);
-// 					let totalTarif 	= Math.floor(tarif[4]);
-
-// 					//get id serve
-// 					let idService = produk.split('-');
-// 					idService = idService[0];
-
-// 					const payload = {
-// 						id: idService,
-// 						description: produk,
-// 						tarif: totalTarif,
-// 						beadasar: fee,
-// 						ppn: ppn,
-// 						htnb: htnb,
-// 						ppnhtnb: ppnhtnb
-// 					};
-
-// 					return(
-// 						<ListItem
-// 							key={i}
-// 						    title={`Rp. ${numberWithCommas(totalTarif)}`}
-// 						    description={produk}
-// 							accessory={(e) => renderItemAccessory(e, payload, onAccept)}
-// 							onPress={() => onAccept(payload)}
-// 						/>
-// 					)
-// 				}
-// 			})}
-// 	</View>
-// 	);
-// }
-
 const ListTarif = ({ onAccept, list }) => (
 	<View style={{paddingBottom: 10}}>
 		{ list.map((x, i) => {
@@ -115,7 +68,8 @@ class PilihTarif extends React.Component{
 	state = {
 		loading: true,
 		tarif: [],
-		freeOngkir: false
+		freeOngkir: false,
+		freeBea: false
 	}
 	
 	async componentDidMount(){
@@ -170,7 +124,8 @@ class PilihTarif extends React.Component{
 	onSelectTarif = (payload) => {
 		const value = {
 			...payload,
-			freeOngkir: this.state.freeOngkir
+			freeOngkir: this.state.freeOngkir,
+			freeBea: this.state.freeBea
 		}
 
 		this.props.navigation.navigate({
@@ -187,7 +142,7 @@ class PilihTarif extends React.Component{
 	)
 
 	render(){
-		const { loading, tarif, freeOngkir } = this.state;
+		const { loading, tarif, freeOngkir, freeBea } = this.state;
 		const { cod } = this.props.navigation.state.params.deskripsiOrder;
 
 		return(
@@ -202,7 +157,7 @@ class PilihTarif extends React.Component{
 				    style={{backgroundColor: 'rgb(240, 132, 0)'}}
 				    subtitleStyle={{color: '#FFF'}}
 				/>
-				{ cod && <React.Fragment>
+				{ cod && <View style={styles.checked}>
 					<CheckBox
 						checked={freeOngkir}
 						style={{marginLeft: 15, marginTop: 10, marginBottom: 10}}
@@ -211,8 +166,16 @@ class PilihTarif extends React.Component{
 						textStyle={{ color: freeOngkir ? 'blue' : 'black'}}
 						onChange={() => this.setState({ freeOngkir: !this.state.freeOngkir})}
 					/> 
-					<View style={{borderBottomWidth: 0.9, borderColor: '#E2E2E2', marginLeft: 15, marginRight: 15}} />
-				</React.Fragment>}
+
+					<CheckBox
+						checked={freeBea}
+						style={{marginLeft: 15, marginTop: 10, marginBottom: 10}}
+						text='Fee COD ditanggung seller'
+						status='info'
+						textStyle={{ color: freeBea ? 'blue' : 'black'}}
+						onChange={() => this.setState({ freeBea: !this.state.freeBea})}
+					/> 
+				</View> }
 				<Loader loading={loading} />
 				{ tarif.length > 0 ? <ListTarif onAccept={this.onSelectTarif} list={tarif} /> : 
 					<React.Fragment>

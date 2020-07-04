@@ -13,6 +13,7 @@ import * as Updates from 'expo-updates';
 import PropTypes from "prop-types";
 import { encode } from 'base-64';
 import { MenuProvider } from 'react-native-popup-menu';
+import { Ionicons } from '@expo/vector-icons';
 
 import Router from './Router';
 
@@ -48,7 +49,10 @@ const MyApp = props => {
   const [loaded] = useFonts({
     'open-sans-reg': require('./assets/fonts/OpenSans-Regular.ttf'),
     'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
-    'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf')
+    'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
+    Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+    Roboto: require('native-base/Fonts/Roboto.ttf'),
+     ...Ionicons.font
   });
 
   const [state, setState] = React.useState({

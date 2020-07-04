@@ -32,49 +32,52 @@ const numberWithCommas = (number) => {
 }
 
 
-const ModalContent = ({ data }) => (
-	<View style={{margin: 15}}>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>External ID</Text>
-	      	<Text style={styles.subjudul}>{data.extid}</Text>
-      	</View>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>Nama Pengirim</Text>
-	      	<Text style={styles.subjudul}>{capitalize(data.shippername)}</Text>
-      	</View>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>Nama Penerima</Text>
-	      	<Text style={styles.subjudul}>{capitalize(data.receivername)}</Text>
-      	</View>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>Alamat Pengirim</Text>
-	      	<Text style={styles.subjudul}>{capitalize(data.shipperfulladdress)}</Text>
-      	</View>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>Alamat Penerima</Text>
-	      	<Text style={styles.subjudul}>{capitalize(data.receiverfulladdress)}</Text>
-      	</View>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>Nama Produk</Text>
-	      	<Text style={styles.subjudul}>{capitalize(data.productname)}</Text>
-      	</View>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>Isi Kiriman</Text>
-	      	<Text style={styles.subjudul}>{capitalize(data.desctrans)}</Text>
-      	</View>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>Nilai Barang</Text>
-	      	<Text style={styles.subjudul}>{numberWithCommas(data.valuegoods)}</Text>
-      	</View>
-      	<View style={styles.list}>
-	      	<Text style={styles.judul}>Riwayat Status Terakhir</Text>
-	      	<Text style={styles.subjudul}>{data.lasthistorystatus ? data.lasthistorystatus : '-'}</Text>
-      	</View>
-      	<View style={styles.lastList}>
-	      	<Text style={styles.judul}>Pickup Number</Text>
-	      	<Text style={styles.subjudul}>{data.pickupnumber ? data.pickupnumber : '-'}</Text>
-      	</View>
-    </View>
-); 
+const ModalContent = ({ data }) => {
+	console.log(data);
+	return(
+		<View style={{margin: 15}}>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>External ID</Text>
+		      	<Text style={styles.subjudul}>{data.extid}</Text>
+	      	</View>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>Nama Pengirim</Text>
+		      	<Text style={styles.subjudul}>{capitalize(data.shippername)}</Text>
+	      	</View>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>Nama Penerima</Text>
+		      	<Text style={styles.subjudul}>{capitalize(data.receivername)}</Text>
+	      	</View>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>Alamat Pengirim</Text>
+		      	<Text style={styles.subjudul}>{capitalize(data.shipperfulladdress)}</Text>
+	      	</View>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>Alamat Penerima</Text>
+		      	<Text style={styles.subjudul}>{capitalize(data.receiverfulladdress)}</Text>
+	      	</View>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>Nama Produk</Text>
+		      	<Text style={styles.subjudul}>{capitalize(data.productname)}</Text>
+	      	</View>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>Isi Kiriman</Text>
+		      	<Text style={styles.subjudul}>{capitalize(data.desctrans)}</Text>
+	      	</View>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>{ data.va ? 'Nilai COD' : 'Nilai Barang'}</Text>
+		      	<Text style={styles.subjudul}>{numberWithCommas(data.valuegoods)}</Text>
+	      	</View>
+	      	<View style={styles.list}>
+		      	<Text style={styles.judul}>Riwayat Status Terakhir</Text>
+		      	<Text style={styles.subjudul}>{data.lasthistorystatus ? data.lasthistorystatus : '-'}</Text>
+	      	</View>
+	      	<View style={styles.lastList}>
+		      	<Text style={styles.judul}>Pickup Number</Text>
+		      	<Text style={styles.subjudul}>{data.pickupnumber ? data.pickupnumber : '-'}</Text>
+	      	</View>
+	    </View>
+	);	
+}
 
 export default ModalContent;

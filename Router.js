@@ -9,7 +9,6 @@ import { Layout, Icon, Avatar } from '@ui-kitten/components';
 import IndexMenu from "./components/screens/menu/Index";
 import PilihTarif from "./components/screens/order/PilihTarif";
 import ResultOrder from "./components/screens/order/ResultOrder";
-import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import LacakBarcode from "./components/screens/LacakBarcode";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 import Barcode from './components/screens/helper/barcode';
@@ -39,7 +38,8 @@ import {
   ValidasiRekening,
   Bantuan as BantuanView,
   Order as OrderView,
-  Invoice as InvoiceView
+  Invoice as InvoiceView,
+  Sender as SenderView
 } from "./views";
 
 const AppLoading = props => (
@@ -87,7 +87,7 @@ const AppNavigator = createStackNavigator({
         screen: RiwayatPickup
       },
       KelolaPengirim: {
-        screen: KelolaPengirim
+        screen: SenderView
       },
       LacakKiriman: {
         screen: LacakKiriman

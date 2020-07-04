@@ -25,4 +25,22 @@ export default  {
 			return Promise.reject(result);
 		}
 	}),
+	getKodePos: (kodepos) => axios.post('https://order.posindonesia.co.id/api/qoblive/getPostalCodeBaru', {
+		kodepos: kodepos
+	}).then(res => {
+		if (!res.data.result) {
+			const errors = {
+				response: {
+					data: {
+						errors: {
+							global: 'Data tidak ditemukan'
+						}
+					}
+				}
+			}
+			return Promise.reject(errors);
+		}else{
+			return Promise.resolve(res.data);
+		}
+	})
 }

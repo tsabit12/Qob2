@@ -31,93 +31,141 @@ const numberWithCommas = (number) => {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPressSyarat }) => (
-	<View style={{margin: 10, borderWidth: 0.4, borderColor: '#cbccc4', flex: 1}}>
-		<View style={styles.labelTarif}>
-			<Text style={{
-				fontWeight: '700',
-				textAlign: 'center',
-				fontSize: 16,
-				paddingBottom: 12,
-				paddingTop: 12
-			}}>{params.selectedTarif.description}</Text>
-		</View>
-		<View style={{padding: 10, flex: 1}}>
-			<View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Pengirim</Text>
-				<Text style={styles.subTitle}>{capitalize(params.pengirimnya.nama)}</Text>
+const rumusCod = (params) => {
+	const result = {
+		beaAdmin: 0,
+		totalAll: 0
+	}
+
+	const defaultVal  = Number(params.deskripsiOrder.nilai) * 0.01;
+
+	if (params.deskripsiOrder.cod) {
+		if (!params.selectedTarif.freeOngkir) { //uncheck free ongkir
+
+			if (params.selectedTarif.freeBea) {
+				result.beaAdmin = 0;
+				result.totalAll = Number(params.deskripsiOrder.nilai) + Number(params.selectedTarif.tarif);  
+			}else{
+				var getCodVal 	= defaultVal <= 1500 ? 1500 : defaultVal;
+			
+				result.beaAdmin = getCodVal;
+				result.totalAll = Number(getCodVal) + Number(params.deskripsiOrder.nilai) + Number(params.selectedTarif.tarif); 
+			}
+		}else{
+			if (params.selectedTarif.freeBea) {
+				result.beaAdmin = 0;
+				result.totalAll = Number(params.deskripsiOrder.nilai); 
+			}else{
+				var getCodVal 	= defaultVal <= 1500 ? 1500 : defaultVal;
+
+				result.beaAdmin = getCodVal;
+				result.totalAll = getCodVal + Number(params.deskripsiOrder.nilai);
+			}
+		}
+	}
+
+	return result;
+}
+
+const RenderInfo = ({ params, onSimpan, checked, onCheckedChange, userid, onPressSyarat }) => {
+	const { totalAll, beaAdmin } = rumusCod(params); 
+
+	return(
+		<View style={{margin: 10, borderWidth: 0.4, borderColor: '#cbccc4', flex: 1}}>
+			<View style={styles.labelTarif}>
+				<Text style={{
+					fontWeight: '700',
+					textAlign: 'center',
+					fontSize: 16,
+					paddingBottom: 12,
+					paddingTop: 12
+				}}>{params.selectedTarif.description}</Text>
 			</View>
-			<View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Alamat Pengirim</Text>
-				<Text style={styles.subTitle}>
-					{params.pengirimnya.alamat}, 
-					{params.pengirimnya.kec}, 
-					{params.pengirimnya.kota}, 
-					{params.pengirimnya.provinsi} ({params.pengirimnya.kodepos})
-				</Text>
+			<View style={{padding: 10, flex: 1}}>
+				<View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Pengirim</Text>
+					<Text style={styles.subTitle}>{capitalize(params.pengirimnya.nama)}</Text>
+				</View>
+				<View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Alamat Pengirim</Text>
+					<Text style={styles.subTitle}>
+						{params.pengirimnya.alamat}, 
+						{params.pengirimnya.kec}, 
+						{params.pengirimnya.kota}, 
+						{params.pengirimnya.provinsi} ({params.pengirimnya.kodepos})
+					</Text>
+				</View>
+				<View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Penerima</Text>
+					<Text style={styles.subTitle}>{capitalize(params.deskripsiPenerima.nama)}</Text>
+				</View>
+				<View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Alamat Penerima</Text>
+					<Text style={styles.subTitle}>
+						{params.deskripsiPenerima.alamatUtama}, 
+						{params.deskripsiPenerima.kecamatan},  
+						{params.deskripsiPenerima.kabupaten},  
+						{params.deskripsiPenerima.provinsi} ({params.deskripsiPenerima.kodepos})
+					</Text>
+				</View>
+				<View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Isi Kiriman</Text>
+					<Text style={styles.subTitle}>{params.deskripsiOrder.isiKiriman}</Text>
+				</View>
+				{ params.deskripsiOrder.cod && <View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Nilai Barang</Text>
+					<Text style={styles.subTitle}>
+							{`Rp ${numberWithCommas(Number(params.deskripsiOrder.nilai))}`}
+					</Text>
+				</View> }
+				<View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Estimasi Ongkos Kirim</Text>
+					<Text style={styles.subTitle}>
+						{params.selectedTarif.freeOngkir ? 'Free Ongkir' : `Rp ${numberWithCommas(params.selectedTarif.tarif)}`}
+					</Text>
+				</View>
+				{ params.deskripsiOrder.cod && <View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Fee COD</Text>
+					<Text style={styles.subTitle}>
+						{ numberWithCommas(beaAdmin) }
+					</Text>
+				</View> }
+				{ params.deskripsiOrder.cod && <View style={styles.viewResult}>
+					<Text style={styles.labelInformasi}>Total</Text>
+					<Text style={styles.subTitle}>
+						{ numberWithCommas(totalAll) }
+					</Text>
+				</View> }
+				<View 
+					style={{
+						flex: 1, 
+						flexDirection: 'row', 
+						marginBottom: 5, 
+						marginTop: 5, 
+						borderWidth: 0.8,
+						borderColor: '#9e9d9d',
+						borderRadius: 5,
+						backgroundColor: '#dbdad7',
+						padding: 6}}>
+					<CheckBox
+				      status='warning'
+				      style={{marginRight: 6}}
+				      checked={checked}
+				      onChange={onCheckedChange}
+				    />
+				    <Text style={{alignItems: 'flex-end', flex: 1}}>
+					    <Text>Saya menyetujui</Text>
+						<Text style={{color: '#0000FF'}} onPress={() => onPressSyarat()}> Syarat dan ketentuan </Text>
+						<Text>yang berlaku di PT.POS INDONESIA</Text>
+					</Text>
+			    </View>
+			    <View style={{width: '40%'}}>
+					<Button status='warning' onPress={() => onSimpan()}>Simpan</Button>
+				</View>
 			</View>
-			<View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Penerima</Text>
-				<Text style={styles.subTitle}>{capitalize(params.deskripsiPenerima.nama)}</Text>
-			</View>
-			<View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Alamat Penerima</Text>
-				<Text style={styles.subTitle}>
-					{params.deskripsiPenerima.alamatUtama}, 
-					{params.deskripsiPenerima.kecamatan},  
-					{params.deskripsiPenerima.kabupaten},  
-					{params.deskripsiPenerima.provinsi} ({params.deskripsiPenerima.kodepos})
-				</Text>
-			</View>
-			<View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Isi Kiriman</Text>
-				<Text style={styles.subTitle}>{params.deskripsiOrder.isiKiriman}</Text>
-			</View>
-			{ userid.substring(0, 3) !== '540' && <View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Jenis Kiriman</Text>
-				<Text style={styles.subTitle}>{ params.deskripsiOrder.cod ? 'Cod' : 'Non Cod' }</Text>
-			</View> }
-			{ params.deskripsiOrder.cod && <View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Nilai Barang { params.selectedTarif.freeOngkir && '(Free Ongkir)'}</Text>
-				<Text style={styles.subTitle}>
-					{ !params.selectedTarif.freeOngkir ? 
-						`Rp ${numberWithCommas(Number(params.deskripsiOrder.nilai) + Number(params.selectedTarif.tarif))}` 
-						: `Rp ${numberWithCommas(params.deskripsiOrder.nilai)}`}
-				</Text>
-			</View> }
-			<View style={styles.viewResult}>
-				<Text style={styles.labelInformasi}>Estimasi Tarif</Text>
-				<Text style={styles.subTitle}>Rp {numberWithCommas(params.selectedTarif.tarif)}</Text>
-			</View>
-			<View 
-				style={{
-					flex: 1, 
-					flexDirection: 'row', 
-					marginBottom: 5, 
-					marginTop: 5, 
-					borderWidth: 0.8,
-					borderColor: '#9e9d9d',
-					borderRadius: 5,
-					backgroundColor: '#dbdad7',
-					padding: 6}}>
-				<CheckBox
-			      status='warning'
-			      style={{marginRight: 6}}
-			      checked={checked}
-			      onChange={onCheckedChange}
-			    />
-			    <Text style={{alignItems: 'flex-end', flex: 1}}>
-				    <Text>Saya menyetujui</Text>
-					<Text style={{color: '#0000FF'}} onPress={() => onPressSyarat()}> Syarat dan ketentuan </Text>
-					<Text>yang berlaku di PT.POS INDONESIA</Text>
-				</Text>
-		    </View>
-		    <View style={{width: '40%'}}>
-				<Button status='warning' onPress={() => onSimpan()}>Simpan</Button>
-			</View>
-		</View>
-	</View>	
-);
+		</View>	
+	);
+}
 
 class ResultOrder extends React.Component{
 	state = {
@@ -144,17 +192,7 @@ class ResultOrder extends React.Component{
 		const { dataLogin } = this.props;
 		const { params }	= this.props.navigation.state;
 		const { selectedTarif, deskripsiOrder, pengirimnya, deskripsiPenerima } = params;
-
-		var nilaiCod;
-		if (deskripsiOrder.cod) {
-			if (selectedTarif.freeOngkir) {
-				nilaiCod = Number(deskripsiOrder.nilai);
-			}else{
-				nilaiCod = Number(deskripsiOrder.nilai) + Number(selectedTarif.tarif);
-			}
-		}else{
-			nilaiCod = deskripsiOrder.nilai;
-		}
+		const { totalAll, beaAdmin } 	= rumusCod(params); 
 
 		const payloadWsdl = {
 			"email": dataLogin.detail.email,
@@ -188,14 +226,17 @@ class ResultOrder extends React.Component{
 		    "feetax": selectedTarif.ppn,
 		    "insurance": selectedTarif.htnb,
 		    "insurancetax": selectedTarif.ppnhtnb,
-		    "valuegoods": nilaiCod,
+		    "valuegoods": deskripsiOrder.nilai,
 		    "desctrans": deskripsiOrder.isiKiriman,
-		    "codvalue": nilaiCod,
+		    "codvalue": totalAll,
 		    "width": deskripsiOrder.lebar,
 		    "length": deskripsiOrder.panjang,
 		    "height": deskripsiOrder.tinggi,
-		    "diagonal": 0
+		    "diagonal": 0,
+		    "feeCod": beaAdmin
 		};
+
+		console.log(payloadWsdl);
 
 		api.qob.booking(payloadWsdl)
 			.then(res => {
@@ -283,16 +324,7 @@ class ResultOrder extends React.Component{
 	}
 
 	pickupKiriman = (tarif, order, pengirim, penerima) => {
-		var nilaiCod;
-		if (order.cod) {
-			if (tarif.freeOngkir) {
-				nilaiCod = Number(order.nilai);
-			}else{
-				nilaiCod = Number(order.nilai) + Number(tarif.tarif);
-			}
-		}else{
-			nilaiCod = order.nilai;
-		}
+		const { totalAll } = rumusCod(this.props.navigation.state.params);
 
 		if (Object.keys(this.state.location).length > 0 ) {
 			this.setState({ loading: true });

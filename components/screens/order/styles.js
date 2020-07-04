@@ -68,5 +68,14 @@ export default StyleSheet.create({
   StatusBar: {
       height: Constants.statusBarHeight,
       backgroundColor: 'rgb(240, 132, 0)'
+  },
+  checked: {
+    borderWidth: 0.1,
+    margin: 10,
+    backgroundColor: 'white',
+    elevation: 5,
+    borderColor: '#acadac',
+    borderRadius: 3,
+    marginRight: 15
   }
 });

@@ -166,7 +166,8 @@ const ValidasiRekening = props => {
 							loading: false,
 							isConfirm: true,
 							pin: kodeVerify,
-							norek: state.norek
+							norek: state.norek,
+							message: `Kode verifikasi telah dikirim ke nomor ${pgmPhone} melalui WhatsApp. (Berlaku sampai pukul 00:00)`,
 						}));	
 					}else{
 						setState(prevState => ({
@@ -227,12 +228,14 @@ const ValidasiRekening = props => {
 					}, 100);	
 				})
 				.catch(err => {
-					console.log(err);
+					AsyncStorage.removeItem('CONFIRMATION_GIRO');
+					// console.log(err);
 					if (err.global) {
 						setState(prevState => ({
 							...prevState,
 							loading: false,
-							message: err.global
+							message: `${err.global}`,
+							isConfirm: false
 						}));
 					}else{
 						setState(prevState => ({
