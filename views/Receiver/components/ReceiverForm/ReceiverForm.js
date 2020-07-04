@@ -1,26 +1,13 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView } from "react-native";
+import { View, StyleSheet, Image, ScrollView, Dimensions } from "react-native";
 import { Input, Button } from "@ui-kitten/components";
 import PropTypes from "prop-types";
-import axios from "axios";
 import { List, ListItem, Text } from 'native-base';
 
 const device = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
-	root: {
-		margin: 5,
-		padding: 7,
-		borderWidth: 0.2,
-		borderColor: '#bdbdbd',
-		borderRadius: 3,
-		backgroundColor: 'white',
-		elevation: 5
-	},
 	input: {
-		marginTop: 5
-	},
-	inputSearch: {
 		marginTop: 5
 	},
 	label: {
@@ -63,37 +50,36 @@ const RenderListCity = props => {
 }
 
 
-const SenderForm = props => {
-	const namaRef 			= React.useRef();
-	const alamatUtamaRef 	= React.useRef();
-	const queryRef 			= React.useRef();
-	const phoneRef 			= React.useRef();
-	const emailRef 			= React.useRef();
+const ReceiverForm = props => {
+	const nameRef 		= React.useRef();
+	const alamatRef 	= React.useRef();
+	const queryRef 		= React.useRef();
+	const phoneRef 		= React.useRef();
+	const emailRef 		= React.useRef();
 
 	const [state, setState] = React.useState({
-		value: null,
 		data: {
-			kodepos: '',
-			alamatUtama: '',
 			nama: '',
-			phone: '',
-			email: '',
+			alamat: '',
+			kodepos: '',
 			kecamatan: '',
 			kabupaten: '',
 			provinsi: '',
-			kelurahan: ''
+			kelurahan: '',
+			phone: '',
+			email: ''
 		},
-		cities: [],
-		loading: false,
 		query: '',
+		loading: false,
+		cities: [],
 		errors: {},
 		choosed: false
-	});
+	})
 
-	const { data, cities, query, errors } = state;
+	const { data, errors, cities } = state;
 
 	React.useEffect(() => {
-		if (query.length > 2 && !state.choosed) {
+		if (state.query.length > 2 && !state.choosed) {
 			let timer = setTimeout(() => {
 				setState(prevState => ({
 					...prevState,
@@ -102,14 +88,13 @@ const SenderForm = props => {
 						global: undefined
 					}
 				}));
-
-				props.onSearch(query)
+				props.onSearch(state.query)
 					.then(res => {
 						setState(prevState => ({
 							...prevState,
 							loading: false,
 							cities: res.result
-						}));
+						}))
 						queryRef.current.blur();
 					})
 					.catch(err => {
@@ -130,56 +115,27 @@ const SenderForm = props => {
 								errors: err.response.data.errors
 							}))
 						}
-					})
+					})	
 			}, 600);
-
 			return () => {
 				clearTimeout(timer)
 			}
 		}
-	}, [query, state.choosed])
+	}, [state.query]);
 
-	React.useEffect(() => {
-		if (props.checked) {
-			const { detail } = props.user;
-			setState(prevState => ({
-				...prevState,
-				data: {
-					...prevState.data,
-					kodepos: `${detail.kodepos}`,
-					email: `${detail.email}`,
-					nama: `${detail.nama}`,
-					phone: `${detail.nohp}`,
-					alamatUtama: `${detail.alamatOl}`,
-					kecamatan: detail.kecamatan,
-					kelurahan: detail.kelurahan,
-					kabupaten: detail.kota,
-					provinsi: detail.provinsi
-				},
-				choosed: true,
-				query: `${detail.kecamatan}, ${detail.kota}, ${detail.provinsi}`,
-				errors: {}
-			}))
-		}else{
-			setState(prevState => ({
-				...prevState,
-				query: '',
-				data: {
-					...prevState.data,
-					kodepos: '',
-					alamatUtama: '',
-					phone: '',
-					email: '',
-					nama: '',
-					kecamatan: '',
-					kelurahan: '-',
-					provinsi: '',
-					kabupaten: ''
-				}
-			}))
-		}
-	}, [props.checked]);
-
+	const handleChange = (text, { name }) => {
+		setState(prevState => ({
+			...prevState,
+			data: {
+				...prevState.data,
+				[name]: text
+			},
+			errors: {
+				...prevState.errors,
+				[name]: undefined
+			}
+		}))
+	}
 
 	const handleChangeSearch = (text) => {
 		setState(prevState => ({
@@ -195,18 +151,6 @@ const SenderForm = props => {
 		      source={state.loading ? require('../../../../components/icons/loaderInput.gif') : require('../../../../components/icons/location.png')}
 		/>
 	);
-
-	const onChange = (e, { name }) => setState(prevState => ({
-		...prevState,
-		data: {
-			...prevState.data,
-			[name]: e
-		},
-		errors: {
-			...prevState.errors,
-			[name]: undefined
-		}
-	}))
 
 	const onChooseCity = (index) => {
 		const citiesChoosed = cities[index];
@@ -225,7 +169,7 @@ const SenderForm = props => {
 		}))
 	}
 
-	const handlePress = () => {
+	const handleSubmit = () => {
 		const errors = validate(state.data);
 		setState(prevState => ({
 			...prevState,
@@ -234,7 +178,6 @@ const SenderForm = props => {
 				...errors
 			}
 		}))
-
 		if (Object.keys(errors).length === 0) {
 			props.onSubmit(state.data);
 		}
@@ -242,11 +185,11 @@ const SenderForm = props => {
 
 	const validate = (data) => {
 		const errors = {};
-		if (!data.kodepos) errors.kodepos = "Kodepos tidak boleh kosong";
-		if (!data.phone) errors.phone = "Nomor handphone harap diisi";
-		if (!data.nama) errors.nama = "Nama harap diisi";
-		if (!data.alamatUtama) errors.alamatUtama = "Alamat utama tidak boleh kosong";
+		if (!data.nama) errors.nama ="Nama penerima harap diisi";
+		if (!data.alamat) errors.alamat ="Alamat harap diisi";
+		if (!data.phone) errors.phone = "Nomor handphone tidak boleh kosong";
 		if (!state.query) errors.global = "Kecamatan/kota tidak boleh kosong";
+		if (!data.kodepos) errors.kodepos = "Kodepos tidak boleh kosong";
 		if (data.email) {
 			//regex email
 			var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -256,58 +199,56 @@ const SenderForm = props => {
 	}
 
 	return(
-		<View style={styles.root}>
+		<View style={props.style}>
 			<Input 
-				ref={namaRef}
-			    placeholder='Masukkan nama pengirim'
+				ref={nameRef}
 				name='nama'
-				label='* Nama'
-				value={data.nama}
+				label='* Nama penerima'
 				style={styles.input}
 				labelStyle={styles.label}
-				onChangeText={(e) => onChange(e, namaRef.current.props)}
-				onSubmitEditing={() => alamatUtamaRef.current.focus() }
-				disabled={props.checked}
-				status={errors.nama ? 'danger' : ''}
-				caption={errors.nama && `${errors.nama}`}
+				placeholder='Masukkan nama penerima'
+				value={data.nama}
+				onChangeText={(text) => handleChange(text, nameRef.current.props)}
 				autoCapitalize='words'
 				returnKeyType='next'
+				onSubmitEditing={() => alamatRef.current.focus() }
+				status={errors.nama ? 'danger' : ''}
+				caption={errors.nama && `${errors.nama}`}
 			/>
-
 			<Input 
-				ref={alamatUtamaRef}
-			    placeholder='Jalan/kp, Desa'
-				name='alamatUtama'
-				label='* Alamat utama'
-				value={data.alamatUtama}
+				ref={alamatRef}
+				name='alamat'
+				value={data.alamat}
+				label='* Alamat utama penerima'
+				placeholder='Masukkan alamat utama'
 				style={styles.input}
 				labelStyle={styles.label}
-				onChangeText={(e) => onChange(e, alamatUtamaRef.current.props)}
-				onSubmitEditing={() => queryRef.current.focus() }
-				disabled={props.checked}
-				status={errors.alamatUtama ? 'danger' : ''}
-				caption={errors.alamatUtama && `${errors.alamatUtama}`}
+				onChangeText={(text) => handleChange(text, alamatRef.current.props)}
 				returnKeyType='next'
+				status={errors.alamat ? 'danger' : ''}
+				caption={errors.alamat && `${errors.alamat}`}
+				onSubmitEditing={() => queryRef.current.focus() }
 			/>
 			<Input 
 				ref={queryRef}
-				nama='query'
-				placeholder='Masukkan kecamatan/kota'
-				label='* Kecamatan/Kota'
+				name='query'
+				value={state.query}
+				label='* Kecamatan/kota'
+				style={styles.input}
 				labelStyle={styles.label}
-				style={styles.inputSearch}
+				placeholder='Cari Kecamatan/kota penerima'
+				onChangeText={(text) => handleChangeSearch(text)}
 				icon={renderIcon}
-				value={query}
-				disabled={props.checked}
-				onChangeText={handleChangeSearch}
 				status={errors.global ? 'danger' : ''}
 				caption={errors.global && `${errors.global}`}
 			/>
+
 			{ cities.length > 0 && !state.choosed &&
 				<RenderListCity 
 					data={cities}
 					onPressItem={onChooseCity}
 				/> }
+
 			<Input 
 				nama='kodepos'
 				value={data.kodepos}
@@ -318,31 +259,30 @@ const SenderForm = props => {
 				placeholder='Cari kecamatan/kota dahulu'
 			/>
 			<Input 
-				ref={phoneRef}
-				value={data.phone}
 				name='phone'
-				keyboardType='phone-pad'
-				label='* Nomor handphone pengirim'
-				labelStyle={styles.label}
+				ref={phoneRef}
 				style={styles.input}
-				disabled={props.checked}
+				labelStyle={styles.label}
 				placeholder='Masukkan nomor handphone'
-				onChangeText={(e) => onChange(e, phoneRef.current.props)}
-				onSubmitEditing={() => emailRef.current.focus() }
+				label='* Nomor handphone'
+				value={data.phone}
+				onChangeText={(text) => handleChange(text, phoneRef.current.props)}
 				returnKeyType='next'
+				keyboardType='phone-pad'
 				status={errors.phone ? 'danger' : ''}
 				caption={errors.phone && `${errors.phone}`}
+				onSubmitEditing={() => emailRef.current.focus() }
 			/>
 			<Input 
-				ref={emailRef}
-				value={data.email}
 				name='email'
+				ref={emailRef}
 				style={styles.input}
 				labelStyle={styles.label}
-				placeholder='Masukkan email'
-				disabled={props.checked}
-				label='Email pengirim'
-				onChangeText={(e) => onChange(e, emailRef.current.props)}
+				placeholder='Masukkan email penerima'
+				label='Email penerima'
+				value={data.email}
+				onChangeText={(text) => handleChange(text, emailRef.current.props)}
+				returnKeyType='done'
 				keyboardType='email-address'
 				autoCapitalize='none'
 				status={errors.email ? 'danger' : ''}
@@ -351,17 +291,15 @@ const SenderForm = props => {
 			<Button 
 				status='warning' 
 				style={styles.button}
-				onPress={handlePress}
+				onPress={handleSubmit}
 			>Selanjutnya</Button>
 		</View>
 	);
 }
 
-SenderForm.propTypes = {
+ReceiverForm.propTypes = {
 	onSearch: PropTypes.func.isRequired,
-	user: PropTypes.object.isRequired,
-	checked: PropTypes.bool.isRequired,
 	onSubmit: PropTypes.func.isRequired
 }
 
-export default SenderForm;
+export default ReceiverForm;

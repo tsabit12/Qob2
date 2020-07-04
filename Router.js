@@ -15,8 +15,7 @@ import Barcode from './components/screens/helper/barcode';
 import AccountScreen from "./components/screens/account/AccountScreenNew";
 import AboutScreen from "./components/screens/about/AboutScreen";
 import CekTarif from "./components/screens/CekTarif";
-import OrderNonMember from "./components/screens/orderDetail/Order";
-import OrderPenerimaNonMember from "./components/screens/orderDetail/Penerima";
+
 import MapsScreen from "./components/screens/historyOrder/MapScreen";
 import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
@@ -39,7 +38,8 @@ import {
   Bantuan as BantuanView,
   Order as OrderView,
   Invoice as InvoiceView,
-  Sender as SenderView
+  Sender as SenderView,
+  Receiver as ReceiverView
 } from "./views";
 
 const AppLoading = props => (
@@ -78,7 +78,7 @@ const AppNavigator = createStackNavigator({
         screen: OrderView
       },
       OrderPenerimaNonMember: {
-        screen: OrderPenerimaNonMember
+        screen: ReceiverView
       },
       Maps: {
         screen: MapsScreen

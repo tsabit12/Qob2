@@ -1,16 +1,9 @@
 import React from "react";
-import { View, Text, Keyboard, StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
-import { TopNavigation, TopNavigationAction, Icon, Toggle } from "@ui-kitten/components";
+import { View, Text, StyleSheet, Keyboard, KeyboardAvoidingView, ScrollView } from "react-native";
+import { TopNavigation, TopNavigationAction, Icon } from "@ui-kitten/components";
 import Constants from "expo-constants";
-import {
-	ApiOrder as api
-} from "../../api";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-
-import {
-	SenderForm
-} from "./components";
+import { ReceiverForm } from "./components";
+import { ApiOrder as api } from "../../api";
 
 const styles = StyleSheet.create({
 	root: {
@@ -21,7 +14,7 @@ const styles = StyleSheet.create({
 		elevation: 10, 
 		paddingTop: Constants.statusBarHeight + 5
 	},
-	toggleView: {
+	card: {
 		margin: 5,
 		padding: 7,
 		elevation: 5,
@@ -29,17 +22,11 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		borderWidth: 0.2,
 		borderColor: '#bdbdbd',
-		flexDirection: 'row',
-		alignItems: 'center'
-	},
-	text: {
-		marginLeft: 10,
-		fontSize: 15,
-		fontFamily: 'Roboto_medium'
+		borderRadius: 3
 	}
 })
 
-const Sender = props => {
+const Receiver = props => {
 	const [state, setState] = React.useState({
 		isKeyboardVisible: false,
 		checked: true
@@ -80,31 +67,33 @@ const Sender = props => {
 	);
 
 	const handleSubmit = (data) => {
-		const pengirimnya = {
+		const deskripsiPenerima = {
 			nama: data.nama,
-			alamat: data.alamatUtama,
-			kota: data.kabupaten,
+			alamatUtama: data.alamat,
 			kodepos: data.kodepos,
-			nohp: data.phone,
-			alamatDet: '-',
-			kel: data.kelurahan,
-			kec: data.kecamatan,
 			email: data.email,
+			nohp: data.phone,
+			kabupaten: data.kabupaten,
+			kecamatan: data.kecamatan,
+			kelurahan: data.kelurahan,
 			provinsi: data.provinsi
-		};
-
-		props.navigation.push('OrderPenerimaNonMember',{
-			...props.navigation.state.params,
-			pengirimnya
-		});
+		}
+		//console.log(deskripsiPenerima);
+		props.navigation.navigate({
+			routeName: 'PilihTarif',
+			params: {
+				...props.navigation.state.params,
+				deskripsiPenerima
+			}
+		})
 	}
 
 	return(
 		<View style={styles.root}>
 			<TopNavigation
 			    leftControl={BackAction()}
-			    subtitle='Kelola Pengirim'
-			    title='Order'
+			    subtitle='Kelola Penerima'
+				title='Order'
 			    alignment='start'
 			    titleStyle={{fontFamily: 'open-sans-bold', color: '#FFF'}}
 			    style={styles.navigation}
@@ -116,18 +105,9 @@ const Sender = props => {
 				enabled={state.isKeyboardVisible}
 			>
 				<ScrollView keyboardShouldPersistTaps='always'>	
-					<View style={styles.toggleView}>
-						<Toggle
-					        status='primary'
-					        onChange={() => setState(prevState => ({ ...prevState, checked: !prevState.checked }))}
-					        checked={state.checked}
-					    />
-					    <Text style={styles.text}>Gunakan data saya</Text>
-					</View>
-					<SenderForm 
+					<ReceiverForm 
+						style={styles.card}
 						onSearch={(kodepos) => api.getKodePos(kodepos)}
-						user={props.dataLogin}
-						checked={state.checked}
 						onSubmit={handleSubmit}
 					/>
 				</ScrollView>
@@ -136,14 +116,4 @@ const Sender = props => {
 	);
 }
 
-Sender.propTypes = {
-	dataLogin: PropTypes.object.isRequired
-}
-
-function mapStateToProps(state) {
-	return{
-		dataLogin: state.auth.dataLogin
-	}
-}
-
-export default connect(mapStateToProps, null)(Sender);
+export default Receiver;
