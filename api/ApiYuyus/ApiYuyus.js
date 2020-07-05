@@ -142,5 +142,25 @@ export default{
 			};
 			return Promise.reject(errors);
 		}
-	})
+	}),
+	getTarif: (param1) => axios.post(url, {
+		messtype: '703',
+		param1,
+		param2: '',
+		param3: '',
+		param4: '',
+		param5: '',
+		hashing: getHashing('703', param1)
+	}, config)
+	.then(res => {
+		const { rc_mess } = res.data;
+		if (rc_mess === '00') {
+			return res.data.response_data1.substring(2);
+		}else{
+			const errors = {
+				global: 'Tarif tidak ditemukan'
+			};
+			return Promise.reject(errors);
+		}
+	}),
 }
