@@ -150,7 +150,7 @@ const SenderForm = props => {
 					email: `${detail.email}`,
 					nama: `${detail.nama}`,
 					phone: `${detail.nohp}`,
-					alamatUtama: `${detail.alamatOl}`,
+					alamatUtama: `${detail.alamatOl.replace(/[-~`_/'"*+%?&^${}<>()|[\]\\]/g, '')}`,
 					kecamatan: detail.kecamatan,
 					kelurahan: detail.kelurahan,
 					kabupaten: detail.kota,
@@ -245,7 +245,12 @@ const SenderForm = props => {
 		if (!data.kodepos) errors.kodepos = "Kodepos tidak boleh kosong";
 		if (!data.phone) errors.phone = "Nomor handphone harap diisi";
 		if (!data.nama) errors.nama = "Nama harap diisi";
-		if (!data.alamatUtama) errors.alamatUtama = "Alamat utama tidak boleh kosong";
+		if (!data.alamatUtama){
+			errors.alamatUtama = "Alamat utama tidak boleh kosong";
+		}else{
+			var re = /[-~`_/'"*+?^${}<>%&()|[\]\\]/;
+			if (re.test(data.alamatUtama) === true) errors.alamatUtama = "Alamat tidak boleh mengandung karakter unik";
+		}
 		if (!state.query) errors.global = "Kecamatan/kota tidak boleh kosong";
 		if (data.email) {
 			//regex email

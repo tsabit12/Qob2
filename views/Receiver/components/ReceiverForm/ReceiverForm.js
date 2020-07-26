@@ -186,7 +186,13 @@ const ReceiverForm = props => {
 	const validate = (data) => {
 		const errors = {};
 		if (!data.nama) errors.nama ="Nama penerima harap diisi";
-		if (!data.alamat) errors.alamat ="Alamat harap diisi";
+		if (!data.alamat){
+			errors.alamat ="Alamat harap diisi";	
+		}else{
+			var re = /[-~`_/'"*+?^${}<>&()%|[\]\\]/;
+			if (re.test(data.alamat) === true) errors.alamat = "Alamat tidak boleh mengandung karakter unik";
+		}
+
 		if (!data.phone) errors.phone = "Nomor handphone tidak boleh kosong";
 		if (!state.query) errors.global = "Kecamatan/kota tidak boleh kosong";
 		if (!data.kodepos) errors.kodepos = "Kodepos tidak boleh kosong";
