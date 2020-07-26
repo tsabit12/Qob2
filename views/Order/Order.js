@@ -107,6 +107,11 @@ const Order = props => {
 								}))
 							}
 						})
+				}else{ //belum connect ke giro
+					setState(prevState => ({
+						...prevState,
+						mount: true
+					}))
 				}
 			}else{
 				api.searchRekeningType(props.dataLogin.norek)
