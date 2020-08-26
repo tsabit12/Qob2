@@ -191,7 +191,7 @@ class MapScreen extends React.Component{
         .then(res => {
         	let routeCoordinates = [];
 	          res.data.response.route[0].leg[0].shape.map(m => {
-	            let latlong = m.split(',');
+	            let latlong = m.split(','); 
 	            let latitude = parseFloat(latlong[0]);
 	            let longitude = parseFloat(latlong[1]);
 	            routeCoordinates.push({latitude: latitude, longitude: longitude});

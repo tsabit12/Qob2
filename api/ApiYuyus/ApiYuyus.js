@@ -5,6 +5,8 @@ import {
 	getHashing
 } from "./utils";
 
+const urlCityCourier = 'https://qcomm.posindonesia.co.id:10444/a767e8eec95442bda80c4e35e0660dbb';
+const getOrderUrl = 'https://qcomm.posindonesia.co.id:10444/getOrder';
 const url = 'https://qcomm.posindonesia.co.id:10444/a767e8eec95442bda80c4e35e0660dbb'; //live
 // const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb'; //dev
 
@@ -163,4 +165,56 @@ export default{
 			return Promise.reject(errors);
 		}
 	}),
+	cityCourier: {
+		getTarif: (payload) => axios.post(urlCityCourier, {
+			messtype: '401',
+			...payload,
+			hashing: getHashing('401', payload.param1)
+		}, config)
+			.then(res => res.data),
+		order: (payload) => axios.post(urlCityCourier, {
+			messtype: '402',
+			...payload,
+			hashing: getHashing('402', payload.param1)
+		}, config).then(res => res.data),
+		getOrder: (userid) => axios.post(getOrderUrl, {
+			userid: userid
+		}, config).then(res => res.data),
+		pembayaran: (userid, param2) => axios.post(urlCityCourier, {
+			messtype: '403',
+			param1: userid,
+			param2,
+			hashing: getHashing('403', userid)
+		}, config)
+			.then(res => {
+				const { rc_mess, desk_mess } = res.data;
+				if (rc_mess === '00') {
+					return Promise.resolve(res.data);
+				}else{
+					const errors = {
+						code: rc_mess,
+						msg: desk_mess
+					};
+					return Promise.reject(errors);
+				}
+			}),
+		cancle: (payload) => axios.post(urlCityCourier, {
+			messtype: '405',
+			param1: payload.userid,
+			param2: payload,
+			userid: payload.userid,
+			hashing: getHashing('405', payload.userid)
+		}, config).then(res => {
+			if (res.data.rc_mess === '00') {
+				return Promise.resolve(res.data);
+			}else{
+				const errors = {
+					msg: res.data.desk_mess,
+					status: res.data.rc_mess
+				};
+
+				return Promise.reject(errors);
+			}
+		})
+	}
 }

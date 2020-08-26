@@ -87,6 +87,7 @@ const ValidasiRekening = props => {
 	});
 
 	const { userid } = props.dataLogin;
+	//const userid = '440278059';
 
 	React.useEffect(() => {
 		(async () => {
@@ -147,6 +148,7 @@ const ValidasiRekening = props => {
 
 			api.connectToGiro(state.norek, userid)
 				.then(res => {
+					console.log(res);
 					const resValue 		= res.response_data1.split("|");
 					const pgmPhone  	= res.response_data3;
 					const kodeVerify 	= resValue[2];

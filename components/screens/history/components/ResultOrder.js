@@ -235,6 +235,11 @@ const ResultOrder = props => {
 				          		<Text>Lacak Kiriman</Text>
 				          	</View>
 				        </MenuOption>
+				        <MenuOption onSelect={() => handelTracking('1583580146_440001352')}>
+				        	<View style={styles.textMenu}>
+				          		<Text>Tracking Pickup</Text>
+				          	</View>
+				        </MenuOption>
 					</MenuOptions>
 				</Menu> 
 		    </React.Fragment> : <React.Fragment> 

@@ -97,7 +97,8 @@ const Home = props => {
 						kota: x[4],
 						kecamatan: x[5],
 						kelurahan: x[6],
-						kodepos: x[7]
+						kodepos: x[7],
+						nopend: res.response_data3
 					};
 
 					props.setLoggedIn(userid, session, val);

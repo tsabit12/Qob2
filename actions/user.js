@@ -57,3 +57,9 @@ export const setLocalUser = (userData) => dispatch => {
 		userData
 	})
 }
+
+export const calculateSaldo = (nominal, calculateType) => dispatch => dispatch({
+	type: 'CALCULATE_SALDO',
+	calculateType,
+	nominal
+})

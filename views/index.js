@@ -7,3 +7,7 @@ export { default as Invoice } from "./Invoice";
 export { default as Sender } from "./Sender";
 export { default as Receiver } from "./Receiver";
 export { default as CekTarif } from "./CekTarif";
+export { default as CityCourier } from "./CityCourier";
+export { default as OnlineBooking } from './OnlineBooking';
+export { default as Profile } from './Profile';
+export { default as Notification } from './Notification';

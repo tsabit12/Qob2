@@ -1,8 +1,8 @@
 import React from "react";
 import Modal from 'react-native-modal';
 import PropTypes from "prop-types";
-import { View, Text, StyleSheet } from "react-native";
-import { Button } from "@ui-kitten/components";
+import { View, StyleSheet } from "react-native";
+import { Button, Text } from 'native-base';
 
 const styles = StyleSheet.create({
 	root: {
@@ -52,28 +52,16 @@ const ModalView = props => {
 				</View>
 				<View style={styles.footer}>
 					{ props.showFooter ? <React.Fragment>
-						<Button 
-							appearance='outline' 
-							style={styles.button}
-							onPress={props.onCancle}
-						>
-							Batal
-						</Button>
-						<Button 
-							appearance='outline' 
-							style={styles.button}
-							onPress={props.onSubmit}
-						>
-							Konfirmasi
-						</Button>
+						<Button transparent onPress={props.onCancle}>
+				            <Text>Batal</Text>
+				        </Button>
+						<Button transparent onPress={props.onSubmit}>
+				            <Text>Konfirmasi</Text>
+				        </Button>
 					</React.Fragment> : 
-					<Button 
-						appearance='outline' 
-						style={styles.button}
-						onPress={props.onCancle}
-					>
-						Tutup
-					</Button>}
+					<Button transparent onPress={props.onCancle}>
+			            <Text>Tutup</Text>
+			        </Button>}
 				</View>
 			</View>
 		</Modal>

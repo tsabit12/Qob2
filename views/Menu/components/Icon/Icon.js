@@ -8,33 +8,31 @@ const device = Dimensions.get('window').width;
 const styles = StyleSheet.create({
 	root: {
 		flex: 1,
-		alignItems: 'center',
-		marginLeft: 5,
-		marginRight: 5,
-		marginBottom: 10,
+		margin: 5,
 		height: '100%',
-		padding: 2,
 		borderWidth: 0.3,
 		borderRadius: 2,
-		borderColor: '#a0a1a3'
+		borderColor: '#a0a1a3',
 	},
 	content:{
 		flex: 1,
 		flexDirection: 'row',
-		marginTop: device*0.2 - 75
+		marginTop: device*0.2 - 75,
+		alignItems: 'center',
 	},
 	icon: {
-		width: device*0.3 - 10,
+		width: device*0.3 - 35,
 		borderRadius: 5,
 		alignItems: 'center',
 		justifyContent: 'center',
-		marginLeft: 10,
-		marginRight: 10,
+		marginLeft: 6,
+		marginRight: 6,
+		marginBottom: 10,
 		borderColor: 'black'
 	},
 	img: {
-		width: device*0.3 - 35, 
-		height: device*0.3 - 35
+		width: device*0.3 - 50, 
+		height: device*0.3 - 50
 	},
 	label: {
 		width: '100%', 
@@ -57,7 +55,7 @@ const Icon = props => {
 				<TouchableOpacity 
 					style={styles.icon}
 					onPress={() => navigation.navigate({
-                        routeName: 'OrderNonMember'
+                        routeName: 'OnlineBooking'
                     })}
 				>
 					<Image 
@@ -65,7 +63,7 @@ const Icon = props => {
 						style={styles.img}
 					/>
 					<View style={styles.label}>
-						<Text style={styles.text}>Quick Online Booking</Text>
+						<Text style={styles.text}>Online Booking</Text>
 					</View>
 				</TouchableOpacity>
 
@@ -96,8 +94,6 @@ const Icon = props => {
 						<Text style={styles.text}>Halo Pos</Text>
 					</View>
 				</TouchableOpacity>
-			</View>
-			<View style={styles.content}>
 				<TouchableOpacity 
 					style={styles.icon}
 					onPress={() => navigation.navigate({
@@ -113,6 +109,8 @@ const Icon = props => {
 					</View>
 				</TouchableOpacity>
 
+			</View>
+			<View style={styles.content}>
 				<TouchableOpacity 
 					style={styles.icon}
 					onPress={props.onGenerateToken}
@@ -138,6 +136,21 @@ const Icon = props => {
 					/>
 					<View style={styles.label}>
 						<Text style={styles.text}>Lacak{'\n'}Kiriman</Text>
+					</View>
+				</TouchableOpacity>
+
+				<TouchableOpacity 
+					style={styles.icon}
+					onPress={() => navigation.navigate({
+                        routeName: 'CityCourier'
+                    })}
+				>
+					<Image 
+						source={require("../../../../assets/city.png")}
+						style={styles.img}
+					/>
+					<View style={styles.label}>
+						<Text style={styles.text}>City Courier</Text>
 					</View>
 				</TouchableOpacity>
 			</View>

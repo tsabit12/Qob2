@@ -21,7 +21,11 @@ const BackIcon = (style) => (
 
 
 const capitalize = (string) => {
-	return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	if (string) {
+		return string.toLowerCase().split(' ').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ');
+	}else{
+		return string;
+	}
 }
 
 const getOfficeTujuan = (description) => {
@@ -59,11 +63,12 @@ const getLayanan = (description) => {
 }
 
 const getKantorAsal = (description) => {
+	console.log(description);
 	const parsing = description.split(';');
 	const office = parsing[2];
-	const officeValue = office.split(':');
-	const officeResult = officeValue[1].replace(/[0-9]/g, '');
-	return capitalize(officeResult);
+	// const officeValue = office.split(':');
+	// const officeResult = officeValue[1].replace(/[0-9]/g, '');
+	return capitalize(office);
 }
 
 const PointInHours = () => (

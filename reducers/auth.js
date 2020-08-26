@@ -121,6 +121,19 @@ export default function auth(state=initialState, action={}){
 				...state,
 				localUser: action.userData
 			}
+		case 'CALCULATE_SALDO':
+			return {
+				...state,
+				dataLogin: {
+					...state.dataLogin,
+					detail: {
+						...state.dataLogin.detail,
+						saldo: action.calculateType === 'min' ? 
+							Number(state.dataLogin.detail.saldo) - Number(action.nominal) : 
+							Number(state.dataLogin.detail.saldo) + Number(action.nominal)
+					}
+				}
+			}
 		default: return state;
 	}
 }

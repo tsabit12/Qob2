@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, AsyncStorage } from "react-native";
+import { View, Text, StyleSheet, AsyncStorage, Vibration, Animated, ActivityIndicator } from "react-native";
 import { useFonts } from '@use-expo/font';
 import { Notifications } from 'expo';
+import { Root } from "native-base";
 import { 
   Spinner,
   ApplicationProvider,
@@ -29,12 +30,30 @@ const styles = StyleSheet.create({
   },
   font: {
     fontFamily: 'open-sans-bold'
+  },
+  notification: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 70,
+    backgroundColor: '#ffae00',
+    margin: 7,
+    padding: 7,
+    borderRadius: 3,
+    elevation: 2,
+    justifyContent: 'center'
+  },
+  textNotif:{
+    color: '#FFFF',
+    fontSize: 16,
+    fontWeight: 'bold'
   }
 })
 
 const AppLoading = props => (
   <View style={styles.container}>
-    <Spinner size='medium' />
+    <ActivityIndicator size="large" />
     <Text style={{textAlign: 'center'}}>{props.text}</Text>
   </View>
 )
@@ -58,7 +77,9 @@ const MyApp = props => {
   const [state, setState] = React.useState({
     localUser: {},
     text: 'Loading...',
-    mount: false
+    mount: false,
+    notif: false,
+    bounceValueNotif: new Animated.Value(200)
   });
 
   React.useEffect(() => {
@@ -93,6 +114,37 @@ const MyApp = props => {
     })();
   }, [loaded]);   
 
+  React.useEffect(() => {
+    if (state.notif) {
+      Animated.spring(state.bounceValueNotif, {
+          toValue: 0,
+          useNativeDriver: true
+        }).start(); 
+
+        setTimeout(function() {
+          Animated.spring(state.bounceValueNotif, {
+            toValue: 200,
+            useNativeDriver: true
+          }).start(); 
+
+          setTimeout(function() {
+            setState(state => ({
+              ...state,
+              notif: false
+            }))
+          }, 10);
+        }, 5000);
+
+        // dispatch()
+    }
+  }, [state.notif])
+
+  React.useEffect(() => {
+    if (state.mount) {
+      console.log('oke');
+    }
+  }, [state.mount]);
+
   const AddNotif = () => {
     Notifications.createChannelAndroidAsync('qposin-messages', {
       name: 'Chat messages',
@@ -100,17 +152,35 @@ const MyApp = props => {
       priority: 'max',
       vibrate: [0, 250, 250, 250]
     });
+
+    setTimeout(function() {
+      Notifications.addListener(_handleNotification);
+    }, 10);
+  }
+
+  const _handleNotification = (notif) => {
+    Vibration.vibrate();
+    setState(state => ({
+      ...state,
+      notif: true
+    }))
   }
 
   return(
-    <Provider store={store}>
-      <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider mapping={mapping} theme={lightTheme}>
-        <MenuProvider>
-          { !state.mount ? <AppLoading text={state.text} /> : <Router /> }
-        </MenuProvider>
-      </ApplicationProvider>
-    </Provider>
+    <Root>
+      <Provider store={store}>
+        <IconRegistry icons={EvaIconsPack} />
+        <ApplicationProvider mapping={mapping} theme={lightTheme}>
+          <MenuProvider>
+            { !state.mount ? <AppLoading text={state.text} /> : <Router /> }
+          </MenuProvider>
+        </ApplicationProvider>
+      </Provider>
+      { state.notif && <Animated.View style={[styles.notification, {transform: [{translateX: state.bounceValueNotif }] }]}>
+        <Text style={styles.textNotif}>Notifikasi</Text>
+        <Text style={{color: '#FFFF'}}>Kamu mempunyai notifikasi baru <Text style={{color: 'blue'}}>cek disini</Text></Text>
+      </Animated.View> }
+    </Root>
   );
 }
 

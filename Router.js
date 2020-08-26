@@ -12,13 +12,13 @@ import ResultOrder from "./components/screens/order/ResultOrder";
 import LacakBarcode from "./components/screens/LacakBarcode";
 import Pembayaran from "./components/screens/Pembayaran/Pembayaran";
 import Barcode from './components/screens/helper/barcode';
-import AccountScreen from "./components/screens/account/AccountScreenNew";
+// import AccountScreen from "./components/screens/account/AccountScreenNew";
 import AboutScreen from "./components/screens/about/AboutScreen";
 
 import MapsScreen from "./components/screens/historyOrder/MapScreen";
 import KelolaPengirim from "./components/screens/orderDetail/Pengirim";
 import LacakKiriman from "./components/screens/LacakKiriman";
-import RegisterPebisol from "./components/screens/pendaftaran/Pebisol";
+import RegisterPebisol from "./components/screens/pendaftaran/Pebisol"; 
 import RegistrasiNonPebisol from "./components/screens/pendaftaran/NonPebisol";
 // import ValidasiRekening from "./components/screens/ValidasiRekening";
 import ChangePinScreen from "./components/screens/ChangePinScreen";
@@ -39,7 +39,11 @@ import {
   Invoice as InvoiceView,
   Sender as SenderView,
   Receiver as ReceiverView,
-  CekTarif as CekTarifView
+  CekTarif as CekTarifView,
+  CityCourier as CityCourierView,
+  OnlineBooking as OnlineBookingView,
+  Profile as ProfileView,
+  Notification as NotificationView
 } from "./views";
 
 const AppLoading = props => (
@@ -69,7 +73,7 @@ const AppNavigator = createStackNavigator({
         screen: Pembayaran
       },
       Account:{
-        screen: AccountScreen
+        screen: ProfileView
       },
       CekTarif: {
         screen: CekTarifView
@@ -104,6 +108,15 @@ const AppNavigator = createStackNavigator({
       Invoice: {
         screen: InvoiceView
       },
+      CityCourier: {
+        screen: CityCourierView
+      },
+      OnlineBooking: {
+        screen: OnlineBookingView
+      },
+      Notification: {
+        screen: NotificationView
+      }
   	},{
   	initialRouteName: 'IndexMenu',
     defaultNavigationOptions: {

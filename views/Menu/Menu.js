@@ -1,8 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView, BackHandler, Alert } from "react-native";
+import { View, Text, StyleSheet, ScrollView, BackHandler, Alert, Dimensions, TouchableOpacity } from "react-native";
 import Constants from 'expo-constants';
-import { Icon, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; 
 import {  StackActions } from 'react-navigation';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -19,38 +18,13 @@ import {
 	Modal
 } from "./components";
 import { loggedOut } from "../../actions/auth";
+import { getNotification } from '../../actions/notification';
 
 import * as Permissions from 'expo-permissions';
 import { Notifications } from 'expo';
+import IconBadge from 'react-native-icon-badge';
 
-const styles = StyleSheet.create({
-	root: {
-		flex: 1
-	},
-	navigationView: {
-        paddingTop: Constants.statusBarHeight,
-        backgroundColor: 'rgb(240, 132, 0)',
-        elevation: 5
-    },
-    navigation: {
-        backgroundColor: 'transparent'
-    }
-})
-
-const ProfileIcon = (style) => {
-	return(
-		<Ionicons
-	        style={{ backgroundColor: 'transparent' }}
-	        name='md-person'
-	        size={25}
-	        color="white"
-	    />
-	);
-}
-
-const ProfileAction = (props) => (
-  <TopNavigationAction {...props} icon={ProfileIcon}/>
-);
+const { width, height } = Dimensions.get('window');
 
 const Menu = props => {
 	const [state, setState] = React.useState({
@@ -96,7 +70,7 @@ const Menu = props => {
 							}))
 		    			})
 		    			.catch(err => {
-		    				console.log(err);
+		    				console.log(err.request);
 		    				setState(prevState => ({
 								...prevState,
 								mount: true
@@ -114,6 +88,7 @@ const Menu = props => {
 
 	React.useEffect(() => {
 		if (state.mount) {
+
 			BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 		    
 		    return () => {
@@ -121,6 +96,16 @@ const Menu = props => {
 		    };
 		}
 	}, [state.mount]);
+
+	React.useEffect(() => {
+		if (props.dataLogin.userid) {
+			const payload = {
+				userid: props.dataLogin.userid
+			};
+
+			props.getNotification(payload);
+		}
+	}, [props.dataLogin.userid]);
 
 	const handleBackButtonClick = () => {
 		if (props.navigation.isFocused()) {
@@ -148,14 +133,6 @@ const Menu = props => {
 
         return true;
 	}
-
-	const renderRightControls = () => (
-		<ProfileAction onPress={() => 
-			props.navigation.navigate({ 
-				routeName: 'Account'
-			})} 
-		/>
-	);
 
 	const goToConnectGiro = () => props.navigation.navigate({
 		routeName: 'ValidasiRekening'
@@ -232,13 +209,37 @@ const Menu = props => {
 		<View style={styles.root}>
 			<Loader loading={state.loading} messagenya='Loading..' />
 			<View style={styles.navigationView}>
-				<TopNavigation
-				    title='QPOSin AJA'
-				    alignment='start'
-				    titleStyle={{fontSize: 19, fontWeight: '700', color: '#FFF'}}
-				    style={styles.navigation}
-				    rightControls={renderRightControls()}
-				/>
+				<Text style={styles.title}>QPOSin AJA</Text>
+				<View style={{marginRight: 7, flexDirection: 'row'}}>
+					<TouchableOpacity 
+						onPress={() => props.navigation.navigate({ 
+							routeName: 'Notification'
+						})}
+						style={{padding: 7, marginRight: 3}}
+					>
+						<IconBadge
+				            MainElement={
+				            	<View style={{margin: 6}}>
+				            		<Ionicons name="md-notifications" size={27} color="white"/>
+				            	</View>
+				            }
+				            BadgeElement={
+						      <Text style={{color:'#FFFFFF', fontSize: 9}}>{props.notification.total}</Text>
+						    }
+						    IconBadgeStyle={{width: 20, height: 20}}
+						    Hidden={props.notification.total === 0}
+				        />
+			        </TouchableOpacity>
+
+					<TouchableOpacity 
+						onPress={() => props.navigation.navigate({ 
+							routeName: 'Account'
+						})}
+						style={{padding: 7, margin:5}}
+					>
+						<Ionicons name="md-person" size={27} color="white" />
+					</TouchableOpacity>
+				</View>
 			</View>
 			<ScrollView>
 				<ImageSlider />
@@ -263,14 +264,42 @@ const Menu = props => {
 	);
 }
 
+const styles = StyleSheet.create({
+	root: {
+		flex: 1
+	},
+	navigationView: {
+        paddingTop: Constants.statusBarHeight,
+        backgroundColor: 'rgb(240, 132, 0)',
+        height: height / 9,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingLeft: 6,
+		paddingRight: 6
+    },
+    navigation: {
+        backgroundColor: 'transparent'
+    },
+    title: {
+    	color: 'white',
+    	fontFamily: 'Roboto_medium',
+		fontWeight: 'bold',
+		fontSize: 20
+    }
+})
+
 Menu.propTypes = {
-	dataLogin: PropTypes.object.isRequired
+	dataLogin: PropTypes.object.isRequired,
+	getNotification: PropTypes.func.isRequired,
+	notification: PropTypes.object.isRequired
 }
 
 function mapStateToProps(state) {
 	return{
-		dataLogin: state.auth.dataLogin
+		dataLogin: state.auth.dataLogin,
+		notification: state.notification
 	}
 }
 
-export default connect(mapStateToProps, { loggedOut })(Menu);
+export default connect(mapStateToProps, { loggedOut, getNotification })(Menu);
