@@ -119,8 +119,8 @@ const CartView = props => {
 	const { loading, presedItem, errors, activePage } = state;
 
 	React.useEffect(() => {
-		//ApiYuyus.cityCourier.getOrder(props.userid)
-		ApiYuyus.cityCourier.getOrder('440000214')
+		ApiYuyus.cityCourier.getOrder(props.userid)
+		// ApiYuyus.cityCourier.getOrder('440000214')
 			.then(res => {
 				const { rc_mess, response_data2 } = res;
 				
@@ -418,10 +418,10 @@ const CartView = props => {
 		return(
 			<View style={styles.root}>
 				<View style={styles.card}>
-					<TouchableOpacity style={{marginRight: 6}} onPress={() => props.goBack()}>
-						<Ionicons name="md-arrow-back" size={24} color="white" />
+					<TouchableOpacity style={{marginRight: 10}} onPress={() => props.goBack()}>
+						<Ionicons name="md-arrow-back" size={20} color="white" />
 					</TouchableOpacity>
-					<Text style={styles.textNavigation}>DAFTAR ORDER</Text>
+					<Text style={styles.textNavigation}>Daftar Order</Text>
 				</View>
 				<Footer>
 		          <FooterTab style={{backgroundColor: 'white', elevation: 0}}>
@@ -460,24 +460,27 @@ const CartView = props => {
 		            </Button>
 		          </FooterTab>
 		        </Footer>
-		        <View style={{flex: 1}}>
-					{ activePage === 1 && 
-						<PageOrder 
-							data={state.data} 
-							handlePressItem={handlePressItem}
-						/> }
+		        <ScrollView>
+			        <View style={{flex: 1}}>
+						{ activePage === 1 && 
+							<PageOrder 
+								data={state.data} 
+								handlePressItem={handlePressItem}
+							/> }
 
-			        { activePage === 2 && 
-			        	<BatalOrder 
-			        		data={state.data2}
-			        	/> }
+				        { activePage === 2 && 
+				        	<BatalOrder 
+				        		data={state.data2}
+				        	/> }
 
-			         { activePage === 3 && 
-			         	<SelesaiOrder 
-			         		data={state.data3}
-			         	/>
-			         }
-			    </View>
+				         { activePage === 3 && 
+				         	<SelesaiOrder 
+				         		data={state.data3}
+				         		userid={props.userid}
+				         	/>
+				         }
+				    </View>
+				</ScrollView>
 		        <Modal 
 		        	transparent={true}
 		        	visible={state.visible}

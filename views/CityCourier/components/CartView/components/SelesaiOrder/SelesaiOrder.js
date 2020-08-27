@@ -16,6 +16,7 @@ import {
 	Right,
 	Content
 } from 'native-base';
+import { ApiQposin } from '../../../../../../api';
 
 const numberWithCommas = (number) => {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -44,7 +45,6 @@ const timeDifference = (current, previous) => {
         return Math.round(elapsed/msPerYear ) + ' tahun yang lalu';   
     }
 }
-
 
 String.prototype.toDate = function(format){
   var normalized      = this.replace(/[^a-zA-Z0-9]/g, '-');
@@ -77,10 +77,18 @@ const SelesaiOrder = props => {
 		position: new Animated.Value(-40),
 		presedItem: {
 			status: false,
-			data: []
+			data: {}
 		},
-		bounceValue: new Animated.Value(300)
+		bounceValue: new Animated.Value(300),
+		loading: false,
+		history: {
+			status: false,
+			data: []
+		}
 	})
+
+	const { data } = props;
+	const { presedItem, history } = state;
 
 	useEffect(() => {
 		Animated.spring(state.position, {
@@ -91,6 +99,7 @@ const SelesaiOrder = props => {
 
 	useEffect(() => {
 		if (state.presedItem.status) {
+			state.bounceValue.setValue(300);
 			Animated.spring(state.bounceValue,{
 			    toValue: 0,
 			    tension: 10,
@@ -99,7 +108,19 @@ const SelesaiOrder = props => {
 		}
 	}, [state.presedItem.status]) 
 
-	const { data } = props;
+	useEffect(() => {
+		if (history.status) {
+			state.bounceValue.setValue(190);
+			
+			Animated.spring(state.bounceValue,{
+			    toValue: 0,
+			    tension: 10,
+			    useNativeDriver: true
+			}).start();
+		}
+	}, [history.status])
+
+	
 
 	const handlePress = (item) => {
 		setState(state => ({
@@ -117,11 +138,41 @@ const SelesaiOrder = props => {
 			presedItem: {
 				status: false,
 				data: []
+			},
+			history: {
+				status: false,
+				data: []
 			}
 		}))
 	}
 
-	const { presedItem } = state;
+
+	const onPressHistory = () => {
+		if (presedItem.status) {
+			const payload = {
+				userid: props.userid,
+				// userid: '440000214',
+				nomorOrder: presedItem.data.nomorOrder
+			}
+
+			setState(state => ({
+				...state,
+				loading: true
+			}))
+
+			ApiQposin.getNotification(payload)
+			.then(notifications => {
+				setState(state => ({
+					...state,
+					loading: false,
+					history: {
+						status: true,
+						data: notifications
+					}
+				}))
+			})
+		}
+	}
 
 	return(
 		<React.Fragment>
@@ -134,10 +185,10 @@ const SelesaiOrder = props => {
 							avatar
 		          			onPress={() => handlePress(row)} 
 		          			key={index}		          	
-		          			//selected={row.nomorOrder === presedItem.data.nomorOrder ? true : false }		
+		          			selected={row.nomorOrder === presedItem.data.nomorOrder ? true : false }		
 		          		>
 	          				<Body style={{marginLeft: -10}}>
-								<Text>Nomor Order</Text>
+								<Text style={styles.subTitle}>Nomor Order</Text>
 								<Text note>{row.nomorOrder}</Text>
 							</Body>
 							<Right>
@@ -169,28 +220,79 @@ const SelesaiOrder = props => {
 								<View style={styles.confirmContent}>
 					        		<Text style={styles.title}>DETAIL ORDER ({presedItem.data.nomorOrder})</Text>
 					        		<View style={styles.list}>
-					        			<Text numberOfLines={1}>Isi Kiriman</Text>
+					        			<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Isi Kiriman
+						        		</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.order.information}</Text>
 					        		</View>
 					        		<View style={styles.list}>
-						        		<Text numberOfLines={1}>Pengirim ({presedItem.data.source.name})</Text>
+						        		<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Pengirim ({presedItem.data.source.name})
+						        		</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.source.address_name}</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.source.address}</Text>
 					        		</View>
 					        		<View style={styles.list}>
-						        		<Text numberOfLines={1}>Penerima ({presedItem.data.destination.name})</Text>
+						        		<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Penerima ({presedItem.data.destination.name})
+						        		</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.destination.address_name}</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.destination.address}</Text>
 					        		</View>
 					        		<View style={styles.list}>
-					        			<Text numberOfLines={1}>Tarif</Text>
+					        			<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Tarif
+						        		</Text>
 						        		<Text note numberOfLines={1}>{numberWithCommas(presedItem.data.order.tariff)}</Text>
 					        		</View>
-					        		<View style={styles.list}>
-					        			<Text numberOfLines={1}>Jenis Pembayaran</Text>
+					        		<View>
+					        			<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Jenis Pembayaran
+						        		</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.order.payment_type === '2' ? 'Non Tunai' : 'Tunai'}</Text>
 					        		</View>
 					        	</View>
+
+					        	{ history.status ? <View style={styles.cardHistory}>
+					        		<Text style={styles.cardTitleText}>Riwayat Order</Text>
+					        		<View style={{padding: 7}}>
+						        		{history.data.map((row, index) => (
+						        			<View key={index} style={{flexDirection: 'row'}}>
+						        				<View style={styles.circle} />
+							        			<View style={{borderLeftWidth: 1, borderColor: '#ff9900', paddingLeft: 10, paddingBottom: 5}}>
+							        				<Text>{row.create_time.substring(0, 10)} 
+							        					<Text note> ({row.create_time.substring(11, 16)})</Text>
+							        				</Text>
+								        			<Text note>
+								        				{row.body}
+								        			</Text>
+							        			</View>
+						        			</View>
+						        		))}
+					        		</View>
+					        	</View> : <View style={styles.footer}>
+					        		<Text 
+					        			style={styles.link}
+					        			onPress={onPressHistory}
+					        		>
+					        			{ state.loading ? 'Sedang memuat...' : 'Tampilkan riwayat order'}
+					        		</Text>
+					        	</View> }
 							</Content> }
 						</Animated.View>
 					</TouchableWithoutFeedback>
@@ -240,10 +342,50 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold'
 		// color: '#FFFF'
 	},
+	footer: {
+		alignItems: 'center',
+		marginBottom: 4,
+		marginTop: -4
+	},
+	link: {
+		color: '#5880bf',
+		fontFamily: 'Roboto',
+		fontSize: 15
+	},
+	subTitle: {
+		fontFamily: 'Roboto_medium'
+	},
+	cardHistory: {
+		margin: 4,
+		borderWidth: 0.3,
+		borderRadius: 6,
+		borderColor: '#b6b8b6'
+	},
+	circle:{
+		width: 10,
+		height: 10,
+		borderRadius: 10 / 2,
+		backgroundColor: '#ff9900',
+		borderWidth: 1,
+		borderColor: '#53bf00',
+		marginRight: -6,
+		marginTop: 7
+	},
+	cardTitleText: {
+		backgroundColor: '#56afbf', 
+		textAlign: 'center', 
+		borderTopLeftRadius: 6, 
+		borderTopRightRadius: 6,
+		color: 'white',
+		fontFamily: 'Roboto_medium',
+		fontSize: 17,
+		padding: 5
+	}
 })
 
 SelesaiOrder.propTypes = {
-	data: PropTypes.array.isRequired
+	data: PropTypes.array.isRequired,
+	userid: PropTypes.string.isRequired
 }
 
 export default SelesaiOrder;

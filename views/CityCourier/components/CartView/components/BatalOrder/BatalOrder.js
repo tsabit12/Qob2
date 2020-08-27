@@ -137,7 +137,7 @@ const BatalOrder = props => {
 		          			selected={row.nomorOrder === presedItem.data.nomorOrder ? true : false }		
 		          		>
 	          				<Body style={{marginLeft: -10}}>
-								<Text>Nomor Order</Text>
+								<Text style={styles.subTitle}>Nomor Order</Text>
 								<Text note>{row.nomorOrder}</Text>
 							</Body>
 							<Right>
@@ -170,25 +170,50 @@ const BatalOrder = props => {
 								<View style={styles.confirmContent}>
 					        		<Text style={styles.title}>DETAIL ORDER ({presedItem.data.nomorOrder})</Text>
 					        		<View style={styles.list}>
-					        			<Text numberOfLines={1}>Isi Kiriman</Text>
+					        			<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+					        				Isi Kiriman
+					        			</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.order.information}</Text>
 					        		</View>
 					        		<View style={styles.list}>
-						        		<Text numberOfLines={1}>Pengirim ({presedItem.data.source.name})</Text>
+						        		<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Pengirim ({presedItem.data.source.name})
+						        		</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.source.address_name}</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.source.address}</Text>
 					        		</View>
 					        		<View style={styles.list}>
-						        		<Text numberOfLines={1}>Penerima ({presedItem.data.destination.name})</Text>
+						        		<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Penerima ({presedItem.data.destination.name})
+						        		</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.destination.address_name}</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.destination.address}</Text>
 					        		</View>
 					        		<View style={styles.list}>
-					        			<Text numberOfLines={1}>Tarif</Text>
+					        			<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Tarif
+						        		</Text>
 						        		<Text note numberOfLines={1}>{numberWithCommas(presedItem.data.order.tariff)}</Text>
 					        		</View>
 					        		<View style={styles.list}>
-					        			<Text numberOfLines={1}>Jenis Pembayaran</Text>
+					        			<Text 
+						        			numberOfLines={1}
+						        			style={styles.subTitle}
+						        		>
+						        			Jenis Pembayaran
+						        		</Text>
 						        		<Text note numberOfLines={1}>{presedItem.data.order.payment_type === '2' ? 'Non Tunai' : 'Tunai'}</Text>
 					        		</View>
 					        	</View>
@@ -239,6 +264,9 @@ const styles = StyleSheet.create({
 		marginBottom: 7,
 		fontWeight: 'bold'
 		// color: '#FFFF'
+	},
+	subTitle: {
+		fontFamily: 'Roboto_medium'
 	},
 })
 
