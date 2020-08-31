@@ -21,7 +21,7 @@ export default function notification(state=initialState, action={}){
 		case GET_NOTIFICATION:
 			return{
 				...state,
-				total: action.notifications.filter(row => row.status === '01').length,
+				//total: action.notifications.filter(row => row.status === '01').length,
 				data: action.notifications.map((row, index) => ({
 					key: `${index}`,
 					text: row.body,
@@ -33,8 +33,13 @@ export default function notification(state=initialState, action={}){
 		case REMOVE_NOTIF: 
 			return{
 				...state,
-				total: state.total - 1,
+				//total: state.total - 1,
 				data: state.data.filter(row => row.id !== action.id)
+			}
+		case 'ADD_NEW_NOTIF':
+			return{
+				...state,
+				total: state.total + 1
 			}
 		default: 
 			return state;

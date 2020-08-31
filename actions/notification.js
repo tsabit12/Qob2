@@ -17,3 +17,8 @@ export const removeNotif = (id) => dispatch =>
 		type: REMOVE_NOTIF,
 		id
 	}))
+
+export const addNewNotif = () => dispatch => 
+	dispatch({
+		type: 'ADD_NEW_NOTIF'
+	})
