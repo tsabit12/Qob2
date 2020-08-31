@@ -69,10 +69,11 @@ const ResultOrder = props => {
 		//make sure user type order button once
 		if (!state.sendLoading) {
 			if (state.jenisPembayaran === '2') {
-				if (Number(user.saldo) < Number(props.tarif)) {
+				const sisaSaldo = Number(user.saldo) - Number(props.tarif);
+				if (Number(sisaSaldo) < 10000) {
 					Alert.alert(
 				      `NOTIFIKASI`,
-				      `Saldo Anda Tidak Mencukupi, Silahkan Top-Up Terlebih dahulu Lalu Login Kembali Atau Pilih Metode Pembayaran Secara Tunai`,
+				      `Saldo Setelah Transaksi Minimal 10.000, Silahkan Top-Up Terlebih dahulu Lalu Login Kembali Atau Pilih Metode Pembayaran Secara Tunai`,
 				      [
 				        { text: "OK", onPress: () => console.log("OK Pressed") }
 				      ]

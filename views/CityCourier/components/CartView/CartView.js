@@ -286,7 +286,7 @@ const CartView = props => {
 				      `STATUS 00`,
 				      `${response.desk_mess}`,
 				      [
-				        { text: "OK", onPress: () => console.log("OK Pressed") }
+				        { text: "OK", onPress: () => handleCloseModalBayar() }
 				      ]
 				    );
 				    
@@ -301,7 +301,7 @@ const CartView = props => {
 							...state,
 							errors: {
 								...err,
-								msg: err.code === '404' ? 'SALDO TIDAK MENCUKUPI' : err.msg.toUpperCase()
+								msg: err.code === '044' ? 'SALDO ANDA TIDAK BOLEH KURANG DARI 10.000 SETELAH TRANSAKSI' : err.msg.toUpperCase()
 							},
 							sendLoading: false
 						}));
@@ -320,6 +320,27 @@ const CartView = props => {
 					}
 				});
 		}
+	}
+
+	const handleCloseModalBayar = () => {
+		const newData = state.data.filter(row => row.nomorOrder !== presedItem.nomorOrder);
+		setState(state => ({
+	    	...state,
+	    	data: newData,
+	    	data3: [
+	    		state.presedItem,
+	    		...state.data3
+	    	],
+	    	// presedItem: {},
+	    	visible: false
+	    }))
+
+		// setState(state => ({
+		// 	...state,
+		// 	presedItem: {},
+		// 	visible: false,
+
+		// }))
 	}
 
 	const handleCancle = (text) => {
