@@ -140,9 +140,15 @@ const Home = props => {
 				// console.log(err);
 				setState(prevState => ({
 					...prevState,
-					loading: false,
-					errors: err
+					loading: false
 				}));
+
+				Toast.show({
+	              text: err.global,
+	              duration: 3000,
+	              textStyle: { textAlign: "center", fontSize: 14 }
+	            })
+	            pinView.current.clearAll();
 			})
 	}
 	

@@ -119,8 +119,8 @@ const CartView = props => {
 	const { loading, presedItem, errors, activePage } = state;
 
 	React.useEffect(() => {
-		ApiYuyus.cityCourier.getOrder(props.userid)
-		// ApiYuyus.cityCourier.getOrder('440000214')
+		//ApiYuyus.cityCourier.getOrder(props.userid)
+		ApiYuyus.cityCourier.getOrder('440000214')
 			.then(res => {
 				const { rc_mess, response_data2 } = res;
 				

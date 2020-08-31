@@ -4,7 +4,6 @@ import {
 	Dimensions, 
 	StyleSheet, 
 	KeyboardAvoidingView, 
-	Keyboard,
 	Animated,
 	TouchableOpacity,
 	BackHandler,
@@ -48,7 +47,6 @@ const ErrorPermissionView = props => {
 }
 
 const CityCourier = props => {
-	const senderMarker = React.useRef(null);
 	const [ region ] = React.useState(new AnimatedRegion({
 		latitude: LATITUDE,
 		longitude: LONGITUDE,
@@ -74,7 +72,6 @@ const CityCourier = props => {
 		loading: true,
 		locationIsEnabled: false,
 		mount: false,
-		keyboardVisible: false,
 		sender: {},
 		receiver: {},
 		kiriman: {},
@@ -88,7 +85,6 @@ const CityCourier = props => {
 		tarif: 0,
 		update: false,
 		cart: false,
-		mountKeyboard: false,
 		success: false,
 		positionMessage: new Animated.Value(200)
 	})
@@ -107,47 +103,13 @@ const CityCourier = props => {
 
 	React.useEffect(() => {
 		if (state.mount) {
-			setState(state => ({
-				...state,
-				mountKeyboard: true
-			}))
-
-			const keyboardDidShowListener = Keyboard.addListener(
-		      'keyboardDidShow',
-		      () => {
-		        setState(prevState => ({ 
-		        	...prevState,
-		        	keyboardVisible: true
-		        }))
-		      }
-		    );
-
-		    const keyboardDidHideListener = Keyboard.addListener(
-		      'keyboardDidHide',
-		      () => {
-		        setState(prevState => ({
-		        	...prevState,
-		        	keyboardVisible: false
-		        }))
-		      }
-		    );
-
-		    return () => {
-		      keyboardDidHideListener.remove();
-		      keyboardDidShowListener.remove();
-		    };
-		}
-	}, [state.mount])
-
-	React.useEffect(() => {
-		if (state.mountKeyboard) {
 			BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
 		    
 		    return () => {
 		      BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
 		    };
 		}
-	}, [state.mountKeyboard, handleBackButtonClick])
+	}, [state.mount, handleBackButtonClick])
 
 	//we have latlong sender before receiver latlong
 	//so only passed receiver to get route
@@ -261,9 +223,16 @@ const CityCourier = props => {
 
 		const newCoordinate = {
 	      latitude: location.latitude,
-	      longitude: location.longitude
+	      longitude: location.longitude,
+	      latitudeDelta: 0,
+          longitudeDelta: 0
 	    };
 	    if (state.moveMarker === 'sender') {
+	    	
+	    		// senderMarker.current.animateMarkerToCoordinate({
+	    		// 	...newCoordinate
+	    		// }, 1000);
+	    	
 	    	region.timing(newCoordinate).start();
 	    }else if(state.moveMarker === 'receiver'){
 	    	regionReceiver.timing(newCoordinate).start();
@@ -343,8 +312,8 @@ const CityCourier = props => {
 			}))
 
 			if (state.moveMarker === 'sender') {
-				senderMarker.current.animateMarkerToCoordinate(newCoordinate, 200);
-		    	//region.timing(newCoordinate).start();
+				// senderMarker.current.animateMarkerToCoordinate(newCoordinate, 200);
+		    	region.timing(newCoordinate).start();
 		    }else if(state.moveMarker === 'receiver'){
 		    	regionReceiver.timing(newCoordinate).start();
 		    }
@@ -688,7 +657,6 @@ const CityCourier = props => {
 									geodesic={true}/> }
 							<Marker.Animated 
 								coordinate={region}
-								ref={senderMarker}
 							>
 								<MarkerLabel
 									name='Pengirim'
