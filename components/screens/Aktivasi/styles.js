@@ -44,5 +44,14 @@ export default StyleSheet.create({
 	},
 	input: {
 		marginBottom: 6
+	},
+	navigation: {
+		backgroundColor: 'transparent', 
+		borderBottomWidth: 0.9, 
+		borderBottomColor: '#e6e6e6',
+	},
+	root: {
+		paddingTop: Constants.statusBarHeight,
+		flex: 1
 	}
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { Button } from "@ui-kitten/components";
-import PDFReader from 'rn-pdf-reader-js'
+// import PDFReader from 'rn-pdf-reader-js'
 
 const styles = StyleSheet.create({
 	root: {

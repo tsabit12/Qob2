@@ -49,27 +49,23 @@ const phoneNumber = (number) => {
 
 const styles = StyleSheet.create({
 	root: {
-		flex: 1
-	},
-	statusbar: {
-		height: Constants.statusBarHeight,
-	  	backgroundColor: '#FFF'
+		flex: 1,
+		paddingTop: Constants.statusBarHeight
 	},
 	form: {
 		margin: 5,
 		marginTop: 10,
-		borderWidth: 0.3,
+		//borderWidth: 0.3,
 		padding: 10,
-		borderColor: '#bfbcbb',
+		//borderColor: '#bfbcbb',
 		borderRadius: 3,
-		backgroundColor: 'white',
-		elevation: 5
+		//backgroundColor: 'white',
+		//elevation: 2
 	},
 	navigation: {
 		backgroundColor: '#FFF', 
 		borderBottomWidth: 0.9, 
-		borderBottomColor: '#e6e6e6',
-		elevation: 5
+		borderBottomColor: '#e6e6e6'
 	},
 	message: {
 		margin: 5,
@@ -371,9 +367,6 @@ const Bantuan = props => {
 	return(
 		<View style={styles.root}>
 			<Loader loading={state.loading} />
-			<View style={styles.statusbar}>
-				<StatusBar translucent barStyle="light-content" />
-			</View>
 			<TopNavigation
 			    leftControl={BackAction()}
 			    title={props.navigation.state.params.title}

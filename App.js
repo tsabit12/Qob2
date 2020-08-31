@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import { encode } from 'base-64';
 import { MenuProvider } from 'react-native-popup-menu';
 import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 
 import Router from './Router';
 
@@ -180,6 +181,7 @@ const MyApp = props => {
         <Text style={styles.textNotif}>Notifikasi</Text>
         <Text style={{color: '#FFFF'}}>Kamu mempunyai notifikasi baru <Text style={{color: 'blue'}}>cek disini</Text></Text>
       </Animated.View> }
+      <StatusBar style="auto" />
     </Root>
   );
 }

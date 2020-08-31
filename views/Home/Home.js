@@ -5,16 +5,14 @@ import PropTypes from "prop-types";
 import Constants from 'expo-constants';
 import md5 from "react-native-md5";
 import { setLoggedIn } from "../../actions/auth";
-
+import { Toast, Icon } from 'native-base';
+import PinView from 'react-native-pin-view';
 import Loader from "../Loader";
-import MessageFlash from "../MessageFlash.js";
-
 import {
 	ApiYuyus as api
 } from "../../api";
 
 import {
-	Pin,
 	Slider as slides,
 	Registrasi
 } from "./components";
@@ -26,10 +24,6 @@ const styles = StyleSheet.create({
 	root: {
 		flex: 1
 	},
-	statusBar: {
-        height: Constants.statusBarHeight,
-        backgroundColor: '#fca903'
-    },
     text: {
 	    color: 'rgba(255, 255, 255, 0.8)',
 	    backgroundColor: 'transparent',
@@ -52,17 +46,42 @@ const styles = StyleSheet.create({
 
 const Home = props => {
 	const { localUser } = props;
+	const pinView = React.useRef(null);
 
 	const [state, setState] = React.useState({
 		loading: false,
 		errors: {},
-		done: false
+		done: false,
+		enteredPin: '',
+		showRemoveButton: false
 	});
 
-	const handleLogin = (val, clear) => {
+	const { errors, enteredPin, showRemoveButton } = state;
+
+	React.useEffect(() => {
+	    if (enteredPin.length > 0) {
+	      setState(state => ({
+	      	...state,
+	      	showRemoveButton: true
+	      }))
+	    } else {
+	      setState(state => ({
+	      	...state,
+	      	showRemoveButton: false
+	      }))
+	    }
+
+	    if (enteredPin.length === 6) {
+	    	handleLogin();
+	    }
+	}, [enteredPin]);
+
+	const handleLogin = () => {
+		const val = enteredPin;
 		setState(prevState => ({
 			...prevState,
-			loading: true
+			loading: true,
+			errors: {}
 		}));
 
 		const { userid, nohp, email } = localUser;
@@ -104,20 +123,21 @@ const Home = props => {
 					props.setLoggedIn(userid, session, val);
 
 				}else{
-					clear();
 					setState(prevState => ({
 						...prevState,
-						loading: false,
-						errors: {
-							global: res.desk_mess,
-							status: res.rc_mess
-						}
+						loading: false
 					}));
+
+					pinView.current.clearAll();
+					Toast.show({
+		              text: res.desk_mess,
+		              duration: 3000,
+		              textStyle: { textAlign: "center" }
+		            })
 				}
 			}) 
 			.catch(err => {
 				// console.log(err);
-				clear();
 				setState(prevState => ({
 					...prevState,
 					loading: false,
@@ -125,14 +145,7 @@ const Home = props => {
 				}));
 			})
 	}
-
-	const { errors } = state;
-
-	const handleCloseAlert = () => setState(prevState => ({
-		...prevState,
-		errors: {}
-	}))
-
+	
 	const renderItem = ({ item, dimensions }) => (
 	    <LinearGradient
 	      style={[
@@ -176,33 +189,87 @@ const Home = props => {
 		})
 	}
 
-	return(
-		<View style={styles.root}>
-			<Loader loading={state.loading} />
-			<View style={styles.statusBar}>
-				<StatusBar translucent barStyle="light-content" />
-			</View>
-			{Object.keys(localUser).length > 0 ?  
-				<Pin 
-					onLogin={handleLogin}
-					onHelp={hadleHelp}
-				/> : <React.Fragment>
-				{ state.done ? <Registrasi navigation={props.navigation} /> : <AppIntroSlider
-			        slides={slides}
-			        renderItem={renderItem}
-			        showPrevButton
-			        showSkipButton
-			        onDone={onDoneSlider}
-			        // onSkip={() => console.log("skipped")}
-			    /> }
-			</React.Fragment> }
+	const handleChangePin = (value) => {
+		setState(state => ({
+			...state,
+			enteredPin: value
+		}))
+	}
 
-			<MessageFlash 
-				visible={!!errors.global}
-				text={errors.global}
-				setClose={handleCloseAlert}
-			/>
-		</View>
+	return(
+		<LinearGradient
+          colors={['#ff781f', '#ff8e1c']}
+          style={styles.root}
+          start={{ x: 0, y: 0.1 }}
+	      end={{ x: 0.1, y: 1 }}
+        >
+			<Loader loading={state.loading} />
+				{Object.keys(localUser).length > 0 ? 
+					<View style={{flex: 1, justifyContent: 'center'}}> 
+						<PinView
+							ref={pinView}
+				            onValueChange={value => handleChangePin(value)}
+				            pinLength={6}
+				            buttonSize={75}
+				            inputSize={32}
+				            buttonAreaStyle={{
+				              marginTop: 24,
+				            }}
+				            inputAreaStyle={{
+				              marginBottom: 24,
+				            }}
+				            inputViewEmptyStyle={{
+				              backgroundColor: "transparent",
+				              borderWidth: 1,
+				              borderColor: "#FFF",
+				            }}
+				            inputViewFilledStyle={{
+				              backgroundColor: "#FFF",
+				            }}
+				            buttonViewStyle={{
+				              //borderWidth: 1,
+				              backgroundColor: "#FFF",
+				              margin: 6
+				            }}
+				            buttonTextStyle={{
+				              color: "black"
+				            }}
+				            onButtonPress={key => {
+				              if (key === "custom_left") {
+				                pinView.current.clear()
+				              }
+				            }}
+				            customLeftButton={showRemoveButton ? 
+					            	<Icon 
+					            		name={"ios-backspace"} 
+					            		// size={36} 
+					            		style={{
+					            			fontSize: 40,
+					            			color: 'white'
+					            		}}
+					            	/> : undefined}
+				        />
+				        <Text 
+							style={{
+								color: 'blue', 
+								textAlign: 'center', 
+								fontFamily: 'open-sans-bold',
+								marginTop: 20,
+								fontSize: 16
+							}}
+							onPress={hadleHelp}
+						>LUPA PIN</Text>
+					</View> : <React.Fragment>
+					{ state.done ? <Registrasi navigation={props.navigation} /> : <AppIntroSlider
+				        slides={slides}
+				        renderItem={renderItem}
+				        showPrevButton
+				        showSkipButton
+				        onDone={onDoneSlider}
+				        // onSkip={() => console.log("skipped")}
+				    /> }
+				</React.Fragment> }
+		</LinearGradient>
 	);
 }
 

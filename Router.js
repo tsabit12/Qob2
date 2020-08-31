@@ -36,7 +36,7 @@ import {
   ValidasiRekening,
   Bantuan as BantuanView,
   Order as OrderView,
-  Invoice as InvoiceView,
+  // Invoice as InvoiceView,
   Sender as SenderView,
   Receiver as ReceiverView,
   CekTarif as CekTarifView,
@@ -105,9 +105,9 @@ const AppNavigator = createStackNavigator({
       DetailOrder: {
         screen: DetailOrder
       },
-      Invoice: {
-        screen: InvoiceView
-      },
+      // Invoice: {
+      //   screen: InvoiceView
+      // },
       CityCourier: {
         screen: CityCourierView
       },

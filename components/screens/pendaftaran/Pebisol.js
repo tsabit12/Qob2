@@ -27,28 +27,13 @@ const BackIcon = (style) => (
 class Pebisol extends React.Component{
 	state = {
 		form: false,
-		keyboardOpen: false,
 		loading: false,
 		imei: Constants.deviceId
-	}
-
-	UNSAFE_componentWillMount () {
-	    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
-	    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
 	}
 
 	componentDidMount(){
 		setTimeout(() => this.setState({ form: true }), 500);	
 	}
-
-	componentWillUnmount () {
-	    this.keyboardDidShowListener.remove();
-	    this.keyboardDidHideListener.remove();
-	}
-
-	keyboardDidShow = (event) => this.setState({ keyboardOpen: true })
-
-	keyboardDidHide = () => this.setState({ keyboardOpen: false })
 
 	BackAction = () => (
   		<TopNavigationAction icon={BackIcon} onPress={() => this.props.navigation.goBack()}/>
@@ -187,7 +172,7 @@ class Pebisol extends React.Component{
 					<KeyboardAvoidingView
 						style={{flex:1}} 
 						behavior="padding" 
-						enabled={this.state.keyboardOpen}>
+						enabled={false}>
 						<ScrollView keyboardShouldPersistTaps='always'>	
 							<PebisolForm onSubmit={this.onSubmit} />
 						</ScrollView>

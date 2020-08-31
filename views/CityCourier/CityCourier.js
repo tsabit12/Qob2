@@ -48,6 +48,7 @@ const ErrorPermissionView = props => {
 }
 
 const CityCourier = props => {
+	const senderMarker = React.useRef(null);
 	const [ region ] = React.useState(new AnimatedRegion({
 		latitude: LATITUDE,
 		longitude: LONGITUDE,
@@ -342,7 +343,8 @@ const CityCourier = props => {
 			}))
 
 			if (state.moveMarker === 'sender') {
-		    	region.timing(newCoordinate).start();
+				senderMarker.current.animateMarkerToCoordinate(newCoordinate, 200);
+		    	//region.timing(newCoordinate).start();
 		    }else if(state.moveMarker === 'receiver'){
 		    	regionReceiver.timing(newCoordinate).start();
 		    }
@@ -641,7 +643,7 @@ const CityCourier = props => {
 		<KeyboardAvoidingView
 			style={{flex:1}} 
 			behavior="padding" 
-			enabled={state.keyboardVisible}
+			enabled={false}
 		>
 
 			{ !state.cart && !state.update && <TouchableOpacity style={styles.chart} onPress={goToCart}>
@@ -684,7 +686,10 @@ const CityCourier = props => {
 									strokeWidth={3} 
 									strokeColor="#f26522" 
 									geodesic={true}/> }
-							<Marker.Animated coordinate={region}>
+							<Marker.Animated 
+								coordinate={region}
+								ref={senderMarker}
+							>
 								<MarkerLabel
 									name='Pengirim'
 								/>

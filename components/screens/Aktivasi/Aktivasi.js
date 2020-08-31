@@ -49,36 +49,8 @@ const Aktivasi = props => {
 			password: ''
 		},
 		errors: {},
-		loading: false,
-		open: false
+		loading: false
 	})
-
-	React.useEffect(() => {
-		const keyboardDidShowListener = Keyboard.addListener(
-	      'keyboardDidShow',
-	      () => {
-	        setData(prevData => ({
-				...prevData,
-				open: true
-			}))
-	      }
-	    );
-	    const keyboardDidHideListener = Keyboard.addListener(
-	      'keyboardDidHide',
-	      () => {
-	        setData(prevData => ({
-				...prevData,
-				open: false
-			}))
-	      }
-	    );
-
-	    return () => {
-	      keyboardDidHideListener.remove();
-	      keyboardDidShowListener.remove();
-	    };
-	}, []);
-
 
 	const emailRef = React.useRef();
 	const passwordRef = React.useRef();
@@ -224,20 +196,19 @@ const Aktivasi = props => {
 	}
 
 	return(
-		<View style={{flex: 1}}>
-			<MyStatusBar />
+		<View style={styles.root}>
 			<TopNavigation
 			    leftControl={BackAction(props.navigation)}
 			    title='Aktifasi QPOSin web'
 			    alignment='start'
 			    titleStyle={{fontFamily: 'open-sans-bold', color: 'black'}}
-			    style={{backgroundColor: 'transparent', borderBottomWidth: 0.9, borderBottomColor: '#e6e6e6'}}
+			    style={styles.navigation}
 			/>
 			<Loader loading={data.loading} />
 			<KeyboardAvoidingView
 				style={{flex:1}} 
 				behavior="padding" 
-				enabled={data.open}
+				enabled={false}
 			>
 				<ScrollView>
 				<Image 
