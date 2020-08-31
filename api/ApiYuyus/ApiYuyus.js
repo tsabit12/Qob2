@@ -5,9 +5,12 @@ import {
 	getHashing
 } from "./utils";
 
-const urlCityCourier = 'https://qcomm.posindonesia.co.id:10444/a767e8eec95442bda80c4e35e0660dbb';
-const getOrderUrl = 'https://qcomm.posindonesia.co.id:10444/getOrder';
-const url = 'https://qcomm.posindonesia.co.id:10444/a767e8eec95442bda80c4e35e0660dbb'; //live
+//dev 10555
+//live 10444
+
+const urlCityCourier = 'https://qcomm.posindonesia.co.id:10555/a767e8eec95442bda80c4e35e0660dbb';
+const getOrderUrl = 'https://qcomm.posindonesia.co.id:10555/getOrder';
+const url = 'https://qcomm.posindonesia.co.id:10555/a767e8eec95442bda80c4e35e0660dbb'; //live
 // const url = 'https://magenpos.posindonesia.co.id:6466/a767e8eec95442bda80c4e35e0660dbb'; //dev
 
 const config = {	
