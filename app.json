@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "QPOSin AJA",
-    "slug": "qob",
+    "name": "QPOSin AJA DEV",
+    "slug": "qob1",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "1.0.7",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logoBaru.png",
     "splash": {
@@ -25,15 +25,15 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.posindonesia.cob",
+      "bundleIdentifier": "com.posindonesia1.cob",
       "buildNumber": "1.2.5"
     },
     "android": {
-      "package": "com.posindonesia.cob",
+      "package": "com.posindonesia1.cob",
       "versionCode": 9,
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyA7czY728UVajvsFfYCGLq67OPIjVpqFPc"
+          "apiKey": "AIzaSyC7IVXqAk-qjFjBAICJUFN5XisAv5g3X7I"
         }
       }
     },
